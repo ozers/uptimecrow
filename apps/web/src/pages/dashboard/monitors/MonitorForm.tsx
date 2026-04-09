@@ -175,16 +175,50 @@ export function MonitorForm({
               {warning}
             </p>
           ))}
-          {testResult.bodyPreview && (
-            <div className="mt-2">
-              <p className="mb-1 text-xs font-medium text-muted-foreground">
-                Response preview ({Math.round(testResult.bodyLength / 1024)}KB):
-              </p>
-              <div className="max-h-24 overflow-y-auto rounded bg-background/50 p-2 text-xs text-muted-foreground">
-                {testResult.bodyPreview}
+          {testResult.bodyPreview && (() => {
+            // Extract keyword suggestions from body
+            const suggestions: string[] = [];
+            const titleMatch = testResult.bodyPreview.match(/^([^|—\-·]+)/);
+            if (titleMatch?.[1]?.trim() && titleMatch[1].trim().length > 2 && titleMatch[1].trim().length < 60) {
+              suggestions.push(titleMatch[1].trim());
+            }
+            // Try to find site name patterns
+            const words = testResult.bodyPreview.split(/\s+/).filter((w) => w.length > 3);
+            const firstMeaningful = words.slice(0, 3).join(" ");
+            if (firstMeaningful && !suggestions.includes(firstMeaningful) && firstMeaningful.length < 40) {
+              suggestions.push(firstMeaningful);
+            }
+
+            return (
+              <div className="mt-3">
+                {suggestions.length > 0 && (
+                  <div className="mb-2">
+                    <p className="mb-1.5 text-xs font-medium text-muted-foreground">
+                      Suggested keywords — click to use:
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {suggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setValue("keyword", s)}
+                          className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p className="mb-1 text-xs font-medium text-muted-foreground">
+                  Response preview ({Math.round(testResult.bodyLength / 1024)}KB):
+                </p>
+                <div className="max-h-24 overflow-y-auto rounded bg-background/50 p-2 text-xs text-muted-foreground">
+                  {testResult.bodyPreview}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
       )}
 
