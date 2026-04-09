@@ -49,7 +49,7 @@ export function Register() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mb-4 flex flex-col items-center gap-3">
-            <img src="/logo.png" alt="" className="h-12 w-12" />
+            <img src="/logo.png" alt="" className="h-14 w-14 rounded-xl" />
             <span className="text-xl font-bold text-primary">UptimeCrow</span>
           </Link>
           <CardTitle className="text-xl">Create an account</CardTitle>
