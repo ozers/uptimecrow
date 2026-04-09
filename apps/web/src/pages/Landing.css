@@ -66,8 +66,9 @@
   align-items: center;
   gap: 0.5rem;
 }
-.logo-icon {
-  width: 24px; height: 24px;
+.logo-img {
+  width: 28px; height: 28px;
+  border-radius: 6px;
 }
 .nav-links {
   display: flex;

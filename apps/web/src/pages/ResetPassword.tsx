@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { LogoStacked } from "@/components/logo";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -56,10 +57,7 @@ export function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link to="/" className="mb-4 flex flex-col items-center gap-3">
-            <img src="/logo.png" alt="" className="h-14 w-14 rounded-xl" />
-            <span className="text-xl font-bold text-primary">UptimeCrow</span>
-          </Link>
+          <LogoStacked className="mb-4" />
           <CardTitle className="text-xl">Set new password</CardTitle>
           <CardDescription>Enter your new password below.</CardDescription>
         </CardHeader>

@@ -7,6 +7,7 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -21,11 +22,8 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-card">
-      <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
-        <Link to="/dashboard" className="flex items-center gap-2.5">
-          <img src="/logo.png" alt="" className="h-8 w-8 rounded-lg" />
-          <span className="text-lg font-bold text-primary">UptimeCrow</span>
-        </Link>
+      <div className="flex h-14 items-center border-b border-border px-5">
+        <Logo size="sm" to="/dashboard" />
       </div>
       <nav className="flex-1 space-y-1 p-3">
         {navItems.map((item) => {
