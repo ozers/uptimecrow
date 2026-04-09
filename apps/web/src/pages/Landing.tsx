@@ -109,12 +109,6 @@ export function LandingPage() {
       {/* TERMINAL DEMO */}
       <TerminalDemo />
 
-      {/* HERO LOGO */}
-      <section className="hero-logo-section">
-        <div className="hero-logo-glow" />
-        <img src="/logo.png" alt="UptimeCrow" className="hero-logo" />
-      </section>
-
       {/* HOW IT WORKS */}
       <section className="section" id="how">
         <div className="container">
@@ -263,6 +257,10 @@ export function LandingPage() {
       {/* FINAL CTA */}
       <section className="final-cta">
         <div className="container">
+          <div className="final-cta-logo">
+            <div className="hero-logo-glow" />
+            <img src="/logo.png" alt="UptimeCrow" className="hero-logo" />
+          </div>
           <h2>Stop writing incident reports at 3 AM.</h2>
           <p>Start monitoring for free. Set up in under 3 minutes.</p>
           <div className="hero-actions">
