@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Check } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { normalizeUrl } from "@/lib/utils";
 import { useMonitors } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,7 +102,7 @@ export function StatusPageCreate() {
         if (!m.name || !m.url) continue;
         const { monitor } = await api.post<{ monitor: Monitor }>("/api/monitors", {
           name: m.name,
-          url: m.url,
+          url: normalizeUrl(m.url),
           intervalSeconds: m.intervalSeconds,
           type: "http",
         });
@@ -282,7 +283,7 @@ export function StatusPageCreate() {
                         <div className="space-y-1">
                           <Label className="text-xs">URL</Label>
                           <Input
-                            placeholder="https://api.example.com"
+                            placeholder="api.example.com"
                             value={m.url}
                             onChange={(e) => updateNewMonitor(m.id, "url", e.target.value)}
                           />
