@@ -42,13 +42,31 @@ export async function executeHttpCheck(
     clearTimeout(timeout);
     const responseMs = Date.now() - start;
 
-    const isUp = response.status === options.expectedStatus;
+    // Determine status based on response code:
+    // - If user set a specific expectedStatus, match exactly
+    // - Default (200): treat 2xx/3xx as UP, 4xx as UP (server responds), 5xx as DOWN
+    let status: "up" | "down" | "degraded";
+    let errorMessage: string | null = null;
+
+    if (options.expectedStatus !== 200) {
+      // User wants a specific code
+      status = response.status === options.expectedStatus ? "up" : "down";
+      if (status === "down") errorMessage = `Expected ${options.expectedStatus}, got ${response.status}`;
+    } else {
+      // Smart defaults
+      if (response.status >= 200 && response.status < 500) {
+        status = "up";
+      } else {
+        status = "down";
+        errorMessage = `Server error: ${response.status}`;
+      }
+    }
 
     return {
-      status: isUp ? "up" : "down",
+      status,
       responseMs,
       statusCode: response.status,
-      errorMessage: isUp ? null : `Unexpected status: ${response.status}`,
+      errorMessage,
       region,
     };
   } catch (err: any) {

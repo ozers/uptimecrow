@@ -40,10 +40,10 @@ function createRateLimiter(config: RateLimitConfig) {
   };
 }
 
-// Auth routes: 10 requests per 15 minutes (login/register brute force protection)
+// Auth routes: 30 req/15min in dev, 10 in prod
 export const authRateLimit = createRateLimiter({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: process.env.NODE_ENV === "production" ? 10 : 30,
   prefix: "auth",
 });
 
