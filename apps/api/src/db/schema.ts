@@ -103,6 +103,23 @@ export const statusPages = pgTable("status_pages", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const statusPageMonitors = pgTable(
+  "status_page_monitors",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    statusPageId: uuid("status_page_id")
+      .notNull()
+      .references(() => statusPages.id, { onDelete: "cascade" }),
+    monitorId: uuid("monitor_id")
+      .notNull()
+      .references(() => monitors.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("spm_status_page_id_idx").on(table.statusPageId),
+    index("spm_monitor_id_idx").on(table.monitorId),
+  ],
+);
+
 export const incidents = pgTable(
   "incidents",
   {

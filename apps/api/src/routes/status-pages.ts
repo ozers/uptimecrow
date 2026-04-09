@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { statusPages } from "../db/schema.js";
+import { statusPages, statusPageMonitors, monitors } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { createStatusPageSchema, updateStatusPageSchema } from "@uptimecrow/shared";
 
@@ -36,7 +36,12 @@ statusPageRoutes.get("/:id", async (c) => {
     return c.json({ error: "Status page not found" }, 404);
   }
 
-  return c.json({ statusPage: page });
+  const linkedMonitors = await db
+    .select({ monitorId: statusPageMonitors.monitorId })
+    .from(statusPageMonitors)
+    .where(eq(statusPageMonitors.statusPageId, id));
+
+  return c.json({ statusPage: page, monitorIds: linkedMonitors.map((m) => m.monitorId) });
 });
 
 // Create status page
@@ -118,4 +123,33 @@ statusPageRoutes.delete("/:id", async (c) => {
   }
 
   return c.json({ ok: true });
+});
+
+// Set monitors for a status page
+statusPageRoutes.put("/:id/monitors", async (c) => {
+  const { orgId } = c.get("user");
+  const id = c.req.param("id");
+  const { monitorIds } = await c.req.json<{ monitorIds: string[] }>();
+
+  // Verify status page belongs to org
+  const [page] = await db
+    .select({ id: statusPages.id })
+    .from(statusPages)
+    .where(and(eq(statusPages.id, id), eq(statusPages.orgId, orgId)))
+    .limit(1);
+
+  if (!page) {
+    return c.json({ error: "Status page not found" }, 404);
+  }
+
+  // Replace all monitor links
+  await db.delete(statusPageMonitors).where(eq(statusPageMonitors.statusPageId, id));
+
+  if (monitorIds.length > 0) {
+    await db.insert(statusPageMonitors).values(
+      monitorIds.map((monitorId) => ({ statusPageId: id, monitorId })),
+    );
+  }
+
+  return c.json({ ok: true, monitorIds });
 });
