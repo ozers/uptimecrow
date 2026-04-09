@@ -56,9 +56,9 @@ export function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link to="/" className="mb-4 inline-flex items-center gap-2">
-            <img src="/logo.png" alt="" className="h-8 w-8" />
-            <span className="text-2xl font-bold text-primary">UptimeCrow</span>
+          <Link to="/" className="mb-4 flex flex-col items-center gap-3">
+            <img src="/logo.png" alt="" className="h-12 w-12" />
+            <span className="text-xl font-bold text-primary">UptimeCrow</span>
           </Link>
           <CardTitle className="text-xl">Set new password</CardTitle>
           <CardDescription>Enter your new password below.</CardDescription>
