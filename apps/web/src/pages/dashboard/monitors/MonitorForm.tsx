@@ -121,6 +121,9 @@ export function MonitorForm({
             type="number"
             {...register("expectedStatus", { valueAsNumber: true })}
           />
+          <p className="text-xs text-muted-foreground">
+            200 = smart mode (5xx is down, everything else is up). Set specific code for exact match.
+          </p>
           {errors.expectedStatus && (
             <p className="text-sm text-destructive">{errors.expectedStatus.message}</p>
           )}
