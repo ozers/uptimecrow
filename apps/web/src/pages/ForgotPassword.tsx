@@ -30,7 +30,7 @@ export function ForgotPassword() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <Link to="/" className="mb-4 inline-flex items-center gap-2">
-            <img src="/logo.svg" alt="" className="h-8 w-8" />
+            <img src="/logo.png" alt="" className="h-8 w-8" />
             <span className="text-2xl font-bold text-primary">UptimeCrow</span>
           </Link>
           <CardTitle className="text-xl">Reset password</CardTitle>

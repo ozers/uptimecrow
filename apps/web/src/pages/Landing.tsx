@@ -78,7 +78,7 @@ export function LandingPage() {
       <nav>
         <div className="nav-inner">
           <div className="logo">
-            <img src="/logo.svg" alt="" className="logo-icon" />
+            <img src="/logo.png" alt="" className="logo-icon" />
             <span>{BRAND}</span>
           </div>
           <div className="nav-links">
