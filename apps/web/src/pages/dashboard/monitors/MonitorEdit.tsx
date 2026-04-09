@@ -27,6 +27,7 @@ export function MonitorEdit() {
           timeoutMs: monitor.timeoutMs,
           expectedStatus: monitor.expectedStatus,
           confirmationCount: monitor.confirmationCount,
+          keyword: (monitor as any).keyword ?? undefined,
         }}
         loading={mutation.isPending}
         submitLabel="Save Changes"

@@ -56,12 +56,15 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
   const planLimits = PLAN_LIMITS[org?.plan || "free"];
   const useMultiRegion = planLimits.multiRegion;
 
+  const checkOpts = {
+    timeoutMs: monitor.timeoutMs,
+    expectedStatus: monitor.expectedStatus,
+    keyword: monitor.keyword,
+  };
+
   let result;
   if (useMultiRegion) {
-    const multiResult = await executeMultiRegionCheck(monitor.url, {
-      timeoutMs: monitor.timeoutMs,
-      expectedStatus: monitor.expectedStatus,
-    });
+    const multiResult = await executeMultiRegionCheck(monitor.url, checkOpts);
     // Record each region's result
     for (const r of multiResult.results) {
       await db.insert(checkResults).values({
@@ -77,10 +80,7 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
     const primary = multiResult.results[0];
     result = { ...primary, status: multiResult.overallStatus };
   } else {
-    result = await executeHttpCheck(monitor.url, {
-      timeoutMs: monitor.timeoutMs,
-      expectedStatus: monitor.expectedStatus,
-    });
+    result = await executeHttpCheck(monitor.url, checkOpts);
     await db.insert(checkResults).values({
       monitorId,
       status: result.status,

@@ -65,6 +65,7 @@ export const monitors = pgTable(
     timeoutMs: integer("timeout_ms").notNull().default(10000),
     expectedStatus: integer("expected_status").notNull().default(200),
     confirmationCount: integer("confirmation_count").notNull().default(2),
+    keyword: varchar("keyword", { length: 500 }),
     status: monitorStatusEnum("status").notNull().default("unknown"),
     lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     lastResponseMs: integer("last_response_ms"),

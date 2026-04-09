@@ -6,6 +6,7 @@ import { authMiddleware } from "../middleware/auth.js";
 import { createMonitorSchema, updateMonitorSchema } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
+import { executeTestCheck } from "../services/monitor.service.js";
 
 export const monitorRoutes = new Hono();
 
@@ -120,6 +121,25 @@ monitorRoutes.delete("/:id", async (c) => {
   }
 
   return c.json({ ok: true });
+});
+
+// Test a URL before creating a monitor (or for an existing one)
+monitorRoutes.post("/test", async (c) => {
+  const { url, expectedStatus, keyword } = await c.req.json<{
+    url: string;
+    expectedStatus?: number;
+    keyword?: string;
+  }>();
+
+  if (!url) return c.json({ error: "URL required" }, 400);
+
+  const result = await executeTestCheck(url, {
+    timeoutMs: 10000,
+    expectedStatus: expectedStatus || 200,
+    keyword: keyword || undefined,
+  });
+
+  return c.json({ result });
 });
 
 // Get check history for a monitor
