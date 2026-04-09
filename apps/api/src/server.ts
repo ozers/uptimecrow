@@ -83,8 +83,10 @@ app.get("/s/:slug", (c) => {
 app.use("/status/*", publicRateLimit);
 app.route("/status", publicRoutes);
 
-// Auth routes (strict rate limit)
-app.use("/api/auth/*", authRateLimit);
+// Auth routes (strict rate limit on login/register, not on /me)
+app.use("/api/auth/login", authRateLimit);
+app.use("/api/auth/register", authRateLimit);
+app.use("/api/auth/forgot-password", authRateLimit);
 app.route("/api/auth", authRoutes);
 
 // Protected API routes
