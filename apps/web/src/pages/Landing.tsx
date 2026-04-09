@@ -106,6 +106,12 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* HERO LOGO */}
+      <section className="hero-logo-section">
+        <div className="hero-logo-glow" />
+        <img src="/logo.png" alt="UptimeCrow" className="hero-logo" />
+      </section>
+
       {/* TERMINAL DEMO */}
       <TerminalDemo />
 
