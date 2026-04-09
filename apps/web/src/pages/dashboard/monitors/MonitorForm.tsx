@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createMonitorSchema } from "@uptimecrow/shared";
 import { api } from "@/lib/api";
+import { normalizeUrl } from "@/lib/utils";
 import { Loader2, Zap, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const monitorResolver = zodResolver(createMonitorSchema) as any;
@@ -78,13 +79,6 @@ export function MonitorForm({
   const monitorType = watch("type");
   const urlValue = watch("url");
 
-  const normalizeUrl = (val: string) => {
-    const trimmed = val.trim();
-    if (!trimmed) return trimmed;
-    if (!/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`;
-    return trimmed;
-  };
-
   const runTest = async () => {
     const raw = getValues("url");
     if (!raw) return;
@@ -125,7 +119,7 @@ export function MonitorForm({
       <div className="space-y-2">
         <Label htmlFor="url">URL</Label>
         <div className="flex gap-2">
-          <Input id="url" placeholder="https://example.com" {...register("url")} className="flex-1" />
+          <Input id="url" placeholder="example.com" {...register("url")} className="flex-1" />
           <Button
             type="button"
             variant="outline"
