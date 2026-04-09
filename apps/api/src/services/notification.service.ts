@@ -1,4 +1,4 @@
-// Notification Service — Email via Resend
+// Notification Service — Email via Resend + Slack/Discord webhooks
 
 import { Resend } from "resend";
 
@@ -131,5 +131,91 @@ export async function sendVerificationEmail(params: {
     console.log(`[Notification] Sent verification to ${params.email}`);
   } catch (err) {
     console.error("[Notification] Failed to send verification email:", err);
+  }
+}
+
+// ── Slack / Discord Webhooks ──
+
+export async function sendSlackWebhook(params: {
+  webhookUrl: string;
+  type: "incident_created" | "incident_resolved";
+  statusPageName: string;
+  incidentTitle: string;
+  severity?: string;
+  updateBody: string;
+}): Promise<void> {
+  const color = params.type === "incident_resolved" ? "#00e676"
+    : params.severity === "critical" ? "#ff5252"
+    : params.severity === "major" ? "#ffab40"
+    : "#ffd54f";
+
+  const payload = {
+    attachments: [{
+      color,
+      pretext: params.type === "incident_resolved"
+        ? `✅ *Resolved:* ${params.incidentTitle}`
+        : `🔴 *New Incident:* ${params.incidentTitle}`,
+      fields: [
+        { title: "Status Page", value: params.statusPageName, short: true },
+        ...(params.severity ? [{ title: "Severity", value: params.severity.toUpperCase(), short: true }] : []),
+        { title: "Update", value: params.updateBody, short: false },
+      ],
+      footer: "UptimeCrow",
+      ts: Math.floor(Date.now() / 1000),
+    }],
+  };
+
+  try {
+    const res = await fetch(params.webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
+    console.log(`[Notification] Slack webhook sent for "${params.incidentTitle}"`);
+  } catch (err) {
+    console.error("[Notification] Slack webhook failed:", err);
+  }
+}
+
+export async function sendDiscordWebhook(params: {
+  webhookUrl: string;
+  type: "incident_created" | "incident_resolved";
+  statusPageName: string;
+  incidentTitle: string;
+  severity?: string;
+  updateBody: string;
+}): Promise<void> {
+  const color = params.type === "incident_resolved" ? 0x00e676
+    : params.severity === "critical" ? 0xff5252
+    : params.severity === "major" ? 0xffab40
+    : 0xffd54f;
+
+  const payload = {
+    embeds: [{
+      title: params.type === "incident_resolved"
+        ? `✅ Resolved: ${params.incidentTitle}`
+        : `🔴 New Incident: ${params.incidentTitle}`,
+      color,
+      fields: [
+        { name: "Status Page", value: params.statusPageName, inline: true },
+        ...(params.severity ? [{ name: "Severity", value: params.severity.toUpperCase(), inline: true }] : []),
+        { name: "Update", value: params.updateBody },
+      ],
+      footer: { text: "UptimeCrow" },
+      timestamp: new Date().toISOString(),
+    }],
+  };
+
+  try {
+    const res = await fetch(params.webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
+    console.log(`[Notification] Discord webhook sent for "${params.incidentTitle}"`);
+  } catch (err) {
+    console.error("[Notification] Discord webhook failed:", err);
   }
 }
