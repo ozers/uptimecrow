@@ -77,6 +77,21 @@
   0%, 100% { box-shadow: 0 0 8px var(--green), 0 0 20px rgba(0,230,118,0.3); }
   50% { box-shadow: 0 0 12px var(--green), 0 0 30px rgba(0,230,118,0.5); }
 }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.nav-links a {
+  font-size: 0.82rem;
+  color: var(--text2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-login {
+  font-weight: 500;
+}
 .nav-cta {
   font-family: var(--font);
   font-size: 0.82rem;
@@ -148,7 +163,37 @@
 }
 .hero-sub strong { color: var(--text); font-weight: 500; }
 
-/* Email form */
+/* Hero action buttons */
+.hero-actions {
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  animation: fadeUp 0.9s ease;
+}
+.hero-btn {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.hero-btn.primary {
+  background: var(--green);
+  color: var(--bg);
+}
+.hero-btn.primary:hover { background: var(--green2); transform: translateY(-1px); }
+.hero-btn.secondary {
+  background: transparent;
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+.hero-btn.secondary:hover { border-color: var(--text3); color: var(--text); }
+
+/* Email form (kept for reference) */
 .email-form {
   display: flex;
   gap: 0.5rem;
@@ -409,6 +454,28 @@
 .price-features { list-style: none; padding: 0; }
 .price-features li { font-size: 0.8rem; color: var(--text2); padding: 0.25rem 0; }
 .price-features li::before { content: "\2713  "; color: var(--green); font-weight: 600; }
+.price-btn {
+  display: block;
+  text-align: center;
+  margin-top: 1.5rem;
+  padding: 0.6rem 1rem;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+  transition: all 0.2s;
+}
+.price-btn:hover { border-color: var(--text3); }
+.price-btn.featured-btn {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+.price-btn.featured-btn:hover { background: var(--green2); }
 
 /* Final CTA */
 .final-cta { text-align: center; padding: 5rem 0; }
@@ -431,7 +498,7 @@
   .steps { grid-template-columns: 1fr; }
   .features-grid { grid-template-columns: 1fr; }
   .pricing-cards { grid-template-columns: 1fr; }
-  .email-form { flex-direction: column; }
+  .hero-actions { flex-direction: column; align-items: center; }
   .hero { padding: 4rem 0 3rem; }
   .comparison-table { font-size: 0.75rem; }
   .comparison-table th, .comparison-table td { padding: 0.5rem 0.5rem; }

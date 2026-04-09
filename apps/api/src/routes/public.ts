@@ -12,6 +12,7 @@ import {
 import { subscribeSchema } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
+import { renderStatusHtml } from "../services/static-gen.service.js";
 
 export const publicRoutes = new Hono();
 
@@ -55,7 +56,7 @@ publicRoutes.get("/:slug", async (c) => {
     )
     .orderBy(desc(incidents.startedAt));
 
-  return c.json({
+  const data = {
     statusPage: {
       name: page.name,
       slug: page.slug,
@@ -64,7 +65,33 @@ publicRoutes.get("/:slug", async (c) => {
     },
     monitors: orgMonitors,
     activeIncidents,
-  });
+  };
+
+  // Return HTML for browser requests, JSON for API requests
+  const accept = c.req.header("Accept") || "";
+  if (accept.includes("text/html")) {
+    const staticData = {
+      generatedAt: new Date().toISOString(),
+      statusPage: data.statusPage,
+      overallStatus: (orgMonitors.some((m) => m.status === "down")
+        ? "major_outage"
+        : orgMonitors.some((m) => m.status === "degraded")
+          ? "degraded"
+          : "operational") as "operational" | "degraded" | "major_outage",
+      monitors: orgMonitors.map((m) => ({
+        name: m.name,
+        status: m.status,
+        lastCheckedAt: m.lastCheckedAt?.toISOString() ?? null,
+        uptimePercent: null,
+      })),
+      activeIncidents: [],
+    };
+    const html = renderStatusHtml(staticData);
+    c.header("Content-Type", "text/html; charset=UTF-8");
+    return c.body(html);
+  }
+
+  return c.json(data);
 });
 
 // Get incident history
@@ -232,7 +259,7 @@ publicRoutes.get("/badge/:slug", async (c) => {
     .where(
       and(
         sql`${checkResults.monitorId} = ANY(${monitorIds})`,
-        sql`${checkResults.checkedAt} > ${thirtyDaysAgo}`,
+        sql`${checkResults.checkedAt} > ${thirtyDaysAgo.toISOString()}`,
       ),
     );
 

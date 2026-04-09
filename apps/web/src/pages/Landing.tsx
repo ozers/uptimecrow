@@ -1,41 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import "./Landing.css";
 
 const BRAND = "UptimeCrow";
-
-function WaitlistForm({ id }: { id: string }) {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) return;
-    // TODO: POST to waitlist API
-    console.log("Waitlist signup:", email);
-    setSubmitted(true);
-  };
-
-  if (submitted) {
-    return <div className="form-success show">You're on the list. We'll reach out soon.</div>;
-  }
-
-  return (
-    <>
-      <form className="email-form" id={id} onSubmit={handleSubmit}>
-        <input
-          type="email"
-          className="email-input"
-          placeholder="you@company.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit" className="email-submit">Get Early Access</button>
-      </form>
-      <p className="form-note">Free tier forever. No credit card required.</p>
-    </>
-  );
-}
 
 function TerminalDemo() {
   const [visibleLines, setVisibleLines] = useState(0);
@@ -114,21 +81,28 @@ export function LandingPage() {
             <div className="logo-dot" />
             <span>{BRAND}</span>
           </div>
-          <a href="#waitlist" className="nav-cta">Join Waitlist</a>
+          <div className="nav-links">
+            <a href="#features">Features</a>
+            <a href="#pricing">Pricing</a>
+            <Link to="/login" className="nav-login">Log in</Link>
+            <Link to="/register" className="nav-cta">Get Started Free</Link>
+          </div>
         </div>
       </nav>
 
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● Building in public — launching soon</div>
+          <div className="hero-badge">● Now available — start monitoring in 3 minutes</div>
           <h1>Your site went down.<br /><span className="highlight">AI handled it.</span></h1>
           <p className="hero-sub">
             Downtime detected → AI writes the incident report → status page updated → subscribers notified. <strong>All before you wake up.</strong>
           </p>
-          <div id="waitlist">
-            <WaitlistForm id="heroForm" />
+          <div className="hero-actions">
+            <Link to="/register" className="hero-btn primary">Get Started Free</Link>
+            <a href="#how" className="hero-btn secondary">See how it works</a>
           </div>
+          <p className="form-note">Free tier forever. No credit card required.</p>
         </div>
       </section>
 
@@ -136,7 +110,7 @@ export function LandingPage() {
       <TerminalDemo />
 
       {/* HOW IT WORKS */}
-      <section className="section">
+      <section className="section" id="how">
         <div className="container">
           <p className="section-label">How it works</p>
           <h2 className="section-title">Three minutes to set up.<br />Zero minutes to manage.</h2>
@@ -162,7 +136,7 @@ export function LandingPage() {
       </section>
 
       {/* FEATURES */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" id="features" style={{ paddingTop: 0 }}>
         <div className="container">
           <p className="section-label">Features</p>
           <h2 className="section-title">Everything you need.<br />Nothing you don't.</h2>
@@ -225,7 +199,7 @@ export function LandingPage() {
       </section>
 
       {/* PRICING */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" id="pricing" style={{ paddingTop: 0 }}>
         <div className="container">
           <p className="section-label">Pricing</p>
           <h2 className="section-title">Start free. Scale when ready.</h2>
@@ -242,6 +216,7 @@ export function LandingPage() {
                 <li>Email notifications</li>
                 <li>Uptime badge</li>
               </ul>
+              <Link to="/register" className="price-btn">Get Started</Link>
             </div>
             <div className="price-card featured">
               <p className="price-name">Pro</p>
@@ -258,6 +233,7 @@ export function LandingPage() {
                 <li>Uptime badge embed</li>
                 <li>2 team seats</li>
               </ul>
+              <Link to="/register" className="price-btn featured-btn">Get Started</Link>
             </div>
             <div className="price-card">
               <p className="price-name">Team</p>
@@ -272,6 +248,7 @@ export function LandingPage() {
                 <li>API access</li>
                 <li>Priority support</li>
               </ul>
+              <Link to="/register" className="price-btn">Get Started</Link>
             </div>
           </div>
         </div>
@@ -281,8 +258,11 @@ export function LandingPage() {
       <section className="final-cta">
         <div className="container">
           <h2>Stop writing incident reports at 3 AM.</h2>
-          <p>Join the waitlist. Be first to know when we launch.</p>
-          <WaitlistForm id="ctaForm" />
+          <p>Start monitoring for free. Set up in under 3 minutes.</p>
+          <div className="hero-actions">
+            <Link to="/register" className="hero-btn primary">Get Started Free</Link>
+            <Link to="/login" className="hero-btn secondary">Log in</Link>
+          </div>
         </div>
       </section>
 

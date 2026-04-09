@@ -81,7 +81,7 @@ export async function regenerateStatusPage(
         .where(
           and(
             eq(checkResults.monitorId, m.id),
-            sql`${checkResults.checkedAt} > ${thirtyDaysAgo}`,
+            sql`${checkResults.checkedAt} > ${thirtyDaysAgo.toISOString()}`,
           ),
         );
 
@@ -164,7 +164,7 @@ export async function regenerateStatusPage(
   console.log(`[StaticGen] Regenerated status page: ${page.slug}`);
 }
 
-function renderStatusHtml(data: StaticStatusPage): string {
+export function renderStatusHtml(data: StaticStatusPage): string {
   const statusColor =
     data.overallStatus === "operational"
       ? "#00e676"
