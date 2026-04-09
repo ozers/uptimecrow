@@ -163,7 +163,7 @@ export async function executeTestCheck(
     // SPA detection
     const isSpa = body.includes('id="root"') || body.includes('id="app"') || body.includes('id="__next"') || body.includes('id="__nuxt"');
     if (response.status === 200 && isSpa && body.length < 5000) {
-      warnings.push("This is a JS-rendered SPA. The HTML is mostly empty — actual content is loaded by JavaScript. Consider adding a keyword from the meta tags (e.g. your site name) to verify the page loads correctly.");
+      warnings.push("JS-rendered site detected. Adding a keyword (e.g. your site name from meta tags) is recommended for more accurate monitoring.");
     }
 
     // Very small response
