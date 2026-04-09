@@ -21,9 +21,10 @@ export function Sidebar() {
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-border bg-card">
-      <div className="flex h-14 items-center border-b border-border px-6">
-        <Link to="/dashboard" className="text-lg font-bold text-primary">
-          UptimeCrow
+      <div className="flex h-14 items-center gap-2.5 border-b border-border px-5">
+        <Link to="/dashboard" className="flex items-center gap-2.5">
+          <img src="/logo.svg" alt="" className="h-7 w-7" />
+          <span className="text-lg font-bold text-primary">UptimeCrow</span>
         </Link>
       </div>
       <nav className="flex-1 space-y-1 p-3">
