@@ -47,8 +47,9 @@ export function Login() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <Link to="/" className="mb-4 inline-block text-2xl font-bold text-primary">
-            UptimeCrow
+          <Link to="/" className="mb-4 inline-flex items-center gap-2">
+            <img src="/logo.svg" alt="" className="h-8 w-8" />
+            <span className="text-2xl font-bold text-primary">UptimeCrow</span>
           </Link>
           <CardTitle className="text-xl">Welcome back</CardTitle>
           <CardDescription>Sign in to your account</CardDescription>

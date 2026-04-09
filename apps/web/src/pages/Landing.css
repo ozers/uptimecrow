@@ -66,16 +66,8 @@
   align-items: center;
   gap: 0.5rem;
 }
-.logo-dot {
-  width: 8px; height: 8px;
-  background: var(--green);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--green), 0 0 20px rgba(0,230,118,0.3);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 8px var(--green), 0 0 20px rgba(0,230,118,0.3); }
-  50% { box-shadow: 0 0 12px var(--green), 0 0 30px rgba(0,230,118,0.5); }
+.logo-icon {
+  width: 24px; height: 24px;
 }
 .nav-links {
   display: flex;
