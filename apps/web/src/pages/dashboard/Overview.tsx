@@ -5,7 +5,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
-  Circle,
   ArrowRight,
   Rocket,
   Globe,
@@ -22,27 +21,7 @@ import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
 
-function Onboarding({ hasMonitors, hasStatusPages }: { hasMonitors: boolean; hasStatusPages: boolean }) {
-  const steps = [
-    {
-      done: hasMonitors,
-      title: "Add your first monitor",
-      description: "Start tracking the uptime of a website or API endpoint.",
-      href: "/dashboard/monitors/new",
-      icon: Activity,
-    },
-    {
-      done: hasStatusPages,
-      title: "Create a status page",
-      description: "Give your users a public page to check service status.",
-      href: "/dashboard/status-pages/new",
-      icon: Globe,
-    },
-  ];
-
-  const completedCount = steps.filter((s) => s.done).length;
-  const allDone = completedCount === steps.length;
-
+function Onboarding() {
   return (
     <div>
       <PageHeader title="Welcome to UptimeCrow" />
@@ -51,59 +30,27 @@ function Onboarding({ hasMonitors, hasStatusPages }: { hasMonitors: boolean; has
           <div className="flex items-center gap-3">
             <Rocket className="h-5 w-5 text-primary" />
             <div>
-              <CardTitle className="text-lg">Get started</CardTitle>
+              <CardTitle className="text-lg">Get started in one step</CardTitle>
               <p className="mt-1 text-sm text-muted-foreground">
-                Complete these steps to set up your monitoring.
+                Create a status page, add your services, and start monitoring — all at once.
               </p>
             </div>
-          </div>
-          <div className="mt-4 flex items-center gap-2">
-            <div className="h-2 flex-1 rounded-full bg-secondary">
-              <div
-                className="h-2 rounded-full bg-primary transition-all duration-500"
-                style={{ width: `${(completedCount / steps.length) * 100}%` }}
-              />
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {completedCount}/{steps.length}
-            </span>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
-          {steps.map((step) => (
-            <Link
-              key={step.title}
-              to={step.done ? "#" : step.href}
-              className={`flex items-center gap-4 rounded-lg border p-4 transition-colors ${
-                step.done
-                  ? "border-primary/20 bg-primary/5"
-                  : "border-border hover:border-primary/40 hover:bg-accent"
-              }`}
-            >
-              {step.done ? (
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />
-              ) : (
-                <Circle className="h-5 w-5 shrink-0 text-muted-foreground" />
-              )}
-              <div className="flex-1">
-                <p className={`text-sm font-medium ${step.done ? "text-muted-foreground line-through" : ""}`}>
-                  {step.title}
-                </p>
-                <p className="text-xs text-muted-foreground">{step.description}</p>
-              </div>
-              {!step.done && <ArrowRight className="h-4 w-4 text-muted-foreground" />}
-            </Link>
-          ))}
-
-          {allDone && (
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-center">
-              <CheckCircle2 className="mx-auto mb-2 h-8 w-8 text-primary" />
-              <p className="text-sm font-medium">You're all set!</p>
+        <CardContent>
+          <Link
+            to="/dashboard/status-pages/new"
+            className="flex items-center gap-4 rounded-lg border border-border p-5 transition-colors hover:border-primary/40 hover:bg-accent"
+          >
+            <Globe className="h-8 w-8 text-primary" />
+            <div className="flex-1">
+              <p className="text-sm font-semibold">Create your status page</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Your monitors are running. Check back soon to see uptime data.
+                Add your services, pick a brand color, and your public status page + monitoring will be live in under a minute.
               </p>
             </div>
-          )}
+            <ArrowRight className="h-5 w-5 text-muted-foreground" />
+          </Link>
         </CardContent>
       </Card>
     </div>
@@ -124,8 +71,8 @@ export function Overview() {
 
   if (monitorsLoading || incidentsLoading || statusPagesLoading) return <LoadingPage />;
 
-  if (!hasMonitors || !hasStatusPages) {
-    return <Onboarding hasMonitors={hasMonitors} hasStatusPages={hasStatusPages} />;
+  if (!hasStatusPages) {
+    return <Onboarding />;
   }
 
   const monitorsUp = monitors?.filter((m) => m.status === "up").length ?? 0;
