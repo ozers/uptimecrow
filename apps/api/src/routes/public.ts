@@ -1,8 +1,9 @@
 import { Hono } from "hono";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import {
   statusPages,
+  statusPageMonitors,
   monitors,
   incidents,
   incidentUpdates,
@@ -12,7 +13,7 @@ import {
 import { subscribeSchema } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
-import { renderStatusHtml } from "../services/static-gen.service.js";
+import { renderStatusHtml, type StaticStatusPage } from "../services/static-gen.service.js";
 
 export const publicRoutes = new Hono();
 
@@ -32,17 +33,38 @@ publicRoutes.get("/:slug", async (c) => {
     return c.json({ error: "Status page not found" }, 404);
   }
 
-  // Get monitors for this org
-  const orgMonitors = await db
-    .select({
-      id: monitors.id,
-      name: monitors.name,
-      status: monitors.status,
-      lastCheckedAt: monitors.lastCheckedAt,
-      lastResponseMs: monitors.lastResponseMs,
-    })
-    .from(monitors)
-    .where(and(eq(monitors.orgId, page.orgId), eq(monitors.isActive, true)));
+  // Get monitors linked to this status page (fall back to all org monitors if none linked)
+  const linkedMonitorIds = await db
+    .select({ monitorId: statusPageMonitors.monitorId })
+    .from(statusPageMonitors)
+    .where(eq(statusPageMonitors.statusPageId, page.id));
+
+  let orgMonitors;
+  if (linkedMonitorIds.length > 0) {
+    const ids = linkedMonitorIds.map((l) => l.monitorId);
+    orgMonitors = await db
+      .select({
+        id: monitors.id,
+        name: monitors.name,
+        status: monitors.status,
+        lastCheckedAt: monitors.lastCheckedAt,
+        lastResponseMs: monitors.lastResponseMs,
+      })
+      .from(monitors)
+      .where(and(eq(monitors.isActive, true), inArray(monitors.id, ids)));
+  } else {
+    // Fallback: show all org monitors if none specifically linked
+    orgMonitors = await db
+      .select({
+        id: monitors.id,
+        name: monitors.name,
+        status: monitors.status,
+        lastCheckedAt: monitors.lastCheckedAt,
+        lastResponseMs: monitors.lastResponseMs,
+      })
+      .from(monitors)
+      .where(and(eq(monitors.orgId, page.orgId), eq(monitors.isActive, true)));
+  }
 
   // Get active incidents
   const activeIncidents = await db
@@ -70,7 +92,144 @@ publicRoutes.get("/:slug", async (c) => {
   // Return HTML for browser requests, JSON for API requests
   const accept = c.req.header("Accept") || "";
   if (accept.includes("text/html")) {
-    const staticData = {
+    // Calculate per-monitor uptime + daily data + response times
+    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+    const monitorsWithUptime = await Promise.all(
+      orgMonitors.map(async (m) => {
+        // Overall 90-day uptime
+        const stats = await db
+          .select({
+            total: sql<number>`count(*)`,
+            up: sql<number>`count(*) filter (where ${checkResults.status} = 'up')`,
+          })
+          .from(checkResults)
+          .where(
+            and(
+              eq(checkResults.monitorId, m.id),
+              sql`${checkResults.checkedAt} > ${ninetyDaysAgo.toISOString()}`,
+            ),
+          );
+        const total = Number(stats[0]?.total || 0);
+        const up = Number(stats[0]?.up || 0);
+
+        // Daily uptime for last 90 days
+        const dailyStats = await db
+          .select({
+            day: sql<string>`date(${checkResults.checkedAt})`,
+            total: sql<number>`count(*)`,
+            up: sql<number>`count(*) filter (where ${checkResults.status} = 'up')`,
+          })
+          .from(checkResults)
+          .where(
+            and(
+              eq(checkResults.monitorId, m.id),
+              sql`${checkResults.checkedAt} > ${ninetyDaysAgo.toISOString()}`,
+            ),
+          )
+          .groupBy(sql`date(${checkResults.checkedAt})`)
+          .orderBy(sql`date(${checkResults.checkedAt})`);
+
+        // Build 90-day array (fill missing days as null)
+        const dailyMap = new Map(dailyStats.map((d) => [d.day, d]));
+        const dailyUptime: Array<{ date: string; percent: number | null; total: number }> = [];
+        for (let i = 89; i >= 0; i--) {
+          const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
+          const day = dailyMap.get(date);
+          if (day && Number(day.total) > 0) {
+            dailyUptime.push({ date, percent: (Number(day.up) / Number(day.total)) * 100, total: Number(day.total) });
+          } else {
+            dailyUptime.push({ date, percent: null, total: 0 });
+          }
+        }
+
+        // Recent response times (last 30 checks)
+        const recentChecks = await db
+          .select({ responseMs: checkResults.responseMs })
+          .from(checkResults)
+          .where(and(eq(checkResults.monitorId, m.id), sql`${checkResults.responseMs} is not null`))
+          .orderBy(desc(checkResults.checkedAt))
+          .limit(30);
+        const recentResponseMs = recentChecks.map((c) => Number(c.responseMs)).reverse();
+
+        return {
+          name: m.name,
+          status: m.status,
+          lastCheckedAt: m.lastCheckedAt?.toISOString() ?? null,
+          uptimePercent: total > 0 ? ((up / total) * 100).toFixed(2) : null,
+          dailyUptime,
+          recentResponseMs,
+        };
+      }),
+    );
+
+    // Fetch incidents with updates for HTML
+    const incidentsWithUpdates = await Promise.all(
+      activeIncidents.map(async (inc) => {
+        const updates = await db
+          .select({
+            status: incidentUpdates.status,
+            body: incidentUpdates.body,
+            createdAt: incidentUpdates.createdAt,
+          })
+          .from(incidentUpdates)
+          .where(eq(incidentUpdates.incidentId, inc.id))
+          .orderBy(desc(incidentUpdates.createdAt));
+        return {
+          id: inc.id,
+          title: inc.title,
+          status: inc.status,
+          severity: inc.severity,
+          startedAt: inc.startedAt.toISOString(),
+          updates: updates.map((u) => ({
+            status: u.status,
+            body: u.body,
+            createdAt: u.createdAt.toISOString(),
+          })),
+        };
+      }),
+    );
+
+    // Recent resolved incidents
+    const recentResolved = await db
+      .select()
+      .from(incidents)
+      .where(
+        and(
+          eq(incidents.statusPageId, page.id),
+          sql`${incidents.status} = 'resolved'`,
+        ),
+      )
+      .orderBy(desc(incidents.resolvedAt))
+      .limit(5);
+
+    const resolvedWithUpdates = await Promise.all(
+      recentResolved.map(async (inc) => {
+        const updates = await db
+          .select({
+            status: incidentUpdates.status,
+            body: incidentUpdates.body,
+            createdAt: incidentUpdates.createdAt,
+          })
+          .from(incidentUpdates)
+          .where(eq(incidentUpdates.incidentId, inc.id))
+          .orderBy(desc(incidentUpdates.createdAt));
+        return {
+          id: inc.id,
+          title: inc.title,
+          status: inc.status,
+          severity: inc.severity,
+          startedAt: inc.startedAt.toISOString(),
+          resolvedAt: inc.resolvedAt?.toISOString() ?? null,
+          updates: updates.map((u) => ({
+            status: u.status,
+            body: u.body,
+            createdAt: u.createdAt.toISOString(),
+          })),
+        };
+      }),
+    );
+
+    const staticData: StaticStatusPage = {
       generatedAt: new Date().toISOString(),
       statusPage: data.statusPage,
       overallStatus: (orgMonitors.some((m) => m.status === "down")
@@ -78,13 +237,10 @@ publicRoutes.get("/:slug", async (c) => {
         : orgMonitors.some((m) => m.status === "degraded")
           ? "degraded"
           : "operational") as "operational" | "degraded" | "major_outage",
-      monitors: orgMonitors.map((m) => ({
-        name: m.name,
-        status: m.status,
-        lastCheckedAt: m.lastCheckedAt?.toISOString() ?? null,
-        uptimePercent: null,
-      })),
-      activeIncidents: [],
+      monitors: monitorsWithUptime,
+      activeIncidents: incidentsWithUpdates,
+      resolvedIncidents: resolvedWithUpdates,
+      subscribeEndpoint: `/status/${slug}/subscribe`,
     };
     const html = renderStatusHtml(staticData);
     c.header("Content-Type", "text/html; charset=UTF-8");

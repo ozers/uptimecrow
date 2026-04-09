@@ -9,11 +9,13 @@ import { StatusPageForm } from "./StatusPageForm";
 export function StatusPageEdit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: statusPage, isLoading } = useStatusPage(id!);
+  const { data, isLoading } = useStatusPage(id!);
   const mutation = useUpdateStatusPage(id!);
 
   if (isLoading) return <LoadingPage />;
-  if (!statusPage) return <p className="text-muted-foreground">Status page not found</p>;
+  if (!data) return <p className="text-muted-foreground">Status page not found</p>;
+
+  const { statusPage } = data;
 
   return (
     <div>

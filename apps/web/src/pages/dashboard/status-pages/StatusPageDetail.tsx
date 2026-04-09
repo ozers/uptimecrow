@@ -1,7 +1,8 @@
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, Pencil, Trash2, Mail } from "lucide-react";
+import { ExternalLink, Pencil, Mail, Activity, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useStatusPage } from "@/lib/queries/status-pages";
+import { useStatusPage, useSetStatusPageMonitors } from "@/lib/queries/status-pages";
+import { useMonitors } from "@/lib/queries/monitors";
 import { useSubscribers, useDeleteSubscriber } from "@/lib/queries/subscribers";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,15 +20,34 @@ import { PageHeader } from "@/components/page-header";
 import { LoadingPage } from "@/components/loading-page";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { RelativeTime } from "@/components/relative-time";
+import { MonitorStatusBadge } from "@/components/status-badge";
 
 export function StatusPageDetail() {
   const { id } = useParams<{ id: string }>();
-  const { data: statusPage, isLoading } = useStatusPage(id!);
+  const { data, isLoading } = useStatusPage(id!);
+  const { data: allMonitors } = useMonitors();
   const { data: subscribers } = useSubscribers(id!);
   const deleteSubscriber = useDeleteSubscriber(id!);
+  const setMonitors = useSetStatusPageMonitors(id!);
 
   if (isLoading) return <LoadingPage />;
-  if (!statusPage) return <p className="text-muted-foreground">Status page not found</p>;
+  if (!data) return <p className="text-muted-foreground">Status page not found</p>;
+
+  const { statusPage, monitorIds } = data;
+  const linkedSet = new Set(monitorIds);
+
+  const toggleMonitor = (monitorId: string) => {
+    const next = new Set(linkedSet);
+    if (next.has(monitorId)) {
+      next.delete(monitorId);
+    } else {
+      next.add(monitorId);
+    }
+    setMonitors.mutate([...next], {
+      onSuccess: () => toast.success("Monitors updated"),
+      onError: () => toast.error("Failed to update monitors"),
+    });
+  };
 
   return (
     <div>
@@ -63,9 +83,7 @@ export function StatusPageDetail() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Visibility
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Visibility</CardTitle>
           </CardHeader>
           <CardContent>
             <Badge variant={statusPage.isPublic ? "default" : "secondary"}>
@@ -75,9 +93,7 @@ export function StatusPageDetail() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Brand Color
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Brand Color</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
@@ -91,9 +107,7 @@ export function StatusPageDetail() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Subscribers
-            </CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Subscribers</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">{subscribers?.length ?? 0}</p>
@@ -101,13 +115,69 @@ export function StatusPageDetail() {
         </Card>
       </div>
 
-      <Tabs defaultValue="subscribers">
+      <Tabs defaultValue="monitors">
         <TabsList>
+          <TabsTrigger value="monitors">
+            <Activity className="mr-2 h-4 w-4" />
+            Monitors
+          </TabsTrigger>
           <TabsTrigger value="subscribers">
             <Mail className="mr-2 h-4 w-4" />
             Subscribers
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="monitors">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                Select which monitors appear on this status page
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {allMonitors && allMonitors.length > 0 ? (
+                <div className="space-y-2">
+                  {allMonitors.map((monitor) => {
+                    const linked = linkedSet.has(monitor.id);
+                    return (
+                      <button
+                        key={monitor.id}
+                        onClick={() => toggleMonitor(monitor.id)}
+                        className={`flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors ${
+                          linked
+                            ? "border-primary/30 bg-primary/5"
+                            : "border-border hover:border-primary/20 hover:bg-accent"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
+                              linked
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-muted-foreground/30"
+                            }`}
+                          >
+                            {linked && "✓"}
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{monitor.name}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{monitor.url}</span>
+                          </div>
+                        </div>
+                        <MonitorStatusBadge status={monitor.status} />
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  No monitors available. <Link to="/dashboard/monitors/new" className="text-primary hover:underline">Create one</Link> first.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="subscribers">
           <Card>
             <CardContent className="pt-6">

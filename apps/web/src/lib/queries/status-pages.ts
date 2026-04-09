@@ -13,9 +13,19 @@ export function useStatusPages() {
 export function useStatusPage(id: string) {
   return useQuery({
     queryKey: ["status-pages", id],
-    queryFn: () => api.get<{ statusPage: StatusPage }>(`/api/status-pages/${id}`),
-    select: (data) => data.statusPage,
+    queryFn: () => api.get<{ statusPage: StatusPage; monitorIds: string[] }>(`/api/status-pages/${id}`),
     enabled: !!id,
+  });
+}
+
+export function useSetStatusPageMonitors(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (monitorIds: string[]) =>
+      api.put<{ ok: boolean }>(`/api/status-pages/${id}/monitors`, { monitorIds }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["status-pages", id] });
+    },
   });
 }
 
