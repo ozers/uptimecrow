@@ -1,0 +1,138 @@
+// Notify Job — Email notification queue handler
+
+import type { Job } from "bullmq";
+import { eq, and } from "drizzle-orm";
+import { db } from "../db/index.js";
+import {
+  subscribers,
+  statusPages,
+  incidents,
+  incidentUpdates,
+} from "../db/schema.js";
+import {
+  sendIncidentNotification,
+  sendIncidentResolvedNotification,
+  sendVerificationEmail,
+} from "../services/notification.service.js";
+
+export interface NotifyJobData {
+  type:
+    | "incident_created"
+    | "incident_updated"
+    | "incident_resolved"
+    | "verification";
+  statusPageId: string;
+  incidentId?: string;
+  // For verification emails
+  email?: string;
+  verifyUrl?: string;
+}
+
+export async function processNotifyJob(
+  job: Job<NotifyJobData>,
+): Promise<void> {
+  const { type, statusPageId } = job.data;
+
+  if (type === "verification") {
+    await handleVerification(job.data);
+    return;
+  }
+
+  if (!job.data.incidentId) {
+    console.error("[Notify] Missing incidentId for incident notification");
+    return;
+  }
+
+  // Fetch status page
+  const [page] = await db
+    .select()
+    .from(statusPages)
+    .where(eq(statusPages.id, statusPageId))
+    .limit(1);
+
+  if (!page) {
+    console.error(`[Notify] Status page ${statusPageId} not found`);
+    return;
+  }
+
+  // Fetch verified subscribers
+  const subscriberList = await db
+    .select({ email: subscribers.email })
+    .from(subscribers)
+    .where(
+      and(
+        eq(subscribers.statusPageId, statusPageId),
+        eq(subscribers.isVerified, true),
+      ),
+    );
+
+  const emails = subscriberList.map((s) => s.email);
+  if (emails.length === 0) {
+    console.log("[Notify] No verified subscribers, skipping");
+    return;
+  }
+
+  // Fetch incident
+  const [incident] = await db
+    .select()
+    .from(incidents)
+    .where(eq(incidents.id, job.data.incidentId))
+    .limit(1);
+
+  if (!incident) {
+    console.error(`[Notify] Incident ${job.data.incidentId} not found`);
+    return;
+  }
+
+  // Fetch latest update
+  const [latestUpdate] = await db
+    .select()
+    .from(incidentUpdates)
+    .where(eq(incidentUpdates.incidentId, incident.id))
+    .orderBy(incidentUpdates.createdAt)
+    .limit(1);
+
+  const updateBody =
+    latestUpdate?.body || "We are investigating this issue.";
+
+  if (type === "incident_resolved") {
+    await sendIncidentResolvedNotification({
+      statusPageName: page.name,
+      incidentTitle: incident.title,
+      updateBody,
+      subscriberEmails: emails,
+    });
+  } else {
+    await sendIncidentNotification({
+      statusPageName: page.name,
+      incidentTitle: incident.title,
+      severity: incident.severity,
+      updateBody,
+      subscriberEmails: emails,
+    });
+  }
+}
+
+async function handleVerification(data: NotifyJobData): Promise<void> {
+  if (!data.email || !data.verifyUrl) {
+    console.error("[Notify] Missing email or verifyUrl for verification");
+    return;
+  }
+
+  const [page] = await db
+    .select()
+    .from(statusPages)
+    .where(eq(statusPages.id, data.statusPageId))
+    .limit(1);
+
+  if (!page) {
+    console.error(`[Notify] Status page ${data.statusPageId} not found`);
+    return;
+  }
+
+  await sendVerificationEmail({
+    email: data.email,
+    statusPageName: page.name,
+    verifyUrl: data.verifyUrl,
+  });
+}

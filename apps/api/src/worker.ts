@@ -1,0 +1,42 @@
+import { Worker } from "bullmq";
+import { redis } from "./db/index.js";
+import { processCheckJob } from "./jobs/check.job.js";
+import { processNotifyJob } from "./jobs/notify.job.js";
+import { processGenerateJob } from "./jobs/generate.job.js";
+
+export async function startWorker() {
+  const checkWorker = new Worker("monitor-checks", processCheckJob, {
+    connection: redis,
+    concurrency: 10,
+  });
+
+  const notifyWorker = new Worker("notifications", processNotifyJob, {
+    connection: redis,
+    concurrency: 5,
+  });
+
+  const generateWorker = new Worker(
+    "status-page-generate",
+    processGenerateJob,
+    {
+      connection: redis,
+      concurrency: 2,
+    },
+  );
+
+  checkWorker.on("failed", (job, err) => {
+    console.error(`[Worker] Check job ${job?.id} failed:`, err.message);
+  });
+
+  notifyWorker.on("failed", (job, err) => {
+    console.error(`[Worker] Notify job ${job?.id} failed:`, err.message);
+  });
+
+  generateWorker.on("failed", (job, err) => {
+    console.error(`[Worker] Generate job ${job?.id} failed:`, err.message);
+  });
+
+  console.log(
+    "[Worker] Started workers: monitor-checks, notifications, status-page-generate",
+  );
+}
