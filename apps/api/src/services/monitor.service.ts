@@ -161,10 +161,9 @@ export async function executeTestCheck(
     }
 
     // SPA detection
-    if (response.status === 200 && body.includes('id="root"') || body.includes('id="app"') || body.includes('id="__next"')) {
-      if (body.length < 5000 && !body.includes('<h1')) {
-        warnings.push("This looks like a JS-rendered SPA. The HTML is mostly empty — actual content is loaded by JavaScript. Consider adding a keyword from the page title or meta tags to verify content loads correctly.");
-      }
+    const isSpa = body.includes('id="root"') || body.includes('id="app"') || body.includes('id="__next"') || body.includes('id="__nuxt"');
+    if (response.status === 200 && isSpa && body.length < 5000) {
+      warnings.push("This is a JS-rendered SPA. The HTML is mostly empty — actual content is loaded by JavaScript. Consider adding a keyword from the meta tags (e.g. your site name) to verify the page loads correctly.");
     }
 
     // Very small response
