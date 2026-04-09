@@ -106,14 +106,14 @@ export function LandingPage() {
         </div>
       </section>
 
+      {/* TERMINAL DEMO */}
+      <TerminalDemo />
+
       {/* HERO LOGO */}
       <section className="hero-logo-section">
         <div className="hero-logo-glow" />
         <img src="/logo.png" alt="UptimeCrow" className="hero-logo" />
       </section>
-
-      {/* TERMINAL DEMO */}
-      <TerminalDemo />
 
       {/* HOW IT WORKS */}
       <section className="section" id="how">
