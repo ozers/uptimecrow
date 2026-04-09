@@ -78,9 +78,18 @@ export function MonitorForm({
   const monitorType = watch("type");
   const urlValue = watch("url");
 
+  const normalizeUrl = (val: string) => {
+    const trimmed = val.trim();
+    if (!trimmed) return trimmed;
+    if (!/^https?:\/\//i.test(trimmed)) return `https://${trimmed}`;
+    return trimmed;
+  };
+
   const runTest = async () => {
-    const url = getValues("url");
-    if (!url) return;
+    const raw = getValues("url");
+    if (!raw) return;
+    const url = normalizeUrl(raw);
+    if (url !== raw) setValue("url", url);
     setTesting(true);
     setTestResult(null);
     try {
@@ -106,7 +115,7 @@ export function MonitorForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
+    <form onSubmit={handleSubmit((data) => onSubmit({ ...data, url: normalizeUrl(data.url) }))} className="max-w-xl space-y-6">
       <div className="space-y-2">
         <Label htmlFor="name">Monitor Name</Label>
         <Input id="name" placeholder="My Website" {...register("name")} />
