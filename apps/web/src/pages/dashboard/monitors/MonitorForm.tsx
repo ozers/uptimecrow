@@ -36,6 +36,7 @@ interface TestResult {
   errorMessage: string | null;
   bodyPreview: string;
   bodyLength: number;
+  warnings: string[];
 }
 
 interface MonitorFormProps {
@@ -97,6 +98,7 @@ export function MonitorForm({
         errorMessage: "Failed to run test",
         bodyPreview: "",
         bodyLength: 0,
+        warnings: [],
       });
     } finally {
       setTesting(false);
@@ -167,12 +169,12 @@ export function MonitorForm({
               {testResult.errorMessage}
             </p>
           )}
-          {testResult.statusCode && testResult.statusCode >= 400 && testResult.statusCode < 500 && testResult.status === "up" && (
-            <p className="mb-2 flex items-center gap-1 text-xs text-yellow-400">
-              <AlertTriangle className="h-3 w-3" />
-              Server responds with {testResult.statusCode} — is this the correct URL?
+          {testResult.warnings?.map((warning, i) => (
+            <p key={i} className="mb-1 flex items-start gap-1 text-xs text-yellow-400">
+              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+              {warning}
             </p>
-          )}
+          ))}
           {testResult.bodyPreview && (
             <div className="mt-2">
               <p className="mb-1 text-xs font-medium text-muted-foreground">

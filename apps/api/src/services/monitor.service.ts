@@ -14,6 +14,7 @@ export interface CheckResult {
 export interface TestCheckResult extends CheckResult {
   bodyPreview: string;
   bodyLength: number;
+  warnings: string[];
 }
 
 export interface MultiRegionResult {
@@ -141,6 +142,41 @@ export async function executeTestCheck(
       .trim()
       .slice(0, 500);
 
+    // Detect warnings
+    const warnings: string[] = [];
+    const bodyLower = body.toLowerCase();
+    const previewLower = textPreview.toLowerCase();
+
+    // Soft 404 detection: server returns 200 but content says "not found"
+    if (response.status === 200) {
+      const soft404Patterns = ["page not found", "404", "not found", "does not exist", "page doesn't exist", "sayfa bulunamadı"];
+      const titleMatch = body.match(/<title[^>]*>(.*?)<\/title>/i);
+      const titleText = titleMatch?.[1]?.toLowerCase() || "";
+
+      if (soft404Patterns.some((p) => titleText.includes(p))) {
+        warnings.push(`Soft 404 detected: page title contains "${titleMatch?.[1]?.trim()}". The server returns 200 but this page may not exist.`);
+      } else if (soft404Patterns.some((p) => previewLower.includes(p)) && body.length < 10000) {
+        warnings.push("This might be a 404 page — the response contains \"not found\" text. If you're monitoring a specific page, make sure the URL is correct.");
+      }
+    }
+
+    // SPA detection
+    if (response.status === 200 && body.includes('id="root"') || body.includes('id="app"') || body.includes('id="__next"')) {
+      if (body.length < 5000 && !body.includes('<h1')) {
+        warnings.push("This looks like a JS-rendered SPA. The HTML is mostly empty — actual content is loaded by JavaScript. Consider adding a keyword from the page title or meta tags to verify content loads correctly.");
+      }
+    }
+
+    // Very small response
+    if (body.length < 100 && response.status === 200) {
+      warnings.push("Very small response body. This might be a redirect page or an empty response.");
+    }
+
+    // Slow response
+    if (responseMs > 3000) {
+      warnings.push(`Slow response time (${responseMs}ms). This may cause intermittent timeout failures.`);
+    }
+
     return {
       status,
       responseMs,
@@ -149,6 +185,7 @@ export async function executeTestCheck(
       region: "eu-west",
       bodyPreview: textPreview,
       bodyLength: body.length,
+      warnings,
     };
   } catch (err: any) {
     const responseMs = Date.now() - start;
@@ -160,6 +197,7 @@ export async function executeTestCheck(
       region: "eu-west",
       bodyPreview: "",
       bodyLength: 0,
+      warnings: [],
     };
   }
 }
