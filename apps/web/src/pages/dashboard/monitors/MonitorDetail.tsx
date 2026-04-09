@@ -16,7 +16,7 @@ import {
 import { PageHeader } from "@/components/page-header";
 import { LoadingPage } from "@/components/loading-page";
 import { MonitorStatusBadge } from "@/components/status-badge";
-import { RelativeTime } from "@/components/relative-time";
+import { RelativeTime, AbsoluteTime } from "@/components/relative-time";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ResponseChart } from "@/components/response-chart";
 
@@ -163,7 +163,7 @@ export function MonitorDetail() {
                       {check.errorMessage ?? "—"}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      <RelativeTime date={check.checkedAt} />
+                      <AbsoluteTime date={check.checkedAt} />
                     </TableCell>
                   </TableRow>
                 ))}
