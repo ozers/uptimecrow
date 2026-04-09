@@ -4,8 +4,12 @@ import { db } from "../db/index.js";
 import { monitors, checkResults } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { createMonitorSchema, updateMonitorSchema } from "@uptimecrow/shared";
+import { Queue } from "bullmq";
+import { redis } from "../db/index.js";
 
 export const monitorRoutes = new Hono();
+
+const checkQueue = new Queue("monitor-checks", { connection: redis });
 
 monitorRoutes.use("*", authMiddleware);
 
@@ -54,6 +58,19 @@ monitorRoutes.post("/", async (c) => {
     .values({ ...parsed.data, orgId })
     .returning();
 
+  // Schedule repeatable check job
+  await checkQueue.add(
+    `check-${monitor.id}`,
+    { monitorId: monitor.id },
+    {
+      repeat: { every: monitor.intervalSeconds * 1000 },
+      jobId: `repeat-${monitor.id}`,
+    },
+  );
+
+  // Run first check immediately
+  await checkQueue.add(`check-${monitor.id}-initial`, { monitorId: monitor.id });
+
   return c.json({ monitor }, 201);
 });
 
@@ -92,6 +109,14 @@ monitorRoutes.delete("/:id", async (c) => {
 
   if (!deleted) {
     return c.json({ error: "Monitor not found" }, 404);
+  }
+
+  // Remove repeatable job
+  const repeatableJobs = await checkQueue.getRepeatableJobs();
+  for (const job of repeatableJobs) {
+    if (job.id === `repeat-${id}`) {
+      await checkQueue.removeRepeatableByKey(job.key);
+    }
   }
 
   return c.json({ ok: true });

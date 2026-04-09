@@ -59,6 +59,8 @@ services:
       target: development
     ports:
       - "5173:5173"
+    environment:
+      API_URL: http://api:3000
     volumes:
       - ./apps/web/src:/app/apps/web/src
       - ./apps/web/index.html:/app/apps/web/index.html

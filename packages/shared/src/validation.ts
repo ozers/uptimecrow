@@ -43,7 +43,7 @@ export const createIncidentUpdateSchema = z.object({
 export const createStatusPageSchema = z.object({
   name: z.string().min(1).max(255),
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/),
-  logoUrl: z.string().url().max(2048).optional(),
+  logoUrl: z.union([z.string().url().max(2048), z.literal("")]).optional().transform((v) => v || undefined),
   brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#00e676"),
   isPublic: z.boolean().default(true),
 });

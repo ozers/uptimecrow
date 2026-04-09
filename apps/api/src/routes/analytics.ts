@@ -37,7 +37,7 @@ analyticsRoutes.get("/uptime", async (c) => {
         .where(
           and(
             eq(checkResults.monitorId, monitor.id),
-            sql`${checkResults.checkedAt} > ${since}`,
+            sql`${checkResults.checkedAt} > ${since.toISOString()}`,
           ),
         );
 
