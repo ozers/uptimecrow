@@ -46,6 +46,8 @@ export const organizations = pgTable("organizations", {
     .references(() => users.id, { onDelete: "cascade" }),
   plan: planEnum("plan").notNull().default("free"),
   aiTokensUsed: integer("ai_tokens_used").notNull().default(0),
+  slackWebhookUrl: varchar("slack_webhook_url", { length: 2048 }),
+  discordWebhookUrl: varchar("discord_webhook_url", { length: 2048 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -8,11 +8,14 @@ import {
   statusPages,
   incidents,
   incidentUpdates,
+  organizations,
 } from "../db/schema.js";
 import {
   sendIncidentNotification,
   sendIncidentResolvedNotification,
   sendVerificationEmail,
+  sendSlackWebhook,
+  sendDiscordWebhook,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -67,10 +70,6 @@ export async function processNotifyJob(
     );
 
   const emails = subscriberList.map((s) => s.email);
-  if (emails.length === 0) {
-    console.log("[Notify] No verified subscribers, skipping");
-    return;
-  }
 
   // Fetch incident
   const [incident] = await db
@@ -95,21 +94,46 @@ export async function processNotifyJob(
   const updateBody =
     latestUpdate?.body || "We are investigating this issue.";
 
-  if (type === "incident_resolved") {
-    await sendIncidentResolvedNotification({
-      statusPageName: page.name,
-      incidentTitle: incident.title,
-      updateBody,
-      subscriberEmails: emails,
-    });
-  } else {
-    await sendIncidentNotification({
-      statusPageName: page.name,
-      incidentTitle: incident.title,
-      severity: incident.severity,
-      updateBody,
-      subscriberEmails: emails,
-    });
+  // Send emails (if any subscribers)
+  if (emails.length > 0) {
+    if (type === "incident_resolved") {
+      await sendIncidentResolvedNotification({
+        statusPageName: page.name,
+        incidentTitle: incident.title,
+        updateBody,
+        subscriberEmails: emails,
+      });
+    } else {
+      await sendIncidentNotification({
+        statusPageName: page.name,
+        incidentTitle: incident.title,
+        severity: incident.severity,
+        updateBody,
+        subscriberEmails: emails,
+      });
+    }
+  }
+
+  // Send Slack/Discord webhooks
+  const [org] = await db
+    .select({ slackWebhookUrl: organizations.slackWebhookUrl, discordWebhookUrl: organizations.discordWebhookUrl })
+    .from(organizations)
+    .where(eq(organizations.id, page.orgId))
+    .limit(1);
+
+  const webhookParams = {
+    type: type as "incident_created" | "incident_resolved",
+    statusPageName: page.name,
+    incidentTitle: incident.title,
+    severity: incident.severity,
+    updateBody,
+  };
+
+  if (org?.slackWebhookUrl) {
+    await sendSlackWebhook({ ...webhookParams, webhookUrl: org.slackWebhookUrl });
+  }
+  if (org?.discordWebhookUrl) {
+    await sendDiscordWebhook({ ...webhookParams, webhookUrl: org.discordWebhookUrl });
   }
 }
 

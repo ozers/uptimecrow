@@ -125,6 +125,50 @@ statusPageRoutes.delete("/:id", async (c) => {
   return c.json({ ok: true });
 });
 
+// Set custom domain
+statusPageRoutes.put("/:id/domain", async (c) => {
+  const { orgId } = c.get("user");
+  const id = c.req.param("id");
+  const { domain } = await c.req.json<{ domain: string | null }>();
+
+  const [page] = await db
+    .select({ id: statusPages.id })
+    .from(statusPages)
+    .where(and(eq(statusPages.id, id), eq(statusPages.orgId, orgId)))
+    .limit(1);
+
+  if (!page) return c.json({ error: "Status page not found" }, 404);
+
+  // If setting a domain, verify CNAME
+  if (domain) {
+    try {
+      const dns = await import("dns");
+      const { promisify } = await import("util");
+      const resolveCname = promisify(dns.resolveCname);
+      const records = await resolveCname(domain);
+      const expectedTarget = process.env.STATUS_CNAME_TARGET || "status.uptimecrow.com";
+      const valid = records.some((r) => r === expectedTarget || r.endsWith(".uptimecrow.com"));
+      if (!valid) {
+        return c.json({
+          error: `CNAME not configured. Point ${domain} to ${expectedTarget}`,
+          records,
+        }, 400);
+      }
+    } catch {
+      return c.json({
+        error: `Could not verify DNS for ${domain}. Make sure CNAME points to ${process.env.STATUS_CNAME_TARGET || "status.uptimecrow.com"}`,
+      }, 400);
+    }
+  }
+
+  await db
+    .update(statusPages)
+    .set({ customDomain: domain })
+    .where(eq(statusPages.id, id));
+
+  return c.json({ ok: true, customDomain: domain });
+});
+
 // Set monitors for a status page
 statusPageRoutes.put("/:id/monitors", async (c) => {
   const { orgId } = c.get("user");

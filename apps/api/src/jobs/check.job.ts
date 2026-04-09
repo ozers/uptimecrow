@@ -12,7 +12,9 @@ import {
   incidentUpdates,
   statusPages,
 } from "../db/schema.js";
-import { executeHttpCheck } from "../services/monitor.service.js";
+import { executeHttpCheck, executeMultiRegionCheck } from "../services/monitor.service.js";
+import { organizations } from "../db/schema.js";
+import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
   generateIncidentReport,
   generateResolvedUpdate,
@@ -44,19 +46,50 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
 
   if (!monitor || !monitor.isActive) return;
 
-  const result = await executeHttpCheck(monitor.url, {
-    timeoutMs: monitor.timeoutMs,
-    expectedStatus: monitor.expectedStatus,
-  });
+  // Check if org has multi-region enabled
+  const [org] = await db
+    .select({ plan: organizations.plan })
+    .from(organizations)
+    .where(eq(organizations.id, monitor.orgId))
+    .limit(1);
 
-  // Record check result
-  await db.insert(checkResults).values({
-    monitorId,
-    status: result.status,
-    responseMs: result.responseMs,
-    statusCode: result.statusCode,
-    errorMessage: result.errorMessage,
-  });
+  const planLimits = PLAN_LIMITS[org?.plan || "free"];
+  const useMultiRegion = planLimits.multiRegion;
+
+  let result;
+  if (useMultiRegion) {
+    const multiResult = await executeMultiRegionCheck(monitor.url, {
+      timeoutMs: monitor.timeoutMs,
+      expectedStatus: monitor.expectedStatus,
+    });
+    // Record each region's result
+    for (const r of multiResult.results) {
+      await db.insert(checkResults).values({
+        monitorId,
+        status: r.status,
+        responseMs: r.responseMs,
+        statusCode: r.statusCode,
+        errorMessage: r.errorMessage,
+        region: r.region,
+      });
+    }
+    // Use the primary region result for response time display
+    const primary = multiResult.results[0];
+    result = { ...primary, status: multiResult.overallStatus };
+  } else {
+    result = await executeHttpCheck(monitor.url, {
+      timeoutMs: monitor.timeoutMs,
+      expectedStatus: monitor.expectedStatus,
+    });
+    await db.insert(checkResults).values({
+      monitorId,
+      status: result.status,
+      responseMs: result.responseMs,
+      statusCode: result.statusCode,
+      errorMessage: result.errorMessage,
+      region: result.region,
+    });
+  }
 
   // Update monitor status
   await db
