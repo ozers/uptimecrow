@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIncidentSchema, INCIDENT_STATUSES, INCIDENT_SEVERITIES } from "@uptimecrow/shared";
@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/page-header";
+
 type IncidentForm = {
   statusPageId: string;
   monitorId?: string;
@@ -66,12 +67,6 @@ export function IncidentCreate() {
       <PageHeader title="Report Incident" description="Create a new incident report" />
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" placeholder="Service outage on API" {...register("title")} />
-          {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-        </div>
-
-        <div className="space-y-2">
           <Label>Status Page</Label>
           <Select onValueChange={(v) => setValue("statusPageId", v)}>
             <SelectTrigger>
@@ -91,6 +86,12 @@ export function IncidentCreate() {
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="title">Title</Label>
+          <Input id="title" placeholder="Service outage on API" {...register("title")} />
+          {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
+        </div>
+
+        <div className="space-y-2">
           <Label>Monitor (optional)</Label>
           <Select onValueChange={(v) => setValue("monitorId", v === "none" ? undefined : v)}>
             <SelectTrigger>
@@ -107,7 +108,7 @@ export function IncidentCreate() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>Status</Label>
             <Select
@@ -158,9 +159,14 @@ export function IncidentCreate() {
           {errors.body && <p className="text-sm text-destructive">{errors.body.message}</p>}
         </div>
 
-        <Button type="submit" disabled={mutation.isPending}>
-          {mutation.isPending ? "Reporting..." : "Report Incident"}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button type="submit" disabled={mutation.isPending}>
+            {mutation.isPending ? "Reporting..." : "Report Incident"}
+          </Button>
+          <Button type="button" variant="ghost" asChild>
+            <Link to="/dashboard/incidents">Cancel</Link>
+          </Button>
+        </div>
       </form>
     </div>
   );

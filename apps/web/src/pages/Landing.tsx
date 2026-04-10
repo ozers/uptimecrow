@@ -1,5 +1,15 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import {
+  Bot,
+  Radio,
+  Palette,
+  Mail,
+  FileText,
+  Timer,
+  Menu,
+  X,
+} from "lucide-react";
 import "./Landing.css";
 
 const BRAND = "UptimeCrow";
@@ -9,6 +19,11 @@ function TerminalDemo() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setVisibleLines(10);
+      return;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -31,11 +46,11 @@ function TerminalDemo() {
     { time: "03:14:22", content: <><span className="t-red">▼ DOWN</span> <span className="t-white">api.yourapp.com</span> <span className="t-dim">— HTTP 503, response timeout</span></> },
     { time: "03:14:25", content: <><span className="t-amber">● AI</span> <span className="t-dim">Incident created:</span> <span className="t-white">"API experiencing elevated error rates"</span></> },
     { time: "03:14:26", content: <><span className="t-amber">● AI</span> <span className="t-dim">Status page updated → investigating</span></> },
-    { time: "03:14:30", content: <span className="t-dim">📧 47 subscribers notified via email</span> },
-    { time: "03:14:31", content: <span className="t-dim">💬 Slack alert sent to #engineering</span> },
+    { time: "03:14:30", content: <span className="t-dim"><span aria-hidden="true">✉ </span>47 subscribers notified via email</span> },
+    { time: "03:14:31", content: <span className="t-dim"><span aria-hidden="true">⬡ </span>Slack alert sent to #engineering</span> },
     { time: "03:31:07", content: <><span className="t-green">▲ UP</span> <span className="t-white">api.yourapp.com</span> <span className="t-dim">— 200 OK, 143ms</span></> },
     { time: "03:31:09", content: <><span className="t-green">● AI</span> <span className="t-dim">Incident resolved. Postmortem draft ready.</span></> },
-    { time: "03:31:10", content: <span className="t-dim">📧 47 subscribers notified — resolved</span> },
+    { time: "03:31:10", content: <span className="t-dim"><span aria-hidden="true">✉ </span>47 subscribers notified — resolved</span> },
     { time: "", content: null },
     { time: "", content: <><span className="t-dim">Total downtime:</span> <span className="t-white">16m 45s</span> <span className="t-dim">· Human intervention:</span> <span className="t-green">none</span></> },
   ];
@@ -72,13 +87,15 @@ function TerminalDemo() {
 }
 
 export function LandingPage() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="landing">
       {/* NAV */}
       <nav>
         <div className="nav-inner">
           <div className="logo">
-            <img src="/logo.png" alt="" className="logo-img" />
+            <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
             <span>{BRAND}</span>
           </div>
           <div className="nav-links">
@@ -87,7 +104,23 @@ export function LandingPage() {
             <Link to="/login" className="nav-login">Log in</Link>
             <Link to="/register" className="nav-cta">Get Started Free</Link>
           </div>
+          <button
+            className="nav-hamburger"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
+        {mobileOpen && (
+          <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
+            <a href="#features" onClick={() => setMobileOpen(false)}>Features</a>
+            <a href="#pricing" onClick={() => setMobileOpen(false)}>Pricing</a>
+            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
+            <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
+          </div>
+        )}
       </nav>
 
       {/* HERO */}
@@ -142,15 +175,15 @@ export function LandingPage() {
           <h2 className="section-title">Everything you need.<br />Nothing you don't.</h2>
           <div className="features-grid">
             {[
-              { icon: "🤖", title: "AI Incident Reports", desc: "When things go wrong, AI writes clear, professional incident updates — not generic \"we're investigating\" messages." },
-              { icon: "📡", title: "Global Monitoring", desc: "HTTP, TCP, and webhook checks every 30s from multiple regions. Sub-minute detection, zero false positives." },
-              { icon: "🎨", title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Your users see a professional page — not a wall of technical jargon." },
-              { icon: "📧", title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction." },
-              { icon: "📝", title: "Postmortem Drafts", desc: "Incident resolved? AI drafts a postmortem with timeline, impact summary, and root cause template. Edit and publish." },
-              { icon: "⏱️", title: "Uptime Badge", desc: "Embed a real-time \"99.98% uptime\" badge on your site, README, or docs. Social proof that builds trust." },
+              { Icon: Bot, title: "AI Incident Reports", desc: "When things go wrong, AI writes clear, professional incident updates — not generic \"we're investigating\" messages." },
+              { Icon: Radio, title: "Global Monitoring", desc: "HTTP, TCP, and webhook checks every 30s from multiple regions. Sub-minute detection, zero false positives." },
+              { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Your users see a professional page — not a wall of technical jargon." },
+              { Icon: Mail, title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction." },
+              { Icon: FileText, title: "Postmortem Drafts", desc: "Incident resolved? AI drafts a postmortem with timeline, impact summary, and root cause template. Edit and publish." },
+              { Icon: Timer, title: "Uptime Badge", desc: "Embed a real-time \"99.98% uptime\" badge on your site, README, or docs. Social proof that builds trust." },
             ].map((f) => (
               <div className="feature" key={f.title}>
-                <div className="feature-icon">{f.icon}</div>
+                <div className="feature-icon"><f.Icon size={22} aria-hidden="true" /></div>
                 <h3>{f.title}</h3>
                 <p>{f.desc}</p>
               </div>
@@ -165,14 +198,15 @@ export function LandingPage() {
           <p className="section-label">Why switch</p>
           <h2 className="section-title">AI-native, not AI-added.</h2>
           <p className="section-desc">Most status page tools make you write incident updates manually. We built AI into the core — not as a checkbox feature.</p>
+          <div className="comparison-scroll">
           <table className="comparison-table">
             <thead>
               <tr>
-                <th></th>
-                <th className="you">{BRAND}</th>
-                <th>Betterstack</th>
-                <th>Instatus</th>
-                <th>Statuspage.io</th>
+                <th scope="col"></th>
+                <th scope="col" className="you">{BRAND}</th>
+                <th scope="col">Betterstack</th>
+                <th scope="col">Instatus</th>
+                <th scope="col">Statuspage.io</th>
               </tr>
             </thead>
             <tbody>
@@ -195,6 +229,7 @@ export function LandingPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </section>
 

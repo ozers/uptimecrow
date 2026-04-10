@@ -277,7 +277,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
         </div>
       </div>
       ${uptimeBar ? `<div class="bar-container">
-        <div class="bar-labels"><span>90 days ago</span><span>Today</span></div>
+        <div class="bar-labels"><span>30 days ago</span><span>Today</span></div>
         ${uptimeBar}
       </div>` : ''}
       ${sparkline ? `<div class="sparkline-container">
@@ -348,19 +348,23 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   <meta name="color-scheme" content="light dark">
   <title>${data.statusPage.name} — Status</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --bg:#050507;--surface:#0a0a0f;--card:#0f0f15;--border:#1a1a24;
-      --text:#ededf0;--text2:#8b8b9a;--text3:#55556a;
+      --bg:#07070b;--surface:#0d0d14;--card:#12121a;--border:#22222e;
+      --text:#eeeef2;--text2:#8b8b9a;--text3:#5a5a70;
+      --bar-empty:#22222e;
+      --card-shadow:none;
       --brand:${brand};
     }
     [data-theme="light"]{
-      --bg:#f8f9fb;--surface:#fff;--card:#fff;--border:#e5e7eb;
-      --text:#111827;--text2:#6b7280;--text3:#9ca3af;
+      --bg:#f4f5f7;--surface:#fff;--card:#fff;--border:#e2e4e9;
+      --text:#111827;--text2:#4b5563;--text3:#6b7280;
+      --bar-empty:#e2e4e9;
+      --card-shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
     }
-    body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+    body{background:var(--bg);color:var(--text);font-family:'Sora',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
     .container{max-width:680px;margin:0 auto;padding:48px 20px 80px}
 
     /* Header */
@@ -368,8 +372,12 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .header-left{display:flex;align-items:center;gap:12px}
     .header-logo{height:28px}
     .header-name{font-size:20px;font-weight:700;letter-spacing:-0.02em}
-    .theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;padding:6px 10px;font-size:14px;transition:all .2s}
+    .header-right{display:flex;align-items:center;gap:12px}
+    .theme-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;padding:5px 10px;font-size:12px;font-weight:500;font-family:inherit;letter-spacing:.01em;transition:all .2s;line-height:1.5}
     .theme-btn:hover{border-color:var(--text3);color:var(--text)}
+    .live-dot{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+    .live-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:#00e676;flex-shrink:0;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
     /* Status Banner */
     .status-banner{border-radius:12px;padding:20px 24px;margin-bottom:36px;display:flex;align-items:center;gap:12px;border:1px solid}
@@ -379,7 +387,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     /* Monitors */
     .monitors-header{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:16px}
-    .monitor-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;transition:border-color .2s}
+    .monitor-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--card-shadow);transition:border-color .2s}
     .monitor-block:hover{border-color:var(--text3)}
     .monitor-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
     .monitor-info{display:flex;align-items:center;gap:10px}
@@ -394,8 +402,6 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .uptime-bar{display:block;border-radius:4px;overflow:hidden}
     .bar-slot{transition:opacity .15s}
     .bar-slot:hover{opacity:.8}
-    :root{--bar-empty:#1a1a24}
-    [data-theme="light"]{--bar-empty:#e5e7eb}
     .sparkline-container{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid var(--border)}
     .sparkline-label{font-size:11px;color:var(--text3);white-space:nowrap}
     .sparkline-wrap{display:flex;align-items:center;gap:10px;flex:1;justify-content:flex-end}
@@ -408,7 +414,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .section-icon{font-size:16px}
 
     /* Incidents */
-    .incident-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:10px}
+    .incident-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--card-shadow)}
     .incident-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
     .incident-title-row{display:flex;align-items:center;gap:8px}
     .incident-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:1px}
@@ -431,7 +437,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .timeline-body{font-size:13px;color:var(--text2);line-height:1.6}
 
     /* Subscribe */
-    .subscribe-section{margin-top:48px;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center}
+    .subscribe-section{margin-top:48px;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-align:center;box-shadow:var(--card-shadow)}
     .subscribe-title{font-size:15px;font-weight:600;margin-bottom:4px}
     .subscribe-desc{font-size:13px;color:var(--text2);margin-bottom:16px}
     .subscribe-form{display:flex;gap:8px;max-width:400px;margin:0 auto}
@@ -465,7 +471,10 @@ export function renderStatusHtml(data: StaticStatusPage): string {
         ${data.statusPage.logoUrl ? `<img src="${data.statusPage.logoUrl}" alt="${data.statusPage.name}" class="header-logo" />` : ''}
         <span class="header-name">${data.statusPage.name}</span>
       </div>
-      <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme"></button>
+      <div class="header-right">
+        <span class="live-dot" id="live-label">Live</span>
+        <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">Dark</button>
+      </div>
     </div>
 
     <div class="status-banner" style="background:${statusColor}0d;border-color:${statusColor}30">
@@ -491,10 +500,16 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
   <script>
     (function(){
+      // Theme
       var s=localStorage.getItem('uc-theme'),d=window.matchMedia('(prefers-color-scheme:dark)').matches,t=s||(d?'dark':'light');
       document.documentElement.setAttribute('data-theme',t);u(t);
-      function u(t){var b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'\\u2600\\uFE0F':'\\uD83C\\uDF19'}
-      window.toggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark',n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('uc-theme',n);u(n)};
+      function u(t){var b=document.getElementById('theme-btn');if(b)b.textContent=t==='dark'?'Light':'Dark';}
+      window.toggleTheme=function(){var c=document.documentElement.getAttribute('data-theme')||'dark',n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('uc-theme',n);u(n);};
+      // Auto-refresh every 60s
+      setTimeout(function(){location.reload();},60000);
+      // Live label countdown
+      var secs=60,lbl=document.getElementById('live-label');
+      setInterval(function(){secs--;if(lbl)lbl.textContent='Refreshes in '+secs+'s';if(secs<=0)secs=60;},1000);
     })();
     ${data.subscribeEndpoint ? `
     (function(){

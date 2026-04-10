@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Pencil, Trash2, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Pencil, Trash2, ExternalLink, ChevronDown } from "lucide-react";
 import { useMonitor, useMonitorChecks, useDeleteMonitor } from "@/lib/queries/monitors";
+import { useUptime } from "@/lib/queries/analytics";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -13,21 +16,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PageHeader } from "@/components/page-header";
-import { LoadingPage } from "@/components/loading-page";
-import { MonitorStatusBadge } from "@/components/status-badge";
-import { RelativeTime, AbsoluteTime } from "@/components/relative-time";
+import { AbsoluteTime } from "@/components/relative-time";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { ResponseChart } from "@/components/response-chart";
+
+function MonitorDetailSkeleton() {
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-8 w-20" />
+        </div>
+      </div>
+      <div className="mb-8 flex items-center gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-4 w-24" />
+        ))}
+      </div>
+      <div className="mb-2 flex items-center justify-between">
+        <Skeleton className="h-4 w-32" />
+      </div>
+      <Skeleton className="mb-8 h-48 w-full" />
+      <div className="mb-2">
+        <Skeleton className="h-4 w-28" />
+      </div>
+      <div className="divide-y divide-border border-t border-border">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 py-3">
+            <Skeleton className="h-5 w-14" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-12" />
+            <Skeleton className="h-4 w-32 ml-auto" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const PAGE_SIZE = 25;
 
 export function MonitorDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+
   const { data: monitor, isLoading } = useMonitor(id!);
   const { data: checks } = useMonitorChecks(id!);
+  const { data: uptimeData } = useUptime(true);
   const deleteMutation = useDeleteMonitor();
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading) return <MonitorDetailSkeleton />;
   if (!monitor) return <p className="text-muted-foreground">Monitor not found</p>;
 
   const handleDelete = () => {
@@ -39,141 +91,200 @@ export function MonitorDetail() {
     });
   };
 
+  const monitorUptime = uptimeData?.find((u) => u.monitorId === monitor.id);
+  const uptimePercent =
+    monitorUptime?.uptimePercent != null
+      ? `${Number(monitorUptime.uptimePercent).toFixed(2)}%`
+      : "—";
+
+  const totalChecks = checks?.length ?? 0;
+  const visibleChecks = checks?.slice(0, page * PAGE_SIZE) ?? [];
+  const hasMore = totalChecks > page * PAGE_SIZE;
+
+  const statusColor = {
+    up: "text-emerald-400",
+    down: "text-red-400",
+    degraded: "text-yellow-400",
+    unknown: "text-zinc-400",
+  }[monitor.status] ?? "text-zinc-400";
+
+  const statusDotColor = {
+    up: "bg-emerald-400",
+    down: "bg-red-400",
+    degraded: "bg-yellow-400",
+    unknown: "bg-zinc-500",
+  }[monitor.status] ?? "bg-zinc-500";
+
   return (
-    <div>
-      <PageHeader
-        title={monitor.name}
-        description={monitor.url}
-        action={
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" asChild>
-              <a href={monitor.url} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Visit
-              </a>
-            </Button>
-            <Button variant="outline" size="sm" asChild>
-              <Link to={`/dashboard/monitors/${monitor.id}/edit`}>
-                <Pencil className="mr-2 h-4 w-4" />
-                Edit
-              </Link>
-            </Button>
-            <ConfirmDialog
-              trigger={
-                <Button variant="outline" size="sm" className="text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
-              }
-              title="Delete monitor?"
-              description={`This will permanently delete "${monitor.name}" and all its check history.`}
-              onConfirm={handleDelete}
-              destructive
-            />
-          </div>
-        }
-      />
+    <TooltipProvider>
+      <div>
+        <PageHeader
+          title={monitor.name}
+          description={monitor.url}
+          action={
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <a href={monitor.url} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Visit
+                </a>
+              </Button>
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/dashboard/monitors/${monitor.id}/edit`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button variant="outline" size="sm" className="text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                }
+                title="Delete monitor?"
+                description={`This will permanently delete "${monitor.name}" and all its check history.`}
+                onConfirm={handleDelete}
+                destructive
+              />
+            </div>
+          }
+        />
 
-      <div className="mb-6 grid grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Status</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <MonitorStatusBadge status={monitor.status} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Response Time
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">
+        {/* Inline stats */}
+        <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
+          <button className="flex items-baseline gap-1.5 text-sm">
+            <span className="relative flex h-2 w-2 items-center self-center shrink-0">
+              {monitor.status === "down" && (
+                <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", statusDotColor)} />
+              )}
+              <span className={cn("relative inline-flex h-2 w-2 rounded-full", statusDotColor)} />
+            </span>
+            <span className={cn("text-xl font-bold capitalize leading-none tracking-tight", statusColor)}>
+              {monitor.status}
+            </span>
+          </button>
+          <div className="flex items-baseline gap-1.5 text-sm">
+            <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
               {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
+            </span>
+            <span className="text-xs text-muted-foreground">response</span>
+          </div>
+          <div className="flex items-baseline gap-1.5 text-sm">
+            <span className="text-xl font-bold tabular-nums leading-none tracking-tight text-primary">
+              {uptimePercent}
+            </span>
+            <span className="text-xs text-muted-foreground">uptime 30d</span>
+          </div>
+          <div className="flex items-baseline gap-1.5 text-sm">
+            <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
+              {monitor.intervalSeconds}s
+            </span>
+            <span className="text-xs text-muted-foreground">interval</span>
+          </div>
+        </div>
+
+        {/* Response time chart */}
+        {checks && checks.length > 0 && (
+          <div className="mb-8">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Response Time
             </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Interval</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{monitor.intervalSeconds}s</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Type</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Badge variant="secondary" className="text-xs uppercase">
-              {monitor.type}
-            </Badge>
-          </CardContent>
-        </Card>
-      </div>
-
-      {checks && checks.length > 0 && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Response Time</CardTitle>
-          </CardHeader>
-          <CardContent>
             <ResponseChart checks={checks} />
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Check History</CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Check history */}
+        <div>
+          <div className="mb-0 flex items-center justify-between pb-3">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Check History
+            </p>
+            {totalChecks > 0 && (
+              <span className="text-xs text-muted-foreground">
+                {visibleChecks.length} of {totalChecks}
+              </span>
+            )}
+          </div>
+
           {checks && checks.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Response Time</TableHead>
-                  <TableHead>Status Code</TableHead>
-                  <TableHead>Error</TableHead>
-                  <TableHead>Checked At</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {checks.map((check) => (
-                  <TableRow key={check.id}>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={
-                          check.status === "up"
-                            ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                            : "bg-red-500/15 text-red-400 border-red-500/30"
-                        }
-                      >
-                        {check.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{check.responseMs != null ? `${check.responseMs}ms` : "—"}</TableCell>
-                    <TableCell>{check.statusCode ?? "—"}</TableCell>
-                    <TableCell className="max-w-[200px] truncate text-muted-foreground">
-                      {check.errorMessage ?? "—"}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      <AbsoluteTime date={check.checkedAt} />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <>
+              <div className="border-t border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                      <TableHead>Status</TableHead>
+                      <TableHead>Response</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Error</TableHead>
+                      <TableHead className="text-right">Checked At</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {visibleChecks.map((check) => (
+                      <TableRow key={check.id}>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={
+                              check.status === "up"
+                                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                                : "bg-red-500/15 text-red-400 border-red-500/30"
+                            }
+                          >
+                            {check.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="tabular-nums text-muted-foreground text-sm">
+                          {check.responseMs != null ? `${check.responseMs}ms` : "—"}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {check.statusCode ?? "—"}
+                        </TableCell>
+                        <TableCell className="max-w-[200px]">
+                          {check.errorMessage ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="block truncate cursor-default text-sm text-muted-foreground">
+                                  {check.errorMessage}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-xs break-words">
+                                {check.errorMessage}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="text-muted-foreground/50">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          <AbsoluteTime date={check.checkedAt} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              {hasMore && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    <ChevronDown className="mr-2 h-4 w-4" />
+                    Show more ({totalChecks - visibleChecks.length} remaining)
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
-            <p className="text-sm text-muted-foreground">No checks recorded yet</p>
+            <div className="border-t border-border py-12 text-center">
+              <p className="text-sm text-muted-foreground">No checks recorded yet.</p>
+            </div>
           )}
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </div>
+    </TooltipProvider>
   );
 }

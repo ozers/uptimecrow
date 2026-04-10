@@ -1,14 +1,49 @@
 import { Link } from "react-router-dom";
-import { Plus, Globe, ExternalLink } from "lucide-react";
+import { Plus, Globe, ExternalLink, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useStatusPages, useDeleteStatusPage } from "@/lib/queries/status-pages";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
-import { LoadingPage } from "@/components/loading-page";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+
+function StatusPagesListSkeleton() {
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <Skeleton className="h-7 w-32" />
+        <Skeleton className="h-9 w-40" />
+      </div>
+      <div className="divide-y divide-border border-t border-border">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 py-3.5">
+            <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-3 w-28" />
+            <Skeleton className="h-5 w-14 ml-auto" />
+            <Skeleton className="h-8 w-16" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function StatusPagesList() {
   const { data: statusPages, isLoading } = useStatusPages();
@@ -21,28 +56,14 @@ export function StatusPagesList() {
     });
   };
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading) return <StatusPagesListSkeleton />;
 
   return (
-    <div>
-      <PageHeader
-        title="Status Pages"
-        description="Public status pages for your services"
-        action={
-          <Button asChild>
-            <Link to="/dashboard/status-pages/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Create Status Page
-            </Link>
-          </Button>
-        }
-      />
-
-      {!statusPages?.length ? (
-        <EmptyState
-          icon={Globe}
-          title="No status pages"
-          description="Create a status page to share service status with your users"
+    <TooltipProvider>
+      <div>
+        <PageHeader
+          title="Status Pages"
+          description="Public status pages for your services"
           action={
             <Button asChild>
               <Link to="/dashboard/status-pages/new">
@@ -52,63 +73,121 @@ export function StatusPagesList() {
             </Button>
           }
         />
-      ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {statusPages.map((sp) => (
-            <Card key={sp.id}>
-              <CardHeader className="flex flex-row items-start justify-between pb-2">
-                <div>
-                  <CardTitle className="text-base">
-                    <Link
-                      to={`/dashboard/status-pages/${sp.id}`}
-                      className="hover:text-primary"
-                    >
-                      {sp.name}
-                    </Link>
-                  </CardTitle>
-                  <p className="mt-1 text-sm text-muted-foreground">/{sp.slug}</p>
-                </div>
-                <div
-                  className="h-4 w-4 rounded-full border border-border"
-                  style={{ backgroundColor: sp.brandColor }}
-                />
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <Badge variant={sp.isPublic ? "default" : "secondary"}>
-                    {sp.isPublic ? "Public" : "Private"}
-                  </Badge>
-                  {sp.customDomain && (
-                    <span className="text-xs text-muted-foreground">{sp.customDomain}</span>
-                  )}
-                </div>
-                <div className="mt-4 flex items-center gap-2">
-                  <Button variant="outline" size="sm" asChild>
-                    <a href={`/status/${sp.slug}`} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="mr-1 h-3 w-3" />
-                      View Live
-                    </a>
-                  </Button>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/dashboard/status-pages/${sp.id}/edit`}>Edit</Link>
-                  </Button>
-                  <ConfirmDialog
-                    trigger={
-                      <Button variant="ghost" size="sm" className="text-destructive">
-                        Delete
-                      </Button>
-                    }
-                    title="Delete status page?"
-                    description={`This will permanently delete "${sp.name}" and remove it from public access.`}
-                    onConfirm={() => handleDelete(sp.id)}
-                    destructive
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+
+        {!statusPages?.length ? (
+          <EmptyState
+            icon={Globe}
+            title="No status pages"
+            description="Create a status page to share service status with your users"
+            action={
+              <Button asChild>
+                <Link to="/dashboard/status-pages/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Status Page
+                </Link>
+              </Button>
+            }
+          />
+        ) : (
+          <div className="border-t border-border">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/40 hover:bg-muted/40">
+                  <TableHead>Name</TableHead>
+                  <TableHead className="hidden md:table-cell">Slug</TableHead>
+                  <TableHead>Visibility</TableHead>
+                  <TableHead className="hidden sm:table-cell">Domain</TableHead>
+                  <TableHead className="w-[100px] text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {statusPages.map((sp) => (
+                  <TableRow key={sp.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-3 w-3 shrink-0 rounded-full ring-1 ring-white/10"
+                          style={{ backgroundColor: sp.brandColor }}
+                        />
+                        <Link
+                          to={`/dashboard/status-pages/${sp.id}`}
+                          className="font-medium text-foreground hover:text-primary transition-colors"
+                        >
+                          {sp.name}
+                        </Link>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <span className="font-mono text-xs text-muted-foreground">
+                        /status/{sp.slug}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={sp.isPublic ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {sp.isPublic ? "Public" : "Private"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                      {sp.customDomain ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                              <a
+                                href={`/status/${sp.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="View live status page"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>View Live</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
+                              <Link
+                                to={`/dashboard/status-pages/${sp.id}/edit`}
+                                aria-label="Edit status page"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit</TooltipContent>
+                        </Tooltip>
+                        <ConfirmDialog
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-destructive"
+                              aria-label="Delete status page"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                          title="Delete status page?"
+                          description={`This will permanently delete "${sp.name}" and remove it from public access.`}
+                          onConfirm={() => handleDelete(sp.id)}
+                          destructive
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }

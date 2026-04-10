@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useCreateMonitor } from "@/lib/queries/monitors";
 import { ApiError } from "@/lib/api";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/page-header";
 import { MonitorForm } from "./MonitorForm";
 
@@ -25,6 +26,11 @@ export function MonitorCreate() {
           })
         }
       />
+      <div className="mt-4 max-w-xl">
+        <Button variant="ghost" asChild>
+          <Link to="/dashboard/monitors">Cancel</Link>
+        </Button>
+      </div>
     </div>
   );
 }

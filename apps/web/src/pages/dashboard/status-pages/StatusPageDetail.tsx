@@ -1,12 +1,13 @@
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, Pencil, Mail, Activity, Trash2 } from "lucide-react";
+import { ExternalLink, Pencil, Mail, Activity, Trash2, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useStatusPage, useSetStatusPageMonitors } from "@/lib/queries/status-pages";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useSubscribers, useDeleteSubscriber } from "@/lib/queries/subscribers";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -16,11 +17,38 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PageHeader } from "@/components/page-header";
-import { LoadingPage } from "@/components/loading-page";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { RelativeTime } from "@/components/relative-time";
 import { MonitorStatusBadge } from "@/components/status-badge";
+import { PageHeader } from "@/components/page-header";
+
+function StatusPageDetailSkeleton() {
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-7 w-48" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-8 w-16" />
+        </div>
+      </div>
+      <div className="mb-8 flex items-center gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-4 w-24" />
+        ))}
+      </div>
+      <Skeleton className="mb-4 h-9 w-48" />
+      <div className="divide-y divide-border border-t border-border">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function StatusPageDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,7 +58,7 @@ export function StatusPageDetail() {
   const deleteSubscriber = useDeleteSubscriber(id!);
   const setMonitors = useSetStatusPageMonitors(id!);
 
-  if (isLoading) return <LoadingPage />;
+  if (isLoading) return <StatusPageDetailSkeleton />;
   if (!data) return <p className="text-muted-foreground">Status page not found</p>;
 
   const { statusPage, monitorIds } = data;
@@ -48,6 +76,8 @@ export function StatusPageDetail() {
       onError: () => toast.error("Failed to update monitors"),
     });
   };
+
+  const subscriberCount = subscribers?.length ?? 0;
 
   return (
     <div>
@@ -72,172 +102,163 @@ export function StatusPageDetail() {
         }
       />
 
-      <div className="mb-6 grid grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Slug</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="font-mono text-sm">{statusPage.slug}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Visibility</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Badge variant={statusPage.isPublic ? "default" : "secondary"}>
-              {statusPage.isPublic ? "Public" : "Private"}
-            </Badge>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Brand Color</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <div
-                className="h-5 w-5 rounded-full border border-border"
-                style={{ backgroundColor: statusPage.brandColor }}
-              />
-              <span className="font-mono text-sm">{statusPage.brandColor}</span>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Subscribers</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{subscribers?.length ?? 0}</p>
-          </CardContent>
-        </Card>
+      {/* Inline stats */}
+      <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
+        <div className="flex items-baseline gap-1.5 text-sm">
+          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{monitorIds.length}</span>
+          <span className="text-xs text-muted-foreground">monitor{monitorIds.length !== 1 ? "s" : ""}</span>
+        </div>
+        <div className="flex items-baseline gap-1.5 text-sm">
+          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{subscriberCount}</span>
+          <span className="text-xs text-muted-foreground">subscriber{subscriberCount !== 1 ? "s" : ""}</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <div className="h-3 w-3 rounded-full ring-1 ring-white/10" style={{ backgroundColor: statusPage.brandColor }} />
+          <span className="font-mono text-xs text-muted-foreground">{statusPage.brandColor}</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-sm">
+          <Badge variant={statusPage.isPublic ? "default" : "secondary"} className="text-xs">
+            {statusPage.isPublic ? "Public" : "Private"}
+          </Badge>
+        </div>
       </div>
 
       <Tabs defaultValue="monitors">
-        <TabsList>
+        <TabsList className="mb-0">
           <TabsTrigger value="monitors">
             <Activity className="mr-2 h-4 w-4" />
             Monitors
+            {monitorIds.length > 0 && (
+              <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                {monitorIds.length}
+              </span>
+            )}
           </TabsTrigger>
           <TabsTrigger value="subscribers">
             <Mail className="mr-2 h-4 w-4" />
             Subscribers
+            {subscriberCount > 0 && (
+              <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                {subscriberCount}
+              </span>
+            )}
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="monitors">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">
+        {/* Monitors tab */}
+        <TabsContent value="monitors" className="mt-0">
+          {allMonitors && allMonitors.length > 0 ? (
+            <>
+              <p className="border-t border-border py-3 text-xs text-muted-foreground">
                 Select which monitors appear on this status page
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {allMonitors && allMonitors.length > 0 ? (
-                <div className="space-y-2">
-                  {allMonitors.map((monitor) => {
-                    const linked = linkedSet.has(monitor.id);
-                    return (
-                      <button
-                        key={monitor.id}
-                        onClick={() => toggleMonitor(monitor.id)}
-                        className={`flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors ${
+              </p>
+              <div className="divide-y divide-border border-b border-border">
+                {allMonitors.map((monitor) => {
+                  const linked = linkedSet.has(monitor.id);
+                  return (
+                    <button
+                      key={monitor.id}
+                      onClick={() => toggleMonitor(monitor.id)}
+                      className={cn(
+                        "flex w-full items-center justify-between py-3 text-left transition-colors cursor-pointer group",
+                        linked ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        {/* Checkbox */}
+                        <div className={cn(
+                          "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold transition-colors",
                           linked
-                            ? "border-primary/30 bg-primary/5"
-                            : "border-border hover:border-primary/20 hover:bg-accent"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
-                              linked
-                                ? "border-primary bg-primary text-primary-foreground"
-                                : "border-muted-foreground/30"
-                            }`}
-                          >
-                            {linked && "✓"}
-                          </div>
-                          <div>
-                            <span className="text-sm font-medium">{monitor.name}</span>
-                            <span className="ml-2 text-xs text-muted-foreground">{monitor.url}</span>
-                          </div>
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-muted-foreground/30 group-hover:border-muted-foreground/60",
+                        )}>
+                          {linked && "✓"}
                         </div>
-                        <MonitorStatusBadge status={monitor.status} />
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  No monitors available. <Link to="/dashboard/monitors/new" className="text-primary hover:underline">Create one</Link> first.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                        <div>
+                          <span className="text-sm font-medium">{monitor.name}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">{monitor.url}</span>
+                        </div>
+                      </div>
+                      <MonitorStatusBadge status={monitor.status} />
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="border-t border-border py-12 text-center">
+              <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">
+                No monitors available.{" "}
+                <Link to="/dashboard/monitors/new" className="text-primary hover:underline">
+                  Create one
+                </Link>{" "}
+                first.
+              </p>
+            </div>
+          )}
         </TabsContent>
 
-        <TabsContent value="subscribers">
-          <Card>
-            <CardContent className="pt-6">
-              {subscribers && subscribers.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Verified</TableHead>
-                      <TableHead>Subscribed</TableHead>
-                      <TableHead className="w-[100px]">Actions</TableHead>
+        {/* Subscribers tab */}
+        <TabsContent value="subscribers" className="mt-0">
+          {subscribers && subscribers.length > 0 ? (
+            <div className="border-t border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableHead>Email</TableHead>
+                    <TableHead>Verified</TableHead>
+                    <TableHead>Subscribed</TableHead>
+                    <TableHead className="w-[60px] text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {subscribers.map((sub) => (
+                    <TableRow key={sub.id}>
+                      <TableCell className="font-medium">{sub.email}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={
+                            sub.isVerified
+                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
+                              : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
+                          }
+                        >
+                          {sub.isVerified ? "Verified" : "Pending"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        <RelativeTime date={sub.createdAt} />
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ConfirmDialog
+                          trigger={
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          }
+                          title="Remove subscriber?"
+                          description={`This will remove ${sub.email} from notifications.`}
+                          onConfirm={() =>
+                            deleteSubscriber.mutate(sub.id, {
+                              onSuccess: () => toast.success("Subscriber removed"),
+                            })
+                          }
+                          destructive
+                        />
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {subscribers.map((sub) => (
-                      <TableRow key={sub.id}>
-                        <TableCell className="font-medium">{sub.email}</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              sub.isVerified
-                                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                                : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
-                            }
-                          >
-                            {sub.isVerified ? "Verified" : "Pending"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          <RelativeTime date={sub.createdAt} />
-                        </TableCell>
-                        <TableCell>
-                          <ConfirmDialog
-                            trigger={
-                              <Button variant="ghost" size="sm" className="text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            }
-                            title="Remove subscriber?"
-                            description={`This will remove ${sub.email} from notifications.`}
-                            onConfirm={() =>
-                              deleteSubscriber.mutate(sub.id, {
-                                onSuccess: () => toast.success("Subscriber removed"),
-                              })
-                            }
-                            destructive
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  No subscribers yet
-                </p>
-              )}
-            </CardContent>
-          </Card>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          ) : (
+            <div className="border-t border-border py-12 text-center">
+              <Users className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <p className="text-sm text-muted-foreground">No subscribers yet.</p>
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>
