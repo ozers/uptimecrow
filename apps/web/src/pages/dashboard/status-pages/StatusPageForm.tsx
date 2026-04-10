@@ -7,6 +7,7 @@ const statusPageResolver = zodResolver(createStatusPageSchema) as any;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 type StatusPageFormData = {
   name: string;
   slug: string;
@@ -52,6 +53,7 @@ export function StatusPageForm({
 
   const name = watch("name");
   const isPublic = watch("isPublic");
+  const brandColor = watch("brandColor");
 
   useEffect(() => {
     if (!defaultValues?.slug && name) {
@@ -76,17 +78,27 @@ export function StatusPageForm({
         {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="brandColor">Brand Color</Label>
           <div className="flex items-center gap-2">
+            <div
+              className="h-10 w-10 shrink-0 rounded-md border border-border cursor-pointer overflow-hidden"
+              style={{ backgroundColor: brandColor }}
+            >
+              <input
+                type="color"
+                className="opacity-0 h-full w-full cursor-pointer"
+                value={brandColor}
+                onChange={(e) => setValue("brandColor", e.target.value)}
+              />
+            </div>
             <Input
               id="brandColor"
-              type="color"
-              className="h-10 w-14 cursor-pointer p-1"
+              className="flex-1"
+              placeholder="#00e676"
               {...register("brandColor")}
             />
-            <Input {...register("brandColor")} className="flex-1" placeholder="#00e676" />
           </div>
           {errors.brandColor && (
             <p className="text-sm text-destructive">{errors.brandColor.message}</p>
@@ -103,13 +115,18 @@ export function StatusPageForm({
       </div>
 
       <div className="flex items-center gap-3">
-        <input
-          type="checkbox"
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isPublic}
           id="isPublic"
-          checked={isPublic}
-          onChange={(e) => setValue("isPublic", e.target.checked)}
-          className="h-4 w-4 rounded border-border"
-        />
+          onClick={() => setValue("isPublic", !isPublic)}
+          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isPublic ? "bg-primary" : "bg-muted"}`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform ${isPublic ? "translate-x-5" : "translate-x-0"}`}
+          />
+        </button>
         <Label htmlFor="isPublic" className="cursor-pointer">
           Publicly accessible
         </Label>

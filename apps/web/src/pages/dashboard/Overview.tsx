@@ -1,227 +1,519 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Activity,
-  ArrowUpRight,
+  TrendingUp,
   AlertTriangle,
   CheckCircle2,
-  XCircle,
-  ArrowRight,
-  Rocket,
   Globe,
+  Plus,
+  ArrowRight,
+  RefreshCw,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PLAN_LIMITS } from "@uptimecrow/shared";
+import type { Plan } from "@uptimecrow/shared";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useIncidents } from "@/lib/queries/incidents";
 import { useStatusPages } from "@/lib/queries/status-pages";
 import { useUptime } from "@/lib/queries/analytics";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuthStore } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/page-header";
-import { LoadingPage } from "@/components/loading-page";
+import { Skeleton } from "@/components/ui/skeleton";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-function Onboarding() {
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+function OverviewSkeleton() {
   return (
     <div>
-      <PageHeader title="Welcome to UptimeCrow" />
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <div className="flex items-center gap-3">
-            <Rocket className="h-5 w-5 text-primary" />
-            <div>
-              <CardTitle className="text-lg">Get started in one step</CardTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Create a status page, add your services, and start monitoring — all at once.
-              </p>
+      <Skeleton className="mb-6 h-[72px] w-full rounded-xl" />
+      <div className="mb-8 flex items-center gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-4 w-28" />
+        ))}
+      </div>
+      <div className="mb-2 flex items-center justify-between">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      <div className="mb-8 divide-y divide-border border-t border-b border-border">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between py-3">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-2 w-2 rounded-full" />
+              <Skeleton className="h-4 w-36" />
+            </div>
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-3 w-14" />
+              <Skeleton className="h-2 w-20 rounded-full" />
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <Link
-            to="/dashboard/status-pages/new"
-            className="flex items-center gap-4 rounded-lg border border-border p-5 transition-colors hover:border-primary/40 hover:bg-accent"
-          >
-            <Globe className="h-8 w-8 text-primary" />
-            <div className="flex-1">
-              <p className="text-sm font-semibold">Create your status page</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Add your services, pick a brand color, and your public status page + monitoring will be live in under a minute.
-              </p>
-            </div>
-            <ArrowRight className="h-5 w-5 text-muted-foreground" />
-          </Link>
-        </CardContent>
-      </Card>
+        ))}
+      </div>
+      <div className="mb-2 flex items-center justify-between">
+        <Skeleton className="h-4 w-32" />
+        <Skeleton className="h-4 w-16" />
+      </div>
+      <div className="divide-y divide-border border-t border-b border-border">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between py-3">
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-4 w-20" />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
+// ─── Onboarding ──────────────────────────────────────────────────────────────
+
+function Onboarding() {
+  return (
+    <div>
+      <div className="mb-8 rounded-xl border border-border px-6 py-5">
+        <h1 className="text-xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Get started by adding a monitor or creating a status page.
+        </p>
+      </div>
+      <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        Quick start
+      </p>
+      <div className="divide-y divide-border border-t border-border">
+        {[
+          {
+            to: "/dashboard/monitors/new",
+            icon: Activity,
+            title: "Add a monitor",
+            desc: "Track uptime for any HTTP or TCP endpoint.",
+          },
+          {
+            to: "/dashboard/status-pages/new",
+            icon: Globe,
+            title: "Create a status page",
+            desc: "Share live service status with your users.",
+          },
+        ].map(({ to, icon: Icon, title, desc }) => (
+          <Link
+            key={to}
+            to={to}
+            className="group flex items-center justify-between py-4 transition-colors hover:text-primary"
+          >
+            <div className="flex items-center gap-4">
+              <Icon className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+              <div>
+                <p className="text-sm font-medium">{title}</p>
+                <p className="text-xs text-muted-foreground">{desc}</p>
+              </div>
+            </div>
+            <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Status Banner ────────────────────────────────────────────────────────────
+
+function StatusBanner({
+  monitorsDown,
+  activeIncidents,
+  hasMonitors,
+  timestamp,
+  onRefetch,
+  isRefetching,
+}: {
+  monitorsDown: number;
+  activeIncidents: number;
+  hasMonitors: boolean;
+  timestamp: number;
+  onRefetch: () => void;
+  isRefetching: boolean;
+}) {
+  const [, tick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => tick((n) => n + 1), 15_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  const updatedLabel =
+    seconds < 10 ? "just now"
+    : seconds < 60 ? `${seconds}s ago`
+    : `${Math.floor(seconds / 60)}m ago`;
+
+  let bg = "";
+  let border = "border-border";
+  let dot: React.ReactNode = null;
+  let headline = "All systems operational";
+  let headlineColor = "";
+  let sub = "Everything is running smoothly.";
+
+  if (!hasMonitors) {
+    headline = "Dashboard";
+    sub = "No monitors configured yet.";
+  } else if (monitorsDown > 0) {
+    bg = "bg-red-500/5";
+    border = "border-red-500/30";
+    headlineColor = "text-red-400";
+    headline = `${monitorsDown} monitor${monitorsDown > 1 ? "s" : ""} down`;
+    sub = "One or more services are unreachable.";
+    dot = (
+      <span className="relative flex h-2.5 w-2.5 shrink-0">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-400" />
+      </span>
+    );
+  } else if (activeIncidents > 0) {
+    bg = "bg-yellow-500/5";
+    border = "border-yellow-500/30";
+    headlineColor = "text-yellow-400";
+    headline = `${activeIncidents} active incident${activeIncidents > 1 ? "s" : ""}`;
+    sub = "An incident is currently being tracked.";
+    dot = <AlertTriangle className="h-4 w-4 shrink-0 text-yellow-400" />;
+  } else if (hasMonitors) {
+    dot = <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />;
+  }
+
+  return (
+    <div className={cn("mb-6 flex items-center justify-between gap-4 rounded-xl border px-6 py-5 transition-colors", bg, border)}>
+      <div className="flex items-center gap-3">
+        {dot}
+        <div>
+          <p className={cn("font-bold tracking-tight", headlineColor)}>{headline}</p>
+          <p className="text-xs text-muted-foreground">{sub}</p>
+        </div>
+      </div>
+      <button
+        onClick={onRefetch}
+        disabled={isRefetching}
+        className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50 cursor-pointer"
+      >
+        <RefreshCw className={cn("h-3 w-3", isRefetching && "animate-spin")} />
+        {isRefetching ? "Refreshing…" : `Updated ${updatedLabel}`}
+      </button>
+    </div>
+  );
+}
+
+// ─── Inline Stats Row ─────────────────────────────────────────────────────────
+
+function StatRow({
+  items,
+}: {
+  items: { label: string; value: string | number; color?: string; to?: string }[];
+}) {
+  const navigate = useNavigate();
+  return (
+    <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
+      {items.map((item, i) => (
+        <button
+          key={i}
+          onClick={item.to ? () => navigate(item.to!) : undefined}
+          className={cn(
+            "flex items-baseline gap-1.5 text-sm",
+            item.to && "cursor-pointer hover:opacity-80 transition-opacity",
+          )}
+        >
+          <span className={cn("text-xl font-bold tabular-nums leading-none tracking-tight", item.color ?? "text-foreground")}>
+            {item.value}
+          </span>
+          <span className="text-xs text-muted-foreground">{item.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ─── Status Dot ───────────────────────────────────────────────────────────────
+
+function StatusDot({ status }: { status: string }) {
+  const colorMap: Record<string, string> = {
+    up: "bg-emerald-400",
+    down: "bg-red-400",
+    degraded: "bg-yellow-400",
+    unknown: "bg-zinc-500",
+  };
+  const color = colorMap[status] ?? "bg-zinc-500";
+  return (
+    <span className="relative flex h-2 w-2 shrink-0">
+      {status === "down" && (
+        <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", color)} />
+      )}
+      <span className={cn("relative inline-flex h-2 w-2 rounded-full", color)} />
+    </span>
+  );
+}
+
+// ─── Response Bar ─────────────────────────────────────────────────────────────
+
+function ResponseBar({ ms }: { ms: number | null | undefined }) {
+  if (ms == null) return <span className="text-xs tabular-nums text-muted-foreground/50">—</span>;
+  const pct = Math.min(100, (ms / 1500) * 100);
+  const barColor = ms < 300 ? "bg-emerald-400" : ms < 800 ? "bg-yellow-400" : "bg-red-400";
+  return (
+    <div className="flex items-center gap-2">
+      <span className="w-12 text-right text-xs tabular-nums text-muted-foreground">{ms}ms</span>
+      <div className="h-1 w-16 rounded-full bg-border">
+        <div className={cn("h-1 rounded-full", barColor)} style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+// ─── Section Header ───────────────────────────────────────────────────────────
+
+function SectionHeader({ title, badge, to }: { title: string; badge?: number; to: string }) {
+  return (
+    <div className="mb-0 flex items-center justify-between pb-2">
+      <div className="flex items-center gap-2">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{title}</p>
+        {badge != null && badge > 0 && (
+          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500/20 px-1 text-[10px] font-bold text-red-400">
+            {badge}
+          </span>
+        )}
+      </div>
+      <Link
+        to={to}
+        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+      >
+        View all <ArrowRight className="h-3 w-3" />
+      </Link>
+    </div>
+  );
+}
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
 export function Overview() {
-  const { data: monitors, isLoading: monitorsLoading } = useMonitors();
-  const { data: incidents, isLoading: incidentsLoading } = useIncidents();
+  const { user } = useAuthStore();
+  const {
+    data: monitors,
+    isLoading: monitorsLoading,
+    dataUpdatedAt,
+    refetch: refetchMonitors,
+    isRefetching,
+  } = useMonitors();
+  const { data: incidents, isLoading: incidentsLoading, refetch: refetchIncidents } = useIncidents();
   const { data: statusPages, isLoading: statusPagesLoading } = useStatusPages();
 
   const totalMonitors = monitors?.length ?? 0;
-  const totalStatusPages = statusPages?.length ?? 0;
   const hasMonitors = totalMonitors > 0;
-  const hasStatusPages = totalStatusPages > 0;
-
   const { data: uptimeData } = useUptime(hasMonitors);
 
-  if (monitorsLoading || incidentsLoading || statusPagesLoading) return <LoadingPage />;
+  if (monitorsLoading || incidentsLoading || statusPagesLoading) return <OverviewSkeleton />;
 
-  if (!hasStatusPages) {
-    return <Onboarding />;
-  }
+  const totalStatusPages = statusPages?.length ?? 0;
+  if (!totalStatusPages && !hasMonitors) return <Onboarding />;
 
-  const monitorsUp = monitors?.filter((m) => m.status === "up").length ?? 0;
   const monitorsDown = monitors?.filter((m) => m.status === "down").length ?? 0;
-
-  const validUptime = uptimeData?.filter((u) => u.uptimePercent != null) ?? [];
-  const avgUptime =
-    validUptime.length > 0
-      ? (validUptime.reduce((sum, u) => sum + Number(u.uptimePercent), 0) / validUptime.length).toFixed(2)
-      : "—";
-
   const activeIncidents = incidents?.filter((i) => i.status !== "resolved") ?? [];
   const recentIncidents = incidents?.slice(0, 5) ?? [];
 
+  const uptimeMap = new Map(uptimeData?.map((u) => [u.monitorId, u]) ?? []);
+  const validUptime = uptimeData?.filter((u) => u.uptimePercent != null) ?? [];
+  const avgUptime =
+    validUptime.length > 0
+      ? `${(validUptime.reduce((sum, u) => sum + Number(u.uptimePercent), 0) / validUptime.length).toFixed(2)}%`
+      : "—";
+
+  const plan = (user?.plan ?? "free") as Plan;
+  const planLimit = PLAN_LIMITS[plan].monitors;
+
+  const handleRefetch = () => {
+    refetchMonitors();
+    refetchIncidents();
+  };
+
+  const SHOW_COUNT = 6;
+  const visibleMonitors = monitors?.slice(0, SHOW_COUNT) ?? [];
+  const hiddenCount = (monitors?.length ?? 0) - SHOW_COUNT;
+
   return (
-    <div>
-      <PageHeader title="Dashboard" />
+    <TooltipProvider>
+      <div>
+        {/* Status banner */}
+        <StatusBanner
+          monitorsDown={monitorsDown}
+          activeIncidents={activeIncidents.length}
+          hasMonitors={hasMonitors}
+          timestamp={dataUpdatedAt}
+          onRefetch={handleRefetch}
+          isRefetching={isRefetching}
+        />
 
-      <div className="mb-6 grid grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Monitors
-            </CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{totalMonitors}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Up</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-emerald-400">{monitorsUp}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Down</CardTitle>
-            <XCircle className="h-4 w-4 text-red-400" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold text-red-400">{monitorsDown}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Avg Uptime (30d)
-            </CardTitle>
-            <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{avgUptime}%</p>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Inline stats */}
+        <StatRow
+          items={[
+            {
+              value: totalMonitors,
+              label: `monitor${totalMonitors !== 1 ? "s" : ""}`,
+              to: "/dashboard/monitors",
+            },
+            {
+              value: avgUptime,
+              label: "avg uptime",
+              color: "text-primary",
+            },
+            {
+              value: activeIncidents.length,
+              label: `active incident${activeIncidents.length !== 1 ? "s" : ""}`,
+              color: activeIncidents.length > 0 ? "text-yellow-400" : undefined,
+              to: "/dashboard/incidents",
+            },
+            {
+              value: totalStatusPages,
+              label: `status page${totalStatusPages !== 1 ? "s" : ""}`,
+              to: "/dashboard/status-pages",
+            },
+          ]}
+        />
 
-      <div className="grid grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Monitors</CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/dashboard/monitors">View all</Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {monitors?.slice(0, 6).map((monitor) => (
-                <Link
-                  key={monitor.id}
-                  to={`/dashboard/monitors/${monitor.id}`}
-                  className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-accent"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`h-2 w-2 rounded-full ${
-                        monitor.status === "up"
-                          ? "bg-emerald-400"
-                          : monitor.status === "down"
-                            ? "bg-red-400"
-                            : "bg-yellow-400"
-                      }`}
-                    />
-                    <span className="text-sm font-medium">{monitor.name}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
-                  </span>
+        {/* Monitors section */}
+        <div className="mb-8">
+          <SectionHeader
+            title="Monitor Status"
+            to="/dashboard/monitors"
+          />
+          {visibleMonitors.length === 0 ? (
+            <div className="border-t border-b border-border py-10 text-center">
+              <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <p className="text-sm font-medium">No monitors yet</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Add your first endpoint to start tracking uptime.</p>
+              <Button size="sm" className="mt-4" asChild>
+                <Link to="/dashboard/monitors/new">
+                  <Plus className="mr-1.5 h-3.5 w-3.5" />
+                  Add Monitor
                 </Link>
-              ))}
+              </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>
-              Recent Incidents
-              {activeIncidents.length > 0 && (
-                <span className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500/15 text-xs text-red-400">
-                  {activeIncidents.length}
-                </span>
-              )}
-            </CardTitle>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/dashboard/incidents">View all</Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            {recentIncidents.length === 0 ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">
-                No incidents recorded
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {recentIncidents.map((incident) => (
-                  <Link
-                    key={incident.id}
-                    to={`/dashboard/incidents/${incident.id}`}
-                    className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-accent"
-                  >
-                    <div className="flex items-center gap-3">
-                      <AlertTriangle
-                        className={`h-4 w-4 ${
-                          incident.status === "resolved" ? "text-emerald-400" : "text-red-400"
-                        }`}
-                      />
-                      <div>
-                        <p className="text-sm font-medium">{incident.title}</p>
-                        <div className="mt-1 flex items-center gap-2">
-                          <IncidentStatusBadge status={incident.status} />
-                          <SeverityBadge severity={incident.severity} />
+          ) : (
+            <div className="divide-y divide-border border-t border-b border-border">
+              {visibleMonitors.map((monitor) => {
+                const uptime = uptimeMap.get(monitor.id);
+                const uptimePct = uptime?.uptimePercent != null ? Number(uptime.uptimePercent) : null;
+                const uptimeColor =
+                  uptimePct == null ? "text-muted-foreground/50"
+                  : uptimePct >= 99.9 ? "text-emerald-400"
+                  : uptimePct >= 99 ? "text-yellow-400"
+                  : "text-red-400";
+                return (
+                  <Tooltip key={monitor.id}>
+                    <TooltipTrigger asChild>
+                      <Link
+                        to={`/dashboard/monitors/${monitor.id}`}
+                        className="group flex items-center justify-between py-3 transition-colors hover:text-primary"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <StatusDot status={monitor.status} />
+                          <span className="truncate text-sm font-medium">{monitor.name}</span>
                         </div>
-                      </div>
+                        <div className="flex items-center gap-5 shrink-0">
+                          {uptimePct != null && (
+                            <span className={cn("w-14 text-right text-xs tabular-nums font-medium", uptimeColor)}>
+                              {uptimePct.toFixed(2)}%
+                            </span>
+                          )}
+                          <ResponseBar ms={monitor.lastResponseMs} />
+                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5" />
+                        </div>
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent side="right" className="text-xs">
+                      {monitor.url}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+              {hiddenCount > 0 && (
+                <Link
+                  to="/dashboard/monitors"
+                  className="flex items-center gap-1.5 py-3 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <Plus className="h-3 w-3" />
+                  {hiddenCount} more monitor{hiddenCount > 1 ? "s" : ""}
+                </Link>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Incidents section */}
+        <div className="mb-8">
+          <SectionHeader
+            title="Recent Incidents"
+            badge={activeIncidents.length}
+            to="/dashboard/incidents"
+          />
+          {recentIncidents.length === 0 ? (
+            <div className="border-t border-b border-border py-10 text-center">
+              <ShieldCheck className="mx-auto mb-3 h-7 w-7 text-emerald-400/50" />
+              <p className="text-sm font-medium">All clear</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">No incidents recorded.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border border-t border-b border-border">
+              {recentIncidents.map((incident) => (
+                <Link
+                  key={incident.id}
+                  to={`/dashboard/incidents/${incident.id}`}
+                  className="group flex items-center justify-between gap-4 py-3 transition-colors hover:text-primary"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    {incident.status === "resolved" ? (
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+                    )}
+                    <span className="truncate text-sm font-medium">{incident.title}</span>
+                    <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                      <IncidentStatusBadge status={incident.status} />
+                      <SeverityBadge severity={incident.severity} />
                     </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
                     <span className="text-xs text-muted-foreground">
                       <RelativeTime date={incident.startedAt} />
                     </span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Upgrade nudge — inline, no card */}
+        {plan === "free" && totalMonitors >= Math.floor(planLimit * 0.66) && (
+          <div className="flex items-center justify-between border-t border-border pt-5">
+            <div className="flex items-center gap-2.5">
+              <Zap className="h-4 w-4 shrink-0 text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Using{" "}
+                <span className="font-semibold text-foreground">{totalMonitors} of {planLimit}</span>{" "}
+                monitors on the free plan.
+              </p>
+            </div>
+            <Button size="sm" variant="outline" asChild>
+              <Link to="/dashboard/settings#plan">Upgrade to Pro</Link>
+            </Button>
+          </div>
+        )}
       </div>
-    </div>
+    </TooltipProvider>
   );
 }
