@@ -24,6 +24,7 @@ FROM deps AS build
 COPY tsconfig.base.json ./
 COPY apps/api/ apps/api/
 COPY packages/shared/ packages/shared/
+RUN pnpm --filter @uptimecrow/shared build
 WORKDIR /app/apps/api
 RUN pnpm build
 
