@@ -35,6 +35,8 @@ COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_module
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/packages/shared ./packages/shared
 COPY apps/api/package.json ./apps/api/
+COPY apps/api/drizzle.config.ts ./apps/api/
+COPY apps/api/drizzle/ ./apps/api/drizzle/
 COPY package.json pnpm-workspace.yaml ./
 WORKDIR /app/apps/api
 EXPOSE 3000
