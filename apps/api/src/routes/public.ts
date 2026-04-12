@@ -22,15 +22,22 @@ const notifyQueue = new Queue("notifications", { connection: redis });
 // Get status page data
 publicRoutes.get("/:slug", async (c) => {
   const slug = c.req.param("slug");
+  const token = c.req.query("token");
 
   const [page] = await db
     .select()
     .from(statusPages)
-    .where(and(eq(statusPages.slug, slug), eq(statusPages.isPublic, true)))
+    .where(eq(statusPages.slug, slug))
     .limit(1);
 
   if (!page) {
     return c.json({ error: "Status page not found" }, 404);
+  }
+
+  if (!page.isPublic) {
+    if (!token || token !== page.accessToken) {
+      return c.json({ error: "Status page not found" }, 404);
+    }
   }
 
   // Get monitors linked to this status page (fall back to all org monitors if none linked)
@@ -255,15 +262,22 @@ publicRoutes.get("/:slug/incidents", async (c) => {
   const slug = c.req.param("slug");
   const limit = parseInt(c.req.query("limit") || "20", 10);
   const offset = parseInt(c.req.query("offset") || "0", 10);
+  const token = c.req.query("token");
 
   const [page] = await db
-    .select({ id: statusPages.id })
+    .select({ id: statusPages.id, isPublic: statusPages.isPublic, accessToken: statusPages.accessToken })
     .from(statusPages)
-    .where(and(eq(statusPages.slug, slug), eq(statusPages.isPublic, true)))
+    .where(eq(statusPages.slug, slug))
     .limit(1);
 
   if (!page) {
     return c.json({ error: "Status page not found" }, 404);
+  }
+
+  if (!page.isPublic) {
+    if (!token || token !== page.accessToken) {
+      return c.json({ error: "Status page not found" }, 404);
+    }
   }
 
   const result = await db
@@ -298,14 +312,22 @@ publicRoutes.post("/:slug/subscribe", async (c) => {
     return c.json({ error: "Validation failed", details: parsed.error.flatten() }, 400);
   }
 
+  const token = c.req.query("token");
+
   const [page] = await db
-    .select({ id: statusPages.id })
+    .select({ id: statusPages.id, isPublic: statusPages.isPublic, accessToken: statusPages.accessToken })
     .from(statusPages)
-    .where(and(eq(statusPages.slug, slug), eq(statusPages.isPublic, true)))
+    .where(eq(statusPages.slug, slug))
     .limit(1);
 
   if (!page) {
     return c.json({ error: "Status page not found" }, 404);
+  }
+
+  if (!page.isPublic) {
+    if (!token || token !== page.accessToken) {
+      return c.json({ error: "Status page not found" }, 404);
+    }
   }
 
   // Check if already subscribed

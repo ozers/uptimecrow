@@ -1,8 +1,8 @@
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, Pencil, Mail, Activity, Trash2, Users } from "lucide-react";
+import { ExternalLink, Pencil, Mail, Activity, Trash2, Users, Link2, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useStatusPage, useSetStatusPageMonitors } from "@/lib/queries/status-pages";
+import { useStatusPage, useSetStatusPageMonitors, useRegenerateAccessToken } from "@/lib/queries/status-pages";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useSubscribers, useDeleteSubscriber } from "@/lib/queries/subscribers";
 import { Button } from "@/components/ui/button";
@@ -57,6 +57,7 @@ export function StatusPageDetail() {
   const { data: subscribers } = useSubscribers(id!);
   const deleteSubscriber = useDeleteSubscriber(id!);
   const setMonitors = useSetStatusPageMonitors(id!);
+  const regenerateToken = useRegenerateAccessToken(id!);
 
   if (isLoading) return <StatusPageDetailSkeleton />;
   if (!data) return <p className="text-muted-foreground">Status page not found</p>;
@@ -78,6 +79,23 @@ export function StatusPageDetail() {
   };
 
   const subscriberCount = subscribers?.length ?? 0;
+
+  const inviteLink = !statusPage.isPublic && statusPage.accessToken
+    ? `${window.location.origin}/status/${statusPage.slug}?token=${statusPage.accessToken}`
+    : null;
+
+  const copyInviteLink = () => {
+    if (!inviteLink) return;
+    navigator.clipboard.writeText(inviteLink);
+    toast.success("Invite link copied to clipboard");
+  };
+
+  const handleRegenerateToken = () => {
+    regenerateToken.mutate(undefined, {
+      onSuccess: () => toast.success("New invite link generated. Old link is now invalid."),
+      onError: () => toast.error("Failed to regenerate link"),
+    });
+  };
 
   return (
     <div>
@@ -120,6 +138,36 @@ export function StatusPageDetail() {
           <Badge variant={statusPage.isPublic ? "default" : "secondary"} className="text-xs">
             {statusPage.isPublic ? "Public" : "Private"}
           </Badge>
+          {!statusPage.isPublic && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-6 gap-1.5 px-2 text-xs"
+                onClick={copyInviteLink}
+                disabled={!inviteLink}
+              >
+                <Link2 className="h-3 w-3" />
+                Copy invite link
+              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                    title="Regenerate invite link (old link will stop working)"
+                  >
+                    <RefreshCw className="h-3 w-3" />
+                  </Button>
+                }
+                title="Regenerate invite link?"
+                description="The current invite link will stop working immediately. Anyone with the old link will lose access."
+                onConfirm={handleRegenerateToken}
+                destructive
+              />
+            </>
+          )}
         </div>
       </div>
 
