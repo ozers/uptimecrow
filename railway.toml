@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "apps/api/Dockerfile"
+buildTarget = "production"
+
+[deploy]
+startCommand = "cd /app && pnpm --filter @uptimecrow/api db:migrate && node /app/apps/api/dist/index.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
