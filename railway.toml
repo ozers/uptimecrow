@@ -1,5 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-
-[deploy]
-restartPolicyType = "ON_FAILURE"
