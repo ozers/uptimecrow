@@ -41,4 +41,4 @@ COPY apps/api/drizzle/ ./apps/api/drizzle/
 COPY package.json pnpm-workspace.yaml ./
 WORKDIR /app/apps/api
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+CMD ["/bin/sh", "-c", "pnpm db:migrate && node dist/index.js"]
