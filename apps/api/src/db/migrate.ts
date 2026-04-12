@@ -19,3 +19,4 @@ await migrate(db, { migrationsFolder: path.join(__dirname, "../../drizzle") });
 console.log("Migrations complete.");
 
 await client.end();
+process.exit(0);
