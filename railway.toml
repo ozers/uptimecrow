@@ -1,8 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-buildTarget = "production"
-
-[deploy]
-restartPolicyType = "ON_FAILURE"
-healthcheckPath = "/health"
-healthcheckTimeout = 30
