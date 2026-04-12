@@ -41,4 +41,4 @@ COPY apps/api/drizzle/ ./apps/api/drizzle/
 COPY package.json pnpm-workspace.yaml ./
 WORKDIR /app/apps/api
 EXPOSE 3000
-CMD ["/bin/sh", "-c", "pnpm --filter @uptimecrow/api db:migrate && node /app/apps/api/dist/index.js"]
+CMD ["/bin/sh", "-c", "node /app/apps/api/dist/db/migrate.js && node /app/apps/api/dist/index.js"]
