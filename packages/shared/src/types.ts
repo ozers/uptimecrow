@@ -62,6 +62,7 @@ export interface StatusPage {
   logoUrl: string | null;
   brandColor: string;
   isPublic: boolean;
+  accessToken: string | null;
   createdAt: Date;
 }
 

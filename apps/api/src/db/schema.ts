@@ -103,6 +103,7 @@ export const statusPages = pgTable("status_pages", {
   logoUrl: varchar("logo_url", { length: 2048 }),
   brandColor: varchar("brand_color", { length: 7 }).notNull().default("#00e676"),
   isPublic: boolean("is_public").notNull().default(true),
+  accessToken: uuid("access_token").defaultRandom(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { statusPages, statusPageMonitors, monitors } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
@@ -123,6 +123,24 @@ statusPageRoutes.delete("/:id", async (c) => {
   }
 
   return c.json({ ok: true });
+});
+
+// Regenerate access token for private status page
+statusPageRoutes.post("/:id/regenerate-token", async (c) => {
+  const { orgId } = c.get("user");
+  const id = c.req.param("id");
+
+  const [page] = await db
+    .update(statusPages)
+    .set({ accessToken: sql`gen_random_uuid()` })
+    .where(and(eq(statusPages.id, id), eq(statusPages.orgId, orgId)))
+    .returning({ accessToken: statusPages.accessToken });
+
+  if (!page) {
+    return c.json({ error: "Status page not found" }, 404);
+  }
+
+  return c.json({ accessToken: page.accessToken });
 });
 
 // Set custom domain

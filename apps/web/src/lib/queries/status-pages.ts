@@ -57,3 +57,14 @@ export function useDeleteStatusPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["status-pages"] }),
   });
 }
+
+export function useRegenerateAccessToken(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post<{ accessToken: string }>(`/api/status-pages/${id}/regenerate-token`, {}),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["status-pages", id] });
+      qc.invalidateQueries({ queryKey: ["status-pages"] });
+    },
+  });
+}
