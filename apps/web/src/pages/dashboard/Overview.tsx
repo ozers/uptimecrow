@@ -79,33 +79,48 @@ function OverviewSkeleton() {
 
 // ─── Onboarding ──────────────────────────────────────────────────────────────
 
-function Onboarding() {
+function Onboarding({ hasMonitors }: { hasMonitors: boolean }) {
+  const items = hasMonitors
+    ? [
+        {
+          to: "/dashboard/status-pages/new",
+          icon: Globe,
+          title: "Create a status page",
+          desc: "Share live service status with your users.",
+        },
+      ]
+    : [
+        {
+          to: "/dashboard/monitors/new",
+          icon: Activity,
+          title: "Add a monitor",
+          desc: "Track uptime for any HTTP or TCP endpoint.",
+        },
+        {
+          to: "/dashboard/status-pages/new",
+          icon: Globe,
+          title: "Create a status page",
+          desc: "Share live service status with your users.",
+        },
+      ];
+
   return (
     <div>
       <div className="mb-8 rounded-xl border border-border px-6 py-5">
-        <h1 className="text-xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
+        <h1 className="text-xl font-bold tracking-tight">
+          {hasMonitors ? "One more step" : "Welcome to UptimeCrow"}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Get started by adding a monitor or creating a status page.
+          {hasMonitors
+            ? "Your monitor is set up. Now create a status page to share uptime with your users."
+            : "Get started by adding a monitor or creating a status page."}
         </p>
       </div>
       <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-        Quick start
+        {hasMonitors ? "Next step" : "Quick start"}
       </p>
       <div className="divide-y divide-border border-t border-border">
-        {[
-          {
-            to: "/dashboard/monitors/new",
-            icon: Activity,
-            title: "Add a monitor",
-            desc: "Track uptime for any HTTP or TCP endpoint.",
-          },
-          {
-            to: "/dashboard/status-pages/new",
-            icon: Globe,
-            title: "Create a status page",
-            desc: "Share live service status with your users.",
-          },
-        ].map(({ to, icon: Icon, title, desc }) => (
+        {items.map(({ to, icon: Icon, title, desc }) => (
           <Link
             key={to}
             to={to}
@@ -318,7 +333,7 @@ export function Overview() {
   if (monitorsLoading || incidentsLoading || statusPagesLoading) return <OverviewSkeleton />;
 
   const totalStatusPages = statusPages?.length ?? 0;
-  if (!totalStatusPages && !hasMonitors) return <Onboarding />;
+  if (!totalStatusPages) return <Onboarding hasMonitors={hasMonitors} />;
 
   const monitorsDown = monitors?.filter((m) => m.status === "down").length ?? 0;
   const activeIncidents = incidents?.filter((i) => i.status !== "resolved") ?? [];
