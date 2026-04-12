@@ -1,6 +1,5 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "apps/api/Dockerfile"
 buildTarget = "production"
 
 [deploy]
