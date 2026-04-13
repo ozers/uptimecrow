@@ -20,6 +20,7 @@ import { StatusPageCreate } from "./pages/dashboard/status-pages/StatusPageCreat
 import { StatusPageEdit } from "./pages/dashboard/status-pages/StatusPageEdit";
 import { StatusPageDetail } from "./pages/dashboard/status-pages/StatusPageDetail";
 import { Settings } from "./pages/dashboard/Settings";
+import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
 
@@ -49,6 +50,7 @@ export function App() {
             <Route path="/dashboard/status-pages/new" element={<StatusPageCreate />} />
             <Route path="/dashboard/status-pages/:id" element={<StatusPageDetail />} />
             <Route path="/dashboard/status-pages/:id/edit" element={<StatusPageEdit />} />
+            <Route path="/dashboard/maintenance" element={<MaintenanceList />} />
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
         </Route>

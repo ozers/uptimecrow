@@ -6,6 +6,7 @@ import {
   Globe,
   Settings,
   Zap,
+  Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
@@ -16,6 +17,7 @@ const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "Monitors", href: "/dashboard/monitors", icon: Activity },
   { label: "Incidents", href: "/dashboard/incidents", icon: AlertTriangle },
+  { label: "Maintenance", href: "/dashboard/maintenance", icon: Wrench },
   { label: "Status Pages", href: "/dashboard/status-pages", icon: Globe },
 ];
 

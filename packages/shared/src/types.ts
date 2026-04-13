@@ -89,6 +89,19 @@ export interface IncidentUpdate {
   createdAt: Date;
 }
 
+export interface MaintenanceWindow {
+  id: string;
+  orgId: string;
+  statusPageId: string;
+  title: string;
+  body: string | null;
+  status: "scheduled" | "in_progress" | "completed" | "cancelled";
+  scheduledStart: string;
+  scheduledEnd: string;
+  createdAt: string;
+  monitorIds: string[];
+}
+
 export interface Subscriber {
   id: string;
   statusPageId: string;
