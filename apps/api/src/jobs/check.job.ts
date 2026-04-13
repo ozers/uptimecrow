@@ -14,7 +14,7 @@ import {
   maintenanceWindows,
   maintenanceWindowMonitors,
 } from "../db/schema.js";
-import { executeHttpCheck, executeMultiRegionCheck } from "../services/monitor.service.js";
+import { executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
 import { organizations } from "../db/schema.js";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
@@ -61,7 +61,19 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
   };
 
   let result;
-  if (useMultiRegion) {
+  if (monitor.type === "tcp") {
+    // TCP checks don't multi-region today (most users add TCP for internal
+    // services where multi-region from third-party IPs doesn't make sense).
+    result = await executeTcpCheck(monitor.url, { timeoutMs: monitor.timeoutMs });
+    await db.insert(checkResults).values({
+      monitorId,
+      status: result.status,
+      responseMs: result.responseMs,
+      statusCode: result.statusCode,
+      errorMessage: result.errorMessage,
+      region: result.region,
+    });
+  } else if (useMultiRegion) {
     const multiResult = await executeMultiRegionCheck(monitor.url, checkOpts);
     // Record each region's result
     for (const r of multiResult.results) {

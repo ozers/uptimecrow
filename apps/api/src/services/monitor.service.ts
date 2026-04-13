@@ -1,4 +1,6 @@
-// Monitor Service — HTTP check execution with multi-region + keyword support
+// Monitor Service — HTTP/TCP check execution with multi-region + keyword support
+
+import net from "node:net";
 
 export const REGIONS = ["eu-west", "us-east", "ap-southeast"] as const;
 export type Region = (typeof REGIONS)[number];
@@ -199,6 +201,72 @@ export async function executeTestCheck(
       warnings: [],
     };
   }
+}
+
+// TCP check — opens a raw socket to host:port and measures connect time.
+// Accepts "host:port" or an URL (we only use hostname/port). A successful TCP
+// handshake within the timeout is "up"; anything else is "down".
+export async function executeTcpCheck(
+  target: string,
+  options: { timeoutMs: number },
+  region: Region = "eu-west",
+): Promise<CheckResult> {
+  const start = Date.now();
+  let host: string;
+  let port: number;
+
+  try {
+    if (target.includes("://")) {
+      const u = new URL(target);
+      host = u.hostname;
+      port = u.port ? Number(u.port) : u.protocol === "https:" ? 443 : 80;
+    } else {
+      const [h, p] = target.split(":");
+      host = h;
+      port = Number(p);
+    }
+    if (!host || !Number.isFinite(port) || port <= 0 || port > 65535) {
+      return {
+        status: "down",
+        responseMs: Date.now() - start,
+        statusCode: null,
+        errorMessage: "Invalid host:port",
+        region,
+      };
+    }
+  } catch (err: unknown) {
+    return {
+      status: "down",
+      responseMs: Date.now() - start,
+      statusCode: null,
+      errorMessage: err instanceof Error ? err.message : "Invalid target",
+      region,
+    };
+  }
+
+  return new Promise<CheckResult>((resolve) => {
+    const socket = new net.Socket();
+    let settled = false;
+
+    const done = (status: "up" | "down", errorMessage: string | null) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      resolve({
+        status,
+        responseMs: Date.now() - start,
+        statusCode: null,
+        errorMessage,
+        region,
+      });
+    };
+
+    socket.setTimeout(options.timeoutMs);
+    socket.once("connect", () => done("up", null));
+    socket.once("timeout", () => done("down", `Timeout after ${options.timeoutMs}ms`));
+    socket.once("error", (err) => done("down", err.message));
+    socket.connect(port, host);
+  });
 }
 
 // Multi-region check

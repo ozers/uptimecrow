@@ -14,11 +14,13 @@ import { maintenanceRoutes } from "./routes/maintenance.js";
 import { apiKeyRoutes } from "./routes/api-keys.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
+import { securityHeaders } from "./middleware/security.js";
 import { logger } from "./utils/logger.js";
 
 const app = new Hono();
 
 app.use("*", honoLogger());
+app.use("*", securityHeaders);
 app.use("*", cors({
   origin: process.env.NODE_ENV === "production"
     ? [process.env.APP_URL || ""]

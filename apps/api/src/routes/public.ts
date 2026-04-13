@@ -14,6 +14,7 @@ import { subscribeSchema } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
 import { renderStatusHtml, type StaticStatusPage } from "../services/static-gen.service.js";
+import { escapeHtml } from "../utils/escape.js";
 
 export const publicRoutes = new Hono();
 
@@ -301,6 +302,79 @@ publicRoutes.get("/:slug/incidents", async (c) => {
   );
 
   return c.json({ incidents: incidentsWithUpdates });
+});
+
+// RSS feed for incidents
+publicRoutes.get("/:slug/rss", async (c) => {
+  const slug = c.req.param("slug");
+  const token = c.req.query("token");
+
+  const [page] = await db
+    .select({
+      id: statusPages.id,
+      name: statusPages.name,
+      slug: statusPages.slug,
+      isPublic: statusPages.isPublic,
+      accessToken: statusPages.accessToken,
+    })
+    .from(statusPages)
+    .where(eq(statusPages.slug, slug))
+    .limit(1);
+
+  if (!page) return c.text("Status page not found", 404);
+  if (!page.isPublic && (!token || token !== page.accessToken)) {
+    return c.text("Status page not found", 404);
+  }
+
+  const rows = await db
+    .select()
+    .from(incidents)
+    .where(eq(incidents.statusPageId, page.id))
+    .orderBy(desc(incidents.startedAt))
+    .limit(50);
+
+  const appUrl = process.env.APP_URL || "http://localhost:5173";
+  const feedUrl = `${appUrl}/status/${slug}/rss`;
+  const pageUrl = `${appUrl}/status/${slug}`;
+
+  const items = await Promise.all(rows.map(async (inc) => {
+    // Latest update body (fall back to title)
+    const [latest] = await db
+      .select({ body: incidentUpdates.body, createdAt: incidentUpdates.createdAt })
+      .from(incidentUpdates)
+      .where(eq(incidentUpdates.incidentId, inc.id))
+      .orderBy(desc(incidentUpdates.createdAt))
+      .limit(1);
+
+    const description = latest?.body ?? `${inc.severity} incident: ${inc.title}`;
+    const pubDate = (latest?.createdAt ?? inc.startedAt).toUTCString();
+
+    return `    <item>
+      <title>${escapeHtml(inc.title)}</title>
+      <link>${pageUrl}#incident-${inc.id}</link>
+      <guid isPermaLink="false">${inc.id}</guid>
+      <pubDate>${pubDate}</pubDate>
+      <category>${inc.severity}</category>
+      <description>${escapeHtml(description)}</description>
+    </item>`;
+  }));
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>${escapeHtml(page.name)} — Incident feed</title>
+    <link>${pageUrl}</link>
+    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>
+    <description>Incident history and updates for ${escapeHtml(page.name)}</description>
+    <language>en</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+${items.join("\n")}
+  </channel>
+</rss>`;
+
+  c.header("Content-Type", "application/rss+xml; charset=UTF-8");
+  c.header("Cache-Control", "public, max-age=300");
+  return c.body(xml);
 });
 
 // Subscribe to status page
