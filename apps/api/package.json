@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
+    "@aws-sdk/client-sesv2": "^3.1029.0",
     "@hono/node-server": "^1.19.12",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
     "@uptimecrow/shared": "workspace:*",
@@ -26,7 +27,6 @@
     "hono": "^4.6.0",
     "ioredis": "^5.4.0",
     "jose": "^5.9.0",
-    "nodemailer": "^8.0.5",
     "pg": "^8.13.0",
     "postgres": "^3.4.0",
     "zod": "^3.23.0"
@@ -34,7 +34,6 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.0.0",
-    "@types/nodemailer": "^8.0.0",
     "@types/pg": "^8.11.0",
     "dotenv": "^17.4.1",
     "drizzle-kit": "^0.28.0",

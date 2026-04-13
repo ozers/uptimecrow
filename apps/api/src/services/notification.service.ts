@@ -1,30 +1,38 @@
-// Notification Service — Email via SMTP (nodemailer) + Slack/Discord webhooks
+// Notification Service — Email via Amazon SES + Slack/Discord webhooks
 
-import nodemailer from "nodemailer";
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
-function getTransport(): nodemailer.Transporter | null {
-  const host = process.env.SMTP_HOST;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  if (!host || !user || !pass) return null;
-  return nodemailer.createTransport({
-    host,
-    port: parseInt(process.env.SMTP_PORT || "587", 10),
-    secure: process.env.SMTP_PORT === "465",
-    auth: { user, pass },
+function getClient(): SESv2Client | null {
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+  if (!accessKeyId || !secretAccessKey) return null;
+  return new SESv2Client({
+    region: process.env.AWS_REGION || "us-east-1",
+    credentials: { accessKeyId, secretAccessKey },
   });
 }
 
 const FROM_EMAIL =
-  process.env.SMTP_FROM || "UptimeCrow <notifications@uptimecrow.com>";
+  process.env.SES_FROM_EMAIL || "UptimeCrow <notifications@uptimecrow.com>";
 
 async function sendEmail(
-  transport: nodemailer.Transporter,
+  client: SESv2Client,
   to: string,
   subject: string,
   html: string,
 ): Promise<void> {
-  await transport.sendMail({ from: FROM_EMAIL, to, subject, html });
+  await client.send(
+    new SendEmailCommand({
+      FromEmailAddress: FROM_EMAIL,
+      Destination: { ToAddresses: [to] },
+      Content: {
+        Simple: {
+          Subject: { Data: subject, Charset: "UTF-8" },
+          Body: { Html: { Data: html, Charset: "UTF-8" } },
+        },
+      },
+    }),
+  );
 }
 
 export async function sendIncidentNotification(params: {
@@ -36,25 +44,26 @@ export async function sendIncidentNotification(params: {
 }): Promise<void> {
   if (params.subscriberEmails.length === 0) return;
 
-  const transport = getTransport();
-  if (!transport) {
+  const client = getClient();
+  if (!client) {
     console.log(
-      `[Notification] No SMTP config — skipping "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
+      `[Notification] No AWS credentials — skipping "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
     );
     return;
   }
 
   const severityLabel =
-    params.severity === "critical"
-      ? "🔴 Critical"
-      : params.severity === "major"
-        ? "🟠 Major"
-        : "🟡 Minor";
-
+    params.severity === "critical" ? "🔴 Critical"
+      : params.severity === "major" ? "🟠 Major"
+      : "🟡 Minor";
   const severityColor =
-    params.severity === "critical" ? "#dc2626" : params.severity === "major" ? "#ea580c" : "#ca8a04";
+    params.severity === "critical" ? "#dc2626"
+      : params.severity === "major" ? "#ea580c"
+      : "#ca8a04";
   const severityBg =
-    params.severity === "critical" ? "#fee2e2" : params.severity === "major" ? "#ffedd5" : "#fef9c3";
+    params.severity === "critical" ? "#fee2e2"
+      : params.severity === "major" ? "#ffedd5"
+      : "#fef9c3";
 
   const subject = `[${params.statusPageName}] ${severityLabel}: ${params.incidentTitle}`;
   const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
@@ -66,16 +75,11 @@ export async function sendIncidentNotification(params: {
   </div>`;
 
   const results = await Promise.allSettled(
-    params.subscriberEmails.map((email) => sendEmail(transport, email, subject, html)),
+    params.subscriberEmails.map((email) => sendEmail(client, email, subject, html)),
   );
-
   const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length > 0) {
-    console.error(`[Notification] ${failed.length} incident emails failed`);
-  }
-  console.log(
-    `[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`,
-  );
+  if (failed.length > 0) console.error(`[Notification] ${failed.length} incident emails failed`);
+  console.log(`[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
 }
 
 export async function sendIncidentResolvedNotification(params: {
@@ -86,11 +90,9 @@ export async function sendIncidentResolvedNotification(params: {
 }): Promise<void> {
   if (params.subscriberEmails.length === 0) return;
 
-  const transport = getTransport();
-  if (!transport) {
-    console.log(
-      `[Notification] No SMTP config — skipping resolved "${params.incidentTitle}"`,
-    );
+  const client = getClient();
+  if (!client) {
+    console.log(`[Notification] No AWS credentials — skipping resolved "${params.incidentTitle}"`);
     return;
   }
 
@@ -103,16 +105,11 @@ export async function sendIncidentResolvedNotification(params: {
   </div>`;
 
   const results = await Promise.allSettled(
-    params.subscriberEmails.map((email) => sendEmail(transport, email, subject, html)),
+    params.subscriberEmails.map((email) => sendEmail(client, email, subject, html)),
   );
-
   const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length > 0) {
-    console.error(`[Notification] ${failed.length} resolved emails failed`);
-  }
-  console.log(
-    `[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`,
-  );
+  if (failed.length > 0) console.error(`[Notification] ${failed.length} resolved emails failed`);
+  console.log(`[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
 }
 
 export async function sendVerificationEmail(params: {
@@ -120,17 +117,15 @@ export async function sendVerificationEmail(params: {
   statusPageName: string;
   verifyUrl: string;
 }): Promise<void> {
-  const transport = getTransport();
-  if (!transport) {
-    console.log(
-      `[Notification] No SMTP config — skipping verification to ${params.email}`,
-    );
+  const client = getClient();
+  if (!client) {
+    console.log(`[Notification] No AWS credentials — skipping verification to ${params.email}`);
     return;
   }
 
   try {
     await sendEmail(
-      transport,
+      client,
       params.email,
       `Confirm your subscription to ${params.statusPageName}`,
       `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
@@ -167,10 +162,9 @@ export async function sendSlackWebhook(params: {
   const payload = {
     attachments: [{
       color,
-      pretext:
-        params.type === "incident_resolved"
-          ? `✅ *Resolved:* ${params.incidentTitle}`
-          : `🔴 *New Incident:* ${params.incidentTitle}`,
+      pretext: params.type === "incident_resolved"
+        ? `✅ *Resolved:* ${params.incidentTitle}`
+        : `🔴 *New Incident:* ${params.incidentTitle}`,
       fields: [
         { title: "Status Page", value: params.statusPageName, short: true },
         ...(params.severity ? [{ title: "Severity", value: params.severity.toUpperCase(), short: true }] : []),
@@ -210,10 +204,9 @@ export async function sendDiscordWebhook(params: {
 
   const payload = {
     embeds: [{
-      title:
-        params.type === "incident_resolved"
-          ? `✅ Resolved: ${params.incidentTitle}`
-          : `🔴 New Incident: ${params.incidentTitle}`,
+      title: params.type === "incident_resolved"
+        ? `✅ Resolved: ${params.incidentTitle}`
+        : `🔴 New Incident: ${params.incidentTitle}`,
       color,
       fields: [
         { name: "Status Page", value: params.statusPageName, inline: true },

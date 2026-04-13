@@ -9,7 +9,7 @@ import { users, organizations } from "../db/schema.js";
 import { createToken } from "../utils/auth.js";
 import { registerSchema, loginSchema } from "@uptimecrow/shared";
 import { authMiddleware } from "../middleware/auth.js";
-import nodemailer from "nodemailer";
+import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
 export const authRoutes = new Hono();
 
@@ -131,24 +131,25 @@ authRoutes.post("/forgot-password", async (c) => {
     const appUrl = process.env.APP_URL || "http://localhost:5173";
     const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
-    const smtpHost = process.env.SMTP_HOST;
-    const smtpUser = process.env.SMTP_USER;
-    const smtpPass = process.env.SMTP_PASS;
-    if (smtpHost && smtpUser && smtpPass) {
-      const transport = nodemailer.createTransport({
-        host: smtpHost,
-        port: parseInt(process.env.SMTP_PORT || "587", 10),
-        secure: process.env.SMTP_PORT === "465",
-        auth: { user: smtpUser, pass: smtpPass },
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+    if (accessKeyId && secretAccessKey) {
+      const ses = new SESv2Client({
+        region: process.env.AWS_REGION || "us-east-1",
+        credentials: { accessKeyId, secretAccessKey },
       });
-      await transport.sendMail({
-        from: process.env.SMTP_FROM || "UptimeCrow <noreply@uptimecrow.com>",
-        to: email,
-        subject: "Reset your password",
-        html: `<p>Click the link below to reset your password. This link expires in 1 hour.</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, ignore this email.</p>`,
-      }).catch((err: unknown) => console.error("[Auth] Failed to send reset email:", err));
+      await ses.send(new SendEmailCommand({
+        FromEmailAddress: process.env.SES_FROM_EMAIL || "UptimeCrow <noreply@uptimecrow.com>",
+        Destination: { ToAddresses: [email] },
+        Content: {
+          Simple: {
+            Subject: { Data: "Reset your password", Charset: "UTF-8" },
+            Body: { Html: { Data: `<p>Click the link below to reset your password. This link expires in 1 hour.</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, ignore this email.</p>`, Charset: "UTF-8" } },
+          },
+        },
+      })).catch((err: unknown) => console.error("[Auth] Failed to send reset email:", err));
     } else {
-      console.log(`[Auth] Password reset link (no SMTP config): ${resetUrl}`);
+      console.log(`[Auth] Password reset link (no AWS credentials): ${resetUrl}`);
     }
   }
 
