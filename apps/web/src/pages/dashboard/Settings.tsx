@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/page-header";
+import { ApiKeysSection } from "@/components/api-keys-section";
 import type { Plan } from "@uptimecrow/shared";
 
 interface OrgSettings {
@@ -295,6 +296,8 @@ export function Settings() {
             </Button>
           </div>
         </div>
+
+        <ApiKeysSection enabled={limits.apiAccess} />
 
       </div>
     </div>

@@ -11,6 +11,7 @@ import { analyticsRoutes } from "./routes/analytics.js";
 import { settingsRoutes } from "./routes/settings.js";
 import { billingRoutes } from "./routes/billing.js";
 import { maintenanceRoutes } from "./routes/maintenance.js";
+import { apiKeyRoutes } from "./routes/api-keys.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { logger } from "./utils/logger.js";
@@ -101,6 +102,7 @@ app.route("/api/analytics", analyticsRoutes);
 app.route("/api/settings", settingsRoutes);
 app.route("/api/billing", billingRoutes);
 app.route("/api/maintenance-windows", maintenanceRoutes);
+app.route("/api/api-keys", apiKeyRoutes);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);
