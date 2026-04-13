@@ -182,7 +182,48 @@ export function MonitorDetail() {
             </span>
             <span className="text-xs text-muted-foreground">interval</span>
           </div>
+          {monitorUptime?.p95ResponseMs != null && (
+            <div className="flex items-baseline gap-1.5 text-sm">
+              <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
+                {monitorUptime.p95ResponseMs}ms
+              </span>
+              <span className="text-xs text-muted-foreground">p95 30d</span>
+            </div>
+          )}
+          {monitorUptime?.p99ResponseMs != null && (
+            <div className="flex items-baseline gap-1.5 text-sm">
+              <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
+                {monitorUptime.p99ResponseMs}ms
+              </span>
+              <span className="text-xs text-muted-foreground">p99 30d</span>
+            </div>
+          )}
         </div>
+
+        {/* Per-region breakdown (multi-region checks only) */}
+        {monitorUptime?.regions && monitorUptime.regions.length > 1 && (
+          <div className="mb-8">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              By Region (30d)
+            </p>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {monitorUptime.regions.map((r) => (
+                <div key={r.region} className="rounded-md border border-border bg-card p-3">
+                  <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{r.region}</div>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-sm font-medium tabular-nums">
+                      {r.uptimePercent ? `${Number(r.uptimePercent).toFixed(2)}%` : "—"}
+                    </span>
+                    <span className="text-xs text-muted-foreground tabular-nums">
+                      {r.avgResponseMs != null ? `${r.avgResponseMs}ms avg` : "—"}
+                      {r.p95ResponseMs != null && ` · p95 ${r.p95ResponseMs}ms`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Response time chart */}
         {checks && checks.length > 0 && (

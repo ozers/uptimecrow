@@ -1,11 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
+interface RegionBreakdown {
+  region: string;
+  totalChecks: number;
+  uptimePercent: string | null;
+  avgResponseMs: number | null;
+  p95ResponseMs: number | null;
+}
+
 interface UptimeData {
   monitorId: string;
-  uptimePercent: number | null;
+  monitorName: string;
+  uptimePercent: string | null;
   avgResponseMs: number | null;
+  p50ResponseMs: number | null;
+  p95ResponseMs: number | null;
+  p99ResponseMs: number | null;
   totalChecks: number;
+  regions: RegionBreakdown[];
 }
 
 export function useUptime(hasMonitors: boolean, days = 30) {
