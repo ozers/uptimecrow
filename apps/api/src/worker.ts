@@ -52,8 +52,8 @@ export async function startWorker() {
   await cleanOrphanedRepeatableJobs();
 
   const removeOpts = {
-    removeOnComplete: { count: 100 },
-    removeOnFail: { count: 50 },
+    removeOnComplete: true,
+    removeOnFail: { count: 20 },
   };
 
   const checkWorker = new Worker("monitor-checks", processCheckJob, {
