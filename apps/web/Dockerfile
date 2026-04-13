@@ -33,4 +33,4 @@ FROM nginx:alpine AS production
 COPY --from=build /app/apps/web/dist /usr/share/nginx/html
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf.template
 EXPOSE 80
-CMD ["/bin/sh", "-c", "export RESOLVER=$(grep ^nameserver /etc/resolv.conf | head -1 | awk '{print $2}') && envsubst '${API_URL} ${RESOLVER}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "DNS=$(grep ^nameserver /etc/resolv.conf | head -1 | awk '{print $2}'); echo \"$DNS\" | grep -q ':' && export RESOLVER=\"[$DNS]\" || export RESOLVER=\"$DNS\"; envsubst '${API_URL} ${RESOLVER}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
