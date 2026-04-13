@@ -4,6 +4,7 @@ import { monitors } from "./db/schema.js";
 import { processCheckJob } from "./jobs/check.job.js";
 import { processNotifyJob } from "./jobs/notify.job.js";
 import { processGenerateJob } from "./jobs/generate.job.js";
+import { processRetentionJob } from "./jobs/retention.job.js";
 
 async function cleanOrphanedRepeatableJobs() {
   const checkQueue = new Queue("monitor-checks", { connection: redis });
@@ -78,6 +79,23 @@ export async function startWorker() {
     },
   );
 
+  const retentionWorker = new Worker("retention", processRetentionJob, {
+    connection: redis,
+    concurrency: 1,
+    ...removeOpts,
+  });
+
+  const retentionQueue = new Queue("retention", { connection: redis });
+  // Run once daily at 03:15 UTC — off-peak for most regions.
+  await retentionQueue.add(
+    "prune-check-results",
+    {},
+    {
+      jobId: "repeat-retention-daily",
+      repeat: { pattern: "15 3 * * *" },
+    },
+  );
+
   checkWorker.on("failed", (job, err) => {
     console.error(`[Worker] Check job ${job?.id} failed:`, err.message);
   });
@@ -90,7 +108,11 @@ export async function startWorker() {
     console.error(`[Worker] Generate job ${job?.id} failed:`, err.message);
   });
 
+  retentionWorker.on("failed", (job, err) => {
+    console.error(`[Worker] Retention job ${job?.id} failed:`, err.message);
+  });
+
   console.log(
-    "[Worker] Started workers: monitor-checks, notifications, status-page-generate",
+    "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention",
   );
 }
