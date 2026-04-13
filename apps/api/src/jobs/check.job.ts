@@ -2,7 +2,7 @@
 
 import type { Job } from "bullmq";
 import { Queue } from "bullmq";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { redis } from "../db/index.js";
 import {
@@ -11,6 +11,8 @@ import {
   incidents,
   incidentUpdates,
   statusPages,
+  maintenanceWindows,
+  maintenanceWindowMonitors,
 } from "../db/schema.js";
 import { executeHttpCheck, executeMultiRegionCheck } from "../services/monitor.service.js";
 import { organizations } from "../db/schema.js";
@@ -144,12 +146,41 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
   }
 }
 
+async function isMonitorUnderActiveMaintenance(monitorId: string): Promise<boolean> {
+  const now = new Date().toISOString();
+  const rows = await db
+    .select({ id: maintenanceWindows.id })
+    .from(maintenanceWindows)
+    .innerJoin(
+      maintenanceWindowMonitors,
+      eq(maintenanceWindowMonitors.maintenanceWindowId, maintenanceWindows.id),
+    )
+    .where(
+      and(
+        eq(maintenanceWindowMonitors.monitorId, monitorId),
+        sql`${maintenanceWindows.status} IN ('scheduled', 'in_progress')`,
+        sql`${maintenanceWindows.scheduledStart} <= ${now}`,
+        sql`${maintenanceWindows.scheduledEnd} >= ${now}`,
+      ),
+    )
+    .limit(1);
+  return rows.length > 0;
+}
+
 async function handleDownTransition(
   monitor: typeof monitors.$inferSelect,
   result: { errorMessage: string | null; statusCode: number | null; responseMs: number | null },
   failures: number,
 ): Promise<void> {
   logger.info(`[Check] Monitor ${monitor.name} transitioned to DOWN`);
+
+  // Suppress incident creation if the monitor is under an active, operator-
+  // declared maintenance window. We still recorded the check_result above, so
+  // history is accurate — we just don't page subscribers for expected downtime.
+  if (await isMonitorUnderActiveMaintenance(monitor.id)) {
+    logger.info(`[Check] Suppressing incident for ${monitor.name} — active maintenance window`);
+    return;
+  }
 
   // Find status page for this monitor's org
   const [page] = await db

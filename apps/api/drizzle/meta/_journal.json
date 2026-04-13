@@ -50,6 +50,13 @@
       "when": 1744588800000,
       "tag": "0006_add_access_token_retry",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1776083233832,
+      "tag": "0007_overconfident_jean_grey",
+      "breakpoints": true
     }
   ]
 }

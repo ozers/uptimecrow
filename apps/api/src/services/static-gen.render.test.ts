@@ -104,6 +104,24 @@ describe("renderStatusHtml — XSS", () => {
     expect(html).toContain(`src="https://cdn.example.com/logo.png"`);
   });
 
+  it("escapes HTML inside maintenance window title and body", () => {
+    const html = renderStatusHtml(baseData({
+      maintenanceWindows: [{
+        id: "m1",
+        title: `<script>alert('title')</script>`,
+        body: `<img src=x onerror=alert('body')>`,
+        status: "in_progress",
+        scheduledStart: "2026-04-13T10:00:00.000Z",
+        scheduledEnd: "2026-04-13T14:00:00.000Z",
+        isActive: true,
+      }],
+    }));
+    expect(html).not.toContain("<script>alert('title')</script>");
+    expect(html).not.toContain("<img src=x onerror=alert('body')>");
+    expect(html).toContain("&lt;script&gt;alert(&#39;title&#39;)&lt;/script&gt;");
+    expect(html).toContain("&lt;img src=x onerror=alert(&#39;body&#39;)&gt;");
+  });
+
   it("falls back to the default brand color on CSS-injection attempt", () => {
     const html = renderStatusHtml(baseData({
       statusPage: {

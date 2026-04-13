@@ -10,6 +10,7 @@ import {
   incidents,
   incidentUpdates,
   checkResults,
+  maintenanceWindows,
 } from "../db/schema.js";
 import { escapeHtml, sanitizeUrl, sanitizeColor } from "../utils/escape.js";
 import { logger } from "../utils/logger.js";
@@ -57,6 +58,15 @@ export interface StaticStatusPage {
     }>;
   }>;
   subscribeEndpoint?: string;
+  maintenanceWindows?: Array<{
+    id: string;
+    title: string;
+    body: string | null;
+    status: string;
+    scheduledStart: string;
+    scheduledEnd: string;
+    isActive: boolean;
+  }>;
 }
 
 // In-memory store for rendered pages. Key = slug.
@@ -154,14 +164,41 @@ export async function regenerateStatusPage(
     }),
   );
 
-  // Determine overall status
+  // Active + upcoming maintenance windows (next 7 days)
+  const now = new Date();
+  const weekAhead = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const maintenanceRows = await db
+    .select()
+    .from(maintenanceWindows)
+    .where(
+      and(
+        eq(maintenanceWindows.statusPageId, page.id),
+        sql`${maintenanceWindows.status} IN ('scheduled', 'in_progress')`,
+        sql`${maintenanceWindows.scheduledEnd} > ${now.toISOString()}`,
+        sql`${maintenanceWindows.scheduledStart} < ${weekAhead.toISOString()}`,
+      ),
+    )
+    .orderBy(maintenanceWindows.scheduledStart);
+
+  const maintenanceForRender = maintenanceRows.map((m) => ({
+    id: m.id,
+    title: m.title,
+    body: m.body,
+    status: m.status,
+    scheduledStart: m.scheduledStart.toISOString(),
+    scheduledEnd: m.scheduledEnd.toISOString(),
+    isActive: m.scheduledStart <= now && m.scheduledEnd >= now,
+  }));
+  const anyMaintenanceActive = maintenanceForRender.some((m) => m.isActive);
+
+  // Determine overall status — active maintenance downgrades outages to "degraded"
+  // since the operator has declared the disruption expected.
   const hasDown = orgMonitors.some((m) => m.status === "down");
   const hasDegraded = orgMonitors.some((m) => m.status === "degraded");
-  const overallStatus = hasDown
-    ? "major_outage"
-    : hasDegraded
-      ? "degraded"
-      : "operational";
+  let overallStatus: "operational" | "degraded" | "major_outage";
+  if (hasDown && !anyMaintenanceActive) overallStatus = "major_outage";
+  else if (hasDown || hasDegraded || anyMaintenanceActive) overallStatus = "degraded";
+  else overallStatus = "operational";
 
   const jsonData: StaticStatusPage = {
     generatedAt: new Date().toISOString(),
@@ -174,6 +211,7 @@ export async function regenerateStatusPage(
     overallStatus,
     monitors: monitorsWithUptime,
     activeIncidents: incidentsWithUpdates,
+    maintenanceWindows: maintenanceForRender,
   };
 
   const html = renderStatusHtml(jsonData);
@@ -340,6 +378,42 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     ${data.activeIncidents.map((inc) => renderIncident(inc)).join("")}
   </section>` : '';
 
+  function renderMaintenanceCard(m: NonNullable<StaticStatusPage["maintenanceWindows"]>[number]) {
+    const dotColor = m.isActive ? "#3b82f6" : "#8b5cf6";
+    const label = m.isActive ? "In progress" : "Scheduled";
+    const start = formatDate(m.scheduledStart);
+    const end = formatDate(m.scheduledEnd);
+    const durationText = m.isActive
+      ? `Started ${timeAgo(m.scheduledStart)}, ends around ${end}`
+      : `${start} → ${end}`;
+    return `<div class="incident-card" style="border-left:3px solid ${dotColor}">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px">
+    <div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${dotColor};background:${dotColor}18;padding:1px 7px;border-radius:4px">Maintenance</span>
+        <span style="font-size:11px;font-weight:600;color:${dotColor}">${label}</span>
+      </div>
+      <strong style="font-size:14px;font-weight:600;color:var(--text)">${escapeHtml(m.title)}</strong>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;color:var(--text3)">${durationText}</div>
+    </div>
+  </div>
+  ${m.body ? `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0;white-space:pre-wrap">${escapeHtml(m.body)}</p>` : ''}
+</div>`;
+  }
+
+  const maintenanceHtml = (data.maintenanceWindows && data.maintenanceWindows.length > 0)
+    ? `<section class="section">
+    <div class="section-header">
+      <span style="display:inline-flex;align-items:center;gap:6px">
+        <span style="width:8px;height:8px;border-radius:50%;background:#3b82f6;display:inline-block"></span>
+        Maintenance
+      </span>
+    </div>
+    ${data.maintenanceWindows.map(renderMaintenanceCard).join("")}
+  </section>` : '';
+
   const resolvedIncidentsHtml = data.resolvedIncidents && data.resolvedIncidents.length > 0
     ? `<section class="section">
     <div class="section-header">Incident History</div>
@@ -476,6 +550,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       ${monitorsHtml}
     </section>
 
+    ${maintenanceHtml}
     ${activeIncidentsHtml}
     ${resolvedIncidentsHtml}
     ${subscribeHtml}
