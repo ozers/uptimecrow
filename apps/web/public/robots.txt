@@ -3,6 +3,7 @@ Allow: /
 Allow: /pricing
 Allow: /privacy
 Allow: /terms
+Allow: /vs/*
 Disallow: /dashboard
 Disallow: /login
 Disallow: /register

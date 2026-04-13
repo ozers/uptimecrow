@@ -23,6 +23,8 @@ import { Settings } from "./pages/dashboard/Settings";
 import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
+import { VsBetterStack } from "./pages/compare/VsBetterStack";
+import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
 
 export function App() {
   return (
@@ -34,6 +36,8 @@ export function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/vs/betterstack" element={<VsBetterStack />} />
+        <Route path="/vs/uptimerobot" element={<VsUptimeRobot />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
