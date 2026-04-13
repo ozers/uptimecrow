@@ -18,5 +18,12 @@ console.log("Running migrations...");
 await migrate(db, { migrationsFolder: path.join(__dirname, "../../drizzle") });
 console.log("Migrations complete.");
 
+// Post-migration schema repair: ensure columns that have caused issues actually exist.
+// Runs every startup as a safety net against Railway Postgres WAL loss on crash.
+await client`
+  ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS access_token uuid DEFAULT gen_random_uuid()
+`;
+console.log("Schema repair complete.");
+
 await client.end();
 process.exit(0);
