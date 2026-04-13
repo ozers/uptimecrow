@@ -7,11 +7,14 @@ import {
   Settings,
   Zap,
   Wrench,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
 import { useAuthStore } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
+import { useTheme } from "@/lib/theme";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -28,6 +31,7 @@ interface SidebarContentProps {
 export function SidebarContent({ onNavClick }: SidebarContentProps) {
   const location = useLocation();
   const { user } = useAuthStore();
+  const { theme, toggle } = useTheme();
 
   const isActive = (href: string) =>
     href === "/dashboard"
@@ -95,6 +99,19 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
           <Settings className="h-4 w-4 shrink-0" />
           Settings
         </Link>
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          className="flex w-full items-center gap-3 rounded-md border-l-2 border-transparent px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+        >
+          {theme === "dark" ? (
+            <Sun className="h-4 w-4 shrink-0" />
+          ) : (
+            <Moon className="h-4 w-4 shrink-0" />
+          )}
+          {theme === "dark" ? "Light mode" : "Dark mode"}
+        </button>
       </div>
     </>
   );

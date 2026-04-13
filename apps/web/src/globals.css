@@ -5,7 +5,8 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+  :root,
+  .dark {
     --background: 240 6% 2%;
     --foreground: 240 6% 92%;
     --card: 240 6% 7%;
@@ -27,6 +28,28 @@
     --ring: 151 100% 45%;
     --radius: 0.5rem;
   }
+
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 151 82% 34%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 10% 8%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 5% 40%;
+    --accent: 240 5% 93%;
+    --accent-foreground: 240 10% 8%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 151 82% 34%;
+  }
 }
 
 @layer base {
@@ -37,8 +60,14 @@
     @apply bg-background text-foreground;
     font-family: 'Sora', system-ui, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
-    /* Subtle radial glow in top-left */
+  }
+  /* Subtle radial glow — only in dark mode */
+  :root body,
+  .dark body {
     background-image: radial-gradient(ellipse 80% 50% at 10% -10%, hsl(151 100% 45% / 0.04) 0%, transparent 60%);
+  }
+  .light body {
+    background-image: none;
   }
 
   /* Custom scrollbar */
