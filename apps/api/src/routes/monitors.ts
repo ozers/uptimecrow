@@ -59,6 +59,14 @@ monitorRoutes.post("/", async (c) => {
     .values({ ...parsed.data, orgId })
     .returning();
 
+  // Remove any stale repeatable jobs for this monitor before scheduling
+  const existingJobs = await checkQueue.getRepeatableJobs();
+  for (const job of existingJobs) {
+    if (job.id === `repeat-${monitor.id}`) {
+      await checkQueue.removeRepeatableByKey(job.key);
+    }
+  }
+
   // Schedule repeatable check job
   await checkQueue.add(
     `check-${monitor.id}`,
@@ -93,6 +101,24 @@ monitorRoutes.patch("/:id", async (c) => {
 
   if (!monitor) {
     return c.json({ error: "Monitor not found" }, 404);
+  }
+
+  // If interval changed, reschedule repeatable job
+  if (parsed.data.intervalSeconds !== undefined) {
+    const repeatableJobs = await checkQueue.getRepeatableJobs();
+    for (const job of repeatableJobs) {
+      if (job.id === `repeat-${id}`) {
+        await checkQueue.removeRepeatableByKey(job.key);
+      }
+    }
+    await checkQueue.add(
+      `check-${monitor.id}`,
+      { monitorId: monitor.id },
+      {
+        repeat: { every: monitor.intervalSeconds * 1000 },
+        jobId: `repeat-${monitor.id}`,
+      },
+    );
   }
 
   return c.json({ monitor });
