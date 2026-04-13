@@ -63,7 +63,7 @@ export function Privacy() {
       <h2 className="mt-8 text-xl font-semibold">Your Rights (GDPR / CCPA)</h2>
       <p>
         You can request access to, export, or deletion of your personal data at any time. Email
-        <a href="mailto:privacy@uptimecrow.com" className="text-primary"> privacy@uptimecrow.com</a> and we will
+        <a href="mailto:support@uptimecrow.com" className="text-primary"> support@uptimecrow.com</a> and we will
         respond within 30 days.
       </p>
 
@@ -76,7 +76,7 @@ export function Privacy() {
 
       <h2 className="mt-8 text-xl font-semibold">Contact</h2>
       <p>
-        Questions? Email <a href="mailto:privacy@uptimecrow.com" className="text-primary">privacy@uptimecrow.com</a>.
+        Questions? Email <a href="mailto:support@uptimecrow.com" className="text-primary">support@uptimecrow.com</a>.
       </p>
     </LegalShell>
   );
@@ -107,7 +107,13 @@ export function Terms() {
       <p>
         Paid plans are billed monthly or annually through Polar. You can cancel at any time; your plan
         remains active until the end of the current period. Refunds are handled case-by-case — email
-        <a href="mailto:billing@uptimecrow.com" className="text-primary"> billing@uptimecrow.com</a>.
+        <a href="mailto:support@uptimecrow.com" className="text-primary"> support@uptimecrow.com</a>.
+      </p>
+      <p>
+        <strong>Billing notice:</strong> online payments and coupon redemption are temporarily paused while
+        we migrate our billing infrastructure. If you'd like to upgrade during this window, email
+        <a href="mailto:support@hooksense.com" className="text-primary"> support@hooksense.com</a> and we'll
+        help you through it manually.
       </p>
 
       <h2 className="mt-8 text-xl font-semibold">No Warranty / SLA</h2>
@@ -130,7 +136,7 @@ export function Terms() {
 
       <h2 className="mt-8 text-xl font-semibold">Contact</h2>
       <p>
-        Questions? Email <a href="mailto:legal@uptimecrow.com" className="text-primary">legal@uptimecrow.com</a>.
+        Questions? Email <a href="mailto:support@uptimecrow.com" className="text-primary">support@uptimecrow.com</a>.
       </p>
     </LegalShell>
   );
