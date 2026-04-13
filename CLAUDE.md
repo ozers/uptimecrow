@@ -1,56 +1,67 @@
+# OpenWolf
+
+@.wolf/OPENWOLF.md
+
+This project uses OpenWolf for context management. Read and follow .wolf/OPENWOLF.md every session. Check .wolf/cerebrum.md before generating code. Check .wolf/anatomy.md before reading files.
+
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Tech Stack
 - **Backend:** Hono + TypeScript + Drizzle ORM + BullMQ
-- **Frontend:** Vite + React + Tailwind CSS
+- **Frontend:** Vite + React + React Router + Tailwind CSS
 - **Database:** PostgreSQL 16 + Redis 7
-- **AI:** Anthropic Claude API (Haiku/Sonnet)
-- **Email:** Resend
+- **Email:** Amazon SES (`@aws-sdk/client-sesv2`)
 - **Infra:** Docker, pnpm workspaces, Node >= 20
 
 ## Development Commands
 ```bash
-docker compose up                    # Start all services (PostgreSQL, Redis, API on :3000, Web on :5173)
-pnpm install                         # Install deps locally (for IDE support)
+docker compose up                    # Start all services (Postgres, Redis, API :3000, Web :5173)
+pnpm install                         # Install deps locally (IDE support)
 pnpm db:generate                     # Generate Drizzle migration files
-pnpm db:migrate                      # Run database migrations
+pnpm db:migrate                      # Run DB migrations
 pnpm test                            # Run all tests (vitest)
-pnpm typecheck                       # Type check all packages
+pnpm typecheck                       # tsc across all packages
 pnpm lint                            # ESLint across all packages
-pnpm --filter @uptimecrow/api test    # Run tests for a single package
+pnpm --filter @uptimecrow/api test   # Single-package test (filter by workspace name)
 pnpm dev:api                         # Run API outside Docker (needs local Postgres/Redis)
 pnpm dev:web                         # Run web outside Docker
 ```
 
+Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run path/to/file.test.ts`.
+
 ## Architecture
 
 ### Monorepo Layout
-- `apps/api` — Hono backend + BullMQ workers. `MODE=api|worker|all` env var controls what runs.
-- `apps/web` — Vite React SPA. Proxies `/api`, `/status`, `/badge` to the API via Vite dev server (and nginx in prod).
-- `packages/shared` — Shared TypeScript types, constants (plan limits, defaults), and Zod validation schemas. Both API and web import from `@uptimecrow/shared`.
+- `apps/api` — Hono backend + BullMQ workers. `MODE=api|worker|all` controls which runs.
+- `apps/web` — Vite React SPA. Vite dev server (and nginx in prod) proxies `/api`, `/status`, `/badge` to the API.
+- `packages/shared` — Shared TS types, constants (plan limits, defaults), Zod schemas. Imported by both API and web as `@uptimecrow/shared`.
 
 ### API Structure (`apps/api/src/`)
-- `index.ts` — Entry point; starts API server, BullMQ workers, or both based on `MODE`
-- `server.ts` — Hono app with CORS, logger, health check, route mounting
-- `routes/` — Route modules: auth, monitors, incidents, status-pages, subscribers, analytics, public status/badge
-- `middleware/auth.ts` — JWT auth middleware (reads from cookie or `Authorization: Bearer` header)
-- `db/schema.ts` — Drizzle schema with all tables and enums
-- `db/index.ts` — Database connection (uses `postgres` driver, not `pg`)
-- `services/` — Business logic: `monitor.service.ts` (HTTP checks), `ai.service.ts` (Claude integration), `notification.service.ts` (Resend), `static-gen.service.ts` (page rendering)
-- `jobs/` — BullMQ job handlers: `check.job.ts` (monitor execution), `generate.job.ts` (status page regen), `notify.job.ts` (email dispatch)
-- `utils/auth.ts` — JWT sign/verify via `jose` (HS256, 7-day expiry)
-- `utils/state-machine.ts` — Redis-backed failure counter + transition evaluator
+- `index.ts` — Entry; dispatches to `startServer()` and/or `startWorker()` based on `MODE`.
+- `server.ts` — Hono app: CORS, logger, health check, route mounting.
+- `worker.ts` — BullMQ worker bootstrap (registers repeatable check jobs for all monitors at startup).
+- `routes/` — `auth`, `monitors`, `incidents`, `status-pages`, `subscribers`, `analytics`, `billing`, `settings`, `public` (status pages, subscribe, badge).
+- `middleware/auth.ts` — JWT auth (reads cookie or `Authorization: Bearer`).
+- `middleware/rate-limit.ts` — Redis-backed rate limiting.
+- `db/schema.ts` + `db/index.ts` — Drizzle schema and connection (uses `postgres` driver, not `pg`).
+- `services/monitor.service.ts` — HTTP/TCP/keyword checks.
+- `services/notification.service.ts` — Email via Amazon SES + Slack/Discord webhooks.
+- `services/static-gen.service.ts` — Pre-renders status pages to storage.
+- `jobs/check.job.ts` / `notify.job.ts` / `generate.job.ts` — BullMQ handlers.
+- `utils/auth.ts` — `jose` JWT sign/verify (HS256, 7-day expiry).
+- `utils/state-machine.ts` — Redis-backed consecutive-failure counter + transition evaluator.
 
 ### Key Patterns
-- **Multi-tenancy:** All resources scoped to `orgId`. Users own organizations.
-- **State machine:** Redis tracks consecutive failures per monitor. 2 consecutive failures (configurable via `confirmationCount`) → DOWN; 1 success → UP.
-- **AI on transitions only:** Claude API is called only on state changes (UP→DOWN, DOWN→UP), never on routine checks.
-- **Static status pages:** Pre-rendered HTML/JSON so status pages survive origin downtime.
-- **BullMQ repeatable jobs:** Monitor checks decoupled from HTTP server; each monitor gets a repeatable job.
-- **Public routes:** `/status/:slug`, `/status/:slug/incidents`, `/status/:slug/subscribe`, `/badge/:slug.svg` require no auth.
-- **Plan limits:** Enforced at application level. Free: 3 monitors, 1 status page, 300s min interval, no AI. Pro/Team scale up.
+- **Multi-tenancy:** All resources scoped to `orgId`; users own organizations.
+- **State machine:** Redis counts consecutive failures per monitor. `confirmationCount` failures (default 2) → DOWN; 1 success → UP. This is what prevents single-blip false alarms — do not bypass.
+- **Transitions trigger side effects:** Only on UP→DOWN / DOWN→UP transitions do we enqueue notify + status-page regen jobs. Routine checks only persist a `check_result` row.
+- **Static status pages:** Pages are pre-rendered so they survive origin downtime — regenerate on incident/monitor changes, don't render on request.
+- **BullMQ repeatable jobs:** One repeatable job per monitor, decoupled from HTTP server. When a monitor's interval changes, the old repeatable must be removed and a new one added.
+- **Public routes (no auth):** `/status/:slug`, `/status/:slug/incidents`, `/status/:slug/subscribe`, verify/unsubscribe confirmation pages (HTML), `/badge/:slug.svg`, `/health`.
+- **Plan limits:** Enforced at the app layer using `packages/shared` constants. Free: 3 monitors, 1 status page, 300s min interval. Pro/Team scale up (see README for the full matrix).
 
 ### Database Enums
 - `plan`: free | pro | team
@@ -60,16 +71,16 @@ pnpm dev:web                         # Run web outside Docker
 - `incident_severity`: minor | major | critical
 
 ### Web Routing
-- `/` — Landing page with waitlist
-- `/dashboard` — Dashboard (stub)
-- `/login` — Login (stub)
+- Public: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`
+- Authed (nested under `ProtectedRoute` → `DashboardLayout`): `/dashboard`, `/dashboard/monitors[...]`, `/dashboard/incidents[...]`, `/dashboard/status-pages[...]`, `/dashboard/settings`
+- `PublicRoute` redirects logged-in users away from landing/login/register.
 
-### Docker
-- Multi-stage Dockerfiles for both API and web (development + production targets)
-- Docker Compose uses `target: development` with volume mounts for hot-reload
-- Web production uses nginx with SPA fallback and reverse proxy to API
+### Docker & CI
+- Multi-stage Dockerfiles for API and web (development + production targets). Compose uses `target: development` with bind mounts for hot-reload.
+- Web production image is nginx with SPA fallback and reverse proxy to the API.
+- CI (`.github/workflows/ci.yml`): lint + typecheck, tests with Postgres 16 + Redis 7 service containers (`uptimecrow_test`), Docker build validation for both images. Deploy workflow pushes to GHCR on `main`.
 
-### CI (`.github/workflows/ci.yml`)
-- Lint + typecheck job
-- Test job with PostgreSQL 16 + Redis 7 services (test DB: `uptimecrow_test`)
-- Docker build validation for both images
+## Historical Notes (watch for stale references)
+- **AI/Anthropic integration was removed** (commit `0dcdb2c`). No `ai.service.ts`, no Claude calls, no `ANTHROPIC_API_KEY`. Older docs and the README still mention it — ignore those references.
+- **Email switched from Resend → nodemailer/SMTP → Amazon SES** (commits `41614ec`, `706d55b`). Use `@aws-sdk/client-sesv2` + `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` / `AWS_REGION` / `SES_FROM_EMAIL`. Do not reintroduce Resend or nodemailer.
+- **Verify/unsubscribe endpoints return HTML** confirmation pages, not JSON (commit `0073a16`).

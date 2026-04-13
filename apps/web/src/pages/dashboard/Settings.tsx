@@ -64,7 +64,7 @@ export function Settings() {
   const handleUpgrade = async (targetPlan: "pro" | "team") => {
     setCheckoutLoading(targetPlan);
     try {
-      const data = await api.post<{ checkoutUrl?: string; error?: string }>("/api/billing/polar/checkout", { plan: targetPlan });
+      const data = await api.post<{ checkoutUrl?: string; error?: string }>("/api/billing/checkout", { plan: targetPlan });
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
@@ -73,7 +73,7 @@ export function Settings() {
       }
     } catch (e) {
       if (e instanceof ApiError && e.message === "Billing not configured") {
-        toast.error("Billing is not configured yet. Set up LemonSqueezy env variables to enable payments.");
+        toast.error("Billing is not configured yet. Set Polar env variables to enable payments.");
       } else {
         toast.error(e instanceof ApiError ? e.message : "Failed to start checkout");
       }
@@ -192,7 +192,7 @@ export function Settings() {
             {plan === "free" && (
               <div className="border-t border-border/50 py-4">
                 <p className="mb-3 text-xs text-muted-foreground">
-                  Upgrade for more monitors, faster check intervals, and AI-powered incident reports.
+                  Upgrade for more monitors, 30-second check intervals, custom domains, and Slack/Discord alerts.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <Button

@@ -39,10 +39,16 @@ services:
       DATABASE_URL: postgresql://uptimecrow:uptimecrow@postgres:5432/uptimecrow
       REDIS_URL: redis://redis:6379
       JWT_SECRET: dev-secret-change-in-production
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-      APP_URL: http://localhost:3000
-      STATUS_PAGE_URL: http://localhost:3000/status
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
+      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN:-}
+      POLAR_WEBHOOK_SECRET: ${POLAR_WEBHOOK_SECRET:-}
+      POLAR_PRO_PRODUCT_ID: ${POLAR_PRO_PRODUCT_ID:-}
+      POLAR_TEAM_PRODUCT_ID: ${POLAR_TEAM_PRODUCT_ID:-}
+      APP_URL: http://localhost:5173
+      STATUS_PAGE_URL: http://localhost:5173/status
     volumes:
       - ./apps/api/src:/app/apps/api/src
       - ./packages/shared/src:/app/packages/shared/src

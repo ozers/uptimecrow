@@ -100,7 +100,7 @@ export function LandingPage() {
           </div>
           <div className="nav-links">
             <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
+            <Link to="/pricing">Pricing</Link>
             <Link to="/login" className="nav-login">Log in</Link>
             <Link to="/register" className="nav-cta">Get Started Free</Link>
           </div>
@@ -116,7 +116,7 @@ export function LandingPage() {
         {mobileOpen && (
           <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
             <a href="#features" onClick={() => setMobileOpen(false)}>Features</a>
-            <a href="#pricing" onClick={() => setMobileOpen(false)}>Pricing</a>
+            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
             <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
             <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
           </div>
@@ -309,6 +309,12 @@ export function LandingPage() {
       <footer>
         <div className="container">
           <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
+          <div className="footer-links">
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/terms">Terms</Link>
+            <Link to="/pricing">Pricing</Link>
+            <Link to="/login">Log in</Link>
+          </div>
         </div>
       </footer>
     </div>

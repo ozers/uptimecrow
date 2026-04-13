@@ -75,7 +75,7 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-primary">Upgrade to Pro</p>
-              <p className="text-xs text-muted-foreground truncate">AI reports + shorter intervals</p>
+              <p className="text-xs text-muted-foreground truncate">Faster intervals + custom domains</p>
             </div>
           </Link>
         )}

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /privacy
+Allow: /terms
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+
+Sitemap: https://uptimecrow.com/sitemap.xml
