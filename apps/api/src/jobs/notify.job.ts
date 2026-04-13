@@ -3,6 +3,7 @@
 import type { Job } from "bullmq";
 import { eq, and } from "drizzle-orm";
 import { db } from "../db/index.js";
+import { logger } from "../utils/logger.js";
 import {
   subscribers,
   statusPages,
@@ -42,7 +43,7 @@ export async function processNotifyJob(
   }
 
   if (!job.data.incidentId) {
-    console.error("[Notify] Missing incidentId for incident notification");
+    logger.error("[Notify] Missing incidentId for incident notification");
     return;
   }
 
@@ -54,7 +55,7 @@ export async function processNotifyJob(
     .limit(1);
 
   if (!page) {
-    console.error(`[Notify] Status page ${statusPageId} not found`);
+    logger.error(`[Notify] Status page ${statusPageId} not found`);
     return;
   }
 
@@ -79,7 +80,7 @@ export async function processNotifyJob(
     .limit(1);
 
   if (!incident) {
-    console.error(`[Notify] Incident ${job.data.incidentId} not found`);
+    logger.error(`[Notify] Incident ${job.data.incidentId} not found`);
     return;
   }
 
@@ -139,7 +140,7 @@ export async function processNotifyJob(
 
 async function handleVerification(data: NotifyJobData): Promise<void> {
   if (!data.email || !data.verifyUrl) {
-    console.error("[Notify] Missing email or verifyUrl for verification");
+    logger.error("[Notify] Missing email or verifyUrl for verification");
     return;
   }
 
@@ -150,7 +151,7 @@ async function handleVerification(data: NotifyJobData): Promise<void> {
     .limit(1);
 
   if (!page) {
-    console.error(`[Notify] Status page ${data.statusPageId} not found`);
+    logger.error(`[Notify] Status page ${data.statusPageId} not found`);
     return;
   }
 

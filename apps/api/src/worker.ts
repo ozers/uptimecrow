@@ -5,6 +5,7 @@ import { processCheckJob } from "./jobs/check.job.js";
 import { processNotifyJob } from "./jobs/notify.job.js";
 import { processGenerateJob } from "./jobs/generate.job.js";
 import { processRetentionJob } from "./jobs/retention.job.js";
+import { logger } from "./utils/logger.js";
 
 async function cleanOrphanedRepeatableJobs() {
   const checkQueue = new Queue("monitor-checks", { connection: redis });
@@ -42,7 +43,7 @@ async function cleanOrphanedRepeatableJobs() {
     }
 
     if (removed > 0) {
-      console.log(`[Worker] Cleaned up ${removed} orphaned/duplicate repeatable job(s)`);
+      logger.info(`[Worker] Cleaned up ${removed} orphaned/duplicate repeatable job(s)`);
     }
   } finally {
     await checkQueue.close();
@@ -97,22 +98,22 @@ export async function startWorker() {
   );
 
   checkWorker.on("failed", (job, err) => {
-    console.error(`[Worker] Check job ${job?.id} failed:`, err.message);
+    logger.error({ err, jobId: job?.id }, "[Worker] Check job failed");
   });
 
   notifyWorker.on("failed", (job, err) => {
-    console.error(`[Worker] Notify job ${job?.id} failed:`, err.message);
+    logger.error({ err, jobId: job?.id }, "[Worker] Notify job failed");
   });
 
   generateWorker.on("failed", (job, err) => {
-    console.error(`[Worker] Generate job ${job?.id} failed:`, err.message);
+    logger.error({ err, jobId: job?.id }, "[Worker] Generate job failed");
   });
 
   retentionWorker.on("failed", (job, err) => {
-    console.error(`[Worker] Retention job ${job?.id} failed:`, err.message);
+    logger.error({ err, jobId: job?.id }, "[Worker] Retention job failed");
   });
 
-  console.log(
+  logger.info(
     "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention",
   );
 }

@@ -20,6 +20,7 @@ import {
   resetFailureCount,
   evaluateTransition,
 } from "../utils/state-machine.js";
+import { logger } from "../utils/logger.js";
 
 export interface CheckJobData {
   monitorId: string;
@@ -148,7 +149,7 @@ async function handleDownTransition(
   result: { errorMessage: string | null; statusCode: number | null; responseMs: number | null },
   failures: number,
 ): Promise<void> {
-  console.log(`[Check] Monitor ${monitor.name} transitioned to DOWN`);
+  logger.info(`[Check] Monitor ${monitor.name} transitioned to DOWN`);
 
   // Find status page for this monitor's org
   const [page] = await db
@@ -203,7 +204,7 @@ async function handleDownTransition(
 async function handleUpTransition(
   monitor: typeof monitors.$inferSelect,
 ): Promise<void> {
-  console.log(`[Check] Monitor ${monitor.name} transitioned to UP`);
+  logger.info(`[Check] Monitor ${monitor.name} transitioned to UP`);
 
   // Find open incident for this monitor
   const [openIncident] = await db

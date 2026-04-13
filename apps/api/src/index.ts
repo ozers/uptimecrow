@@ -1,5 +1,6 @@
 import { startServer } from "./server.js";
 import { startWorker } from "./worker.js";
+import { logger } from "./utils/logger.js";
 
 const mode = process.env.MODE || "all";
 
@@ -21,7 +22,7 @@ function assertProductionSecrets() {
 
 async function main() {
   assertProductionSecrets();
-  console.log(`[UptimeCrow] Starting in ${mode} mode...`);
+  logger.info(`[UptimeCrow] Starting in ${mode} mode...`);
 
   if (mode === "api" || mode === "all") {
     await startServer();
@@ -31,10 +32,10 @@ async function main() {
     await startWorker();
   }
 
-  console.log(`[UptimeCrow] Running (mode=${mode})`);
+  logger.info(`[UptimeCrow] Running (mode=${mode})`);
 }
 
 main().catch((err) => {
-  console.error("[UptimeCrow] Fatal error:", err);
+  logger.error({ err }, "[UptimeCrow] Fatal error");
   process.exit(1);
 });

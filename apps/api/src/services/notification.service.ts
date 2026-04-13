@@ -1,6 +1,7 @@
 // Notification Service — Email via Amazon SES + Slack/Discord webhooks
 
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { logger } from "../utils/logger.js";
 
 function getClient(): SESv2Client | null {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -46,7 +47,7 @@ export async function sendIncidentNotification(params: {
 
   const client = getClient();
   if (!client) {
-    console.log(
+    logger.info(
       `[Notification] No AWS credentials — skipping "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
     );
     return;
@@ -78,8 +79,8 @@ export async function sendIncidentNotification(params: {
     params.subscriberEmails.map((email) => sendEmail(client, email, subject, html)),
   );
   const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length > 0) console.error(`[Notification] ${failed.length} incident emails failed`);
-  console.log(`[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
+  if (failed.length > 0) logger.error(`[Notification] ${failed.length} incident emails failed`);
+  logger.info(`[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
 }
 
 export async function sendIncidentResolvedNotification(params: {
@@ -92,7 +93,7 @@ export async function sendIncidentResolvedNotification(params: {
 
   const client = getClient();
   if (!client) {
-    console.log(`[Notification] No AWS credentials — skipping resolved "${params.incidentTitle}"`);
+    logger.info(`[Notification] No AWS credentials — skipping resolved "${params.incidentTitle}"`);
     return;
   }
 
@@ -108,8 +109,8 @@ export async function sendIncidentResolvedNotification(params: {
     params.subscriberEmails.map((email) => sendEmail(client, email, subject, html)),
   );
   const failed = results.filter((r) => r.status === "rejected");
-  if (failed.length > 0) console.error(`[Notification] ${failed.length} resolved emails failed`);
-  console.log(`[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
+  if (failed.length > 0) logger.error(`[Notification] ${failed.length} resolved emails failed`);
+  logger.info(`[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`);
 }
 
 export async function sendVerificationEmail(params: {
@@ -119,7 +120,7 @@ export async function sendVerificationEmail(params: {
 }): Promise<void> {
   const client = getClient();
   if (!client) {
-    console.log(`[Notification] No AWS credentials — skipping verification to ${params.email}`);
+    logger.info(`[Notification] No AWS credentials — skipping verification to ${params.email}`);
     return;
   }
 
@@ -137,9 +138,9 @@ export async function sendVerificationEmail(params: {
         <p style="color:#9a9a9a;font-size:12px">If you did not request this, you can safely ignore this email.</p>
       </div>`,
     );
-    console.log(`[Notification] Sent verification to ${params.email}`);
+    logger.info(`[Notification] Sent verification to ${params.email}`);
   } catch (err) {
-    console.error("[Notification] Failed to send verification email:", err);
+    logger.error({ err }, "[Notification] Failed to send verification email");
   }
 }
 
@@ -182,9 +183,9 @@ export async function sendSlackWebhook(params: {
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
-    console.log(`[Notification] Slack webhook sent for "${params.incidentTitle}"`);
+    logger.info(`[Notification] Slack webhook sent for "${params.incidentTitle}"`);
   } catch (err) {
-    console.error("[Notification] Slack webhook failed:", err);
+    logger.error({ err }, "[Notification] Slack webhook failed");
   }
 }
 
@@ -225,8 +226,8 @@ export async function sendDiscordWebhook(params: {
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
-    console.log(`[Notification] Discord webhook sent for "${params.incidentTitle}"`);
+    logger.info(`[Notification] Discord webhook sent for "${params.incidentTitle}"`);
   } catch (err) {
-    console.error("[Notification] Discord webhook failed:", err);
+    logger.error({ err }, "[Notification] Discord webhook failed");
   }
 }

@@ -165,6 +165,8 @@ pnpm dev:web    # http://localhost:5173
 | `MODE` | No | `all` | API process mode: `api`, `worker`, or `all` |
 | `PORT` | No | `3000` | API server port |
 | `NODE_ENV` | No | `development` | Environment |
+| `LOG_LEVEL` | No | — | Pino log level override (`info` in prod, `debug` in dev by default) |
+| `VITE_PLAUSIBLE_DOMAIN` | No | — | Plausible Analytics site domain (web build-time) |
 | `APP_URL` | No | `http://localhost:5173` | Base URL for links in emails |
 | `STATUS_PAGE_URL` | No | `http://localhost:5173/status` | Public status page base URL |
 | `AWS_ACCESS_KEY_ID` | No¹ | — | AWS credentials for SES |

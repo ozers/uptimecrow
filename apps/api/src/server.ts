@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { logger } from "hono/logger";
+import { logger as honoLogger } from "hono/logger";
 import { authRoutes } from "./routes/auth.js";
 import { monitorRoutes } from "./routes/monitors.js";
 import { incidentRoutes } from "./routes/incidents.js";
@@ -12,10 +12,11 @@ import { settingsRoutes } from "./routes/settings.js";
 import { billingRoutes } from "./routes/billing.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
+import { logger } from "./utils/logger.js";
 
 const app = new Hono();
 
-app.use("*", logger());
+app.use("*", honoLogger());
 app.use("*", cors({
   origin: process.env.NODE_ENV === "production"
     ? [process.env.APP_URL || ""]
@@ -102,7 +103,7 @@ app.route("/api/billing", billingRoutes);
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);
 
-  console.log(`[Server] Listening on port ${port}`);
+  logger.info(`[Server] Listening on port ${port}`);
 
   const { serve } = await import("@hono/node-server");
   serve({ fetch: app.fetch, port });

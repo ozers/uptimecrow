@@ -12,6 +12,7 @@ import {
   checkResults,
 } from "../db/schema.js";
 import { escapeHtml, sanitizeUrl, sanitizeColor } from "../utils/escape.js";
+import { logger } from "../utils/logger.js";
 
 export interface StaticStatusPage {
   generatedAt: string;
@@ -75,7 +76,7 @@ export async function regenerateStatusPage(
     .limit(1);
 
   if (!page) {
-    console.error(`[StaticGen] Status page ${statusPageId} not found`);
+    logger.error(`[StaticGen] Status page ${statusPageId} not found`);
     return;
   }
 
@@ -178,7 +179,7 @@ export async function regenerateStatusPage(
   const html = renderStatusHtml(jsonData);
 
   pageStore.set(page.slug, { json: jsonData, html });
-  console.log(`[StaticGen] Regenerated status page: ${page.slug}`);
+  logger.info(`[StaticGen] Regenerated status page: ${page.slug}`);
 }
 
 export function renderStatusHtml(data: StaticStatusPage): string {
