@@ -374,13 +374,26 @@ publicRoutes.get("/verify/:token", async (c) => {
     .update(subscribers)
     .set({ isVerified: true })
     .where(eq(subscribers.unsubscribeToken, token))
-    .returning({ id: subscribers.id });
+    .returning({ statusPageId: subscribers.statusPageId });
 
   if (!subscriber) {
-    return c.json({ error: "Invalid verification link" }, 404);
+    c.header("Content-Type", "text/html; charset=UTF-8");
+    return c.body(confirmationPage("Invalid link", "This verification link is invalid or has already been used.", false, null));
   }
 
-  return c.json({ message: "Email verified successfully" });
+  const [page] = await db
+    .select({ name: statusPages.name, slug: statusPages.slug })
+    .from(statusPages)
+    .where(eq(statusPages.id, subscriber.statusPageId))
+    .limit(1);
+
+  c.header("Content-Type", "text/html; charset=UTF-8");
+  return c.body(confirmationPage(
+    "You're subscribed!",
+    `You'll receive email updates when incidents are created or resolved for <strong>${page?.name ?? "this status page"}</strong>.`,
+    true,
+    page?.slug ?? null,
+  ));
 });
 
 // Unsubscribe
@@ -390,14 +403,62 @@ publicRoutes.get("/unsubscribe/:token", async (c) => {
   const [subscriber] = await db
     .delete(subscribers)
     .where(eq(subscribers.unsubscribeToken, token))
-    .returning({ id: subscribers.id });
+    .returning({ statusPageId: subscribers.statusPageId });
 
   if (!subscriber) {
-    return c.json({ error: "Invalid unsubscribe link" }, 404);
+    c.header("Content-Type", "text/html; charset=UTF-8");
+    return c.body(confirmationPage("Invalid link", "This unsubscribe link is invalid or has already been used.", false, null));
   }
 
-  return c.json({ message: "Unsubscribed successfully" });
+  const [page] = await db
+    .select({ name: statusPages.name, slug: statusPages.slug })
+    .from(statusPages)
+    .where(eq(statusPages.id, subscriber.statusPageId))
+    .limit(1);
+
+  c.header("Content-Type", "text/html; charset=UTF-8");
+  return c.body(confirmationPage(
+    "Unsubscribed",
+    `You've been removed from <strong>${page?.name ?? "this status page"}</strong> notifications.`,
+    false,
+    page?.slug ?? null,
+  ));
 });
+
+function confirmationPage(title: string, message: string, success: boolean, slug: string | null): string {
+  const icon = success ? "✓" : "✕";
+  const iconColor = success ? "#22c55e" : "#ef4444";
+  const statusLink = slug
+    ? `<a href="/status/${slug}" style="display:inline-block;margin-top:24px;padding:10px 22px;background:#18181f;border:1px solid #2a2a38;border-radius:8px;color:#9090a8;text-decoration:none;font-size:13px;font-weight:500">← Back to status page</a>`
+    : `<a href="/" style="display:inline-block;margin-top:24px;padding:10px 22px;background:#18181f;border:1px solid #2a2a38;border-radius:8px;color:#9090a8;text-decoration:none;font-size:13px;font-weight:500">← UptimeCrow</a>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${title} — UptimeCrow</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#0a0a0f;color:#f0f0f5;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;-webkit-font-smoothing:antialiased}
+    .card{background:#111118;border:1px solid #1e1e2a;border-radius:16px;padding:48px 40px;max-width:420px;width:100%;text-align:center}
+    .icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 24px;background:${iconColor}18;color:${iconColor}}
+    h1{font-size:20px;font-weight:600;letter-spacing:-0.02em;margin-bottom:12px}
+    p{font-size:14px;color:#9090a8;line-height:1.6}
+    p strong{color:#c0c0d0;font-weight:500}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">${icon}</div>
+    <h1>${title}</h1>
+    <p>${message}</p>
+    ${statusLink}
+  </div>
+</body>
+</html>`;
+}
 
 // Uptime badge SVG
 publicRoutes.get("/badge/:slug", async (c) => {
