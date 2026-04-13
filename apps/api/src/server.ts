@@ -12,6 +12,7 @@ import { settingsRoutes } from "./routes/settings.js";
 import { billingRoutes } from "./routes/billing.js";
 import { maintenanceRoutes } from "./routes/maintenance.js";
 import { apiKeyRoutes } from "./routes/api-keys.js";
+import { docsRoutes } from "./routes/docs.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
@@ -30,6 +31,9 @@ app.use("*", cors({
 }));
 
 app.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
+
+// API docs — unauthenticated, no rate limit; pure static content.
+app.route("/api", docsRoutes);
 
 // Custom domain routing — rewrite requests whose Host header matches a
 // registered custom domain to the pre-rendered status page. Moved into its

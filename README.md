@@ -244,6 +244,10 @@ pnpm --filter @uptimecrow/web build   # Build web only
 | `PATCH` | `/api/status-pages/:id` | Update status page |
 | `DELETE` | `/api/status-pages/:id` | Delete status page |
 
+### API Documentation
+
+Interactive Swagger UI at `/api/docs` and the raw OpenAPI 3.1 document at `/api/openapi.json`.
+
 ### API Keys (Team plan, dashboard only)
 
 | Method | Path | Description |
