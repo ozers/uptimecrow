@@ -65,3 +65,27 @@ export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
 });
+
+export const MAINTENANCE_STATUSES = ["scheduled", "in_progress", "completed", "cancelled"] as const;
+export type MaintenanceStatus = (typeof MAINTENANCE_STATUSES)[number];
+
+export const createMaintenanceWindowSchema = z.object({
+  statusPageId: z.string().uuid(),
+  title: z.string().min(1).max(500),
+  body: z.string().max(5000).optional().transform((v) => v || undefined),
+  scheduledStart: z.string().datetime(),
+  scheduledEnd: z.string().datetime(),
+  monitorIds: z.array(z.string().uuid()).default([]),
+}).refine(
+  (data) => new Date(data.scheduledEnd) > new Date(data.scheduledStart),
+  { message: "scheduledEnd must be after scheduledStart", path: ["scheduledEnd"] },
+);
+
+export const updateMaintenanceWindowSchema = z.object({
+  title: z.string().min(1).max(500).optional(),
+  body: z.string().max(5000).optional(),
+  status: z.enum(MAINTENANCE_STATUSES).optional(),
+  scheduledStart: z.string().datetime().optional(),
+  scheduledEnd: z.string().datetime().optional(),
+  monitorIds: z.array(z.string().uuid()).optional(),
+});

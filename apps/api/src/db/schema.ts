@@ -24,6 +24,12 @@ export const incidentStatusEnum = pgEnum("incident_status", [
   "resolved",
 ]);
 export const incidentSeverityEnum = pgEnum("incident_severity", ["minor", "major", "critical"]);
+export const maintenanceStatusEnum = pgEnum("maintenance_status", [
+  "scheduled",
+  "in_progress",
+  "completed",
+  "cancelled",
+]);
 
 // ── Tables ──
 
@@ -162,6 +168,50 @@ export const incidentUpdates = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("incident_updates_incident_id_idx").on(table.incidentId)],
+);
+
+export const maintenanceWindows = pgTable(
+  "maintenance_windows",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    statusPageId: uuid("status_page_id")
+      .notNull()
+      .references(() => statusPages.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 500 }).notNull(),
+    body: text("body"),
+    status: maintenanceStatusEnum("status").notNull().default("scheduled"),
+    scheduledStart: timestamp("scheduled_start", { withTimezone: true }).notNull(),
+    scheduledEnd: timestamp("scheduled_end", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("maintenance_windows_org_id_idx").on(table.orgId),
+    index("maintenance_windows_status_page_id_idx").on(table.statusPageId),
+    index("maintenance_windows_window_idx").on(
+      table.scheduledStart,
+      table.scheduledEnd,
+    ),
+  ],
+);
+
+export const maintenanceWindowMonitors = pgTable(
+  "maintenance_window_monitors",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    maintenanceWindowId: uuid("maintenance_window_id")
+      .notNull()
+      .references(() => maintenanceWindows.id, { onDelete: "cascade" }),
+    monitorId: uuid("monitor_id")
+      .notNull()
+      .references(() => monitors.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    index("mwm_maintenance_window_id_idx").on(table.maintenanceWindowId),
+    index("mwm_monitor_id_idx").on(table.monitorId),
+  ],
 );
 
 export const subscribers = pgTable(
