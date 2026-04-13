@@ -1,10 +1,8 @@
 // Check Job — Monitor ping execution + incident creation + notifications
 
 import type { Job } from "bullmq";
-import { Queue } from "bullmq";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { redis } from "../db/index.js";
 import {
   monitors,
   checkResults,
@@ -14,6 +12,7 @@ import {
   maintenanceWindows,
   maintenanceWindowMonitors,
 } from "../db/schema.js";
+import { makeQueue } from "../utils/queues.js";
 import { executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
 import { organizations } from "../db/schema.js";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
@@ -28,10 +27,8 @@ export interface CheckJobData {
   monitorId: string;
 }
 
-const notifyQueue = new Queue("notifications", { connection: redis });
-const generateQueue = new Queue("status-page-generate", {
-  connection: redis,
-});
+const notifyQueue = makeQueue("notifications");
+const generateQueue = makeQueue("status-page-generate");
 
 export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
   const { monitorId } = job.data;

@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { eq, and, desc, inArray } from "drizzle-orm";
-import { Queue } from "bullmq";
-import { db, redis } from "../db/index.js";
+import { db } from "../db/index.js";
+import { makeQueue } from "../utils/queues.js";
 import {
   maintenanceWindows,
   maintenanceWindowMonitors,
@@ -17,7 +17,7 @@ import { logger } from "../utils/logger.js";
 export const maintenanceRoutes = new Hono();
 maintenanceRoutes.use("*", authMiddleware);
 
-const generateQueue = new Queue("status-page-generate", { connection: redis });
+const generateQueue = makeQueue("status-page-generate");
 
 async function enqueueRegen(statusPageId: string) {
   await generateQueue.add("regenerate", { statusPageId });

@@ -11,14 +11,13 @@ import {
   checkResults,
 } from "../db/schema.js";
 import { subscribeSchema } from "@uptimecrow/shared";
-import { Queue } from "bullmq";
-import { redis } from "../db/index.js";
 import { renderStatusHtml, type StaticStatusPage } from "../services/static-gen.service.js";
 import { escapeHtml } from "../utils/escape.js";
+import { makeQueue } from "../utils/queues.js";
 
 export const publicRoutes = new Hono();
 
-const notifyQueue = new Queue("notifications", { connection: redis });
+const notifyQueue = makeQueue("notifications");
 
 // Get status page data
 publicRoutes.get("/:slug", async (c) => {
