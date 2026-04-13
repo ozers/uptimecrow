@@ -3,14 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIncidentUpdateSchema, INCIDENT_STATUSES } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { Bot, Send, CheckCircle2 } from "lucide-react";
+import { Send, CheckCircle2 } from "lucide-react";
 import { useIncident, useCreateIncidentUpdate, useUpdateIncident } from "@/lib/queries/incidents";
 import { ApiError } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -106,12 +105,6 @@ export function IncidentDetail() {
       <div className="mb-6 flex flex-wrap items-center gap-3">
         <IncidentStatusBadge status={incident.status} />
         <SeverityBadge severity={incident.severity} />
-        {incident.isAiGenerated && (
-          <Badge variant="outline" className="gap-1 text-xs">
-            <Bot className="h-3 w-3" />
-            AI Generated
-          </Badge>
-        )}
         <span className="text-sm text-muted-foreground">
           Started <RelativeTime date={incident.startedAt} />
         </span>
@@ -151,12 +144,6 @@ export function IncidentDetail() {
                         <div className="flex-1 pb-2">
                           <div className="mb-1 flex items-center gap-2">
                             <IncidentStatusBadge status={update.status} />
-                            {update.isAiGenerated && (
-                              <Badge variant="outline" className="gap-1 text-xs">
-                                <Bot className="h-3 w-3" />
-                                AI
-                              </Badge>
-                            )}
                             <span className="text-xs text-muted-foreground">
                               <RelativeTime date={update.createdAt} />
                             </span>

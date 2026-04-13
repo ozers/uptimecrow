@@ -55,7 +55,7 @@ export function Login() {
               Monitor your services<br />with confidence
             </h2>
             <p className="text-muted-foreground">
-              Real-time uptime monitoring, instant alerts, and AI-powered incident reports — all in one place.
+              Real-time uptime monitoring, instant alerts, and pre-rendered status pages that stay online even when you don't.
             </p>
           </div>
           <div className="space-y-4">
@@ -82,8 +82,8 @@ export function Login() {
                 <Shield className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">AI-powered incident reports</p>
-                <p className="text-xs text-muted-foreground">Automatic root cause analysis on every outage</p>
+                <p className="text-sm font-medium">Status pages that survive downtime</p>
+                <p className="text-xs text-muted-foreground">Pre-rendered and served from our edge — not your origin</p>
               </div>
             </div>
           </div>

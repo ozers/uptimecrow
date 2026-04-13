@@ -20,6 +20,8 @@ import { StatusPageCreate } from "./pages/dashboard/status-pages/StatusPageCreat
 import { StatusPageEdit } from "./pages/dashboard/status-pages/StatusPageEdit";
 import { StatusPageDetail } from "./pages/dashboard/status-pages/StatusPageDetail";
 import { Settings } from "./pages/dashboard/Settings";
+import { Privacy, Terms } from "./pages/Legal";
+import { Pricing } from "./pages/Pricing";
 
 export function App() {
   return (
@@ -28,6 +30,9 @@ export function App() {
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/pricing" element={<Pricing />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>

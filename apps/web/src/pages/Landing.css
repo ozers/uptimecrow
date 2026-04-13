@@ -552,6 +552,9 @@
 /* Footer */
 .landing footer { padding: 2rem 0; border-top: 1px solid var(--border); text-align: center; }
 .landing footer p { font-size: 0.75rem; color: var(--text3); }
+.landing .footer-links { margin-top: 0.75rem; display: flex; justify-content: center; gap: 1.25rem; font-size: 0.8rem; flex-wrap: wrap; }
+.landing .footer-links a { color: var(--text2); text-decoration: none; transition: color 0.15s ease; }
+.landing .footer-links a:hover { color: var(--text); }
 
 /* Animations */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

@@ -20,7 +20,7 @@ const PERKS = [
   "Monitor up to 3 services instantly",
   "Slack & Discord alert integrations",
   "Public status pages for your users",
-  "AI-generated incident reports",
+  "Pre-rendered status pages that survive origin downtime",
   "Up and running in under 3 minutes",
 ];
 
