@@ -52,7 +52,7 @@ export async function startWorker() {
   await cleanOrphanedRepeatableJobs();
 
   const removeOpts = {
-    removeOnComplete: true,
+    removeOnComplete: { count: 0 },
     removeOnFail: { count: 20 },
   };
 
