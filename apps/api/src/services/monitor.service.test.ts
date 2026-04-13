@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { executeHttpCheck } from "./monitor.service.js";
+import net from "node:net";
+import { executeHttpCheck, executeTcpCheck } from "./monitor.service.js";
 
 function mockFetch(impl: typeof fetch) {
   vi.stubGlobal("fetch", impl);
@@ -160,6 +161,57 @@ describe("executeHttpCheck", () => {
     );
     expect(capturedUA).toContain("UptimeCrow");
     expect(capturedUA).toContain("us-east");
+  });
+});
+
+describe("executeTcpCheck", () => {
+  let server: net.Server;
+  let port: number;
+
+  beforeEach(async () => {
+    server = net.createServer((socket) => socket.end());
+    await new Promise<void>((resolve) => {
+      server.listen(0, "127.0.0.1", () => {
+        const addr = server.address();
+        if (addr && typeof addr === "object") port = addr.port;
+        resolve();
+      });
+    });
+  });
+
+  afterEach(async () => {
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  });
+
+  it("returns UP when the TCP handshake succeeds", async () => {
+    const result = await executeTcpCheck(`127.0.0.1:${port}`, { timeoutMs: 2000 });
+    expect(result.status).toBe("up");
+    expect(result.errorMessage).toBeNull();
+    expect(result.responseMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it("returns DOWN for a closed port with a clear error", async () => {
+    // Pick a port we know is unused — closed socket fires ECONNREFUSED fast.
+    const result = await executeTcpCheck("127.0.0.1:1", { timeoutMs: 2000 });
+    expect(result.status).toBe("down");
+    expect(result.errorMessage).toBeTruthy();
+  });
+
+  it("reports an invalid host:port early", async () => {
+    const result = await executeTcpCheck("not-a-target", { timeoutMs: 2000 });
+    expect(result.status).toBe("down");
+    expect(result.errorMessage).toBe("Invalid host:port");
+  });
+
+  it("rejects out-of-range ports", async () => {
+    const result = await executeTcpCheck("127.0.0.1:70000", { timeoutMs: 2000 });
+    expect(result.status).toBe("down");
+    expect(result.errorMessage).toBe("Invalid host:port");
+  });
+
+  it("parses a URL-form target (takes hostname + port from it)", async () => {
+    const result = await executeTcpCheck(`tcp://127.0.0.1:${port}`, { timeoutMs: 2000 });
+    expect(result.status).toBe("up");
   });
 });
 

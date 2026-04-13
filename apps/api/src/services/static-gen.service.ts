@@ -220,6 +220,12 @@ export async function regenerateStatusPage(
   logger.info(`[StaticGen] Regenerated status page: ${page.slug}`);
 }
 
+// slug is validated at create time (regex /^[a-z0-9-]+$/) but we escape here
+// too — cheap insurance if that invariant ever weakens.
+function escapeAttrValue(input: string): string {
+  return input.replace(/[^a-z0-9-]/gi, "");
+}
+
 export function renderStatusHtml(data: StaticStatusPage): string {
   const brand = sanitizeColor(data.statusPage.brandColor);
   const pageName = escapeHtml(data.statusPage.name);
@@ -442,6 +448,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>${pageName} — Status</title>
+  <link rel="alternate" type="application/rss+xml" title="${pageName} incidents" href="/status/${escapeAttrValue(data.statusPage.slug)}/rss">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
