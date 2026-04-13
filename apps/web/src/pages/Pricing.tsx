@@ -63,16 +63,20 @@ const PLANS = [
 
 const FAQ = [
   {
+    q: "How do I upgrade right now?",
+    a: "Online checkout and coupon redemption are temporarily paused while we migrate our billing infrastructure. In the meantime, email support@hooksense.com with your account email and the plan you want — we'll activate it manually, usually the same day.",
+  },
+  {
     q: "Is there a free trial for Pro or Team?",
-    a: "Not yet. The Free plan is free forever — use it until you outgrow the 3-monitor limit, then upgrade in one click. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
+    a: "Not yet. The Free plan is free forever — use it until you outgrow the 3-monitor limit, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
   },
   {
     q: "Can I change or cancel my plan anytime?",
-    a: "Yes. Upgrade, downgrade, or cancel from Settings → Plan. Downgrades take effect at the end of your current billing period, so you keep the features you paid for.",
+    a: "Yes. Downgrades take effect at the end of your current billing period, so you keep the features you paid for. While self-serve billing is paused, email support@hooksense.com for plan changes and we'll process them by hand.",
   },
   {
     q: "How does billing work?",
-    a: "Paid plans are billed monthly through Polar. You can pay by card, PayPal, or supported crypto. Invoices are emailed automatically and are also available in the customer portal.",
+    a: "Paid plans are billed monthly through Polar. You can pay by card, PayPal, or supported crypto. Invoices are emailed automatically and are also available in the customer portal — once self-serve checkout is back online.",
   },
   {
     q: "What counts as a monitor?",
@@ -80,7 +84,7 @@ const FAQ = [
   },
   {
     q: "Do you offer annual discounts or an enterprise plan?",
-    a: "Annual billing and enterprise SLAs are on the roadmap. If you need SSO, a DPA, a custom invoice, or more than 50 monitors, email hello@uptimecrow.com and we'll sort it out.",
+    a: "Annual billing and enterprise SLAs are on the roadmap. If you need SSO, a DPA, a custom invoice, or more than 50 monitors, email support@uptimecrow.com and we'll sort it out.",
   },
   {
     q: "Can I self-host UptimeCrow?",
@@ -133,6 +137,30 @@ export function Pricing() {
           <p className="hero-sub">
             Start free forever. Upgrade when you need more monitors, faster checks, or a branded status page.
           </p>
+          <div
+            role="status"
+            style={{
+              marginTop: "1.75rem",
+              padding: "0.9rem 1.1rem",
+              background: "var(--amber)18",
+              border: "1px solid var(--amber)",
+              borderRadius: 12,
+              color: "var(--text)",
+              fontSize: "0.92rem",
+              lineHeight: 1.6,
+              maxWidth: 640,
+              marginInline: "auto",
+              textAlign: "left",
+            }}
+          >
+            <strong style={{ color: "var(--amber)" }}>Heads up:</strong> online payments and coupon
+            redemption are temporarily paused while we migrate our billing infrastructure. To upgrade or
+            use a coupon in the meantime, email{" "}
+            <a href="mailto:support@hooksense.com" style={{ color: "var(--green)", textDecoration: "underline" }}>
+              support@hooksense.com
+            </a>{" "}
+            and we'll help you out.
+          </div>
         </div>
       </section>
 

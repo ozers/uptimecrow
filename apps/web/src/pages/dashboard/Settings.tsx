@@ -4,7 +4,7 @@ import { useAuthStore } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { Zap, User, CreditCard, Webhook, ExternalLink, Loader2 } from "lucide-react";
+import { User, CreditCard, Webhook, ExternalLink, Loader2, Mail } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,6 @@ export function Settings() {
   const [slackUrl, setSlackUrl] = useState("");
   const [discordUrl, setDiscordUrl] = useState("");
   const [saving, setSaving] = useState(false);
-  const [checkoutLoading, setCheckoutLoading] = useState<"pro" | "team" | null>(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
   useEffect(() => {
@@ -61,26 +60,6 @@ export function Settings() {
 
   const plan = user.plan as Plan;
   const limits = PLAN_LIMITS[plan];
-
-  const handleUpgrade = async (targetPlan: "pro" | "team") => {
-    setCheckoutLoading(targetPlan);
-    try {
-      const data = await api.post<{ checkoutUrl?: string; error?: string }>("/api/billing/checkout", { plan: targetPlan });
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        toast.error("Billing is not configured yet.");
-        setCheckoutLoading(null);
-      }
-    } catch (e) {
-      if (e instanceof ApiError && e.message === "Billing not configured") {
-        toast.error("Billing is not configured yet. Set Polar env variables to enable payments.");
-      } else {
-        toast.error(e instanceof ApiError ? e.message : "Failed to start checkout");
-      }
-      setCheckoutLoading(null);
-    }
-  };
 
   const handlePortal = async () => {
     setPortalLoading(true);
@@ -189,39 +168,25 @@ export function Settings() {
               ))}
             </div>
 
-            {/* Upgrade options for free plan */}
+            {/* Upgrade options for free plan — self-serve checkout is paused for
+                billing-infra migration; we direct users to email support. */}
             {plan === "free" && (
               <div className="border-t border-border/50 py-4">
-                <p className="mb-3 text-xs text-muted-foreground">
-                  Upgrade for more monitors, 30-second check intervals, custom domains, and Slack/Discord alerts.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    size="sm"
-                    onClick={() => handleUpgrade("pro")}
-                    disabled={checkoutLoading !== null}
-                    className="gap-1.5"
-                  >
-                    {checkoutLoading === "pro" ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Zap className="h-3.5 w-3.5" />
-                    )}
-                    Upgrade to Pro
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleUpgrade("team")}
-                    disabled={checkoutLoading !== null}
-                    className="gap-1.5"
-                  >
-                    {checkoutLoading === "team" ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : (
-                      <Zap className="h-3.5 w-3.5" />
-                    )}
-                    Upgrade to Team
+                <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-medium text-amber-400">
+                    <Mail className="h-4 w-4" />
+                    Upgrades and coupons temporarily via email
+                  </div>
+                  <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
+                    Online payments and coupon redemption are paused while we migrate our billing
+                    infrastructure. Send us the plan you want from your account email and we'll activate
+                    it manually — usually the same day.
+                  </p>
+                  <Button size="sm" variant="outline" asChild className="gap-1.5">
+                    <a href="mailto:support@hooksense.com?subject=UptimeCrow%20upgrade%20request">
+                      <Mail className="h-3.5 w-3.5" />
+                      Email support@hooksense.com
+                    </a>
                   </Button>
                 </div>
               </div>
