@@ -182,7 +182,7 @@ export function MonitorsList() {
                         {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
                       </TableCell>
                       <TableCell>
-                        <UptimeBar percent={uptime?.uptimePercent ?? null} />
+                        <UptimeBar percent={uptime?.uptimePercent != null ? Number(uptime.uptimePercent) : null} />
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
                         {monitor.lastCheckedAt ? (
