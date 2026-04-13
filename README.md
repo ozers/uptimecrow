@@ -244,6 +244,16 @@ pnpm --filter @uptimecrow/web build   # Build web only
 | `PATCH` | `/api/status-pages/:id` | Update status page |
 | `DELETE` | `/api/status-pages/:id` | Delete status page |
 
+### API Keys (Team plan, dashboard only)
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/api-keys` | List active keys |
+| `POST` | `/api/api-keys` | Create a key (secret shown once) |
+| `DELETE` | `/api/api-keys/:id` | Revoke a key |
+
+Use the returned key as `Authorization: Bearer <key>` on any `/api/*` endpoint.
+
 ### Billing (authenticated)
 
 | Method | Path | Description |

@@ -170,6 +170,28 @@ export const incidentUpdates = pgTable(
   (table) => [index("incident_updates_incident_id_idx").on(table.incidentId)],
 );
 
+export const apiKeys = pgTable(
+  "api_keys",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull(),
+    // We store a SHA-256 hash of the secret; the plaintext is shown once at creation.
+    keyHash: varchar("key_hash", { length: 64 }).notNull().unique(),
+    // Display-only prefix shown next to the name so users can tell keys apart.
+    prefix: varchar("prefix", { length: 16 }).notNull(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("api_keys_org_id_idx").on(table.orgId)],
+);
+
 export const maintenanceWindows = pgTable(
   "maintenance_windows",
   {
