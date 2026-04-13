@@ -15,6 +15,7 @@ import { apiKeyRoutes } from "./routes/api-keys.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
+import { customDomainRouter } from "./middleware/custom-domain.js";
 import { logger } from "./utils/logger.js";
 
 const app = new Hono();
@@ -30,43 +31,10 @@ app.use("*", cors({
 
 app.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
 
-// Custom domain routing — check if Host header matches a custom domain
-app.use("*", async (c, next) => {
-  const host = c.req.header("host") || "";
-  // Skip for localhost, API routes, and known paths
-  if (
-    host.includes("localhost") ||
-    host.includes("uptimecrow") ||
-    c.req.path.startsWith("/api") ||
-    c.req.path.startsWith("/status") ||
-    c.req.path.startsWith("/health") ||
-    c.req.path.startsWith("/s/") ||
-    c.req.path.startsWith("/badge")
-  ) {
-    return next();
-  }
-
-  // Check if this host is a custom domain for a status page
-  const { eq: eqFn } = await import("drizzle-orm");
-  const { db: database } = await import("./db/index.js");
-  const { statusPages: sp } = await import("./db/schema.js");
-
-  const [page] = await database
-    .select({ slug: sp.slug })
-    .from(sp)
-    .where(eqFn(sp.customDomain, host))
-    .limit(1);
-
-  if (page) {
-    // Rewrite to the public status page route
-    const url = new URL(c.req.url);
-    url.pathname = `/status/${page.slug}${url.pathname === "/" ? "" : url.pathname}`;
-    const newReq = new Request(url.toString(), c.req.raw);
-    return app.fetch(newReq);
-  }
-
-  return next();
-});
+// Custom domain routing — rewrite requests whose Host header matches a
+// registered custom domain to the pre-rendered status page. Moved into its
+// own middleware so the hostname validation + cache logic is testable.
+app.use("*", customDomainRouter(app));
 
 // Pre-rendered static status pages (HTML + JSON)
 app.get("/s/:slug", (c) => {
