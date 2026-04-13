@@ -11,6 +11,7 @@ import {
   incidentUpdates,
   checkResults,
 } from "../db/schema.js";
+import { escapeHtml, sanitizeUrl, sanitizeColor } from "../utils/escape.js";
 
 export interface StaticStatusPage {
   generatedAt: string;
@@ -181,7 +182,9 @@ export async function regenerateStatusPage(
 }
 
 export function renderStatusHtml(data: StaticStatusPage): string {
-  const brand = data.statusPage.brandColor;
+  const brand = sanitizeColor(data.statusPage.brandColor);
+  const pageName = escapeHtml(data.statusPage.name);
+  const logoUrl = sanitizeUrl(data.statusPage.logoUrl);
   const statusColor =
     data.overallStatus === "operational" ? "#22c55e"
       : data.overallStatus === "degraded" ? "#f59e0b"
@@ -267,7 +270,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   <div class="monitor-row">
     <div style="display:flex;align-items:center;gap:10px;min-width:0">
       <span class="status-dot" style="background:${dc};box-shadow:0 0 0 3px ${dc}22"></span>
-      <span class="monitor-name">${m.name}</span>
+      <span class="monitor-name">${escapeHtml(m.name)}</span>
       <span class="monitor-pill" style="color:${dc};background:${dc}15">${statusText(m.status)}</span>
     </div>
     <div style="display:flex;align-items:center;gap:16px;flex-shrink:0">
@@ -303,7 +306,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
             <span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${uc}">${u.status}</span>
             <span style="font-size:11px;color:var(--text3)">${timeAgo(u.createdAt)}</span>
           </div>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0">${u.body}</p>
+          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0;white-space:pre-wrap">${escapeHtml(u.body)}</p>
         </div>
       </div>`;
     }).join("") : '';
@@ -314,7 +317,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
         <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:${sevColor};background:${sevColor}18;padding:1px 7px;border-radius:4px">${sev}</span>
         <span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${sc}">${inc.status}</span>
       </div>
-      <strong style="font-size:14px;font-weight:600;color:var(--text)">${inc.title}</strong>
+      <strong style="font-size:14px;font-weight:600;color:var(--text)">${escapeHtml(inc.title)}</strong>
     </div>
     <div style="text-align:right;flex-shrink:0">
       <div style="font-size:11px;color:var(--text3)">${formatDate(inc.startedAt)}</div>
@@ -363,7 +366,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>${data.statusPage.name} — Status</title>
+  <title>${pageName} — Status</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -452,8 +455,8 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     <nav class="nav">
       <div class="nav-brand">
-        ${data.statusPage.logoUrl ? `<img src="${data.statusPage.logoUrl}" alt="" class="nav-logo">` : ''}
-        <span class="nav-name">${data.statusPage.name}</span>
+        ${logoUrl ? `<img src="${logoUrl}" alt="" class="nav-logo">` : ''}
+        <span class="nav-name">${pageName}</span>
       </div>
       <div class="nav-right">
         <span class="live-badge" id="live-label">Live</span>
@@ -477,7 +480,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     ${subscribeHtml}
 
     <div class="footer">
-      <span>&copy; ${new Date().getFullYear()} ${data.statusPage.name}</span>
+      <span>&copy; ${new Date().getFullYear()} ${pageName}</span>
       <a href="https://uptimecrow.com" target="_blank" rel="noopener">Powered by UptimeCrow</a>
     </div>
   </div>
