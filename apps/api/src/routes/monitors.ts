@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, count } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { monitors, checkResults } from "../db/schema.js";
+import { monitors, checkResults, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
-import { createMonitorSchema, updateMonitorSchema } from "@uptimecrow/shared";
+import { createMonitorSchema, updateMonitorSchema, PLAN_LIMITS } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
 import { executeTestCheck } from "../services/monitor.service.js";
@@ -54,6 +54,33 @@ monitorRoutes.post("/", async (c) => {
     return c.json({ error: "Validation failed", details: parsed.error.flatten() }, 400);
   }
 
+  // Enforce plan limits
+  const [org] = await db
+    .select({ plan: organizations.plan })
+    .from(organizations)
+    .where(eq(organizations.id, orgId))
+    .limit(1);
+  const limits = PLAN_LIMITS[org?.plan ?? "free"];
+
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(monitors)
+    .where(and(eq(monitors.orgId, orgId), eq(monitors.isActive, true)));
+
+  if (Number(total) >= limits.monitors) {
+    return c.json(
+      { error: `Monitor limit reached. Your plan allows ${limits.monitors} monitors.` },
+      403,
+    );
+  }
+
+  if (parsed.data.intervalSeconds && parsed.data.intervalSeconds < limits.minInterval) {
+    return c.json(
+      { error: `Minimum check interval for your plan is ${limits.minInterval}s.` },
+      403,
+    );
+  }
+
   const [monitor] = await db
     .insert(monitors)
     .values({ ...parsed.data, orgId })
@@ -101,6 +128,22 @@ monitorRoutes.patch("/:id", async (c) => {
 
   if (!monitor) {
     return c.json({ error: "Monitor not found" }, 404);
+  }
+
+  // Enforce min interval on update
+  if (parsed.data.intervalSeconds !== undefined) {
+    const [org] = await db
+      .select({ plan: organizations.plan })
+      .from(organizations)
+      .where(eq(organizations.id, orgId))
+      .limit(1);
+    const limits = PLAN_LIMITS[org?.plan ?? "free"];
+    if (parsed.data.intervalSeconds < limits.minInterval) {
+      return c.json(
+        { error: `Minimum check interval for your plan is ${limits.minInterval}s.` },
+        403,
+      );
+    }
   }
 
   // If interval changed, reschedule repeatable job
