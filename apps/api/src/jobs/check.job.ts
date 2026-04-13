@@ -1,4 +1,4 @@
-// Check Job — Monitor ping execution + AI incident creation + notifications
+// Check Job — Monitor ping execution + incident creation + notifications
 
 import type { Job } from "bullmq";
 import { Queue } from "bullmq";
@@ -16,13 +16,8 @@ import { executeHttpCheck, executeMultiRegionCheck } from "../services/monitor.s
 import { organizations } from "../db/schema.js";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
-  generateIncidentReport,
-  generateResolvedUpdate,
-} from "../services/ai.service.js";
-import {
   incrementFailureCount,
   resetFailureCount,
-  getFailureCount,
   evaluateTransition,
 } from "../utils/state-machine.js";
 
@@ -164,16 +159,11 @@ async function handleDownTransition(
 
   if (!page) return;
 
-  // Generate AI incident report
-  const aiResult = await generateIncidentReport({
-    serviceName: monitor.name,
-    url: monitor.url,
-    error: result.errorMessage || "Service unreachable",
-    statusCode: result.statusCode ?? undefined,
-    responseMs: result.responseMs ?? undefined,
-    failedChecks: failures,
-    detectedAt: new Date().toISOString(),
-  });
+  const statusCode = result.statusCode ? ` (HTTP ${result.statusCode})` : "";
+  const errorDetail = result.errorMessage ? `: ${result.errorMessage}` : "";
+  const title = `${monitor.name} is down`;
+  const severity = result.statusCode && result.statusCode >= 500 ? "major" : "minor";
+  const updateText = `We detected that ${monitor.name} is not responding${statusCode}${errorDetail}. Our team has been notified and is investigating.`;
 
   // Create incident
   const [incident] = await db
@@ -182,10 +172,10 @@ async function handleDownTransition(
       orgId: monitor.orgId,
       statusPageId: page.id,
       monitorId: monitor.id,
-      title: aiResult.title,
+      title,
       status: "investigating",
-      severity: aiResult.severity,
-      isAiGenerated: true,
+      severity,
+      isAiGenerated: false,
     })
     .returning();
 
@@ -193,8 +183,8 @@ async function handleDownTransition(
   await db.insert(incidentUpdates).values({
     incidentId: incident.id,
     status: "investigating",
-    body: aiResult.updateText,
-    isAiGenerated: true,
+    body: updateText,
+    isAiGenerated: false,
   });
 
   // Queue notification to subscribers
@@ -232,13 +222,11 @@ async function handleUpTransition(
   // Calculate downtime
   const downtimeMs = Date.now() - openIncident.startedAt.getTime();
   const downtimeMinutes = Math.round(downtimeMs / 60000);
+  const downtimeText = downtimeMinutes < 60
+    ? `${downtimeMinutes} minute${downtimeMinutes !== 1 ? "s" : ""}`
+    : `${Math.round(downtimeMinutes / 60)} hour${Math.round(downtimeMinutes / 60) !== 1 ? "s" : ""}`;
 
-  // Generate AI resolved update
-  const resolvedText = await generateResolvedUpdate({
-    serviceName: monitor.name,
-    downtimeMinutes,
-    incidentTitle: openIncident.title,
-  });
+  const resolvedText = `${monitor.name} has recovered and is responding normally. Total downtime was approximately ${downtimeText}.`;
 
   // Resolve incident
   await db
@@ -254,7 +242,7 @@ async function handleUpTransition(
     incidentId: openIncident.id,
     status: "resolved",
     body: resolvedText,
-    isAiGenerated: true,
+    isAiGenerated: false,
   });
 
   // Queue notification

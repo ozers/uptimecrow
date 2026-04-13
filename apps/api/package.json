@@ -16,7 +16,6 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.39.0",
     "@aws-sdk/client-sesv2": "^3.1029.0",
     "@hono/node-server": "^1.19.12",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
