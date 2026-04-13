@@ -13,6 +13,7 @@ import {
   maintenanceWindows,
 } from "../db/schema.js";
 import { escapeHtml, sanitizeUrl, sanitizeColor } from "../utils/escape.js";
+import { renderMarkdown } from "../utils/markdown.js";
 import { logger } from "../utils/logger.js";
 
 export interface StaticStatusPage {
@@ -351,7 +352,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
             <span style="font-size:11px;font-weight:600;text-transform:capitalize;color:${uc}">${u.status}</span>
             <span style="font-size:11px;color:var(--text3)">${timeAgo(u.createdAt)}</span>
           </div>
-          <p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0;white-space:pre-wrap">${escapeHtml(u.body)}</p>
+          <div class="md" style="font-size:13px;color:var(--text2);line-height:1.6">${renderMarkdown(u.body)}</div>
         </div>
       </div>`;
     }).join("") : '';
@@ -405,7 +406,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       <div style="font-size:11px;color:var(--text3)">${durationText}</div>
     </div>
   </div>
-  ${m.body ? `<p style="font-size:13px;color:var(--text2);line-height:1.6;margin:0;white-space:pre-wrap">${escapeHtml(m.body)}</p>` : ''}
+  ${m.body ? `<div class="md" style="font-size:13px;color:var(--text2);line-height:1.6">${renderMarkdown(m.body)}</div>` : ''}
 </div>`;
   }
 
@@ -509,6 +510,15 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     /* Empty */
     .empty-state{font-size:13px;color:var(--text3);padding:20px 0}
+
+    /* Markdown inside incident bodies */
+    .md p{margin:0 0 8px 0}
+    .md p:last-child{margin-bottom:0}
+    .md ul,.md ol{margin:6px 0 8px 18px;padding:0}
+    .md li{margin:2px 0}
+    .md code{background:var(--border);padding:1px 5px;border-radius:3px;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+    .md a{color:var(--brand);text-decoration:underline}
+    .md strong{color:var(--text)}
 
     /* Subscribe */
     .subscribe-box{margin-top:48px;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:12px}
