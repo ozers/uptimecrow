@@ -10,6 +10,7 @@ import { createToken } from "../utils/auth.js";
 import { registerSchema, loginSchema } from "@uptimecrow/shared";
 import { authMiddleware } from "../middleware/auth.js";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { logger } from "../utils/logger.js";
 
 export const authRoutes = new Hono();
 
@@ -147,9 +148,9 @@ authRoutes.post("/forgot-password", async (c) => {
             Body: { Html: { Data: `<p>Click the link below to reset your password. This link expires in 1 hour.</p><p><a href="${resetUrl}">${resetUrl}</a></p><p>If you didn't request this, ignore this email.</p>`, Charset: "UTF-8" } },
           },
         },
-      })).catch((err: unknown) => console.error("[Auth] Failed to send reset email:", err));
+      })).catch((err: unknown) => logger.error({ err }, "[Auth] Failed to send reset email"));
     } else {
-      console.log(`[Auth] Password reset link (no AWS credentials): ${resetUrl}`);
+      logger.info(`[Auth] Password reset link (no AWS credentials): ${resetUrl}`);
     }
   }
 

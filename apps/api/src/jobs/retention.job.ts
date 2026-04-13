@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { PLAN_LIMITS, PLANS, type Plan } from "@uptimecrow/shared";
+import { logger } from "../utils/logger.js";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -53,5 +54,5 @@ export async function pruneOldCheckResults(): Promise<RetentionResult[]> {
 export async function processRetentionJob(): Promise<void> {
   const results = await pruneOldCheckResults();
   const summary = results.map((r) => `${r.plan}=${r.deleted}`).join(" ");
-  console.log(`[Retention] Pruned check_results: ${summary}`);
+  logger.info(`[Retention] Pruned check_results: ${summary}`);
 }

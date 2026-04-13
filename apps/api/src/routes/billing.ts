@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { users, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { logger } from "../utils/logger.js";
 
 export const billingRoutes = new Hono();
 
@@ -42,7 +43,7 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("[Polar] Checkout error:", err);
+    logger.error({ err }, "[Polar] Checkout error");
     return c.json({ error: "Failed to create checkout" }, 500);
   }
 
@@ -77,7 +78,7 @@ billingRoutes.post("/portal", authMiddleware, async (c) => {
 
   if (!res.ok) {
     const err = await res.text();
-    console.error("[Polar] Portal session error:", err);
+    logger.error({ err }, "[Polar] Portal session error");
     return c.json({ error: "Failed to open billing portal" }, 500);
   }
 
@@ -115,7 +116,7 @@ async function handlePolarWebhook(c: Context) {
   const userId: string | undefined = event.data?.metadata?.user_id;
   const customerId = String(event.data?.customer_id || "");
 
-  console.log(`[Polar] Webhook: ${eventType} for user ${userId}`);
+  logger.info(`[Polar] Webhook: ${eventType} for user ${userId}`);
   if (!userId) return c.json({ ok: true });
 
   switch (eventType) {
@@ -128,7 +129,7 @@ async function handlePolarWebhook(c: Context) {
       if (plan && (status === "active" || status === "trialing")) {
         await db.update(users).set({ plan, stripeCustomerId: customerId }).where(eq(users.id, userId));
         await db.update(organizations).set({ plan }).where(eq(organizations.ownerId, userId));
-        console.log(`[Polar] Upgraded ${userId} to ${plan}`);
+        logger.info(`[Polar] Upgraded ${userId} to ${plan}`);
       }
       break;
     }
@@ -137,7 +138,7 @@ async function handlePolarWebhook(c: Context) {
     case "subscription.revoked": {
       await db.update(users).set({ plan: "free", stripeCustomerId: null }).where(eq(users.id, userId));
       await db.update(organizations).set({ plan: "free" }).where(eq(organizations.ownerId, userId));
-      console.log(`[Polar] Downgraded ${userId} to free`);
+      logger.info(`[Polar] Downgraded ${userId} to free`);
       break;
     }
   }
