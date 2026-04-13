@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, count } from "drizzle-orm";
 import { db } from "../db/index.js";
-import { statusPages, statusPageMonitors, monitors } from "../db/schema.js";
+import { statusPages, statusPageMonitors, monitors, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
-import { createStatusPageSchema, updateStatusPageSchema } from "@uptimecrow/shared";
+import { createStatusPageSchema, updateStatusPageSchema, PLAN_LIMITS } from "@uptimecrow/shared";
 
 export const statusPageRoutes = new Hono();
 
@@ -51,6 +51,26 @@ statusPageRoutes.post("/", async (c) => {
   const parsed = createStatusPageSchema.safeParse(body);
   if (!parsed.success) {
     return c.json({ error: "Validation failed", details: parsed.error.flatten() }, 400);
+  }
+
+  // Enforce plan limits
+  const [org] = await db
+    .select({ plan: organizations.plan })
+    .from(organizations)
+    .where(eq(organizations.id, orgId))
+    .limit(1);
+  const limits = PLAN_LIMITS[org?.plan ?? "free"];
+
+  const [{ total }] = await db
+    .select({ total: count() })
+    .from(statusPages)
+    .where(eq(statusPages.orgId, orgId));
+
+  if (Number(total) >= limits.statusPages) {
+    return c.json(
+      { error: `Status page limit reached. Your plan allows ${limits.statusPages} status page(s).` },
+      403,
+    );
   }
 
   // Check slug uniqueness

@@ -1,14 +1,31 @@
-// Notification Service — Email via Resend + Slack/Discord webhooks
+// Notification Service — Email via SMTP (nodemailer) + Slack/Discord webhooks
 
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
-const getClient = () => {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return null;
-  return new Resend(apiKey);
-};
+function getTransport(): nodemailer.Transporter | null {
+  const host = process.env.SMTP_HOST;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  if (!host || !user || !pass) return null;
+  return nodemailer.createTransport({
+    host,
+    port: parseInt(process.env.SMTP_PORT || "587", 10),
+    secure: process.env.SMTP_PORT === "465",
+    auth: { user, pass },
+  });
+}
 
-const FROM_EMAIL = "UptimeCrow <notifications@uptimecrow.com>";
+const FROM_EMAIL =
+  process.env.SMTP_FROM || "UptimeCrow <notifications@uptimecrow.com>";
+
+async function sendEmail(
+  transport: nodemailer.Transporter,
+  to: string,
+  subject: string,
+  html: string,
+): Promise<void> {
+  await transport.sendMail({ from: FROM_EMAIL, to, subject, html });
+}
 
 export async function sendIncidentNotification(params: {
   statusPageName: string;
@@ -19,10 +36,10 @@ export async function sendIncidentNotification(params: {
 }): Promise<void> {
   if (params.subscriberEmails.length === 0) return;
 
-  const client = getClient();
-  if (!client) {
+  const transport = getTransport();
+  if (!transport) {
     console.log(
-      `[Notification] No RESEND_API_KEY — would send "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
+      `[Notification] No SMTP config — skipping "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
     );
     return;
   }
@@ -34,29 +51,31 @@ export async function sendIncidentNotification(params: {
         ? "🟠 Major"
         : "🟡 Minor";
 
-  try {
-    await client.batch.send(
-      params.subscriberEmails.map((email) => ({
-        from: FROM_EMAIL,
-        to: email,
-        subject: `[${params.statusPageName}] ${severityLabel}: ${params.incidentTitle}`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1a1a1a;">${params.incidentTitle}</h2>
-            <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; background: ${params.severity === "critical" ? "#fee2e2" : params.severity === "major" ? "#ffedd5" : "#fef9c3"}; color: ${params.severity === "critical" ? "#dc2626" : params.severity === "major" ? "#ea580c" : "#ca8a04"};">${severityLabel}</span>
-            <p style="color: #4a4a4a; line-height: 1.6; margin-top: 16px;">${params.updateBody}</p>
-            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;" />
-            <p style="color: #9a9a9a; font-size: 12px;">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
-          </div>
-        `,
-      })),
-    );
-    console.log(
-      `[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
-    );
-  } catch (err) {
-    console.error("[Notification] Failed to send incident emails:", err);
+  const severityColor =
+    params.severity === "critical" ? "#dc2626" : params.severity === "major" ? "#ea580c" : "#ca8a04";
+  const severityBg =
+    params.severity === "critical" ? "#fee2e2" : params.severity === "major" ? "#ffedd5" : "#fef9c3";
+
+  const subject = `[${params.statusPageName}] ${severityLabel}: ${params.incidentTitle}`;
+  const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
+    <h2 style="color:#1a1a1a">${params.incidentTitle}</h2>
+    <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;background:${severityBg};color:${severityColor}">${severityLabel}</span>
+    <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${params.updateBody}</p>
+    <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
+    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
+  </div>`;
+
+  const results = await Promise.allSettled(
+    params.subscriberEmails.map((email) => sendEmail(transport, email, subject, html)),
+  );
+
+  const failed = results.filter((r) => r.status === "rejected");
+  if (failed.length > 0) {
+    console.error(`[Notification] ${failed.length} incident emails failed`);
   }
+  console.log(
+    `[Notification] Sent "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`,
+  );
 }
 
 export async function sendIncidentResolvedNotification(params: {
@@ -67,36 +86,33 @@ export async function sendIncidentResolvedNotification(params: {
 }): Promise<void> {
   if (params.subscriberEmails.length === 0) return;
 
-  const client = getClient();
-  if (!client) {
+  const transport = getTransport();
+  if (!transport) {
     console.log(
-      `[Notification] No RESEND_API_KEY — would send resolved "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
+      `[Notification] No SMTP config — skipping resolved "${params.incidentTitle}"`,
     );
     return;
   }
 
-  try {
-    await client.batch.send(
-      params.subscriberEmails.map((email) => ({
-        from: FROM_EMAIL,
-        to: email,
-        subject: `[${params.statusPageName}] ✅ Resolved: ${params.incidentTitle}`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #1a1a1a;">✅ Resolved: ${params.incidentTitle}</h2>
-            <p style="color: #4a4a4a; line-height: 1.6;">${params.updateBody}</p>
-            <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;" />
-            <p style="color: #9a9a9a; font-size: 12px;">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
-          </div>
-        `,
-      })),
-    );
-    console.log(
-      `[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length} subscribers`,
-    );
-  } catch (err) {
-    console.error("[Notification] Failed to send resolved emails:", err);
+  const subject = `[${params.statusPageName}] ✅ Resolved: ${params.incidentTitle}`;
+  const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
+    <h2 style="color:#1a1a1a">✅ Resolved: ${params.incidentTitle}</h2>
+    <p style="color:#4a4a4a;line-height:1.6">${params.updateBody}</p>
+    <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
+    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
+  </div>`;
+
+  const results = await Promise.allSettled(
+    params.subscriberEmails.map((email) => sendEmail(transport, email, subject, html)),
+  );
+
+  const failed = results.filter((r) => r.status === "rejected");
+  if (failed.length > 0) {
+    console.error(`[Notification] ${failed.length} resolved emails failed`);
   }
+  console.log(
+    `[Notification] Sent resolved "${params.incidentTitle}" to ${params.subscriberEmails.length - failed.length} subscribers`,
+  );
 }
 
 export async function sendVerificationEmail(params: {
@@ -104,30 +120,28 @@ export async function sendVerificationEmail(params: {
   statusPageName: string;
   verifyUrl: string;
 }): Promise<void> {
-  const client = getClient();
-  if (!client) {
+  const transport = getTransport();
+  if (!transport) {
     console.log(
-      `[Notification] No RESEND_API_KEY — would send verification to ${params.email}`,
+      `[Notification] No SMTP config — skipping verification to ${params.email}`,
     );
     return;
   }
 
   try {
-    await client.emails.send({
-      from: FROM_EMAIL,
-      to: params.email,
-      subject: `Confirm your subscription to ${params.statusPageName}`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1a1a1a;">Confirm your subscription</h2>
-          <p style="color: #4a4a4a; line-height: 1.6;">You requested to receive status updates for <strong>${params.statusPageName}</strong>.</p>
-          <p style="margin: 24px 0;">
-            <a href="${params.verifyUrl}" style="display: inline-block; padding: 12px 24px; background: #00e676; color: #000; text-decoration: none; border-radius: 6px; font-weight: 600;">Confirm Subscription</a>
-          </p>
-          <p style="color: #9a9a9a; font-size: 12px;">If you did not request this, you can safely ignore this email.</p>
-        </div>
-      `,
-    });
+    await sendEmail(
+      transport,
+      params.email,
+      `Confirm your subscription to ${params.statusPageName}`,
+      `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
+        <h2 style="color:#1a1a1a">Confirm your subscription</h2>
+        <p style="color:#4a4a4a;line-height:1.6">You requested to receive status updates for <strong>${params.statusPageName}</strong>.</p>
+        <p style="margin:24px 0">
+          <a href="${params.verifyUrl}" style="display:inline-block;padding:12px 24px;background:#00e676;color:#000;text-decoration:none;border-radius:6px;font-weight:600">Confirm Subscription</a>
+        </p>
+        <p style="color:#9a9a9a;font-size:12px">If you did not request this, you can safely ignore this email.</p>
+      </div>`,
+    );
     console.log(`[Notification] Sent verification to ${params.email}`);
   } catch (err) {
     console.error("[Notification] Failed to send verification email:", err);
@@ -144,17 +158,19 @@ export async function sendSlackWebhook(params: {
   severity?: string;
   updateBody: string;
 }): Promise<void> {
-  const color = params.type === "incident_resolved" ? "#00e676"
-    : params.severity === "critical" ? "#ff5252"
-    : params.severity === "major" ? "#ffab40"
-    : "#ffd54f";
+  const color =
+    params.type === "incident_resolved" ? "#00e676"
+      : params.severity === "critical" ? "#ff5252"
+      : params.severity === "major" ? "#ffab40"
+      : "#ffd54f";
 
   const payload = {
     attachments: [{
       color,
-      pretext: params.type === "incident_resolved"
-        ? `✅ *Resolved:* ${params.incidentTitle}`
-        : `🔴 *New Incident:* ${params.incidentTitle}`,
+      pretext:
+        params.type === "incident_resolved"
+          ? `✅ *Resolved:* ${params.incidentTitle}`
+          : `🔴 *New Incident:* ${params.incidentTitle}`,
       fields: [
         { title: "Status Page", value: params.statusPageName, short: true },
         ...(params.severity ? [{ title: "Severity", value: params.severity.toUpperCase(), short: true }] : []),
@@ -186,16 +202,18 @@ export async function sendDiscordWebhook(params: {
   severity?: string;
   updateBody: string;
 }): Promise<void> {
-  const color = params.type === "incident_resolved" ? 0x00e676
-    : params.severity === "critical" ? 0xff5252
-    : params.severity === "major" ? 0xffab40
-    : 0xffd54f;
+  const color =
+    params.type === "incident_resolved" ? 0x00e676
+      : params.severity === "critical" ? 0xff5252
+      : params.severity === "major" ? 0xffab40
+      : 0xffd54f;
 
   const payload = {
     embeds: [{
-      title: params.type === "incident_resolved"
-        ? `✅ Resolved: ${params.incidentTitle}`
-        : `🔴 New Incident: ${params.incidentTitle}`,
+      title:
+        params.type === "incident_resolved"
+          ? `✅ Resolved: ${params.incidentTitle}`
+          : `🔴 New Incident: ${params.incidentTitle}`,
       color,
       fields: [
         { name: "Status Page", value: params.statusPageName, inline: true },
