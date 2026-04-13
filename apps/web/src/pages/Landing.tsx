@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
-  Bot,
   Radio,
   Palette,
   Mail,
-  FileText,
   Timer,
   Menu,
   X,
+  Bell,
+  ShieldCheck,
 } from "lucide-react";
 import "./Landing.css";
 
@@ -44,12 +44,12 @@ function TerminalDemo() {
 
   const lines = [
     { time: "03:14:22", content: <><span className="t-red">▼ DOWN</span> <span className="t-white">api.yourapp.com</span> <span className="t-dim">— HTTP 503, response timeout</span></> },
-    { time: "03:14:25", content: <><span className="t-amber">● AI</span> <span className="t-dim">Incident created:</span> <span className="t-white">"API experiencing elevated error rates"</span></> },
-    { time: "03:14:26", content: <><span className="t-amber">● AI</span> <span className="t-dim">Status page updated → investigating</span></> },
+    { time: "03:14:25", content: <><span className="t-amber">● INCIDENT</span> <span className="t-dim">Created:</span> <span className="t-white">"API experiencing elevated error rates"</span></> },
+    { time: "03:14:26", content: <><span className="t-amber">● STATUS PAGE</span> <span className="t-dim">Updated → investigating</span></> },
     { time: "03:14:30", content: <span className="t-dim"><span aria-hidden="true">✉ </span>47 subscribers notified via email</span> },
     { time: "03:14:31", content: <span className="t-dim"><span aria-hidden="true">⬡ </span>Slack alert sent to #engineering</span> },
     { time: "03:31:07", content: <><span className="t-green">▲ UP</span> <span className="t-white">api.yourapp.com</span> <span className="t-dim">— 200 OK, 143ms</span></> },
-    { time: "03:31:09", content: <><span className="t-green">● AI</span> <span className="t-dim">Incident resolved. Postmortem draft ready.</span></> },
+    { time: "03:31:09", content: <><span className="t-green">● RESOLVED</span> <span className="t-dim">Incident closed. Status page updated.</span></> },
     { time: "03:31:10", content: <span className="t-dim"><span aria-hidden="true">✉ </span>47 subscribers notified — resolved</span> },
     { time: "", content: null },
     { time: "", content: <><span className="t-dim">Total downtime:</span> <span className="t-white">16m 45s</span> <span className="t-dim">· Human intervention:</span> <span className="t-green">none</span></> },
@@ -127,9 +127,9 @@ export function LandingPage() {
       <section className="hero">
         <div className="container">
           <div className="hero-badge">● Now available — start monitoring in 3 minutes</div>
-          <h1>Your site went down.<br /><span className="highlight">AI handled it.</span></h1>
+          <h1>Your site went down.<br /><span className="highlight">We caught it first.</span></h1>
           <p className="hero-sub">
-            Downtime detected → AI writes the incident report → status page updated → subscribers notified. <strong>All before you wake up.</strong>
+            Downtime detected → incident created → status page updated → subscribers notified. <strong>All before you wake up.</strong>
           </p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
@@ -152,17 +152,17 @@ export function LandingPage() {
             <div className="step">
               <div className="step-num">01</div>
               <h3>Add your endpoints</h3>
-              <p>HTTP, TCP, or webhook. We ping every 30 seconds from multiple regions. If it's down, we know in under a minute.</p>
+              <p>HTTP, TCP, or keyword checks. We ping every 30 seconds from multiple regions. If it's down, we know in under a minute.</p>
             </div>
             <div className="step">
               <div className="step-num">02</div>
-              <h3>AI manages incidents</h3>
-              <p>Downtime detected → AI creates an incident, writes a clear status update, and posts it to your status page. No copy-pasting.</p>
+              <h3>Incidents are handled automatically</h3>
+              <p>Downtime detected → incident created, status update written, and status page updated instantly. No manual work needed.</p>
             </div>
             <div className="step">
               <div className="step-num">03</div>
               <h3>Subscribers stay informed</h3>
-              <p>Email, Slack, webhook — your users know what's happening. When it's resolved, AI writes the postmortem draft.</p>
+              <p>Email and Slack — your users know what's happening the moment it does. When it's resolved, everyone gets notified automatically.</p>
             </div>
           </div>
         </div>
@@ -175,12 +175,12 @@ export function LandingPage() {
           <h2 className="section-title">Everything you need.<br />Nothing you don't.</h2>
           <div className="features-grid">
             {[
-              { Icon: Bot, title: "AI Incident Reports", desc: "When things go wrong, AI writes clear, professional incident updates — not generic \"we're investigating\" messages." },
-              { Icon: Radio, title: "Global Monitoring", desc: "HTTP, TCP, and webhook checks every 30s from multiple regions. Sub-minute detection, zero false positives." },
+              { Icon: ShieldCheck, title: "Automatic Incident Detection", desc: "Consecutive failure confirmation prevents false alarms. When it's really down, an incident is created and your status page is updated automatically." },
+              { Icon: Radio, title: "Global Monitoring", desc: "HTTP, TCP, and keyword checks every 30s from multiple regions. Sub-minute detection with configurable confirmation counts." },
               { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Your users see a professional page — not a wall of technical jargon." },
-              { Icon: Mail, title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction." },
-              { Icon: FileText, title: "Postmortem Drafts", desc: "Incident resolved? AI drafts a postmortem with timeline, impact summary, and root cause template. Edit and publish." },
-              { Icon: Timer, title: "Uptime Badge", desc: "Embed a real-time \"99.98% uptime\" badge on your site, README, or docs. Social proof that builds trust." },
+              { Icon: Mail, title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction on your end." },
+              { Icon: Bell, title: "Instant Alerts", desc: "Get notified the moment something goes wrong via Slack webhooks or Discord. Know before your users do." },
+              { Icon: Timer, title: "Uptime Badge", desc: "Embed a real-time uptime badge on your site, README, or docs. Social proof that builds trust automatically." },
             ].map((f) => (
               <div className="feature" key={f.title}>
                 <div className="feature-icon"><f.Icon size={22} aria-hidden="true" /></div>
@@ -196,8 +196,8 @@ export function LandingPage() {
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="container">
           <p className="section-label">Why switch</p>
-          <h2 className="section-title">AI-native, not AI-added.</h2>
-          <p className="section-desc">Most status page tools make you write incident updates manually. We built AI into the core — not as a checkbox feature.</p>
+          <h2 className="section-title">Simple, affordable, and complete.</h2>
+          <p className="section-desc">Most status page tools charge enterprise prices for features you actually need. UptimeCrow gives you monitoring, status pages, and notifications — without the bloat.</p>
           <div className="comparison-scroll">
           <table className="comparison-table">
             <thead>
@@ -211,10 +211,10 @@ export function LandingPage() {
             </thead>
             <tbody>
               {[
-                { feature: "AI incident reports", us: "✓ Auto-generated", bs: "✗", ins: "✗", sp: "✗" },
-                { feature: "AI postmortem drafts", us: "✓ Auto-drafted", bs: "✗", ins: "✗", sp: "✗" },
-                { feature: "Auto status page update", us: "✓", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
+                { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
+                { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Uptime monitoring", us: "✓ 30s intervals", bs: "✓", ins: "✓", sp: "Add-on" },
+                { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Custom domain", us: "✓", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Free tier", us: "✓ Forever free", bs: "Trial only", ins: "✓", sp: "✗" },
                 { feature: "Starting price", us: "$19/mo", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
@@ -247,7 +247,7 @@ export function LandingPage() {
                 <li>1 status page</li>
                 <li>3 monitors</li>
                 <li>5-minute check intervals</li>
-                <li>Manual incident management</li>
+                <li>Automatic incident management</li>
                 <li>Email notifications</li>
                 <li>Uptime badge</li>
               </ul>
@@ -261,11 +261,10 @@ export function LandingPage() {
                 <li>3 status pages</li>
                 <li>20 monitors</li>
                 <li>30-second check intervals</li>
-                <li>AI incident reports</li>
-                <li>AI postmortem drafts</li>
                 <li>Custom domain</li>
                 <li>Slack + webhook alerts</li>
                 <li>Uptime badge embed</li>
+                <li>90-day history retention</li>
                 <li>2 team seats</li>
               </ul>
               <Link to="/register" className="price-btn featured-btn">Get Started</Link>
@@ -279,6 +278,7 @@ export function LandingPage() {
                 <li>Unlimited status pages</li>
                 <li>50 monitors</li>
                 <li>Multi-region checks</li>
+                <li>365-day history retention</li>
                 <li>Team members (5 seats)</li>
                 <li>API access</li>
                 <li>Priority support</li>
@@ -296,7 +296,7 @@ export function LandingPage() {
             <div className="hero-logo-glow" />
             <img src="/logo.png" alt="UptimeCrow" className="hero-logo" />
           </div>
-          <h2>Stop writing incident reports at 3 AM.</h2>
+          <h2>Know when your site is down before your users do.</h2>
           <p>Start monitoring for free. Set up in under 3 minutes.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
