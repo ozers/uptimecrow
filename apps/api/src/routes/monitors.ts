@@ -120,9 +120,17 @@ monitorRoutes.patch("/:id", async (c) => {
     return c.json({ error: "Validation failed", details: parsed.error.flatten() }, 400);
   }
 
+  // The Zod schema transforms empty strings to `undefined`, which Drizzle
+  // would skip. When the user explicitly clears an optional field in the UI
+  // we need to write NULL instead — otherwise the old value sticks around.
+  const updateData: Record<string, unknown> = { ...parsed.data };
+  if ("keyword" in body && !body.keyword) {
+    updateData.keyword = null;
+  }
+
   const [monitor] = await db
     .update(monitors)
-    .set(parsed.data)
+    .set(updateData)
     .where(and(eq(monitors.id, id), eq(monitors.orgId, orgId)))
     .returning();
 
