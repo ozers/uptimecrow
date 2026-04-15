@@ -100,6 +100,8 @@ export function MonitorDetail() {
   const totalChecks = checks?.length ?? 0;
   const visibleChecks = checks?.slice(0, page * PAGE_SIZE) ?? [];
   const hasMore = totalChecks > page * PAGE_SIZE;
+  const failedChecks = checks?.filter((c) => c.status !== "up") ?? [];
+  const recentFailures = failedChecks.slice(0, 10);
 
   const statusColor = {
     up: "text-emerald-400",
@@ -232,6 +234,82 @@ export function MonitorDetail() {
               Response Time
             </p>
             <ResponseChart checks={checks} />
+          </div>
+        )}
+
+        {/* Recent failures — surfaces individual failed checks that didn't
+            cross the confirmation threshold (so no incident was opened) but
+            still pulled uptime % below 100. */}
+        {checks && checks.length > 0 && (
+          <div className="mb-8">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                Recent Failures
+              </p>
+              {failedChecks.length > 0 && (
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  {failedChecks.length} in last {checks.length} checks
+                </span>
+              )}
+            </div>
+            {recentFailures.length === 0 ? (
+              <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-400">
+                No failures in the last {checks.length} checks.
+              </div>
+            ) : (
+              <div className="border-t border-border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                      <TableHead>Status</TableHead>
+                      <TableHead>Code</TableHead>
+                      <TableHead>Region</TableHead>
+                      <TableHead>Error</TableHead>
+                      <TableHead className="text-right">Failed At</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentFailures.map((check) => (
+                      <TableRow key={check.id}>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className="bg-red-500/15 text-red-400 border-red-500/30"
+                          >
+                            {check.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm tabular-nums">
+                          {check.statusCode ?? "—"}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground text-sm uppercase">
+                          {check.region || "—"}
+                        </TableCell>
+                        <TableCell className="max-w-[280px]">
+                          {check.errorMessage ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="block truncate cursor-default text-sm text-muted-foreground">
+                                  {check.errorMessage}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="top" className="max-w-xs break-words">
+                                {check.errorMessage}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="text-muted-foreground/50">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right text-sm text-muted-foreground">
+                          <AbsoluteTime date={check.checkedAt} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </div>
         )}
 
