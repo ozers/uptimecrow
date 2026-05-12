@@ -18,6 +18,9 @@ import {
   sendSlackWebhook,
   sendDiscordWebhook,
   sendCustomWebhook,
+  sendPagerDutyAlert,
+  sendTeamsWebhook,
+  sendTelegramMessage,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -116,12 +119,16 @@ export async function processNotifyJob(
     }
   }
 
-  // Send Slack/Discord webhooks
+  // Send webhooks & integrations
   const [org] = await db
     .select({
       slackWebhookUrl: organizations.slackWebhookUrl,
       discordWebhookUrl: organizations.discordWebhookUrl,
       customWebhookUrl: organizations.customWebhookUrl,
+      pagerdutyIntegrationKey: organizations.pagerdutyIntegrationKey,
+      teamsWebhookUrl: organizations.teamsWebhookUrl,
+      telegramBotToken: organizations.telegramBotToken,
+      telegramChatId: organizations.telegramChatId,
     })
     .from(organizations)
     .where(eq(organizations.id, page.orgId))
@@ -143,6 +150,23 @@ export async function processNotifyJob(
   }
   if (org?.customWebhookUrl) {
     await sendCustomWebhook({ ...webhookParams, webhookUrl: org.customWebhookUrl });
+  }
+  if (org?.pagerdutyIntegrationKey) {
+    await sendPagerDutyAlert({
+      ...webhookParams,
+      integrationKey: org.pagerdutyIntegrationKey,
+      dedupKey: incident.id,
+    });
+  }
+  if (org?.teamsWebhookUrl) {
+    await sendTeamsWebhook({ ...webhookParams, webhookUrl: org.teamsWebhookUrl });
+  }
+  if (org?.telegramBotToken && org?.telegramChatId) {
+    await sendTelegramMessage({
+      ...webhookParams,
+      botToken: org.telegramBotToken,
+      chatId: org.telegramChatId,
+    });
   }
 }
 

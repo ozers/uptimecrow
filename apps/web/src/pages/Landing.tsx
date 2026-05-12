@@ -293,7 +293,7 @@ export function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● Now available — start monitoring in 3 minutes</div>
+          <div className="hero-badge">● Free forever · 10 monitors · 1 status page · 60-second checks</div>
           <h1>Your site went down.<br /><span className="highlight">We caught it first.</span></h1>
           <p className="hero-sub">
             Downtime detected → incident created → status page updated → subscribers notified. <strong>All before you wake up.</strong>
@@ -302,9 +302,21 @@ export function LandingPage() {
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <a href="#how" className="hero-btn secondary">See how it works</a>
           </div>
-          <p className="form-note">Free tier forever. No credit card required.</p>
+          <p className="form-note">No credit card required. Live in 3 minutes.</p>
         </div>
       </section>
+
+      {/* LOGO WALL */}
+      <div className="logo-wall">
+        <div className="logo-wall-inner">
+          <span className="logo-wall-label">trusted by developers building</span>
+          <div className="logo-wall-items">
+            {["SaaS products", "open source tools", "API platforms", "indie apps", "developer tools", "e-commerce"].map((item) => (
+              <span key={item} className="logo-wall-item">{item}</span>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* TERMINAL DEMO */}
       <TerminalDemo />
@@ -449,9 +461,10 @@ export function LandingPage() {
               { Icon: ShieldCheck, title: "Automatic Incident Detection", desc: "Consecutive failure confirmation prevents false alarms. When it's really down, an incident is created and your status page is updated automatically." },
               { Icon: Radio, title: "Uptime Monitoring", desc: "HTTP, TCP, and keyword checks every minute from multiple regions. Sub-minute detection with configurable confirmation counts." },
               { Icon: Heart, title: "Heartbeat Monitoring", desc: "Monitor cron jobs and scheduled tasks. Your service pings a unique URL — if we don't hear from it, we alert you. Available on every plan." },
-              { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Your users see a professional page — not a wall of technical jargon." },
-              { Icon: Mail, title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction on your end." },
-              { Icon: Bell, title: "Instant Alerts", desc: "Get notified the moment something goes wrong via Slack or Discord webhooks. Know before your users do." },
+              { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Pre-rendered so they stay online even when your origin is down." },
+              { Icon: Mail, title: "Subscriber Notifications", desc: "Email, Slack, Discord, PagerDuty, Teams, and Telegram alerts when incidents start and resolve. Your users subscribe themselves." },
+              { Icon: Zap, title: "MCP Server for AI Assistants", desc: "Query your monitor status directly from Claude Code, Cursor, or Windsurf. Ask 'Is my API up?' without leaving your editor. First-class MCP support." },
+              { Icon: Bell, title: "Incident Templates", desc: "9 pre-written templates for common incident types. One click to fill in the title and update body — incident comms in seconds, not minutes." },
               { Icon: Timer, title: "Uptime Badge", desc: "Embed a real-time uptime badge on your site, README, or docs. Social proof that builds trust automatically." },
             ].map((f) => (
               <div className="feature" key={f.title}>
@@ -485,11 +498,14 @@ export function LandingPage() {
               {[
                 { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
-                { feature: "Uptime monitoring", us: "✓ 1-min intervals", bs: "✓", ins: "✓", sp: "Add-on" },
+                { feature: "Uptime monitoring", us: "✓ 60s free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
+                { feature: "Free monitors", us: "✓ 10 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
                 { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
-                { feature: "Custom domain", us: "✓", bs: "✓", ins: "✓", sp: "✓" },
-                { feature: "Free tier", us: "✓ Forever free", bs: "Trial only", ins: "✓", sp: "✗" },
                 { feature: "Heartbeat monitoring", us: "✓ All plans", bs: "✓ Paid only", ins: "✗", sp: "✗" },
+                { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
+                { feature: "PagerDuty + Teams + Telegram", us: "✓ Built-in", bs: "✓ Paid", ins: "✗ Partial", sp: "✓ Enterprise" },
+                { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
+                { feature: "False positive prevention", us: "✓ Multi-check", bs: "✓", ins: "✗", sp: "✗" },
                 { feature: "Starting price", us: "$12/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
               ].map((row) => (
                 <tr key={row.feature}>

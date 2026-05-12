@@ -14,6 +14,7 @@ import { maintenanceRoutes } from "./routes/maintenance.js";
 import { apiKeyRoutes } from "./routes/api-keys.js";
 import { docsRoutes } from "./routes/docs.js";
 import heartbeatRoutes from "./routes/heartbeats.js";
+import { mcpRoutes } from "./routes/mcp.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { db } from "./db/index.js";
 import { heartbeats } from "./db/schema.js";
@@ -97,6 +98,7 @@ app.route("/api/billing", billingRoutes);
 app.route("/api/maintenance-windows", maintenanceRoutes);
 app.route("/api/api-keys", apiKeyRoutes);
 app.route("/api/heartbeats", heartbeatRoutes);
+app.route("/api/mcp", mcpRoutes);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);

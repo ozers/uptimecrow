@@ -552,6 +552,49 @@
 .final-cta h2 { font-size: 2rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 1rem; }
 .final-cta p { font-size: 1rem; color: var(--text2); margin-bottom: 2rem; font-weight: 300; }
 
+/* Logo Wall */
+.logo-wall {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.25rem 0;
+}
+.logo-wall-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.logo-wall-label {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text3);
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.logo-wall-items {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.logo-wall-item {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text2);
+  padding: 0.25rem 0.85rem;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  margin: 0.25rem;
+  white-space: nowrap;
+}
+
 /* Social Proof Strip */
 .proof-strip {
   border-top: 1px solid var(--border);

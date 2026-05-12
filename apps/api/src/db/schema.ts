@@ -61,6 +61,10 @@ export const organizations = pgTable("organizations", {
   slackWebhookUrl: varchar("slack_webhook_url", { length: 2048 }),
   discordWebhookUrl: varchar("discord_webhook_url", { length: 2048 }),
   customWebhookUrl: varchar("custom_webhook_url", { length: 2048 }),
+  pagerdutyIntegrationKey: varchar("pagerduty_integration_key", { length: 255 }),
+  teamsWebhookUrl: varchar("teams_webhook_url", { length: 2048 }),
+  telegramBotToken: varchar("telegram_bot_token", { length: 255 }),
+  telegramChatId: varchar("telegram_chat_id", { length: 100 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
