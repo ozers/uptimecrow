@@ -30,6 +30,9 @@ import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
 import { VsFreshping } from "./pages/compare/VsFreshping";
 import { VsUptimeKuma } from "./pages/compare/VsUptimeKuma";
 import { VsInstatus } from "./pages/compare/VsInstatus";
+import McpPage from "./pages/McpPage";
+import SelfHostPage from "./pages/SelfHostPage";
+import HeartbeatPage from "./pages/HeartbeatPage";
 
 export function App() {
   return (
@@ -47,6 +50,9 @@ export function App() {
         <Route path="/vs/freshping" element={<VsFreshping />} />
         <Route path="/vs/uptime-kuma" element={<VsUptimeKuma />} />
         <Route path="/vs/instatus" element={<VsInstatus />} />
+        <Route path="/mcp" element={<McpPage />} />
+        <Route path="/self-host" element={<SelfHostPage />} />
+        <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
