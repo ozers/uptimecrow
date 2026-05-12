@@ -177,6 +177,8 @@ export function CompareLayout(props: Props) {
               <Link to="/vs/uptime-kuma">vs Uptime Kuma</Link>
               <Link to="/vs/freshping">vs Freshping</Link>
               <Link to="/vs/instatus">vs Instatus</Link>
+              <Link to="/vs/pingdom">vs Pingdom</Link>
+              <Link to="/vs/cronitor">vs Cronitor</Link>
               <Link to="/privacy">Privacy</Link>
               <Link to="/login">Log in</Link>
             </div>
