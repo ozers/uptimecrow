@@ -1,7 +1,7 @@
 // Notify Job — Email notification queue handler
 
 import type { Job } from "bullmq";
-import { eq, and } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { logger } from "../utils/logger.js";
 import {
@@ -11,7 +11,10 @@ import {
   incidentUpdates,
   organizations,
   users,
+  onCallSchedules,
+  onCallContacts,
 } from "../db/schema.js";
+import { getCurrentOnCall } from "../routes/oncall.js";
 import {
   sendIncidentNotification,
   sendIncidentResolvedNotification,
@@ -235,6 +238,49 @@ export async function processNotifyJob(
       incidentTitle: incident.title,
       severity: incident.severity,
     });
+  }
+
+  // Notify on-call person
+  if (type === "incident_created" || type === "incident_resolved") {
+    const [schedule] = await db
+      .select({ id: onCallSchedules.id, rotationDays: onCallSchedules.rotationDays })
+      .from(onCallSchedules)
+      .where(eq(onCallSchedules.orgId, page.orgId))
+      .limit(1);
+
+    if (schedule) {
+      const contacts = await db
+        .select()
+        .from(onCallContacts)
+        .where(eq(onCallContacts.scheduleId, schedule.id))
+        .orderBy(asc(onCallContacts.position));
+
+      const oncall = getCurrentOnCall(contacts, schedule.rotationDays);
+      if (oncall) {
+        // SMS on-call person if they have a phone and Twilio is configured
+        if (oncall.phone && org?.twilioAccountSid && org?.twilioAuthToken && org?.twilioFromNumber) {
+          await sendSmsAlert({
+            accountSid: org.twilioAccountSid,
+            authToken: org.twilioAuthToken,
+            fromNumber: org.twilioFromNumber,
+            toNumber: oncall.phone,
+            type: type as "incident_created" | "incident_resolved",
+            statusPageName: page.name,
+            incidentTitle: incident.title,
+            severity: incident.severity,
+          }).catch((err) => logger.error({ err }, "[Notify] On-call SMS failed"));
+        }
+        // Email on-call person
+        if (oncall.email) {
+          const { sendIncidentNotification, sendIncidentResolvedNotification } = await import("../services/notification.service.js");
+          if (type === "incident_resolved") {
+            await sendIncidentResolvedNotification({ statusPageName: page.name, incidentTitle: incident.title, updateBody, subscriberEmails: [oncall.email] }).catch(() => null);
+          } else {
+            await sendIncidentNotification({ statusPageName: page.name, incidentTitle: incident.title, severity: incident.severity, updateBody, subscriberEmails: [oncall.email] }).catch(() => null);
+          }
+        }
+      }
+    }
   }
 }
 

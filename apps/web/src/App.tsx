@@ -22,9 +22,11 @@ import { StatusPageDetail } from "./pages/dashboard/status-pages/StatusPageDetai
 import { Settings } from "./pages/dashboard/Settings";
 import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
 import { HeartbeatsList } from "./pages/dashboard/heartbeats/HeartbeatsList";
+import { OnCallPage } from "./pages/dashboard/oncall/OnCallPage";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
 import { Docs } from "./pages/Docs";
+import { AcceptInvite } from "./pages/AcceptInvite";
 import { VsBetterStack } from "./pages/compare/VsBetterStack";
 import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
 import { VsFreshping } from "./pages/compare/VsFreshping";
@@ -57,6 +59,7 @@ export function App() {
         <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
         <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />
+        <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
@@ -75,6 +78,7 @@ export function App() {
             <Route path="/dashboard/status-pages/:id/edit" element={<StatusPageEdit />} />
             <Route path="/dashboard/heartbeats" element={<HeartbeatsList />} />
             <Route path="/dashboard/maintenance" element={<MaintenanceList />} />
+            <Route path="/dashboard/oncall" element={<OnCallPage />} />
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
         </Route>

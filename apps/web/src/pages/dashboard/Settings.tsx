@@ -4,13 +4,14 @@ import { useAuthStore } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { User, CreditCard, Webhook, ExternalLink, Loader2, Mail } from "lucide-react";
+import { User, CreditCard, Webhook, ExternalLink, Loader2, Mail, Users, Trash2, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PageHeader } from "@/components/page-header";
 import { ApiKeysSection } from "@/components/api-keys-section";
+import { useTeam, useInviteMember, useRemoveMember, useCancelInvite } from "@/lib/queries/team";
 import type { Plan } from "@uptimecrow/shared";
 
 interface OrgSettings {
@@ -449,6 +450,110 @@ export function Settings() {
 
         <ApiKeysSection enabled={limits.apiAccess} />
 
+        <TeamSection orgPlan={plan} />
+
+      </div>
+    </div>
+  );
+}
+
+function TeamSection({ orgPlan }: { orgPlan: string }) {
+  const { data, isLoading } = useTeam();
+  const inviteMember = useInviteMember();
+  const removeMember = useRemoveMember();
+  const cancelInvite = useCancelInvite();
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("member");
+  const [inviting, setInviting] = useState(false);
+
+  const handleInvite = async () => {
+    if (!inviteEmail.trim()) return;
+    setInviting(true);
+    try {
+      await inviteMember.mutateAsync({ email: inviteEmail.trim(), role: inviteRole });
+      toast.success(`Invite sent to ${inviteEmail}`);
+      setInviteEmail("");
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : "Failed to send invite");
+    } finally {
+      setInviting(false);
+    }
+  };
+
+  const pendingInvites = data?.invites?.filter((i) => !i.acceptedAt) ?? [];
+
+  return (
+    <div>
+      <SectionLabel icon={Users} title="Team" />
+      <div className="border-t border-b border-border">
+        {/* Members */}
+        {isLoading ? (
+          <div className="py-4 text-sm text-muted-foreground">Loading…</div>
+        ) : (
+          <>
+            {(data?.members ?? []).map((member) => (
+              <div key={member.id} className="flex items-center justify-between py-3.5 border-b border-border/50 last:border-0">
+                <div>
+                  <p className="text-sm font-medium">{member.name}</p>
+                  <p className="text-xs text-muted-foreground">{member.email} · <span className="capitalize">{member.role}</span></p>
+                </div>
+                <button
+                  onClick={() => removeMember.mutate(member.userId, { onSuccess: () => toast.success("Member removed"), onError: () => toast.error("Failed") })}
+                  className="text-destructive/60 hover:text-destructive transition-colors p-1"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+
+            {pendingInvites.map((invite) => (
+              <div key={invite.id} className="flex items-center justify-between py-3.5 border-b border-border/50 last:border-0 opacity-60">
+                <div>
+                  <p className="text-sm">{invite.email}</p>
+                  <p className="text-xs text-muted-foreground">Invite pending · <span className="capitalize">{invite.role}</span></p>
+                </div>
+                <button
+                  onClick={() => cancelInvite.mutate(invite.id, { onSuccess: () => toast.success("Invite cancelled") })}
+                  className="text-destructive/60 hover:text-destructive transition-colors p-1"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+
+            {data?.members.length === 0 && pendingInvites.length === 0 && (
+              <p className="py-4 text-sm text-muted-foreground">No team members yet.</p>
+            )}
+          </>
+        )}
+      </div>
+
+      <div className="pt-4 space-y-3">
+        <p className="text-xs text-muted-foreground">
+          Invite a teammate by email. They'll receive a link to join your organization.
+          {" "}Your plan allows <strong>{PLAN_LIMITS[orgPlan as Plan]?.teamSeats ?? 1}</strong> seat(s).
+        </p>
+        <div className="flex gap-2 flex-wrap">
+          <Input
+            placeholder="colleague@company.com"
+            value={inviteEmail}
+            onChange={(e) => setInviteEmail(e.target.value)}
+            className="flex-1 min-w-48"
+            onKeyDown={(e) => e.key === "Enter" && handleInvite()}
+          />
+          <select
+            value={inviteRole}
+            onChange={(e) => setInviteRole(e.target.value)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+          <Button onClick={handleInvite} disabled={inviting || !inviteEmail.trim()}>
+            <Plus className="mr-1 h-3.5 w-3.5" />
+            {inviting ? "Sending…" : "Invite"}
+          </Button>
+        </div>
       </div>
     </div>
   );

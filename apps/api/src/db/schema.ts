@@ -9,6 +9,7 @@ import {
   timestamp,
   pgEnum,
   index,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 // ── Enums ──
@@ -43,7 +44,8 @@ export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }).notNull(),
-  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  passwordHash: varchar("password_hash", { length: 255 }),
+  googleId: varchar("google_id", { length: 255 }).unique(),
   plan: planEnum("plan").notNull().default("free"),
   stripeCustomerId: varchar("stripe_customer_id", { length: 255 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -295,5 +297,67 @@ export const subscribers = pgTable(
   (table) => [
     index("subscribers_status_page_id_idx").on(table.statusPageId),
     index("subscribers_email_page_idx").on(table.statusPageId, table.email),
+  ],
+);
+
+export const orgMembers = pgTable(
+  "org_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+    role: varchar("role", { length: 20 }).notNull().default("member"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("org_members_org_user_idx").on(table.orgId, table.userId),
+    index("org_members_org_id_idx").on(table.orgId),
+  ],
+);
+
+export const orgInvites = pgTable(
+  "org_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+    email: varchar("email", { length: 255 }).notNull(),
+    role: varchar("role", { length: 20 }).notNull().default("member"),
+    token: uuid("token").notNull().defaultRandom().unique(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    acceptedAt: timestamp("accepted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("org_invites_org_id_idx").on(table.orgId),
+  ],
+);
+
+export const onCallSchedules = pgTable(
+  "on_call_schedules",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull().default("Default"),
+    rotationDays: integer("rotation_days").notNull().default(7),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("on_call_schedules_org_id_idx").on(table.orgId),
+  ],
+);
+
+export const onCallContacts = pgTable(
+  "on_call_contacts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    scheduleId: uuid("schedule_id").notNull().references(() => onCallSchedules.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }),
+    phone: varchar("phone", { length: 32 }),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("on_call_contacts_schedule_id_idx").on(table.scheduleId),
   ],
 );
