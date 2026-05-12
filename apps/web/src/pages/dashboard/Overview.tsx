@@ -524,7 +524,7 @@ export function Overview() {
               </p>
             </div>
             <Button size="sm" variant="outline" asChild>
-              <Link to="/dashboard/settings#plan">Upgrade to Pro</Link>
+              <Link to="/dashboard/settings#plan">Upgrade</Link>
             </Button>
           </div>
         )}

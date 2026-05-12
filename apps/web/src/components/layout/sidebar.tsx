@@ -7,6 +7,7 @@ import {
   Settings,
   Zap,
   Wrench,
+  Heart,
   Sun,
   Moon,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import { useTheme } from "@/lib/theme";
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "Monitors", href: "/dashboard/monitors", icon: Activity },
+  { label: "Heartbeats", href: "/dashboard/heartbeats", icon: Heart },
   { label: "Incidents", href: "/dashboard/incidents", icon: AlertTriangle },
   { label: "Maintenance", href: "/dashboard/maintenance", icon: Wrench },
   { label: "Status Pages", href: "/dashboard/status-pages", icon: Globe },
@@ -80,8 +82,8 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
               <Zap className="h-3.5 w-3.5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-primary">Upgrade to Pro</p>
-              <p className="text-xs text-muted-foreground truncate">Faster intervals + custom domains</p>
+              <p className="text-xs font-semibold text-primary">Upgrade your plan</p>
+              <p className="text-xs text-muted-foreground truncate">More monitors, heartbeats & custom domain</p>
             </div>
           </Link>
         )}

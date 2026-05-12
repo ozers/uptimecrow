@@ -155,7 +155,7 @@ export function CompareLayout(props: Props) {
 
       <section className="final-cta">
         <div className="container">
-          <h2>Try {BRAND} free for 3 monitors, forever.</h2>
+          <h2>Try {BRAND} free — 10 monitors, forever.</h2>
           <p>No credit card. If it fits, upgrade in one click. If not, delete your account in Settings.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
@@ -166,12 +166,16 @@ export function CompareLayout(props: Props) {
 
       <footer>
         <div className="container">
-          <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-          <div className="footer-links">
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/login">Log in</Link>
+          <div className="footer-bottom">
+            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
+            <div className="footer-links">
+              <Link to="/">Home</Link>
+              <Link to="/pricing">Pricing</Link>
+              <Link to="/vs/betterstack">vs Betterstack</Link>
+              <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/login">Log in</Link>
+            </div>
           </div>
         </div>
       </footer>

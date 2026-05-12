@@ -112,7 +112,7 @@ export function Terms() {
       <p>
         <strong>Billing notice:</strong> online payments and coupon redemption are temporarily paused while
         we migrate our billing infrastructure. If you'd like to upgrade during this window, email
-        <a href="mailto:support@hooksense.com" className="text-primary"> support@hooksense.com</a> and we'll
+        <a href="mailto:support@uptimecrow.com" className="text-primary"> support@uptimecrow.com</a> and we'll
         help you through it manually.
       </p>
 

@@ -13,7 +13,7 @@ import {
   maintenanceWindowMonitors,
 } from "../db/schema.js";
 import { makeQueue } from "../utils/queues.js";
-import { executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
+import { checkSslExpiry, executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
 import { organizations } from "../db/schema.js";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
@@ -96,6 +96,30 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
       errorMessage: result.errorMessage,
       region: result.region,
     });
+  }
+
+  // SSL check for HTTPS monitors — re-checked at most once per 24h to avoid per-ping TLS overhead
+  if (monitor.type !== "tcp" && monitor.url.startsWith("https://")) {
+    const SSL_TTL_MS = 24 * 60 * 60 * 1000;
+    const needsRefresh = !monitor.sslCheckedAt ||
+      Date.now() - new Date(monitor.sslCheckedAt).getTime() > SSL_TTL_MS;
+
+    let sslExpiresAt = monitor.sslExpiresAt ? new Date(monitor.sslExpiresAt) : null;
+    if (needsRefresh) {
+      const ssl = await checkSslExpiry(monitor.url);
+      sslExpiresAt = ssl.expiresAt;
+      await db.update(monitors).set({ sslExpiresAt: ssl.expiresAt, sslCheckedAt: new Date() }).where(eq(monitors.id, monitorId));
+    }
+
+    if (sslExpiresAt) {
+      const daysRemaining = Math.floor((sslExpiresAt.getTime() - Date.now()) / 86_400_000);
+      if (daysRemaining < 14 && result.status === "up") {
+        const daysMsg = daysRemaining < 0
+          ? "SSL certificate has expired"
+          : `SSL certificate expires in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+        result = { ...result, status: "degraded" as const, errorMessage: daysMsg };
+      }
+    }
   }
 
   // Update monitor status

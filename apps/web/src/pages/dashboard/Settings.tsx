@@ -20,6 +20,7 @@ interface OrgSettings {
   plan: string;
   slackWebhookUrl: string | null;
   discordWebhookUrl: string | null;
+  customWebhookUrl: string | null;
 }
 
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
@@ -37,6 +38,7 @@ export function Settings() {
   const [org, setOrg] = useState<OrgSettings | null>(null);
   const [slackUrl, setSlackUrl] = useState("");
   const [discordUrl, setDiscordUrl] = useState("");
+  const [customWebhookUrl, setCustomWebhookUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -45,6 +47,7 @@ export function Settings() {
       setOrg(data.organization);
       setSlackUrl(data.organization.slackWebhookUrl || "");
       setDiscordUrl(data.organization.discordWebhookUrl || "");
+      setCustomWebhookUrl(data.organization.customWebhookUrl || "");
     });
   }, []);
 
@@ -79,6 +82,7 @@ export function Settings() {
       const data = await api.patch<{ organization: OrgSettings }>("/api/settings", {
         slackWebhookUrl: slackUrl || null,
         discordWebhookUrl: discordUrl || null,
+        customWebhookUrl: customWebhookUrl || null,
       });
       setOrg(data.organization);
       toast.success("Webhooks saved");
@@ -89,7 +93,7 @@ export function Settings() {
     }
   };
 
-  const testWebhook = async (type: "slack" | "discord") => {
+  const testWebhook = async (type: "slack" | "discord" | "custom") => {
     try {
       await api.post("/api/settings/test-webhook", { type });
       toast.success(`Test ${type} notification sent!`);
@@ -158,6 +162,7 @@ export function Settings() {
               {[
                 { label: "Monitors", value: limits.monitors },
                 { label: "Status Pages", value: limits.statusPages === Infinity ? "Unlimited" : limits.statusPages },
+                { label: "Heartbeats", value: limits.heartbeats },
                 { label: "Min Check Interval", value: `${limits.minInterval}s` },
                 { label: "Data Retention", value: `${limits.retentionDays} days` },
               ].map(({ label, value }) => (
@@ -183,9 +188,9 @@ export function Settings() {
                     it manually — usually the same day.
                   </p>
                   <Button size="sm" variant="outline" asChild className="gap-1.5">
-                    <a href="mailto:support@hooksense.com?subject=UptimeCrow%20upgrade%20request">
+                    <a href="mailto:support@uptimecrow.com?subject=UptimeCrow%20upgrade%20request">
                       <Mail className="h-3.5 w-3.5" />
-                      Email support@hooksense.com
+                      Email support@uptimecrow.com
                     </a>
                   </Button>
                 </div>
@@ -232,7 +237,7 @@ export function Settings() {
             </div>
 
             {/* Discord */}
-            <div className="py-4">
+            <div className="py-4 border-b border-border">
               <div className="mb-3">
                 <Label htmlFor="discord" className="text-sm font-medium">Discord Webhook URL</Label>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -249,6 +254,30 @@ export function Settings() {
                 />
                 {org?.discordWebhookUrl && (
                   <Button variant="outline" size="sm" className="sm:shrink-0" onClick={() => testWebhook("discord")}>
+                    Test
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Custom Webhook */}
+            <div className="py-4">
+              <div className="mb-3">
+                <Label htmlFor="customWebhook" className="text-sm font-medium">Custom Webhook URL</Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  POST JSON payload to any URL on incident events. Useful for PagerDuty, OpsGenie, or custom integrations.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input
+                  id="customWebhook"
+                  placeholder="https://example.com/webhooks/uptimecrow"
+                  value={customWebhookUrl}
+                  onChange={(e) => setCustomWebhookUrl(e.target.value)}
+                  className="flex-1"
+                />
+                {org?.customWebhookUrl && (
+                  <Button variant="outline" size="sm" className="sm:shrink-0" onClick={() => testWebhook("custom")}>
                     Test
                   </Button>
                 )}

@@ -51,6 +51,7 @@ services:
       STATUS_PAGE_URL: http://localhost:5173/status
     volumes:
       - ./apps/api/src:/app/apps/api/src
+      - ./apps/api/drizzle:/app/apps/api/drizzle
       - ./packages/shared/src:/app/packages/shared/src
     depends_on:
       postgres:

@@ -13,7 +13,7 @@ import {
 
 // ── Enums ──
 
-export const planEnum = pgEnum("plan", ["free", "pro", "team"]);
+export const planEnum = pgEnum("plan", ["free", "indie", "pro", "team"]);
 export const monitorTypeEnum = pgEnum("monitor_type", ["http", "tcp", "keyword"]);
 export const monitorStatusEnum = pgEnum("monitor_status", ["up", "down", "degraded", "unknown"]);
 export const checkStatusEnum = pgEnum("check_status", ["up", "down", "degraded"]);
@@ -29,6 +29,12 @@ export const maintenanceStatusEnum = pgEnum("maintenance_status", [
   "in_progress",
   "completed",
   "cancelled",
+]);
+export const heartbeatStatusEnum = pgEnum("heartbeat_status", [
+  "healthy",
+  "late",
+  "paused",
+  "unknown",
 ]);
 
 // ── Tables ──
@@ -54,6 +60,7 @@ export const organizations = pgTable("organizations", {
   aiTokensUsed: integer("ai_tokens_used").notNull().default(0),
   slackWebhookUrl: varchar("slack_webhook_url", { length: 2048 }),
   discordWebhookUrl: varchar("discord_webhook_url", { length: 2048 }),
+  customWebhookUrl: varchar("custom_webhook_url", { length: 2048 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -76,6 +83,8 @@ export const monitors = pgTable(
     lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     lastResponseMs: integer("last_response_ms"),
     isActive: boolean("is_active").notNull().default(true),
+    sslExpiresAt: timestamp("ssl_expires_at", { withTimezone: true }),
+    sslCheckedAt: timestamp("ssl_checked_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("monitors_org_id_idx").on(table.orgId)],
@@ -233,6 +242,27 @@ export const maintenanceWindowMonitors = pgTable(
   (table) => [
     index("mwm_maintenance_window_id_idx").on(table.maintenanceWindowId),
     index("mwm_monitor_id_idx").on(table.monitorId),
+  ],
+);
+
+export const heartbeats = pgTable(
+  "heartbeats",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    orgId: uuid("org_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: varchar("name", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 100 }).notNull().unique(),
+    period: integer("period").notNull().default(86400),
+    grace: integer("grace").notNull().default(300),
+    status: heartbeatStatusEnum("status").notNull().default("unknown"),
+    lastPingAt: timestamp("last_ping_at", { withTimezone: true }),
+    isActive: boolean("is_active").notNull().default(true),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("heartbeats_org_id_idx").on(table.orgId),
   ],
 );
 

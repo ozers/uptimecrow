@@ -21,6 +21,7 @@ import { StatusPageEdit } from "./pages/dashboard/status-pages/StatusPageEdit";
 import { StatusPageDetail } from "./pages/dashboard/status-pages/StatusPageDetail";
 import { Settings } from "./pages/dashboard/Settings";
 import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
+import { HeartbeatsList } from "./pages/dashboard/heartbeats/HeartbeatsList";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
 import { VsBetterStack } from "./pages/compare/VsBetterStack";
@@ -54,6 +55,7 @@ export function App() {
             <Route path="/dashboard/status-pages/new" element={<StatusPageCreate />} />
             <Route path="/dashboard/status-pages/:id" element={<StatusPageDetail />} />
             <Route path="/dashboard/status-pages/:id/edit" element={<StatusPageEdit />} />
+            <Route path="/dashboard/heartbeats" element={<HeartbeatsList />} />
             <Route path="/dashboard/maintenance" element={<MaintenanceList />} />
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>

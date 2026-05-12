@@ -24,7 +24,7 @@ export interface RetentionResult {
 }
 
 // Deletes check_results rows older than each org's plan retention window.
-// Runs one DELETE per plan tier — small number (3) and each is bounded by
+// Runs one DELETE per plan tier — one per plan in PLANS — each bounded by
 // the index on (monitor_id, checked_at).
 export async function pruneOldCheckResults(): Promise<RetentionResult[]> {
   const cutoffs = computeCutoffs();

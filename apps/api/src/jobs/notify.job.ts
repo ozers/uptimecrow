@@ -17,6 +17,7 @@ import {
   sendVerificationEmail,
   sendSlackWebhook,
   sendDiscordWebhook,
+  sendCustomWebhook,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -117,7 +118,11 @@ export async function processNotifyJob(
 
   // Send Slack/Discord webhooks
   const [org] = await db
-    .select({ slackWebhookUrl: organizations.slackWebhookUrl, discordWebhookUrl: organizations.discordWebhookUrl })
+    .select({
+      slackWebhookUrl: organizations.slackWebhookUrl,
+      discordWebhookUrl: organizations.discordWebhookUrl,
+      customWebhookUrl: organizations.customWebhookUrl,
+    })
     .from(organizations)
     .where(eq(organizations.id, page.orgId))
     .limit(1);
@@ -135,6 +140,9 @@ export async function processNotifyJob(
   }
   if (org?.discordWebhookUrl) {
     await sendDiscordWebhook({ ...webhookParams, webhookUrl: org.discordWebhookUrl });
+  }
+  if (org?.customWebhookUrl) {
+    await sendCustomWebhook({ ...webhookParams, webhookUrl: org.customWebhookUrl });
   }
 }
 

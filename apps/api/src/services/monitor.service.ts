@@ -1,6 +1,7 @@
 // Monitor Service — HTTP/TCP check execution with multi-region + keyword support
 
 import net from "node:net";
+import tls from "node:tls";
 
 export const REGIONS = ["eu-west", "us-east", "ap-southeast"] as const;
 export type Region = (typeof REGIONS)[number];
@@ -291,4 +292,45 @@ export async function executeMultiRegionCheck(
   }
 
   return { overallStatus, results };
+}
+
+// SSL certificate expiry check
+export interface SslCheckResult {
+  expiresAt: Date | null;
+  daysRemaining: number | null;
+  status: "ok" | "expiring_soon" | "expired" | "error";
+}
+
+export async function checkSslExpiry(url: string): Promise<SslCheckResult> {
+  let hostname: string;
+  let port = 443;
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return { expiresAt: null, daysRemaining: null, status: "ok" };
+    hostname = parsed.hostname;
+    if (parsed.port) port = parseInt(parsed.port, 10);
+  } catch {
+    return { expiresAt: null, daysRemaining: null, status: "error" };
+  }
+
+  return new Promise((resolve) => {
+    const socket = tls.connect({ host: hostname, port, servername: hostname, rejectUnauthorized: false }, () => {
+      try {
+        const cert = socket.getPeerCertificate();
+        socket.destroy();
+        if (!cert?.valid_to) return resolve({ expiresAt: null, daysRemaining: null, status: "error" });
+        const expiresAt = new Date(cert.valid_to);
+        const daysRemaining = Math.floor((expiresAt.getTime() - Date.now()) / 86_400_000);
+        let status: SslCheckResult["status"] = "ok";
+        if (daysRemaining < 0) status = "expired";
+        else if (daysRemaining < 14) status = "expiring_soon";
+        resolve({ expiresAt, daysRemaining, status });
+      } catch {
+        socket.destroy();
+        resolve({ expiresAt: null, daysRemaining: null, status: "error" });
+      }
+    });
+    socket.on("error", () => resolve({ expiresAt: null, daysRemaining: null, status: "error" }));
+    socket.setTimeout(5000, () => { socket.destroy(); resolve({ expiresAt: null, daysRemaining: null, status: "error" }); });
+  });
 }

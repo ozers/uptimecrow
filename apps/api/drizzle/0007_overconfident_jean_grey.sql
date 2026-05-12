@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS "maintenance_windows" (
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "status_pages" ADD COLUMN "access_token" uuid DEFAULT gen_random_uuid();--> statement-breakpoint
+ALTER TABLE "status_pages" ADD COLUMN IF NOT EXISTS "access_token" uuid DEFAULT gen_random_uuid();--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "maintenance_window_monitors" ADD CONSTRAINT "maintenance_window_monitors_maintenance_window_id_maintenance_windows_id_fk" FOREIGN KEY ("maintenance_window_id") REFERENCES "public"."maintenance_windows"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION

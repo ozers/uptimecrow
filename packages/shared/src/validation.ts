@@ -89,3 +89,13 @@ export const updateMaintenanceWindowSchema = z.object({
   scheduledEnd: z.string().datetime().optional(),
   monitorIds: z.array(z.string().uuid()).optional(),
 });
+
+export const createHeartbeatSchema = z.object({
+  name: z.string().min(1).max(255),
+  period: z.number().int().min(60).max(2_592_000).default(86400),
+  grace: z.number().int().min(60).max(3600).default(300),
+});
+
+export const updateHeartbeatSchema = createHeartbeatSchema.partial().extend({
+  isActive: z.boolean().optional(),
+});
