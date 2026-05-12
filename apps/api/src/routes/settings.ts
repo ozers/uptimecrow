@@ -25,6 +25,10 @@ settingsRoutes.get("/", async (c) => {
       teamsWebhookUrl: organizations.teamsWebhookUrl,
       telegramBotToken: organizations.telegramBotToken,
       telegramChatId: organizations.telegramChatId,
+      twilioAccountSid: organizations.twilioAccountSid,
+      twilioAuthToken: organizations.twilioAuthToken,
+      twilioFromNumber: organizations.twilioFromNumber,
+      twilioToNumber: organizations.twilioToNumber,
     })
     .from(organizations)
     .where(eq(organizations.id, orgId))
@@ -32,10 +36,11 @@ settingsRoutes.get("/", async (c) => {
 
   if (!org) return c.json({ error: "Organization not found" }, 404);
 
-  // Mask telegram bot token for display
+  // Mask sensitive tokens for display
   const masked = {
     ...org,
     telegramBotToken: org.telegramBotToken ? "••••••••" + org.telegramBotToken.slice(-4) : null,
+    twilioAuthToken: org.twilioAuthToken ? "••••••••" + org.twilioAuthToken.slice(-4) : null,
   };
 
   return c.json({ organization: masked });
@@ -52,6 +57,10 @@ settingsRoutes.patch("/", async (c) => {
     teamsWebhookUrl?: string | null;
     telegramBotToken?: string | null;
     telegramChatId?: string | null;
+    twilioAccountSid?: string | null;
+    twilioAuthToken?: string | null;
+    twilioFromNumber?: string | null;
+    twilioToNumber?: string | null;
   }>();
 
   const updates: Record<string, string | null> = {};
@@ -62,6 +71,10 @@ settingsRoutes.patch("/", async (c) => {
   if ("teamsWebhookUrl" in body) updates.teamsWebhookUrl = body.teamsWebhookUrl || null;
   if ("telegramBotToken" in body) updates.telegramBotToken = body.telegramBotToken || null;
   if ("telegramChatId" in body) updates.telegramChatId = body.telegramChatId || null;
+  if ("twilioAccountSid" in body) updates.twilioAccountSid = body.twilioAccountSid || null;
+  if ("twilioAuthToken" in body) updates.twilioAuthToken = body.twilioAuthToken || null;
+  if ("twilioFromNumber" in body) updates.twilioFromNumber = body.twilioFromNumber || null;
+  if ("twilioToNumber" in body) updates.twilioToNumber = body.twilioToNumber || null;
 
   if (Object.keys(updates).length === 0) {
     return c.json({ error: "No fields to update" }, 400);
@@ -79,7 +92,7 @@ settingsRoutes.patch("/", async (c) => {
 // Test webhook
 settingsRoutes.post("/test-webhook", async (c) => {
   const { orgId } = c.get("user");
-  const { type } = await c.req.json<{ type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram" }>();
+  const { type } = await c.req.json<{ type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram" | "sms" }>();
 
   const [org] = await db
     .select({
@@ -90,6 +103,10 @@ settingsRoutes.post("/test-webhook", async (c) => {
       teamsWebhookUrl: organizations.teamsWebhookUrl,
       telegramBotToken: organizations.telegramBotToken,
       telegramChatId: organizations.telegramChatId,
+      twilioAccountSid: organizations.twilioAccountSid,
+      twilioAuthToken: organizations.twilioAuthToken,
+      twilioFromNumber: organizations.twilioFromNumber,
+      twilioToNumber: organizations.twilioToNumber,
     })
     .from(organizations)
     .where(eq(organizations.id, orgId))
@@ -130,6 +147,21 @@ settingsRoutes.post("/test-webhook", async (c) => {
       if (!org.telegramBotToken || !org.telegramChatId) return c.json({ error: "No Telegram bot token or chat ID configured" }, 400);
       const { sendTelegramMessage } = await import("../services/notification.service.js");
       await sendTelegramMessage({ ...testParams, botToken: org.telegramBotToken, chatId: org.telegramChatId });
+    } else if (type === "sms") {
+      if (!org.twilioAccountSid || !org.twilioAuthToken || !org.twilioFromNumber || !org.twilioToNumber) {
+        return c.json({ error: "Twilio SMS not fully configured" }, 400);
+      }
+      const { sendSmsAlert } = await import("../services/notification.service.js");
+      await sendSmsAlert({
+        accountSid: org.twilioAccountSid,
+        authToken: org.twilioAuthToken,
+        fromNumber: org.twilioFromNumber,
+        toNumber: org.twilioToNumber,
+        type: "incident_created",
+        statusPageName: "Test",
+        incidentTitle: "Test SMS from UptimeCrow",
+        severity: "minor",
+      });
     }
     return c.json({ ok: true, message: `${type} test sent` });
   } catch {

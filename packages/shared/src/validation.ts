@@ -55,6 +55,7 @@ export const updateStatusPageSchema = createStatusPageSchema.partial();
 
 export const subscribeSchema = z.object({
   email: z.string().email().max(255),
+  webhookUrl: z.string().url().max(2048).optional().transform((v) => v || undefined),
 });
 
 export const registerSchema = z.object({

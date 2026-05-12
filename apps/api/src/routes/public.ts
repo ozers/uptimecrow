@@ -424,6 +424,7 @@ publicRoutes.post("/:slug/subscribe", async (c) => {
     .values({
       statusPageId: page.id,
       email: parsed.data.email,
+      webhookUrl: parsed.data.webhookUrl || null,
     })
     .returning();
 

@@ -65,6 +65,10 @@ export const organizations = pgTable("organizations", {
   teamsWebhookUrl: varchar("teams_webhook_url", { length: 2048 }),
   telegramBotToken: varchar("telegram_bot_token", { length: 255 }),
   telegramChatId: varchar("telegram_chat_id", { length: 100 }),
+  twilioAccountSid: varchar("twilio_account_sid", { length: 64 }),
+  twilioAuthToken: varchar("twilio_auth_token", { length: 64 }),
+  twilioFromNumber: varchar("twilio_from_number", { length: 32 }),
+  twilioToNumber: varchar("twilio_to_number", { length: 32 }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -283,6 +287,7 @@ export const subscribers = pgTable(
       .notNull()
       .references(() => statusPages.id, { onDelete: "cascade" }),
     email: varchar("email", { length: 255 }).notNull(),
+    webhookUrl: varchar("webhook_url", { length: 2048 }),
     isVerified: boolean("is_verified").notNull().default(false),
     unsubscribeToken: uuid("unsubscribe_token").notNull().defaultRandom(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -22,6 +22,7 @@ import {
   sendPagerDutyAlert,
   sendTeamsWebhook,
   sendTelegramMessage,
+  sendSmsAlert,
   sendSslExpiryNotification,
   sendDomainExpiryNotification,
 } from "../services/notification.service.js";
@@ -93,7 +94,7 @@ export async function processNotifyJob(
 
   // Fetch verified subscribers
   const subscriberList = await db
-    .select({ email: subscribers.email })
+    .select({ email: subscribers.email, webhookUrl: subscribers.webhookUrl })
     .from(subscribers)
     .where(
       and(
@@ -103,6 +104,7 @@ export async function processNotifyJob(
     );
 
   const emails = subscriberList.map((s) => s.email);
+  const subscriberWebhooks = subscriberList.map((s) => s.webhookUrl).filter(Boolean) as string[];
 
   // Fetch incident
   const [incident] = await db
@@ -147,6 +149,28 @@ export async function processNotifyJob(
     }
   }
 
+  // Fire subscriber webhook URLs (Slack or any webhook they provided)
+  if (subscriberWebhooks.length > 0) {
+    const slackPayload = {
+      text: type === "incident_resolved"
+        ? `✅ *Resolved* — ${incident.title} on *${page.name}*`
+        : `🔴 *Incident* [${incident.severity}] — ${incident.title} on *${page.name}*`,
+      attachments: [{
+        color: type === "incident_resolved" ? "#00e676" : incident.severity === "critical" ? "#ff5252" : incident.severity === "major" ? "#ff9800" : "#ffeb3b",
+        text: updateBody,
+      }],
+    };
+    await Promise.allSettled(
+      subscriberWebhooks.map((url) =>
+        fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(slackPayload),
+        }).catch((err) => logger.error({ err, url }, "[Notify] Subscriber webhook failed")),
+      ),
+    );
+  }
+
   // Send webhooks & integrations
   const [org] = await db
     .select({
@@ -157,6 +181,10 @@ export async function processNotifyJob(
       teamsWebhookUrl: organizations.teamsWebhookUrl,
       telegramBotToken: organizations.telegramBotToken,
       telegramChatId: organizations.telegramChatId,
+      twilioAccountSid: organizations.twilioAccountSid,
+      twilioAuthToken: organizations.twilioAuthToken,
+      twilioFromNumber: organizations.twilioFromNumber,
+      twilioToNumber: organizations.twilioToNumber,
     })
     .from(organizations)
     .where(eq(organizations.id, page.orgId))
@@ -194,6 +222,18 @@ export async function processNotifyJob(
       ...webhookParams,
       botToken: org.telegramBotToken,
       chatId: org.telegramChatId,
+    });
+  }
+  if (org?.twilioAccountSid && org?.twilioAuthToken && org?.twilioFromNumber && org?.twilioToNumber) {
+    await sendSmsAlert({
+      accountSid: org.twilioAccountSid,
+      authToken: org.twilioAuthToken,
+      fromNumber: org.twilioFromNumber,
+      toNumber: org.twilioToNumber,
+      type: type as "incident_created" | "incident_resolved",
+      statusPageName: page.name,
+      incidentTitle: incident.title,
+      severity: incident.severity,
     });
   }
 }

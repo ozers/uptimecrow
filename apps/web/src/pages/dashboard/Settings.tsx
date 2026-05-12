@@ -25,6 +25,10 @@ interface OrgSettings {
   teamsWebhookUrl: string | null;
   telegramBotToken: string | null;
   telegramChatId: string | null;
+  twilioAccountSid: string | null;
+  twilioAuthToken: string | null;
+  twilioFromNumber: string | null;
+  twilioToNumber: string | null;
 }
 
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
@@ -47,6 +51,10 @@ export function Settings() {
   const [teamsUrl, setTeamsUrl] = useState("");
   const [telegramToken, setTelegramToken] = useState("");
   const [telegramChatId, setTelegramChatId] = useState("");
+  const [twilioSid, setTwilioSid] = useState("");
+  const [twilioToken, setTwilioToken] = useState("");
+  const [twilioFrom, setTwilioFrom] = useState("");
+  const [twilioTo, setTwilioTo] = useState("");
   const [saving, setSaving] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -60,6 +68,10 @@ export function Settings() {
       setTeamsUrl(data.organization.teamsWebhookUrl || "");
       setTelegramToken(data.organization.telegramBotToken ? "••••" : "");
       setTelegramChatId(data.organization.telegramChatId || "");
+      setTwilioSid(data.organization.twilioAccountSid || "");
+      setTwilioToken(data.organization.twilioAuthToken ? "••••" : "");
+      setTwilioFrom(data.organization.twilioFromNumber || "");
+      setTwilioTo(data.organization.twilioToNumber || "");
     });
   }, []);
 
@@ -99,6 +111,10 @@ export function Settings() {
         teamsWebhookUrl: teamsUrl || null,
         ...(telegramToken && !telegramToken.startsWith("••") ? { telegramBotToken: telegramToken } : {}),
         telegramChatId: telegramChatId || null,
+        twilioAccountSid: twilioSid || null,
+        ...(twilioToken && !twilioToken.startsWith("••") ? { twilioAuthToken: twilioToken } : {}),
+        twilioFromNumber: twilioFrom || null,
+        twilioToNumber: twilioTo || null,
       });
       setOrg(data.organization);
       toast.success("Webhooks saved");
@@ -109,7 +125,7 @@ export function Settings() {
     }
   };
 
-  const testWebhook = async (type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram") => {
+  const testWebhook = async (type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram" | "sms") => {
     try {
       await api.post("/api/settings/test-webhook", { type });
       toast.success(`Test ${type} notification sent!`);
@@ -349,7 +365,7 @@ export function Settings() {
             </div>
 
             {/* Telegram */}
-            <div className="py-4">
+            <div className="py-4 border-b border-border">
               <div className="mb-3">
                 <Label className="text-sm font-medium">Telegram Bot</Label>
                 <p className="mt-0.5 text-xs text-muted-foreground">
@@ -376,6 +392,50 @@ export function Settings() {
               {org?.telegramBotToken && org?.telegramChatId && (
                 <Button variant="outline" size="sm" className="mt-2" onClick={() => testWebhook("telegram")}>
                   Test Telegram
+                </Button>
+              )}
+            </div>
+
+            {/* Twilio SMS */}
+            <div className="py-4">
+              <div className="mb-3">
+                <Label className="text-sm font-medium">SMS Alerts via Twilio</Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Receive incident alerts via SMS. Get your credentials from the{" "}
+                  <a href="https://console.twilio.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Twilio Console</a>.
+                  Use a Twilio phone number for "From" and your mobile number for "To".
+                </p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Input
+                  placeholder="Account SID (ACxxxxxxx...)"
+                  value={twilioSid}
+                  onChange={(e) => setTwilioSid(e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <Input
+                  placeholder="Auth Token"
+                  value={twilioToken}
+                  onChange={(e) => setTwilioToken(e.target.value)}
+                  className="font-mono text-sm"
+                  type="password"
+                />
+                <Input
+                  placeholder="From number (+15551234567)"
+                  value={twilioFrom}
+                  onChange={(e) => setTwilioFrom(e.target.value)}
+                  className="font-mono text-sm"
+                />
+                <Input
+                  placeholder="To number (+15559876543)"
+                  value={twilioTo}
+                  onChange={(e) => setTwilioTo(e.target.value)}
+                  className="font-mono text-sm"
+                />
+              </div>
+              {org?.twilioAccountSid && org?.twilioAuthToken && org?.twilioFromNumber && org?.twilioToNumber && (
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => testWebhook("sms")}>
+                  Test SMS
                 </Button>
               )}
             </div>

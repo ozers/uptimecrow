@@ -617,3 +617,50 @@ export async function sendSslExpiryNotification(params: {
     }
   }
 }
+
+export interface SmsAlertParams {
+  accountSid: string;
+  authToken: string;
+  fromNumber: string;
+  toNumber: string;
+  type: "incident_created" | "incident_resolved";
+  statusPageName: string;
+  incidentTitle: string;
+  severity: string;
+}
+
+export async function sendSmsAlert(params: SmsAlertParams): Promise<void> {
+  const { accountSid, authToken, fromNumber, toNumber, type, statusPageName, incidentTitle, severity } = params;
+
+  const emoji = type === "incident_resolved" ? "✅" : severity === "critical" ? "🔴" : severity === "major" ? "🟠" : "🟡";
+  const verb = type === "incident_resolved" ? "Resolved" : "Incident";
+  const body = `${emoji} UptimeCrow ${verb} [${statusPageName}]: ${incidentTitle}`;
+
+  const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+  const creds = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+
+  const formData = new URLSearchParams({
+    From: fromNumber,
+    To: toNumber,
+    Body: body,
+  });
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${creds}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Twilio returned ${res.status}: ${text}`);
+    }
+    logger.info(`[Notification] SMS sent to ${toNumber} via Twilio`);
+  } catch (err) {
+    logger.error({ err }, "[Notification] SMS alert failed");
+    throw err;
+  }
+}
