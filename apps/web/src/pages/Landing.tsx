@@ -623,8 +623,11 @@ export function LandingPage() {
               </div>
               <div className="footer-col">
                 <p className="footer-col-label">Compare</p>
-                <Link to="/vs/betterstack">vs Betterstack</Link>
+                <Link to="/vs/betterstack">vs BetterStack</Link>
                 <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+                <Link to="/vs/uptime-kuma">vs Uptime Kuma</Link>
+                <Link to="/vs/freshping">vs Freshping</Link>
+                <Link to="/vs/instatus">vs Instatus</Link>
               </div>
               <div className="footer-col">
                 <p className="footer-col-label">Legal</p>

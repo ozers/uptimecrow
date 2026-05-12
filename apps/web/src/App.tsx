@@ -26,6 +26,9 @@ import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
 import { VsBetterStack } from "./pages/compare/VsBetterStack";
 import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
+import { VsFreshping } from "./pages/compare/VsFreshping";
+import { VsUptimeKuma } from "./pages/compare/VsUptimeKuma";
+import { VsInstatus } from "./pages/compare/VsInstatus";
 
 export function App() {
   return (
@@ -39,6 +42,9 @@ export function App() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/vs/betterstack" element={<VsBetterStack />} />
         <Route path="/vs/uptimerobot" element={<VsUptimeRobot />} />
+        <Route path="/vs/freshping" element={<VsFreshping />} />
+        <Route path="/vs/uptime-kuma" element={<VsUptimeKuma />} />
+        <Route path="/vs/instatus" element={<VsInstatus />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
