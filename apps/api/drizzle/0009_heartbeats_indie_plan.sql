@@ -1,8 +1,12 @@
--- Add indie plan to plan enum
-ALTER TYPE "plan" ADD VALUE 'indie' BEFORE 'pro';
+-- Add indie plan to plan enum (IF NOT EXISTS requires PG 9.6+)
+ALTER TYPE "plan" ADD VALUE IF NOT EXISTS 'indie' BEFORE 'pro';
 
 -- Create heartbeat_status enum
-CREATE TYPE "heartbeat_status" AS ENUM ('healthy', 'late', 'paused', 'unknown');
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'heartbeat_status') THEN
+    CREATE TYPE "heartbeat_status" AS ENUM ('healthy', 'late', 'paused', 'unknown');
+  END IF;
+END $$;
 
 -- Create heartbeats table
 CREATE TABLE "heartbeats" (
