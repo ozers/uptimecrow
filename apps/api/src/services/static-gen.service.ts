@@ -7,6 +7,7 @@ import { db } from "../db/index.js";
 import {
   statusPages,
   monitors,
+  statusPageMonitors,
   incidents,
   incidentUpdates,
   checkResults,
@@ -30,6 +31,7 @@ export interface StaticStatusPage {
     status: string;
     lastCheckedAt: string | null;
     uptimePercent: string | null;
+    groupName?: string | null;
     dailyUptime?: Array<{ date: string; percent: number | null; total: number }>;
     recentResponseMs?: number[];
   }>;
@@ -91,16 +93,24 @@ export async function regenerateStatusPage(
     return;
   }
 
-  // Fetch monitors
-  const orgMonitors = await db
-    .select()
-    .from(monitors)
-    .where(and(eq(monitors.orgId, page.orgId), eq(monitors.isActive, true)));
+  // Fetch only monitors linked to this status page (in order, with group info)
+  const linkedRows = await db
+    .select({
+      id: monitors.id,
+      name: monitors.name,
+      status: monitors.status,
+      lastCheckedAt: monitors.lastCheckedAt,
+      isActive: monitors.isActive,
+      groupName: statusPageMonitors.groupName,
+    })
+    .from(statusPageMonitors)
+    .innerJoin(monitors, eq(monitors.id, statusPageMonitors.monitorId))
+    .where(and(eq(statusPageMonitors.statusPageId, page.id), eq(monitors.isActive, true)));
 
   // Calculate per-monitor 30-day uptime
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   const monitorsWithUptime = await Promise.all(
-    orgMonitors.map(async (m) => {
+    linkedRows.map(async (m) => {
       const stats = await db
         .select({
           total: sql<number>`count(*)`,
@@ -122,9 +132,13 @@ export async function regenerateStatusPage(
         status: m.status,
         lastCheckedAt: m.lastCheckedAt?.toISOString() ?? null,
         uptimePercent: total > 0 ? ((up / total) * 100).toFixed(2) : null,
+        groupName: m.groupName ?? null,
       };
     }),
   );
+
+  // Use linked monitors for status calculation
+  const orgMonitors = linkedRows;
 
   // Fetch active incidents with updates
   const activeIncidents = await db
@@ -330,19 +344,16 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 </div>`;
   }
 
-  // Monitors section
-  const monitorsHtml = data.monitors.length === 0
-    ? '<p style="font-size:13px;color:var(--text3);padding:16px 0">No services configured.</p>'
-    : data.monitors.map((m) => {
-      const dc = dotColor(m.status);
-      const st = statusText(m.status);
-      const uptimePct = m.uptimePercent ? parseFloat(m.uptimePercent) : null;
-      const uptimeColor = uptimePct === null ? "var(--text3)"
-        : uptimePct >= 99.9 ? "#22c55e"
-        : uptimePct >= 99 ? "#f59e0b"
-        : "#ef4444";
-      const bar = renderUptimeBar(m.dailyUptime ?? []);
-      return `<div class="service-row">
+  function renderMonitorRow(m: typeof data.monitors[number]) {
+    const dc = dotColor(m.status);
+    const st = statusText(m.status);
+    const uptimePct = m.uptimePercent ? parseFloat(m.uptimePercent) : null;
+    const uptimeColor = uptimePct === null ? "var(--text3)"
+      : uptimePct >= 99.9 ? "#22c55e"
+      : uptimePct >= 99 ? "#f59e0b"
+      : "#ef4444";
+    const bar = renderUptimeBar(m.dailyUptime ?? []);
+    return `<div class="service-row">
   <div class="service-top">
     <div class="service-name-wrap">
       <span class="service-dot" style="background:${dc};box-shadow:0 0 0 3px ${dc}20"></span>
@@ -355,7 +366,39 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   </div>
   ${bar}
 </div>`;
-    }).join("");
+  }
+
+  // Monitors section — render grouped or flat
+  let monitorsHtml: string;
+  if (data.monitors.length === 0) {
+    monitorsHtml = '<p style="font-size:13px;color:var(--text3);padding:16px 0">No services configured.</p>';
+  } else {
+    const hasGroups = data.monitors.some((m) => m.groupName);
+    if (!hasGroups) {
+      monitorsHtml = data.monitors.map(renderMonitorRow).join("");
+    } else {
+      // Group monitors: null group goes last as "Other"
+      const groups = new Map<string, typeof data.monitors>();
+      for (const m of data.monitors) {
+        const key = m.groupName || "";
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(m);
+      }
+      // Sort: named groups first, then ungrouped
+      const sortedGroups = [...groups.entries()].sort(([a], [b]) => {
+        if (!a && b) return 1;
+        if (a && !b) return -1;
+        return a.localeCompare(b);
+      });
+      monitorsHtml = sortedGroups.map(([groupName, groupMonitors]) => {
+        const label = groupName ? escapeHtml(groupName) : "Other";
+        return `<div class="service-group">
+  <div class="service-group-label">${label}</div>
+  ${groupMonitors.map(renderMonitorRow).join("")}
+</div>`;
+      }).join("");
+    }
+  }
 
   // Incident rendering
   function renderIncidentUpdates(updates: Array<{ status: string; body: string; createdAt: string }>) {
@@ -580,6 +623,10 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     }
     .section-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
     .section-badge{padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
+
+    /* ── Service Groups ── */
+    .service-group{margin-bottom:20px}
+    .service-group-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:0 2px 8px;border-bottom:1px solid var(--border);margin-bottom:8px}
 
     /* ── Service Row ── */
     .service-row{

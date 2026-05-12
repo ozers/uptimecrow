@@ -454,3 +454,42 @@
 | 23:40 | Edited apps/web/src/pages/compare/CompareLayout.tsx | 8→11 lines | ~157 |
 | 23:40 | Edited apps/web/src/pages/Landing.tsx | 5→8 lines | ~126 |
 | 23:41 | Edited apps/web/index.html | expanded (+52 lines) | ~490 |
+| 23:41 | Session end: 11 writes across 10 files (competitor-analysis.md, competitor-analysis-report.html, VsFreshping.tsx, VsUptimeKuma.tsx, VsInstatus.tsx) | 11 reads | ~53883 tok |
+
+## Session: 2026-05-12 23:49
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 23:49 | Created apps/api/drizzle/0013_ssl_days_warning.sql | — | ~26 |
+| 23:51 | Edited apps/api/src/db/schema.ts | 3→4 lines | ~86 |
+| 23:51 | Edited packages/shared/src/types.ts | 3→4 lines | ~25 |
+| 23:51 | Edited packages/shared/src/validation.ts | 2→3 lines | ~44 |
+| 23:51 | Edited apps/api/src/jobs/check.job.ts | added nullish coalescing | ~303 |
+| 23:51 | Edited apps/api/src/services/notification.service.ts | added 5 condition(s) | ~1257 |
+| 23:52 | Edited apps/api/src/jobs/notify.job.ts | expanded (+9 lines) | ~273 |
+| 23:52 | Edited apps/api/src/jobs/notify.job.ts | added 1 condition(s) | ~103 |
+| 23:52 | Edited apps/api/src/jobs/notify.job.ts | added 1 condition(s) | ~79 |
+| 23:52 | Edited apps/api/src/jobs/notify.job.ts | added 3 condition(s) | ~487 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | 2→2 lines | ~34 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | CSS: lg | ~70 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | added nullish coalescing | ~562 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | 10→11 lines | ~70 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | CSS: sslDaysWarning | ~58 |
+| 23:52 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | added optional chaining | ~174 |
+| 23:53 | Created apps/api/drizzle/0014_status_page_monitor_groups.sql | — | ~24 |
+| 23:53 | Edited apps/api/src/db/schema.ts | 11→12 lines | ~120 |
+| 23:54 | Edited apps/api/src/routes/status-pages.ts | 6→6 lines | ~80 |
+| 23:54 | Edited apps/api/src/routes/status-pages.ts | added nullish coalescing | ~291 |
+| 23:54 | Edited apps/api/src/services/static-gen.service.ts | 8→9 lines | ~44 |
+| 23:54 | Edited apps/api/src/services/static-gen.service.ts | 8→9 lines | ~80 |
+| 23:54 | Edited apps/api/src/services/static-gen.service.ts | modified toFixed() | ~445 |
+| 23:54 | Edited apps/api/src/services/static-gen.service.ts | added 5 condition(s) | ~630 |
+| 23:55 | Edited apps/api/src/services/static-gen.service.ts | 2→6 lines | ~90 |
+| 23:55 | Edited apps/web/src/lib/queries/status-pages.ts | modified useStatusPage() | ~195 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | inline fix | ~31 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | inline fix | ~40 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | added 1 import(s) | ~56 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | added nullish coalescing | ~360 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | 4→4 lines | ~88 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | 9→9 lines | ~108 |
+| 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | added nullish coalescing | ~882 |

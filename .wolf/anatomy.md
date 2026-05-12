@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T20:41:02.427Z
-> Files: 230 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T20:55:54.893Z
+> Files: 232 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -106,6 +106,8 @@
 - `0010_ssl_monitoring.sql` (~42 tok)
 - `0011_custom_webhook.sql` (~20 tok)
 - `0012_new_integrations.sql` — Add PagerDuty, Microsoft Teams, and Telegram webhook fields to organizations (~97 tok)
+- `0013_ssl_days_warning.sql` (~26 tok)
+- `0014_status_page_monitor_groups.sql` (~24 tok)
 
 ## apps/api/drizzle/meta/
 
@@ -127,7 +129,7 @@
 
 - `index.ts` — Exports db, redis (~175 tok)
 - `migrate.ts` — Declares databaseUrl (~1199 tok)
-- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3235 tok)
+- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3271 tok)
 
 ## apps/api/src/docs/
 
@@ -135,10 +137,10 @@
 
 ## apps/api/src/jobs/
 
-- `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~2856 tok)
+- `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~2836 tok)
 - `generate.job.ts` — Generate Job — Status page regeneration (~113 tok)
 - `heartbeat-check.job.ts` — Exports processHeartbeatCheckJob (~780 tok)
-- `notify.job.ts` — Notify Job — Email notification queue handler (~1439 tok)
+- `notify.job.ts` — Notify Job — Email notification queue handler (~1885 tok)
 - `retention.job.test.ts` — Declares cutoffs (~531 tok)
 - `retention.job.ts` — Exports RetentionCutoff, computeCutoffs, RetentionResult, pruneOldCheckResults, processRetentionJob (~524 tok)
 
@@ -164,16 +166,16 @@
 - `monitors.ts` — API routes: GET, POST, PATCH, DELETE (13 endpoints) (~2013 tok)
 - `public.ts` — API routes: GET, POST (4 endpoints) (~5777 tok)
 - `settings.ts` — API routes: GET, PATCH, POST (6 endpoints) (~1695 tok)
-- `status-pages.ts` — API routes: GET, POST, PATCH, DELETE, PUT (16 endpoints) (~1962 tok)
+- `status-pages.ts` — API routes: GET, POST, PATCH, DELETE, PUT (16 endpoints) (~2016 tok)
 - `subscribers.ts` — API routes: GET, DELETE (4 endpoints) (~552 tok)
 
 ## apps/api/src/services/
 
 - `monitor.service.test.ts` — mockFetch: respond (~2246 tok)
 - `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3142 tok)
-- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~4386 tok)
+- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~5460 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
-- `static-gen.service.ts` — Static Generation Service — pre-renders status pages; renderStatusHtml produces modern HTML with accent-bar, status-hero, ubar uptime bars, incident timeline, subscribe form (~10500 tok)
+- `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~10346 tok)
 
 ## apps/api/src/utils/
 
@@ -272,7 +274,7 @@
 - `incidents.ts` — Exports useIncidents, useIncident, useCreateIncident, useUpdateIncident, useCreateIncidentUpdate (~489 tok)
 - `maintenance.ts` — Exports useMaintenanceWindows, useCreateMaintenanceWindow, useUpdateMaintenanceWindow, useDeleteMaintenanceWindow (~441 tok)
 - `monitors.ts` — API routes: DELETE (1 endpoints) (~512 tok)
-- `status-pages.ts` — API routes: DELETE (1 endpoints) (~650 tok)
+- `status-pages.ts` — API routes: DELETE (1 endpoints) (~682 tok)
 - `subscribers.ts` — API routes: DELETE (1 endpoints) (~216 tok)
 
 ## apps/web/src/pages/
@@ -319,13 +321,13 @@
 - `MonitorCreate.tsx` — MonitorCreate — uses useNavigate (~326 tok)
 - `MonitorDetail.tsx` — MonitorDetailSkeleton — renders table (~5071 tok)
 - `MonitorEdit.tsx` — MonitorEdit — uses useNavigate (~462 tok)
-- `MonitorForm.tsx` — monitorResolver — renders form — uses useState (~3203 tok)
-- `MonitorsList.tsx` — UptimeBar — renders table (~2704 tok)
+- `MonitorForm.tsx` — monitorResolver — renders form (~3357 tok)
+- `MonitorsList.tsx` — UptimeBar — renders table (~3174 tok)
 
 ## apps/web/src/pages/dashboard/status-pages/
 
 - `StatusPageCreate.tsx` — toSlug — renders form — uses useNavigate, useState, useEffect (~3407 tok)
-- `StatusPageDetail.tsx` — StatusPageDetailSkeleton — renders table (~3691 tok)
+- `StatusPageDetail.tsx` — StatusPageDetailSkeleton — renders table (~4232 tok)
 - `StatusPageEdit.tsx` — StatusPageEdit — uses useNavigate (~442 tok)
 - `StatusPageForm.tsx` — statusPageResolver — renders form — uses useEffect (~1341 tok)
 - `StatusPagesList.tsx` — StatusPagesListSkeleton — renders table (~2142 tok)
@@ -350,5 +352,5 @@
 
 - `constants.ts` — Exports PLANS, Plan, MONITOR_TYPES, MonitorType + 14 more (~590 tok)
 - `index.ts` (~27 tok)
-- `types.ts` — Exports User, Organization, Monitor, CheckResult + 7 more (~701 tok)
-- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1042 tok)
+- `types.ts` — Exports User, Organization, Monitor, CheckResult + 7 more (~708 tok)
+- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1063 tok)

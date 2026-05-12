@@ -10,6 +10,7 @@ import {
   incidents,
   incidentUpdates,
   organizations,
+  users,
 } from "../db/schema.js";
 import {
   sendIncidentNotification,
@@ -21,6 +22,7 @@ import {
   sendPagerDutyAlert,
   sendTeamsWebhook,
   sendTelegramMessage,
+  sendSslExpiryNotification,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -28,21 +30,40 @@ export interface NotifyJobData {
     | "incident_created"
     | "incident_updated"
     | "incident_resolved"
-    | "verification";
-  statusPageId: string;
+    | "verification"
+    | "ssl_expiry";
+  statusPageId?: string;
   incidentId?: string;
   // For verification emails
   email?: string;
   verifyUrl?: string;
+  // For ssl_expiry
+  orgId?: string;
+  monitorId?: string;
+  monitorName?: string;
+  monitorUrl?: string;
+  daysRemaining?: number;
 }
 
 export async function processNotifyJob(
   job: Job<NotifyJobData>,
 ): Promise<void> {
-  const { type, statusPageId } = job.data;
+  const { type } = job.data;
 
   if (type === "verification") {
     await handleVerification(job.data);
+    return;
+  }
+
+  if (type === "ssl_expiry") {
+    await handleSslExpiry(job.data);
+    return;
+  }
+
+  const { statusPageId } = job.data;
+
+  if (!statusPageId) {
+    logger.error("[Notify] Missing statusPageId for incident notification");
     return;
   }
 
@@ -179,7 +200,7 @@ async function handleVerification(data: NotifyJobData): Promise<void> {
   const [page] = await db
     .select()
     .from(statusPages)
-    .where(eq(statusPages.id, data.statusPageId))
+    .where(eq(statusPages.id, data.statusPageId!))
     .limit(1);
 
   if (!page) {
@@ -191,5 +212,47 @@ async function handleVerification(data: NotifyJobData): Promise<void> {
     email: data.email,
     statusPageName: page.name,
     verifyUrl: data.verifyUrl,
+  });
+}
+
+async function handleSslExpiry(data: NotifyJobData): Promise<void> {
+  if (!data.orgId || !data.monitorName || !data.monitorUrl || data.daysRemaining == null) {
+    logger.error("[Notify] Missing fields for ssl_expiry notification");
+    return;
+  }
+
+  const [org] = await db
+    .select({
+      ownerId: organizations.ownerId,
+      slackWebhookUrl: organizations.slackWebhookUrl,
+      discordWebhookUrl: organizations.discordWebhookUrl,
+    })
+    .from(organizations)
+    .where(eq(organizations.id, data.orgId))
+    .limit(1);
+
+  if (!org) {
+    logger.error(`[Notify] Org ${data.orgId} not found for SSL expiry`);
+    return;
+  }
+
+  const [owner] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, org.ownerId))
+    .limit(1);
+
+  if (!owner) {
+    logger.error(`[Notify] Owner not found for org ${data.orgId}`);
+    return;
+  }
+
+  await sendSslExpiryNotification({
+    ownerEmail: owner.email,
+    monitorName: data.monitorName,
+    monitorUrl: data.monitorUrl,
+    daysRemaining: data.daysRemaining,
+    slackWebhookUrl: org.slackWebhookUrl,
+    discordWebhookUrl: org.discordWebhookUrl,
   });
 }

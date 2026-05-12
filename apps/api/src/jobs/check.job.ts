@@ -104,20 +104,23 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
     const needsRefresh = !monitor.sslCheckedAt ||
       Date.now() - new Date(monitor.sslCheckedAt).getTime() > SSL_TTL_MS;
 
-    let sslExpiresAt = monitor.sslExpiresAt ? new Date(monitor.sslExpiresAt) : null;
     if (needsRefresh) {
       const ssl = await checkSslExpiry(monitor.url);
-      sslExpiresAt = ssl.expiresAt;
       await db.update(monitors).set({ sslExpiresAt: ssl.expiresAt, sslCheckedAt: new Date() }).where(eq(monitors.id, monitorId));
-    }
 
-    if (sslExpiresAt) {
-      const daysRemaining = Math.floor((sslExpiresAt.getTime() - Date.now()) / 86_400_000);
-      if (daysRemaining < 14 && result.status === "up") {
-        const daysMsg = daysRemaining < 0
-          ? "SSL certificate has expired"
-          : `SSL certificate expires in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
-        result = { ...result, status: "degraded" as const, errorMessage: daysMsg };
+      if (ssl.expiresAt) {
+        const daysRemaining = Math.floor((ssl.expiresAt.getTime() - Date.now()) / 86_400_000);
+        const threshold = monitor.sslDaysWarning ?? 30;
+        if (daysRemaining < threshold) {
+          await notifyQueue.add("ssl_expiry", {
+            type: "ssl_expiry",
+            orgId: monitor.orgId,
+            monitorId: monitor.id,
+            monitorName: monitor.name,
+            monitorUrl: monitor.url,
+            daysRemaining,
+          });
+        }
       }
     }
   }

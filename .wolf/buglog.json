@@ -1280,6 +1280,230 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-12T15:20:09.884Z"
+    },
+    {
+      "id": "bug-081",
+      "timestamp": "2026-05-12T17:02:31.877Z",
+      "error_message": "Missing error handling in function",
+      "file": "apps/api/src/services/notification.service.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T17:02:31.877Z"
+    },
+    {
+      "id": "bug-082",
+      "timestamp": "2026-05-12T17:04:06.414Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T17:04:06.414Z"
+    },
+    {
+      "id": "bug-083",
+      "timestamp": "2026-05-12T17:04:14.844Z",
+      "error_message": "CSS fix: type",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "type: \"slack\" | \"discord\" | \"custom\") => { → \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\") => {",
+      "fix": "Changed type: \"slack\" | \"discord\" | \"custom\") => { → \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\") => {",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-12T17:04:30.889Z"
+    },
+    {
+      "id": "bug-084",
+      "timestamp": "2026-05-12T17:05:13.873Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/pages/Landing.tsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 15→27 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T17:05:13.873Z"
+    },
+    {
+      "id": "bug-085",
+      "timestamp": "2026-05-12T20:51:24.592Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/src/jobs/check.job.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:51:24.592Z"
+    },
+    {
+      "id": "bug-086",
+      "timestamp": "2026-05-12T20:51:51.577Z",
+      "error_message": "Function not marked async",
+      "file": "apps/api/src/services/notification.service.ts",
+      "root_cause": "Function uses await but wasn't declared async",
+      "fix": "Added async modifier",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:51:51.577Z"
+    },
+    {
+      "id": "bug-087",
+      "timestamp": "2026-05-12T20:52:27.921Z",
+      "error_message": "Wrong reference: ArrowRight should be ShieldAlert",
+      "file": "apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+      "root_cause": "Used \"ArrowRight\" instead of \"ShieldAlert\"",
+      "fix": "Changed ArrowRight → ShieldAlert",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:52:27.921Z"
+    },
+    {
+      "id": "bug-088",
+      "timestamp": "2026-05-12T20:52:31.462Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+      "root_cause": "Had \"w-[80px] text-right\"",
+      "fix": "Changed to \"hidden lg:table-cell\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:52:31.462Z"
+    },
+    {
+      "id": "bug-089",
+      "timestamp": "2026-05-12T20:52:39.825Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:52:39.825Z"
+    },
+    {
+      "id": "bug-090",
+      "timestamp": "2026-05-12T20:52:52.639Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/pages/dashboard/monitors/MonitorForm.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:52:52.639Z"
+    },
+    {
+      "id": "bug-091",
+      "timestamp": "2026-05-12T20:54:17.194Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/src/routes/status-pages.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:54:17.194Z"
+    },
+    {
+      "id": "bug-092",
+      "timestamp": "2026-05-12T20:54:36.289Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/services/static-gen.service.ts",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 34→46 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:54:36.289Z"
+    },
+    {
+      "id": "bug-093",
+      "timestamp": "2026-05-12T20:54:50.980Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/api/src/services/static-gen.service.ts",
+      "root_cause": "No early return/throw for edge case: data.monitors.length === 0",
+      "fix": "Added guard clause: if (data.monitors.length === 0)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T20:54:50.980Z"
+    },
+    {
+      "id": "bug-094",
+      "timestamp": "2026-05-12T20:55:29.522Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check) | Also: Select which monitors appear on this status page. Optionally; const linked = linkedMap.has(monitor.id);",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-12T20:55:54.903Z"
     }
   ]
 }

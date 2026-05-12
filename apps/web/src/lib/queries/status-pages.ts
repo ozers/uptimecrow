@@ -10,10 +10,12 @@ export function useStatusPages() {
   });
 }
 
+export type StatusPageMonitorEntry = { monitorId: string; groupName: string | null };
+
 export function useStatusPage(id: string) {
   return useQuery({
     queryKey: ["status-pages", id],
-    queryFn: () => api.get<{ statusPage: StatusPage; monitorIds: string[] }>(`/api/status-pages/${id}`),
+    queryFn: () => api.get<{ statusPage: StatusPage; monitors: StatusPageMonitorEntry[] }>(`/api/status-pages/${id}`),
     enabled: !!id,
   });
 }
@@ -21,8 +23,8 @@ export function useStatusPage(id: string) {
 export function useSetStatusPageMonitors(id: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (monitorIds: string[]) =>
-      api.put<{ ok: boolean }>(`/api/status-pages/${id}/monitors`, { monitorIds }),
+    mutationFn: (monitors: StatusPageMonitorEntry[]) =>
+      api.put<{ ok: boolean }>(`/api/status-pages/${id}/monitors`, { monitors }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["status-pages", id] });
     },

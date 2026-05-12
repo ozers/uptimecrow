@@ -435,3 +435,94 @@ export async function sendHeartbeatLateAlert(params: {
     }
   }
 }
+
+export async function sendSslExpiryNotification(params: {
+  ownerEmail: string;
+  monitorName: string;
+  monitorUrl: string;
+  daysRemaining: number;
+  slackWebhookUrl?: string | null;
+  discordWebhookUrl?: string | null;
+}): Promise<void> {
+  const { daysRemaining, monitorName, monitorUrl } = params;
+  const expired = daysRemaining < 0;
+  const subject = expired
+    ? `⚠️ SSL certificate expired: ${monitorName}`
+    : `⚠️ SSL certificate expiring in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}: ${monitorName}`;
+  const detail = expired
+    ? `The SSL certificate for <strong>${monitorUrl}</strong> has expired. Visitors will see a security warning.`
+    : `The SSL certificate for <strong>${monitorUrl}</strong> expires in <strong>${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}</strong>. Renew it before it expires to avoid service disruption.`;
+
+  const client = getClient();
+  if (client) {
+    try {
+      await sendEmail(
+        client,
+        params.ownerEmail,
+        subject,
+        `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
+          <h2 style="color:#1a1a1a">${subject}</h2>
+          <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${detail}</p>
+          <p style="color:#4a4a4a;line-height:1.6">Log in to UptimeCrow to update the SSL warning threshold or silence this alert.</p>
+          <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
+          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${monitorName}</strong> on UptimeCrow.</p>
+        </div>`,
+      );
+      logger.info(`[Notification] SSL expiry email sent to ${params.ownerEmail} for "${monitorName}"`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] SSL expiry email failed");
+    }
+  } else {
+    logger.info(`[Notification] No AWS credentials — skipping SSL expiry email for "${monitorName}"`);
+  }
+
+  if (params.slackWebhookUrl) {
+    const payload = {
+      attachments: [{
+        color: expired ? "#ff5252" : "#ffab40",
+        pretext: subject,
+        fields: [
+          { title: "Monitor", value: monitorName, short: true },
+          { title: "URL", value: monitorUrl, short: true },
+          { title: "Status", value: expired ? "Expired" : `Expires in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`, short: false },
+        ],
+        footer: "UptimeCrow SSL Monitor",
+        ts: Math.floor(Date.now() / 1000),
+      }],
+    };
+    try {
+      const res = await fetch(params.slackWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] SSL expiry Slack alert failed");
+    }
+  }
+
+  if (params.discordWebhookUrl) {
+    const payload = {
+      embeds: [{
+        title: subject,
+        description: expired
+          ? `The SSL certificate for **${monitorUrl}** has expired.`
+          : `The SSL certificate for **${monitorUrl}** expires in **${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}**.`,
+        color: expired ? 0xff5252 : 0xffab40,
+        timestamp: new Date().toISOString(),
+        footer: { text: "UptimeCrow SSL Monitor" },
+      }],
+    };
+    try {
+      const res = await fetch(params.discordWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] SSL expiry Discord alert failed");
+    }
+  }
+}

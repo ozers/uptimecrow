@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-04-13T11:18:30.889Z",
   "lifetime": {
-    "total_tokens_estimated": 481752,
-    "total_reads": 166,
-    "total_writes": 192,
-    "total_sessions": 6,
-    "anatomy_hits": 159,
-    "anatomy_misses": 3,
-    "repeated_reads_blocked": 29,
-    "estimated_savings_vs_bare_cli": 135494
+    "total_tokens_estimated": 942619,
+    "total_reads": 295,
+    "total_writes": 290,
+    "total_sessions": 10,
+    "anatomy_hits": 287,
+    "anatomy_misses": 4,
+    "repeated_reads_blocked": 66,
+    "estimated_savings_vs_bare_cli": 342251
   },
   "sessions": [
     {
@@ -2235,6 +2235,1457 @@
         "writes_count": 12,
         "repeated_reads_blocked": 2,
         "anatomy_lookups": 10
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:03:00.426Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 284,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 26542,
+        "output_tokens_estimated": 627,
+        "reads_count": 13,
+        "writes_count": 6,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 13
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:08:32.345Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 284,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/dashboard-layout.tsx",
+          "tokens_estimated": 293,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1745,
+          "action": "create"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 26835,
+        "output_tokens_estimated": 10188,
+        "reads_count": 14,
+        "writes_count": 8,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 14
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:09:47.676Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 284,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/dashboard-layout.tsx",
+          "tokens_estimated": 293,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1745,
+          "action": "create"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 27575,
+        "output_tokens_estimated": 10188,
+        "reads_count": 16,
+        "writes_count": 8,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 16
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:10:04.638Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 284,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/dashboard-layout.tsx",
+          "tokens_estimated": 293,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1745,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 26,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 27575,
+        "output_tokens_estimated": 10214,
+        "reads_count": 16,
+        "writes_count": 9,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 16
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:12:16.939Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 284,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/dashboard-layout.tsx",
+          "tokens_estimated": 293,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1745,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 26,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/Dockerfile",
+          "tokens_estimated": 26,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 27945,
+        "output_tokens_estimated": 10240,
+        "reads_count": 17,
+        "writes_count": 10,
+        "repeated_reads_blocked": 2,
+        "anatomy_lookups": 17
+      }
+    },
+    {
+      "id": "session-2026-05-12-1658",
+      "started": "2026-05-12T13:58:21.961Z",
+      "ended": "2026-05-12T14:17:45.605Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 733,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/heartbeats.ts",
+          "tokens_estimated": 872,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/queries/heartbeats.ts",
+          "tokens_estimated": 348,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 266,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 524,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx",
+          "tokens_estimated": 3199,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1227,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 5843,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 2762,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/maintenance/MaintenanceList.tsx",
+          "tokens_estimated": 3721,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/monitors/MonitorsList.tsx",
+          "tokens_estimated": 2704,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3169,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/dashboard-layout.tsx",
+          "tokens_estimated": 293,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/Dockerfile",
+          "tokens_estimated": 370,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/migrate.ts",
+          "tokens_estimated": 611,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/heartbeat-check.job.ts",
+          "tokens_estimated": 186,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 21,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 19,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/check.job.ts",
+          "tokens_estimated": 323,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/retention.job.ts",
+          "tokens_estimated": 55,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1745,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/Dockerfile",
+          "tokens_estimated": 26,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/Dockerfile",
+          "tokens_estimated": 26,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+          "tokens_estimated": 102,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/migrate.ts",
+          "tokens_estimated": 773,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 28538,
+        "output_tokens_estimated": 11115,
+        "reads_count": 18,
+        "writes_count": 12,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 18
+      }
+    },
+    {
+      "id": "session-2026-05-12-1806",
+      "started": "2026-05-12T15:06:27.833Z",
+      "ended": "2026-05-12T15:24:17.452Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 5250,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 7594,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 4769,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 9027,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 7987,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 2318,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 326,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 36,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 9810,
+          "action": "create"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 25429,
+        "output_tokens_estimated": 29504,
+        "reads_count": 4,
+        "writes_count": 6,
+        "repeated_reads_blocked": 8,
+        "anatomy_lookups": 4
+      }
+    },
+    {
+      "id": "session-2026-05-12-1806",
+      "started": "2026-05-12T15:06:27.833Z",
+      "ended": "2026-05-12T15:51:07.445Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 5250,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 7816,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 7594,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 4769,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 9027,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 7987,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 2318,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 326,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 36,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 9810,
+          "action": "create"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 25429,
+        "output_tokens_estimated": 29504,
+        "reads_count": 4,
+        "writes_count": 6,
+        "repeated_reads_blocked": 8,
+        "anatomy_lookups": 4
+      }
+    },
+    {
+      "id": "session-2026-05-12-1915",
+      "started": "2026-05-12T16:15:35.410Z",
+      "ended": "2026-05-12T17:07:43.875Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/notification.service.ts",
+          "tokens_estimated": 3235,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/incidents/IncidentCreate.tsx",
+          "tokens_estimated": 1663,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Settings.tsx",
+          "tokens_estimated": 0,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 3474,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/server.ts",
+          "tokens_estimated": 1178,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 8500,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 3155,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/settings.ts",
+          "tokens_estimated": 998,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/notify.job.ts",
+          "tokens_estimated": 1212,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/meta/_journal.json",
+          "tokens_estimated": 525,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 7119,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/drizzle/0012_new_integrations.sql",
+          "tokens_estimated": 104,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/db/schema.ts",
+          "tokens_estimated": 164,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/notification.service.ts",
+          "tokens_estimated": 1166,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/settings.ts",
+          "tokens_estimated": 1695,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/notify.job.ts",
+          "tokens_estimated": 78,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/jobs/notify.job.ts",
+          "tokens_estimated": 466,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/mcp.ts",
+          "tokens_estimated": 3332,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/server.ts",
+          "tokens_estimated": 42,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/server.ts",
+          "tokens_estimated": 23,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 96,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 124,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 133,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 140,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 31,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Settings.tsx",
+          "tokens_estimated": 1346,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/incidents/IncidentCreate.tsx",
+          "tokens_estimated": 3312,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 375,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 906,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 467,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 256,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 31059,
+        "output_tokens_estimated": 14256,
+        "reads_count": 11,
+        "writes_count": 20,
+        "repeated_reads_blocked": 3,
+        "anatomy_lookups": 10
+      }
+    },
+    {
+      "id": "session-2026-05-12-2322",
+      "started": "2026-05-12T20:22:53.227Z",
+      "ended": "2026-05-12T20:33:26.118Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/README.md",
+          "tokens_estimated": 3127,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/PROJECT_ANALYSIS.md",
+          "tokens_estimated": 4450,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsBetterStack.tsx",
+          "tokens_estimated": 1207,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/robots.txt",
+          "tokens_estimated": 60,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/sitemap.xml",
+          "tokens_estimated": 254,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/competitor-analysis.md",
+          "tokens_estimated": 5960,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/competitor-analysis-report.html",
+          "tokens_estimated": 19163,
+          "action": "create"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 9098,
+        "output_tokens_estimated": 25123,
+        "reads_count": 5,
+        "writes_count": 2,
+        "repeated_reads_blocked": 0,
+        "anatomy_lookups": 5
+      }
+    },
+    {
+      "id": "session-2026-05-12-2322",
+      "started": "2026-05-12T20:22:53.227Z",
+      "ended": "2026-05-12T20:41:46.662Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/README.md",
+          "tokens_estimated": 3127,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/PROJECT_ANALYSIS.md",
+          "tokens_estimated": 4450,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsBetterStack.tsx",
+          "tokens_estimated": 1207,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/robots.txt",
+          "tokens_estimated": 60,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/sitemap.xml",
+          "tokens_estimated": 254,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/packages/shared/src/constants.ts",
+          "tokens_estimated": 590,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/index.html",
+          "tokens_estimated": 661,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 1156,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsUptimeRobot.tsx",
+          "tokens_estimated": 1245,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/CompareLayout.tsx",
+          "tokens_estimated": 2070,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 8324,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/competitor-analysis.md",
+          "tokens_estimated": 5960,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/docs/competitor-analysis-report.html",
+          "tokens_estimated": 19163,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsFreshping.tsx",
+          "tokens_estimated": 1295,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsUptimeKuma.tsx",
+          "tokens_estimated": 1492,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/VsInstatus.tsx",
+          "tokens_estimated": 1470,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 87,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/App.tsx",
+          "tokens_estimated": 96,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/sitemap.xml",
+          "tokens_estimated": 369,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/compare/CompareLayout.tsx",
+          "tokens_estimated": 157,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 126,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/index.html",
+          "tokens_estimated": 524,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 23144,
+        "output_tokens_estimated": 30739,
+        "reads_count": 11,
+        "writes_count": 11,
+        "repeated_reads_blocked": 5,
+        "anatomy_lookups": 11
       }
     }
   ],
