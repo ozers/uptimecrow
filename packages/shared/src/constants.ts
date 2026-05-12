@@ -1,4 +1,4 @@
-export const PLANS = ["free", "pro", "team"] as const;
+export const PLANS = ["free", "indie", "pro", "team"] as const;
 export type Plan = (typeof PLANS)[number];
 
 export const MONITOR_TYPES = ["http", "tcp", "keyword"] as const;
@@ -24,35 +24,56 @@ export const DEFAULT_EXPECTED_STATUS = 200;
 export const PLAN_LIMITS = {
   free: {
     statusPages: 1,
-    monitors: 3,
-    minInterval: 300,
+    monitors: 10,
+    minInterval: 60,
     customDomain: false,
-    slackWebhook: false,
+    slackWebhook: true,
     teamSeats: 1,
-    retentionDays: 7,
+    retentionDays: 30,
     apiAccess: false,
     multiRegion: false,
+    heartbeats: 3,
   },
-  pro: {
+  indie: {
     statusPages: 3,
-    monitors: 20,
-    minInterval: 30,
+    monitors: 25,
+    minInterval: 60,
     customDomain: true,
     slackWebhook: true,
     teamSeats: 2,
     retentionDays: 90,
-    apiAccess: false,
+    apiAccess: true,
     multiRegion: false,
+    heartbeats: 10,
   },
-  team: {
-    statusPages: Infinity,
+  pro: {
+    statusPages: 10,
     monitors: 50,
     minInterval: 30,
     customDomain: true,
     slackWebhook: true,
-    teamSeats: 5,
+    teamSeats: 3,
+    retentionDays: 90,
+    apiAccess: true,
+    multiRegion: true,
+    heartbeats: 25,
+  },
+  team: {
+    statusPages: Infinity,
+    monitors: 200,
+    minInterval: 30,
+    customDomain: true,
+    slackWebhook: true,
+    teamSeats: 10,
     retentionDays: 365,
     apiAccess: true,
     multiRegion: true,
+    heartbeats: 100,
   },
 } as const;
+
+export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
+  indie: 12,
+  pro: 29,
+  team: 79,
+};

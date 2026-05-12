@@ -9,6 +9,10 @@ import {
   X,
   Bell,
   ShieldCheck,
+  Zap,
+  Clock,
+  Globe,
+  Heart,
 } from "lucide-react";
 import "./Landing.css";
 
@@ -142,6 +146,31 @@ export function LandingPage() {
       {/* TERMINAL DEMO */}
       <TerminalDemo />
 
+      {/* SOCIAL PROOF STRIP */}
+      <div className="proof-strip">
+        <div className="proof-inner">
+          <div className="proof-item">
+            <Zap size={14} aria-hidden="true" />
+            <span>Auto incident creation — no manual work</span>
+          </div>
+          <div className="proof-divider" aria-hidden="true" />
+          <div className="proof-item">
+            <Clock size={14} aria-hidden="true" />
+            <span>1-minute checks free · 30-second checks Pro+</span>
+          </div>
+          <div className="proof-divider" aria-hidden="true" />
+          <div className="proof-item">
+            <Globe size={14} aria-hidden="true" />
+            <span>Status pages that survive outages</span>
+          </div>
+          <div className="proof-divider" aria-hidden="true" />
+          <div className="proof-item">
+            <ShieldCheck size={14} aria-hidden="true" />
+            <span>Free forever — no credit card</span>
+          </div>
+        </div>
+      </div>
+
       {/* HOW IT WORKS */}
       <section className="section" id="how">
         <div className="container">
@@ -152,7 +181,7 @@ export function LandingPage() {
             <div className="step">
               <div className="step-num">01</div>
               <h3>Add your endpoints</h3>
-              <p>HTTP, TCP, or keyword checks. We ping every 30 seconds from multiple regions. If it's down, we know in under a minute.</p>
+              <p>HTTP, TCP, or keyword checks. We ping every minute from multiple regions. If it's down, we know fast — and heartbeat monitoring keeps an eye on your cron jobs too.</p>
             </div>
             <div className="step">
               <div className="step-num">02</div>
@@ -176,10 +205,11 @@ export function LandingPage() {
           <div className="features-grid">
             {[
               { Icon: ShieldCheck, title: "Automatic Incident Detection", desc: "Consecutive failure confirmation prevents false alarms. When it's really down, an incident is created and your status page is updated automatically." },
-              { Icon: Radio, title: "Global Monitoring", desc: "HTTP, TCP, and keyword checks every 30s from multiple regions. Sub-minute detection with configurable confirmation counts." },
+              { Icon: Radio, title: "Uptime Monitoring", desc: "HTTP, TCP, and keyword checks every minute from multiple regions. Sub-minute detection with configurable confirmation counts." },
+              { Icon: Heart, title: "Heartbeat Monitoring", desc: "Monitor cron jobs and scheduled tasks. Your service pings a unique URL — if we don't hear from it, we alert you. Available on every plan." },
               { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Your users see a professional page — not a wall of technical jargon." },
               { Icon: Mail, title: "Subscriber Notifications", desc: "Email and Slack alerts when incidents start and resolve. Your users subscribe themselves — zero friction on your end." },
-              { Icon: Bell, title: "Instant Alerts", desc: "Get notified the moment something goes wrong via Slack webhooks or Discord. Know before your users do." },
+              { Icon: Bell, title: "Instant Alerts", desc: "Get notified the moment something goes wrong via Slack or Discord webhooks. Know before your users do." },
               { Icon: Timer, title: "Uptime Badge", desc: "Embed a real-time uptime badge on your site, README, or docs. Social proof that builds trust automatically." },
             ].map((f) => (
               <div className="feature" key={f.title}>
@@ -213,11 +243,12 @@ export function LandingPage() {
               {[
                 { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
-                { feature: "Uptime monitoring", us: "✓ 30s intervals", bs: "✓", ins: "✓", sp: "Add-on" },
+                { feature: "Uptime monitoring", us: "✓ 1-min intervals", bs: "✓", ins: "✓", sp: "Add-on" },
                 { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Custom domain", us: "✓", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Free tier", us: "✓ Forever free", bs: "Trial only", ins: "✓", sp: "✗" },
-                { feature: "Starting price", us: "$19/mo", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
+                { feature: "Heartbeat monitoring", us: "✓ All plans", bs: "✓ Paid only", ins: "✗", sp: "✗" },
+                { feature: "Starting price", us: "$12/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
               ].map((row) => (
                 <tr key={row.feature}>
                   <td>{row.feature}</td>
@@ -245,43 +276,55 @@ export function LandingPage() {
               <p className="price-desc">For side projects and personal apps.</p>
               <ul className="price-features">
                 <li>1 status page</li>
-                <li>3 monitors</li>
-                <li>5-minute check intervals</li>
-                <li>Automatic incident management</li>
-                <li>Email notifications</li>
+                <li>10 monitors</li>
+                <li>1-minute check intervals</li>
+                <li>3 heartbeat monitors</li>
+                <li>Slack & Discord alerts</li>
                 <li>Uptime badge</li>
+                <li>30-day history</li>
+              </ul>
+              <Link to="/register" className="price-btn">Get Started</Link>
+            </div>
+            <div className="price-card">
+              <p className="price-name">Indie</p>
+              <p className="price-amount">$12<span>/mo</span></p>
+              <p className="price-desc">For indie hackers and solo founders.</p>
+              <ul className="price-features">
+                <li>3 status pages</li>
+                <li>25 monitors</li>
+                <li>1-minute check intervals</li>
+                <li>10 heartbeat monitors</li>
+                <li>Custom domain</li>
+                <li>90-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>
             <div className="price-card featured">
               <p className="price-name">Pro</p>
-              <p className="price-amount">$19<span>/mo</span></p>
+              <p className="price-amount">$29<span>/mo</span></p>
               <p className="price-desc">For growing SaaS teams.</p>
               <ul className="price-features">
-                <li>3 status pages</li>
-                <li>20 monitors</li>
+                <li>10 status pages</li>
+                <li>50 monitors</li>
                 <li>30-second check intervals</li>
-                <li>Custom domain</li>
-                <li>Slack + webhook alerts</li>
-                <li>Uptime badge embed</li>
-                <li>90-day history retention</li>
-                <li>2 team seats</li>
+                <li>25 heartbeat monitors</li>
+                <li>Custom domain + API access</li>
+                <li>3 team seats</li>
+                <li>90-day history</li>
               </ul>
               <Link to="/register" className="price-btn featured-btn">Get Started</Link>
             </div>
             <div className="price-card">
               <p className="price-name">Team</p>
-              <p className="price-amount">$49<span>/mo</span></p>
+              <p className="price-amount">$79<span>/mo</span></p>
               <p className="price-desc">For teams that ship fast.</p>
               <ul className="price-features">
                 <li>Everything in Pro</li>
-                <li>Unlimited status pages</li>
-                <li>50 monitors</li>
+                <li>200 monitors</li>
+                <li>100 heartbeat monitors</li>
                 <li>Multi-region checks</li>
-                <li>365-day history retention</li>
-                <li>Team members (5 seats)</li>
-                <li>API access</li>
-                <li>Priority support</li>
+                <li>10 team seats</li>
+                <li>365-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>
@@ -308,12 +351,37 @@ export function LandingPage() {
       {/* FOOTER */}
       <footer>
         <div className="container">
-          <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-          <div className="footer-links">
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/login">Log in</Link>
+          <div className="footer-top">
+            <div className="footer-brand">
+              <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
+              <span className="footer-brand-name">{BRAND}</span>
+            </div>
+            <div className="footer-cols">
+              <div className="footer-col">
+                <p className="footer-col-label">Product</p>
+                <a href="#features">Features</a>
+                <Link to="/pricing">Pricing</Link>
+                <a href="/api/docs" target="_blank" rel="noopener noreferrer">API Docs</a>
+              </div>
+              <div className="footer-col">
+                <p className="footer-col-label">Compare</p>
+                <Link to="/vs/betterstack">vs Betterstack</Link>
+                <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+              </div>
+              <div className="footer-col">
+                <p className="footer-col-label">Legal</p>
+                <Link to="/privacy">Privacy</Link>
+                <Link to="/terms">Terms</Link>
+              </div>
+            </div>
+          </div>
+          <div className="footer-bottom">
+            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
+            <div className="footer-links">
+              <a href="https://github.com/uptimecrow" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <Link to="/login">Log in</Link>
+              <Link to="/register">Get Started</Link>
+            </div>
           </div>
         </div>
       </footer>

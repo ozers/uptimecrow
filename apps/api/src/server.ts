@@ -13,7 +13,11 @@ import { billingRoutes } from "./routes/billing.js";
 import { maintenanceRoutes } from "./routes/maintenance.js";
 import { apiKeyRoutes } from "./routes/api-keys.js";
 import { docsRoutes } from "./routes/docs.js";
+import heartbeatRoutes from "./routes/heartbeats.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
+import { db } from "./db/index.js";
+import { heartbeats } from "./db/schema.js";
+import { eq } from "drizzle-orm";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
@@ -56,6 +60,21 @@ app.get("/s/:slug", (c) => {
   return c.body(rendered.html);
 });
 
+// Heartbeat ping endpoint — public, no auth
+app.get("/hb/:slug", publicRateLimit, async (c) => {
+  const slug = c.req.param("slug") as string;
+  const [hb] = await db
+    .select({ id: heartbeats.id, isActive: heartbeats.isActive })
+    .from(heartbeats)
+    .where(eq(heartbeats.slug, slug));
+  if (!hb || !hb.isActive) return c.text("Not found", 404);
+  await db
+    .update(heartbeats)
+    .set({ lastPingAt: new Date(), status: "healthy" })
+    .where(eq(heartbeats.id, hb.id));
+  return c.text("OK", 200);
+});
+
 // Public API routes (no auth)
 app.use("/status/*", publicRateLimit);
 app.route("/status", publicRoutes);
@@ -77,6 +96,7 @@ app.route("/api/settings", settingsRoutes);
 app.route("/api/billing", billingRoutes);
 app.route("/api/maintenance-windows", maintenanceRoutes);
 app.route("/api/api-keys", apiKeyRoutes);
+app.route("/api/heartbeats", heartbeatRoutes);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);

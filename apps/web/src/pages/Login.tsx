@@ -64,7 +64,7 @@ export function Login() {
                 <Activity className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">30-second check intervals</p>
+                <p className="text-sm font-medium">1-minute check intervals — every plan</p>
                 <p className="text-xs text-muted-foreground">Know about outages before your users do</p>
               </div>
             </div>

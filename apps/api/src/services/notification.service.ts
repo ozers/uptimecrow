@@ -231,3 +231,88 @@ export async function sendDiscordWebhook(params: {
     logger.error({ err }, "[Notification] Discord webhook failed");
   }
 }
+
+export async function sendCustomWebhook(params: {
+  webhookUrl: string;
+  type: "incident_created" | "incident_resolved";
+  statusPageName: string;
+  incidentTitle: string;
+  severity?: string;
+  updateBody: string;
+}): Promise<void> {
+  const payload = {
+    event: params.type,
+    statusPage: params.statusPageName,
+    incident: {
+      title: params.incidentTitle,
+      severity: params.severity ?? null,
+      update: params.updateBody,
+    },
+    timestamp: new Date().toISOString(),
+    source: "UptimeCrow",
+  };
+  try {
+    const res = await fetch(params.webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(`Custom webhook returned ${res.status}`);
+    logger.info(`[Notification] Custom webhook sent for "${params.incidentTitle}"`);
+  } catch (err) {
+    logger.error({ err }, "[Notification] Custom webhook failed");
+  }
+}
+
+export async function sendHeartbeatLateAlert(params: {
+  heartbeatName: string;
+  slackWebhookUrl?: string | null;
+  discordWebhookUrl?: string | null;
+}): Promise<void> {
+  const title = `💔 Heartbeat missed: ${params.heartbeatName}`;
+  const body = `No ping received within the expected window. Check that your scheduled job or cron is running.`;
+
+  if (params.slackWebhookUrl) {
+    const payload = {
+      attachments: [{
+        color: "#ff5370",
+        pretext: title,
+        fields: [{ title: "Details", value: body, short: false }],
+        footer: "UptimeCrow Heartbeats",
+        ts: Math.floor(Date.now() / 1000),
+      }],
+    };
+    try {
+      const res = await fetch(params.slackWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] Heartbeat Slack alert failed");
+    }
+  }
+
+  if (params.discordWebhookUrl) {
+    const payload = {
+      embeds: [{
+        title,
+        description: body,
+        color: 0xff5370,
+        timestamp: new Date().toISOString(),
+        footer: { text: "UptimeCrow Heartbeats" },
+      }],
+    };
+    try {
+      const res = await fetch(params.discordWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] Heartbeat Discord alert failed");
+    }
+  }
+}

@@ -200,6 +200,19 @@ export function MonitorDetail() {
               <span className="text-xs text-muted-foreground">p99 30d</span>
             </div>
           )}
+          {monitor.sslExpiresAt != null && monitor.url.startsWith("https://") && (() => {
+            const days = Math.round((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
+            const expired = days < 0;
+            const warning = days < 14;
+            return (
+              <div className="flex items-baseline gap-1.5 text-sm">
+                <span className={cn("text-xl font-bold tabular-nums leading-none tracking-tight", expired ? "text-destructive" : warning ? "text-yellow-500" : "")}>
+                  {expired ? "Expired" : `${days}d`}
+                </span>
+                <span className="text-xs text-muted-foreground">SSL expiry</span>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Per-region breakdown (multi-region checks only) */}

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UptimeCrow — Before / After Pre-Launch Report</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --card: #1c2030;
+    --border: #2a2f42;
+    --text: #e8eaf6;
+    --text2: #8892b0;
+    --green: #00e676;
+    --red: #ff5370;
+    --amber: #ffb74d;
+    --blue: #64b5f6;
+    --purple: #ce93d8;
+    --indigo: #7986cb;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; line-height: 1.6; }
+
+  .hero { padding: 5rem 2rem 3rem; text-align: center; background: linear-gradient(180deg, #0d0f14 0%, #111420 100%); }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 1rem; }
+  .hero p { color: var(--text2); font-size: 1.1rem; max-width: 640px; margin: 0 auto; }
+  .tag { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1.25rem; background: var(--green)18; color: var(--green); border: 1px solid var(--green)40; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+  .section { padding: 3.5rem 2rem; }
+  .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem; }
+  .section-title { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 2.5rem; }
+
+  /* Summary stats bar */
+  .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin: 2rem 0 3rem; }
+  .stat { background: var(--card); padding: 1.5rem; text-align: center; }
+  .stat-num { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--green); display: block; }
+  .stat-label { font-size: 0.8rem; color: var(--text2); margin-top: 0.25rem; }
+
+  /* Change cards */
+  .changes { display: grid; gap: 1.5rem; }
+  .change-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .change-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; }
+  .change-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .change-icon.new { background: var(--green)15; }
+  .change-icon.improved { background: var(--blue)15; }
+  .change-icon.fixed { background: var(--amber)15; }
+  .change-meta { flex: 1; }
+  .change-title { font-weight: 700; font-size: 1rem; }
+  .change-file { font-size: 0.78rem; color: var(--text2); font-family: "SF Mono", "Fira Code", monospace; margin-top: 0.15rem; }
+  .change-badge { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 999px; flex-shrink: 0; }
+  .change-badge.new { background: var(--green)18; color: var(--green); border: 1px solid var(--green)40; }
+  .change-badge.improved { background: var(--blue)18; color: var(--blue); border: 1px solid var(--blue)40; }
+  .change-badge.fixed { background: var(--amber)18; color: var(--amber); border: 1px solid var(--amber)40; }
+
+  .change-body { padding: 1.25rem 1.5rem; }
+  .diff { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 640px) { .diff { grid-template-columns: 1fr; } }
+  .diff-col { }
+  .diff-col-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .diff-col.before .diff-col-label { color: var(--red); }
+  .diff-col.after .diff-col-label { color: var(--green); }
+  .diff-items { list-style: none; space-y: 0.3rem; }
+  .diff-items li { font-size: 0.88rem; color: var(--text2); padding: 0.25rem 0; padding-left: 1.2rem; position: relative; line-height: 1.5; }
+  .diff-items li::before { position: absolute; left: 0; font-weight: 700; }
+  .diff-col.before .diff-items li::before { content: "–"; color: var(--red); }
+  .diff-col.after .diff-items li::before { content: "+"; color: var(--green); }
+  .diff-col.after .diff-items li { color: var(--text); }
+  .change-desc { font-size: 0.92rem; color: var(--text2); margin-bottom: 1rem; line-height: 1.7; }
+  .code-block { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.8rem; color: var(--text2); overflow-x: auto; margin-top: 0.75rem; line-height: 1.7; }
+  .code-block .add { color: var(--green); }
+  .code-block .rem { color: var(--red); }
+  .code-block .comment { color: #4a5568; }
+
+  /* Pricing comparison */
+  .plan-compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .plan-col { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+  .plan-col.highlight { border-color: var(--green)50; background: var(--green)05; }
+  .plan-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.25rem; }
+  .plan-price { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: var(--green); }
+  .plan-price span { font-size: 0.85rem; color: var(--text2); font-weight: 400; }
+  .plan-change { font-size: 0.75rem; color: var(--amber); margin-top: 0.15rem; }
+  .plan-features { margin-top: 0.75rem; }
+  .plan-features li { font-size: 0.8rem; color: var(--text2); padding: 0.15rem 0; padding-left: 1rem; position: relative; }
+  .plan-features li::before { content: "·"; position: absolute; left: 0.25rem; color: var(--green); }
+
+  /* Impact table */
+  .impact-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.88rem; }
+  .impact-table th { text-align: left; padding: 0.75rem 1rem; background: var(--surface); color: var(--text2); font-weight: 600; font-size: 0.78rem; letter-spacing: 0.05em; text-transform: uppercase; border-bottom: 1px solid var(--border); }
+  .impact-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border)80; vertical-align: top; }
+  .impact-table tr:last-child td { border-bottom: none; }
+  .impact-table .area { font-weight: 600; }
+  .impact-table .impact-hi { color: var(--green); font-weight: 600; }
+  .impact-table .impact-med { color: var(--amber); font-weight: 600; }
+  .impact-table .impact-lo { color: var(--blue); font-weight: 600; }
+
+  /* Footer */
+  footer { padding: 2.5rem 2rem; border-top: 1px solid var(--border); text-align: center; color: var(--text2); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="tag">Pre-launch implementation report</div>
+  <h1>Before → After</h1>
+  <p>Everything that changed between the initial audit and today. Grouped by area, with diffs and impact ratings.</p>
+</div>
+
+<!-- Stats bar -->
+<div class="container">
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num">12</span><div class="stat-label">Files changed</div></div>
+    <div class="stat"><span class="stat-num">5</span><div class="stat-label">New files created</div></div>
+    <div class="stat"><span class="stat-num">4</span><div class="stat-label">Plans (was 3)</div></div>
+    <div class="stat"><span class="stat-num">10</span><div class="stat-label">Free monitors (was 3)</div></div>
+    <div class="stat"><span class="stat-num">$12</span><div class="stat-label">New Indie entry point</div></div>
+    <div class="stat"><span class="stat-num">3+</span><div class="stat-label">New backend features</div></div>
+  </div>
+</div>
+
+<!-- Section 1: Plan limits -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">01 · Plan limits</p>
+    <h2 class="section-title">Competitive pricing overhaul</h2>
+
+    <div class="change-card">
+      <div class="change-header">
+        <div class="change-icon improved">📊</div>
+        <div class="change-meta">
+          <div class="change-title">Plan structure & limits rewritten</div>
+          <div class="change-file">packages/shared/src/constants.ts</div>
+        </div>
+        <div class="change-badge improved">Improved</div>
+      </div>
+      <div class="change-body">
+        <p class="change-desc">Free tier was anti-competitive (3 monitors, 5-min checks). Pro pricing was mis-positioned ($19 was splitting the difference with nobody). A $12 Indie tier fills the $0-$29 gap.</p>
+        <div class="plan-compare">
+          <div class="plan-col">
+            <div class="plan-name">Free</div>
+            <div class="plan-price">$0<span>/mo</span></div>
+            <div class="plan-change">↑ Monitors: 3 → 10 &nbsp;|&nbsp; Interval: 5min → 1min</div>
+            <ul class="plan-features">
+              <li>10 monitors (was 3)</li>
+              <li>1-min checks (was 5-min)</li>
+              <li>3 heartbeats (NEW)</li>
+              <li>Slack &amp; Discord (was Pro-only)</li>
+              <li>30-day history (was 7-day)</li>
+            </ul>
+          </div>
+          <div class="plan-col highlight">
+            <div class="plan-name">Indie ✨ NEW</div>
+            <div class="plan-price">$12<span>/mo</span></div>
+            <div class="plan-change">Fills the $0–$29 gap</div>
+            <ul class="plan-features">
+              <li>25 monitors</li>
+              <li>3 status pages</li>
+              <li>10 heartbeats</li>
+              <li>Custom domain</li>
+              <li>90-day history</li>
+            </ul>
+          </div>
+          <div class="plan-col">
+            <div class="plan-name">Pro</div>
+            <div class="plan-price">$29<span>/mo</span></div>
+            <div class="plan-change">↑ Was $19 · Monitors: 20 → 50</div>
+            <ul class="plan-features">
+              <li>50 monitors (was 20)</li>
+              <li>10 status pages (was 3)</li>
+              <li>25 heartbeats (NEW)</li>
+              <li>API access (NEW)</li>
+              <li>3 team seats (was 2)</li>
+            </ul>
+          </div>
+          <div class="plan-col">
+            <div class="plan-name">Team</div>
+            <div class="plan-price">$79<span>/mo</span></div>
+            <div class="plan-change">↑ Was $49 · Monitors: 50 → 200</div>
+            <ul class="plan-features">
+              <li>200 monitors (was 50)</li>
+              <li>100 heartbeats (NEW)</li>
+              <li>Multi-region checks</li>
+              <li>10 team seats (was 5)</li>
+              <li>365-day history</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 2: Heartbeat monitoring -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label">02 · New feature</p>
+    <h2 class="section-title">Heartbeat monitoring — end-to-end</h2>
+
+    <div class="changes">
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🗄️</div>
+          <div class="change-meta">
+            <div class="change-title">Database schema + migration</div>
+            <div class="change-file">apps/api/src/db/schema.ts · apps/api/drizzle/0009_heartbeats_indie_plan.sql</div>
+          </div>
+          <div class="change-badge new">New</div>
+        </div>
+        <div class="change-body">
+          <p class="change-desc">New <code>heartbeats</code> table with status enum, period/grace columns, and org-scoped access. Migration also adds the <code>indie</code> value to the plan enum.</p>
+          <div class="code-block">
+<span class="comment">-- Migration 0009</span>
+<span class="add">ALTER TYPE "plan" ADD VALUE 'indie' BEFORE 'pro';</span>
+<span class="add">CREATE TYPE "heartbeat_status" AS ENUM ('healthy', 'late', 'paused', 'unknown');</span>
+<span class="add">CREATE TABLE "heartbeats" (</span>
+<span class="add">  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),</span>
+<span class="add">  "org_id" uuid NOT NULL REFERENCES organizations(id) ON DELETE cascade,</span>
+<span class="add">  "slug" varchar(100) NOT NULL UNIQUE,</span>
+<span class="add">  "period" integer NOT NULL DEFAULT 86400,</span>
+<span class="add">  "grace" integer NOT NULL DEFAULT 300,</span>
+<span class="add">  "status" heartbeat_status NOT NULL DEFAULT 'unknown',</span>
+<span class="add">  "last_ping_at" timestamptz, "is_active" boolean DEFAULT true, ...</span>
+<span class="add">);</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🔌</div>
+          <div class="change-meta">
+            <div class="change-title">REST API — CRUD + public ping endpoint</div>
+            <div class="change-file">apps/api/src/routes/heartbeats.ts · apps/api/src/server.ts</div>
+          </div>
+          <div class="change-badge new">New</div>
+        </div>
+        <div class="change-body">
+          <div class="diff">
+            <div class="diff-col before">
+              <div class="diff-col-label">Before</div>
+              <ul class="diff-items">
+                <li>No heartbeat endpoints</li>
+                <li>No public ping URL</li>
+                <li>Cron job monitoring impossible</li>
+              </ul>
+            </div>
+            <div class="diff-col after">
+              <div class="diff-col-label">After</div>
+              <ul class="diff-items">
+                <li>GET /api/heartbeats — list org's heartbeats</li>
+                <li>POST /api/heartbeats — create with plan-limit check</li>
+                <li>PATCH /api/heartbeats/:id — update name/period/grace</li>
+                <li>DELETE /api/heartbeats/:id — org-scoped delete</li>
+                <li>GET /hb/:slug — public ping (no auth, rate-limited)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">⚙️</div>
+          <div class="change-meta">
+            <div class="change-title">Worker — late heartbeat detection every 60s</div>
+            <div class="change-file">apps/api/src/jobs/heartbeat-check.job.ts · apps/api/src/worker.ts</div>
+          </div>
+          <div class="change-badge new">New</div>
+        </div>
+        <div class="change-body">
+          <p class="change-desc">BullMQ repeatable job runs every 60 seconds. Queries heartbeats where <code>lastPingAt + period + grace &lt; now()</code> (and never-pinged ones where <code>createdAt + period + grace &lt; now()</code>), then marks them <em>late</em> and logs a warning per heartbeat.</p>
+          <div class="code-block">
+<span class="comment">// heartbeat-check.job.ts (simplified)</span>
+const overdue = await db.select(...)
+  .where(and(
+    eq(heartbeats.isActive, true),
+    ne(heartbeats.status, "late"),
+    isNotNull(heartbeats.lastPingAt),
+<span class="add">    lt(sql`last_ping_at + (period + grace) * interval '1 second'`, now),</span>
+  ));
+
+<span class="comment">// worker.ts additions</span>
+<span class="add">const heartbeatCheckWorker = new Worker("heartbeat-checks", processHeartbeatCheckJob, ...);</span>
+<span class="add">await heartbeatQueue.add("check-late-heartbeats", {}, { repeat: { every: 60_000 } });</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🖥️</div>
+          <div class="change-meta">
+            <div class="change-title">Dashboard UI — HeartbeatsList page</div>
+            <div class="change-file">apps/web/src/pages/dashboard/heartbeats/HeartbeatsList.tsx · lib/queries/heartbeats.ts</div>
+          </div>
+          <div class="change-badge new">New</div>
+        </div>
+        <div class="change-body">
+          <div class="diff">
+            <div class="diff-col before">
+              <div class="diff-col-label">Before</div>
+              <ul class="diff-items">
+                <li>No heartbeat UI whatsoever</li>
+                <li>No sidebar entry</li>
+                <li>No route</li>
+              </ul>
+            </div>
+            <div class="diff-col after">
+              <div class="diff-col-label">After</div>
+              <ul class="diff-items">
+                <li>/dashboard/heartbeats route added to App.tsx</li>
+                <li>"Heartbeats" nav item in sidebar (Heart icon)</li>
+                <li>Full list view with status badges, last-ping time</li>
+                <li>Copy-to-clipboard ping URL per heartbeat</li>
+                <li>Create dialog (name, period, grace selectors)</li>
+                <li>Delete with confirmation dialog</li>
+                <li>React Query hooks in lib/queries/heartbeats.ts</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 3: Landing & Marketing -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label">03 · Marketing pages</p>
+    <h2 class="section-title">Copy, positioning &amp; SEO pages</h2>
+
+    <div class="changes">
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon improved">🏠</div>
+          <div class="change-meta">
+            <div class="change-title">Landing page — features, proof strip, pricing cards</div>
+            <div class="change-file">apps/web/src/pages/Landing.tsx · Landing.css</div>
+          </div>
+          <div class="change-badge improved">Improved</div>
+        </div>
+        <div class="change-body">
+          <div class="diff">
+            <div class="diff-col before">
+              <div class="diff-col-label">Before</div>
+              <ul class="diff-items">
+                <li>3 pricing cards (Free / Pro / Team)</li>
+                <li>Old prices: $0 / $19 / $49</li>
+                <li>No heartbeat feature in grid</li>
+                <li>"30-second check intervals" in proof strip</li>
+                <li>3 monitors / 5-min free tier in cards</li>
+                <li>No compare links in footer</li>
+                <li>No social proof strip</li>
+              </ul>
+            </div>
+            <div class="diff-col after">
+              <div class="diff-col-label">After</div>
+              <ul class="diff-items">
+                <li>4 pricing cards (Free / Indie / Pro / Team)</li>
+                <li>New prices: $0 / $12 / $29 / $79</li>
+                <li>Heartbeat monitoring feature card added</li>
+                <li>"1-minute check intervals on every plan"</li>
+                <li>10 monitors / 1-min free tier in cards</li>
+                <li>Compare links in 3-column footer</li>
+                <li>Social proof strip (4 items, nowrap)</li>
+                <li>Heartbeat row in comparison table</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon improved">💰</div>
+          <div class="change-meta">
+            <div class="change-title">Pricing page — 4-card layout</div>
+            <div class="change-file">apps/web/src/pages/Pricing.tsx</div>
+          </div>
+          <div class="change-badge improved">Improved</div>
+        </div>
+        <div class="change-body">
+          <div class="diff">
+            <div class="diff-col before">
+              <div class="diff-col-label">Before</div>
+              <ul class="diff-items">
+                <li>3 plans: Free / Pro ($19) / Team ($49)</li>
+                <li>Free: 3 monitors, 5-min, 7-day history</li>
+                <li>No Indie tier</li>
+                <li>Pro: 20 monitors, 2 seats</li>
+                <li>Team: 50 monitors, 5 seats</li>
+              </ul>
+            </div>
+            <div class="diff-col after">
+              <div class="diff-col-label">After</div>
+              <ul class="diff-items">
+                <li>4 plans: Free / Indie ($12) / Pro ($29) / Team ($79)</li>
+                <li>Free: 10 monitors, 1-min, 30-day, 3 heartbeats</li>
+                <li>Indie: 25 monitors, custom domain, 10 heartbeats</li>
+                <li>Pro: 50 monitors, API, 3 seats, 25 heartbeats</li>
+                <li>Team: 200 monitors, 10 seats, 100 heartbeats</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon improved">⚔️</div>
+          <div class="change-meta">
+            <div class="change-title">vs/ SEO pages — richer, updated positioning</div>
+            <div class="change-file">apps/web/src/pages/compare/VsBetterStack.tsx · VsUptimeRobot.tsx</div>
+          </div>
+          <div class="change-badge improved">Improved</div>
+        </div>
+        <div class="change-body">
+          <div class="diff">
+            <div class="diff-col before">
+              <div class="diff-col-label">Before</div>
+              <ul class="diff-items">
+                <li>Old pricing ($19/$49) in comparison rows</li>
+                <li>No heartbeat mention anywhere</li>
+                <li>BetterStack: "Pro $19 · 20 monitors"</li>
+                <li>UptimeRobot: "Free 3 monitors, 5-min checks"</li>
+                <li>Slack only on "Pro plan"</li>
+              </ul>
+            </div>
+            <div class="diff-col after">
+              <div class="diff-col-label">After</div>
+              <ul class="diff-items">
+                <li>Updated pricing ($12/$29/$79) throughout</li>
+                <li>Heartbeat row added to both tables</li>
+                <li>BetterStack: "Pro $29 · 50 monitors vs $29 · 10"</li>
+                <li>UptimeRobot: "Free 10 monitors, 1-min checks"</li>
+                <li>Slack &amp; Discord "All plans incl. free"</li>
+                <li>UptimeRobot: explicit "heartbeats not available"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon fixed">🔧</div>
+          <div class="change-meta">
+            <div class="change-title">Email cleanup — hooksense.com → uptimecrow.com</div>
+            <div class="change-file">Settings.tsx · Legal.tsx · Pricing.tsx · CompareLayout.tsx</div>
+          </div>
+          <div class="change-badge fixed">Fixed</div>
+        </div>
+        <div class="change-body">
+          <p class="change-desc">7 instances of <code>support@hooksense.com</code> were scattered across 4 files — a leaked reference to the previous project name. All replaced with <code>support@uptimecrow.com</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section 4: Impact summary -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <p class="section-label">04 · Impact summary</p>
+    <h2 class="section-title">What each change moves</h2>
+    <table class="impact-table">
+      <thead>
+        <tr>
+          <th>Area</th>
+          <th>Change</th>
+          <th>Metric it moves</th>
+          <th>Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="area">Free tier</td>
+          <td>3 → 10 monitors, 5-min → 1-min, 7d → 30d history</td>
+          <td>Trial-to-registration conversion; reduces churn at the "I need more monitors" moment</td>
+          <td class="impact-hi">High</td>
+        </tr>
+        <tr>
+          <td class="area">Indie plan ($12)</td>
+          <td>New tier between $0 and $29</td>
+          <td>Captures solo devs who would bounce at $29 but want custom domain</td>
+          <td class="impact-hi">High</td>
+        </tr>
+        <tr>
+          <td class="area">Heartbeat monitoring</td>
+          <td>Full stack: schema, API, worker, UI, public ping</td>
+          <td>Unique differentiator vs. UptimeRobot (they have none); moat deepening</td>
+          <td class="impact-hi">High</td>
+        </tr>
+        <tr>
+          <td class="area">Slack/Discord on free</td>
+          <td>Moved from Pro-only to all plans</td>
+          <td>Removes a blocker for free users; increases upgrade motivation through feature exposure</td>
+          <td class="impact-med">Medium</td>
+        </tr>
+        <tr>
+          <td class="area">Landing copy</td>
+          <td>Heartbeat feature card, updated proof strip and comparison table</td>
+          <td>SEO signals; reduces "what does this do?" bounce</td>
+          <td class="impact-med">Medium</td>
+        </tr>
+        <tr>
+          <td class="area">vs/ SEO pages</td>
+          <td>Updated pricing rows, heartbeat row, stronger pitch</td>
+          <td>Long-tail search traffic ("betterstack alternative", "uptimerobot alternative")</td>
+          <td class="impact-med">Medium</td>
+        </tr>
+        <tr>
+          <td class="area">Email cleanup</td>
+          <td>hooksense → uptimecrow.com (7 instances)</td>
+          <td>Brand trust; prevents support emails going to a dead address</td>
+          <td class="impact-lo">Low (blocker fixed)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Section 5: What's next -->
+<section class="section" style="padding-top:0; padding-bottom: 4rem">
+  <div class="container">
+    <p class="section-label">05 · What's next after launch</p>
+    <h2 class="section-title">Post-launch roadmap (top picks)</h2>
+    <div class="changes">
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🌐</div>
+          <div class="change-meta">
+            <div class="change-title">Multi-region monitoring</div>
+            <div class="change-file">Differentiates Team plan; requires infra in 2–3 regions</div>
+          </div>
+          <div class="change-badge new">Post-launch</div>
+        </div>
+      </div>
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🔔</div>
+          <div class="change-meta">
+            <div class="change-title">On-call / PagerDuty-style escalations</div>
+            <div class="change-file">Closes the last meaningful gap vs. BetterStack for teams</div>
+          </div>
+          <div class="change-badge new">Post-launch</div>
+        </div>
+      </div>
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">🤖</div>
+          <div class="change-meta">
+            <div class="change-title">Self-serve billing (Polar checkout)</div>
+            <div class="change-file">Currently manual via email — unblocking this is a prerequisite for scale</div>
+          </div>
+          <div class="change-badge new">Post-launch</div>
+        </div>
+      </div>
+      <div class="change-card">
+        <div class="change-header">
+          <div class="change-icon new">📊</div>
+          <div class="change-meta">
+            <div class="change-title">Public embed widget</div>
+            <div class="change-file">Status badge is already live; a full embed widget (incident feed + uptime) drives viral distribution</div>
+          </div>
+          <div class="change-badge new">Post-launch</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>UptimeCrow — Pre-launch implementation report · Generated 2026-05-12</p>
+</footer>
+</body>
+</html>

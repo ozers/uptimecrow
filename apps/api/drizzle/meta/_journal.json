@@ -64,6 +64,27 @@
       "when": 1776084607152,
       "tag": "0008_puzzling_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1747094400000,
+      "tag": "0009_heartbeats_indie_plan",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1747267200000,
+      "tag": "0010_ssl_monitoring",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1747353600000,
+      "tag": "0011_custom_webhook",
+      "breakpoints": true
     }
   ]
 }

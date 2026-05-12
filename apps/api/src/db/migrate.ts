@@ -45,10 +45,19 @@ try {
 
 // Post-migration schema repair: ensure columns that have caused issues actually exist.
 // Runs every startup as a safety net against Railway Postgres WAL loss on crash.
-await client`
-  ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS access_token uuid DEFAULT gen_random_uuid()
-`;
-logger.info("Schema repair complete.");
+try {
+  await client`
+    ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS access_token uuid DEFAULT gen_random_uuid()
+  `;
+  logger.info("Schema repair complete.");
+} catch (repairErr: unknown) {
+  const repairCode = (repairErr as { code?: string } | null)?.code;
+  if (repairCode === "42P01") {
+    logger.warn("Schema repair skipped — status_pages table not yet created (migration pending)");
+  } else {
+    logger.error({ err: repairErr }, "Schema repair failed");
+  }
+}
 
 await client.end();
 process.exit(0);

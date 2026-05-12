@@ -13,47 +13,64 @@ const PLANS = [
     desc: "For side projects and personal apps.",
     features: [
       "1 status page",
-      "3 monitors",
-      "5-minute check intervals",
+      "10 monitors",
+      "1-minute check intervals",
+      "3 heartbeat monitors",
       "Automatic incident management",
-      "Email notifications",
+      "Slack & Discord alerts",
       "Uptime badge",
-      "7-day history retention",
+      "30-day history",
+    ],
+    cta: "Get Started",
+    featured: false,
+  },
+  {
+    name: "Indie",
+    price: "$12",
+    per: "/mo",
+    desc: "For indie hackers and solo founders.",
+    features: [
+      "3 status pages",
+      "25 monitors",
+      "1-minute check intervals",
+      "10 heartbeat monitors",
+      "Custom domain",
+      "Slack & Discord alerts",
+      "90-day history",
     ],
     cta: "Get Started",
     featured: false,
   },
   {
     name: "Pro",
-    price: "$19",
+    price: "$29",
     per: "/mo",
     desc: "For growing SaaS teams.",
     features: [
-      "3 status pages",
-      "20 monitors",
+      "10 status pages",
+      "50 monitors",
       "30-second check intervals",
+      "25 heartbeat monitors",
       "Custom domain",
-      "Slack + Discord alerts",
-      "Uptime badge embed",
-      "90-day history retention",
-      "2 team seats",
+      "API access",
+      "3 team seats",
+      "90-day history",
     ],
     cta: "Get Started",
     featured: true,
   },
   {
     name: "Team",
-    price: "$49",
+    price: "$79",
     per: "/mo",
     desc: "For teams that ship fast.",
     features: [
       "Everything in Pro",
-      "Unlimited status pages",
-      "50 monitors",
+      "200 monitors",
+      "100 heartbeat monitors",
       "Multi-region checks",
-      "365-day history retention",
-      "5 team seats",
-      "API access",
+      "10 team seats",
+      "365-day history",
       "Priority support",
     ],
     cta: "Get Started",
@@ -64,15 +81,15 @@ const PLANS = [
 const FAQ = [
   {
     q: "How do I upgrade right now?",
-    a: "Online checkout and coupon redemption are temporarily paused while we migrate our billing infrastructure. In the meantime, email support@hooksense.com with your account email and the plan you want — we'll activate it manually, usually the same day.",
+    a: "Online checkout and coupon redemption are temporarily paused while we migrate our billing infrastructure. In the meantime, email support@uptimecrow.com with your account email and the plan you want — we'll activate it manually, usually the same day.",
   },
   {
     q: "Is there a free trial for Pro or Team?",
-    a: "Not yet. The Free plan is free forever — use it until you outgrow the 3-monitor limit, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
+    a: "Not yet. The Free plan is free forever — use it until you outgrow the 10-monitor limit, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
   },
   {
     q: "Can I change or cancel my plan anytime?",
-    a: "Yes. Downgrades take effect at the end of your current billing period, so you keep the features you paid for. While self-serve billing is paused, email support@hooksense.com for plan changes and we'll process them by hand.",
+    a: "Yes. Downgrades take effect at the end of your current billing period, so you keep the features you paid for. While self-serve billing is paused, email support@uptimecrow.com for plan changes and we'll process them by hand.",
   },
   {
     q: "How does billing work?",
@@ -156,8 +173,8 @@ export function Pricing() {
             <strong style={{ color: "var(--amber)" }}>Heads up:</strong> online payments and coupon
             redemption are temporarily paused while we migrate our billing infrastructure. To upgrade or
             use a coupon in the meantime, email{" "}
-            <a href="mailto:support@hooksense.com" style={{ color: "var(--green)", textDecoration: "underline" }}>
-              support@hooksense.com
+            <a href="mailto:support@uptimecrow.com" style={{ color: "var(--green)", textDecoration: "underline" }}>
+              support@uptimecrow.com
             </a>{" "}
             and we'll help you out.
           </div>
@@ -218,7 +235,7 @@ export function Pricing() {
       <section className="final-cta">
         <div className="container">
           <h2>Ready to know when you're down?</h2>
-          <p>Start free. No credit card. 3 minutes to set up.</p>
+          <p>10 monitors, 1-min checks, forever free. No credit card needed.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/login" className="hero-btn secondary">Log in</Link>
@@ -228,12 +245,16 @@ export function Pricing() {
 
       <footer>
         <div className="container">
-          <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-          <div className="footer-links">
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/terms">Terms</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/login">Log in</Link>
+          <div className="footer-bottom">
+            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
+            <div className="footer-links">
+              <Link to="/">Home</Link>
+              <Link to="/vs/betterstack">vs Betterstack</Link>
+              <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/terms">Terms</Link>
+              <Link to="/login">Log in</Link>
+            </div>
           </div>
         </div>
       </footer>
