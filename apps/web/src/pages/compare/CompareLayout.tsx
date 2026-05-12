@@ -171,8 +171,11 @@ export function CompareLayout(props: Props) {
             <div className="footer-links">
               <Link to="/">Home</Link>
               <Link to="/pricing">Pricing</Link>
-              <Link to="/vs/betterstack">vs Betterstack</Link>
+              <Link to="/vs/betterstack">vs BetterStack</Link>
               <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+              <Link to="/vs/uptime-kuma">vs Uptime Kuma</Link>
+              <Link to="/vs/freshping">vs Freshping</Link>
+              <Link to="/vs/instatus">vs Instatus</Link>
               <Link to="/privacy">Privacy</Link>
               <Link to="/login">Log in</Link>
             </div>

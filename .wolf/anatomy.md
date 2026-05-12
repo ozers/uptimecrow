@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T15:22:42.667Z
-> Files: 223 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T20:41:02.427Z
+> Files: 230 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -105,6 +105,7 @@
 - `0009_heartbeats_indie_plan.sql` — Add indie plan to plan enum (IF NOT EXISTS requires PG 9.6+) (~309 tok)
 - `0010_ssl_monitoring.sql` (~42 tok)
 - `0011_custom_webhook.sql` (~20 tok)
+- `0012_new_integrations.sql` — Add PagerDuty, Microsoft Teams, and Telegram webhook fields to organizations (~97 tok)
 
 ## apps/api/drizzle/meta/
 
@@ -119,14 +120,14 @@
 ## apps/api/src/
 
 - `index.ts` — mode: assertProductionSecrets, main (~309 tok)
-- `server.ts` — API routes: GET (3 endpoints) (~1178 tok)
+- `server.ts` — API routes: GET (3 endpoints) (~1201 tok)
 - `worker.ts` — Exports startWorker (~1323 tok)
 
 ## apps/api/src/db/
 
 - `index.ts` — Exports db, redis (~175 tok)
 - `migrate.ts` — Declares databaseUrl (~1199 tok)
-- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3155 tok)
+- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3235 tok)
 
 ## apps/api/src/docs/
 
@@ -137,7 +138,7 @@
 - `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~2856 tok)
 - `generate.job.ts` — Generate Job — Status page regeneration (~113 tok)
 - `heartbeat-check.job.ts` — Exports processHeartbeatCheckJob (~780 tok)
-- `notify.job.ts` — Notify Job — Email notification queue handler (~1212 tok)
+- `notify.job.ts` — Notify Job — Email notification queue handler (~1439 tok)
 - `retention.job.test.ts` — Declares cutoffs (~531 tok)
 - `retention.job.ts` — Exports RetentionCutoff, computeCutoffs, RetentionResult, pruneOldCheckResults, processRetentionJob (~524 tok)
 
@@ -159,9 +160,10 @@
 - `heartbeats.ts` — API routes: GET, POST, PATCH, DELETE (8 endpoints) (~872 tok)
 - `incidents.ts` — API routes: GET, POST, PATCH (10 endpoints) (~1175 tok)
 - `maintenance.ts` — API routes: GET, POST, PATCH, DELETE (8 endpoints) (~1557 tok)
+- `mcp.ts` — MCP (Model Context Protocol) Server — exposes UptimeCrow data to AI assistants (~3332 tok)
 - `monitors.ts` — API routes: GET, POST, PATCH, DELETE (13 endpoints) (~2013 tok)
 - `public.ts` — API routes: GET, POST (4 endpoints) (~5777 tok)
-- `settings.ts` — API routes: GET, PATCH, POST (6 endpoints) (~998 tok)
+- `settings.ts` — API routes: GET, PATCH, POST (6 endpoints) (~1695 tok)
 - `status-pages.ts` — API routes: GET, POST, PATCH, DELETE, PUT (16 endpoints) (~1962 tok)
 - `subscribers.ts` — API routes: GET, DELETE (4 endpoints) (~552 tok)
 
@@ -169,7 +171,7 @@
 
 - `monitor.service.test.ts` — mockFetch: respond (~2246 tok)
 - `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3142 tok)
-- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~3235 tok)
+- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~4386 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
 - `static-gen.service.ts` — Static Generation Service — pre-renders status pages; renderStatusHtml produces modern HTML with accent-bar, status-hero, ubar uptime bars, incident timeline, subscribe form (~10500 tok)
 
@@ -193,7 +195,7 @@
 
 - `components.json` (~114 tok)
 - `Dockerfile` — Docker container definition (~333 tok)
-- `index.html` — UptimeCrow — Uptime Monitoring &amp; Status Pages for Developers (~661 tok)
+- `index.html` — UptimeCrow — Uptime Monitoring &amp; Status Pages for Developers (~1117 tok)
 - `nginx.conf` — Nginx configuration (~331 tok)
 - `package.json` — Node.js package manifest (~448 tok)
 - `postcss.config.js` — PostCSS configuration (~24 tok)
@@ -205,11 +207,11 @@
 ## apps/web/public/
 
 - `robots.txt` (~60 tok)
-- `sitemap.xml` (~254 tok)
+- `sitemap.xml` (~344 tok)
 
 ## apps/web/src/
 
-- `App.tsx` — App (~1156 tok)
+- `App.tsx` — App (~1262 tok)
 - `globals.css` — Styles: 6 rules, 39 vars, 1 media queries, 2 layers (~731 tok)
 - `main.tsx` — queryClient (~244 tok)
 
@@ -276,8 +278,8 @@
 ## apps/web/src/pages/
 
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
-- `Landing.css` — Styles: 95 rules, 15 vars (~7119 tok)
-- `Landing.tsx` — BRAND, DashboardPreview, StatusPagePreview — renders browser mockups + comparison table (~8500 tok)
+- `Landing.css` — Styles: 95 rules, 15 vars (~7364 tok)
+- `Landing.tsx` — BRAND (~8377 tok)
 - `Legal.tsx` — LegalShell (~2006 tok)
 - `Login.tsx` — Login — renders form (~1668 tok)
 - `Pricing.tsx` — BRAND (~2746 tok)
@@ -286,14 +288,17 @@
 
 ## apps/web/src/pages/compare/
 
-- `CompareLayout.tsx` — BRAND — renders table (~2070 tok)
+- `CompareLayout.tsx` — BRAND — renders table (~2121 tok)
 - `VsBetterStack.tsx` — VsBetterStack (~1207 tok)
+- `VsFreshping.tsx` — VsFreshping (~1295 tok)
+- `VsInstatus.tsx` — VsInstatus (~1470 tok)
+- `VsUptimeKuma.tsx` — VsUptimeKuma (~1492 tok)
 - `VsUptimeRobot.tsx` — VsUptimeRobot (~1245 tok)
 
 ## apps/web/src/pages/dashboard/
 
 - `Overview.tsx` — MetricCards, Onboarding (visual step cards + progress bar), StatusBanner, Overview — full redesign (~9500 tok)
-- `Settings.tsx` — SectionLabel (~3474 tok)
+- `Settings.tsx` — SectionLabel (~4770 tok)
 
 ## apps/web/src/pages/dashboard/heartbeats/
 
@@ -301,7 +306,7 @@
 
 ## apps/web/src/pages/dashboard/incidents/
 
-- `IncidentCreate.tsx` — incidentResolver — renders form — uses useNavigate (~1663 tok)
+- `IncidentCreate.tsx` — incidentResolver — renders form (~3312 tok)
 - `IncidentDetail.tsx` — IncidentDetailSkeleton — renders form (~2252 tok)
 - `IncidentsList.tsx` — IncidentsListSkeleton — renders table (~2013 tok)
 
@@ -329,6 +334,8 @@
 
 - `ai-status-page-landing.html` — [YourBrand] — AI-Native Status Page for Modern Teams (~6200 tok)
 - `before-after.html` — UptimeCrow — Before / After Pre-Launch Report (~7359 tok)
+- `competitor-analysis-report.html` — UptimeCrow — Rakip Analizi Raporu 2026 (~17886 tok)
+- `competitor-analysis.md` — UptimeCrow — Rakip Analizi & İyileştirme Planı (~5215 tok)
 - `degerlendirme-v3.html` — ShipGateway — BUILD & MAYBE Fikirler (~4939 tok)
 - `lovable-prompt.md` — AI-Native Status Page — Landing Page (~1412 tok)
 - `pricing-analysis.html` — UptimeCrow — Pricing & Competitive Analysis 2026 (~16214 tok)

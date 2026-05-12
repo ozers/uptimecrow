@@ -32,6 +32,16 @@
 - **Dashboard MetricCards:** Replaced flat `StatRow` text row with a 2×4 responsive grid of `MetricCards`. Each card has: small icon top-left, big bold number, label, optional colored badge. Uses `bg-card border-border` Tailwind pattern.
 - **Dashboard Onboarding redesign:** Now has: gradient welcome hero card with progress bar (width driven by % of required steps done), step cards with step-number circle icon and detailed description (explaining WHY), dots progress indicator per step, "What you'll get" section at bottom showing 3 final outcome features.
 
+## Key Learnings
+
+- **MCP server route:** `/api/mcp` (POST = JSON-RPC, GET = discovery info). Authenticated via API key Bearer token. Tools: get_status_summary, list_monitors, list_active_incidents, get_monitor_detail, list_heartbeats.
+- **New notification integrations:** PagerDuty (Events API v2 via `pagerdutyIntegrationKey`), Teams (MessageCard webhook), Telegram (Bot API). All stored on `organizations` table, fire in `notify.job.ts`.
+- **DB migration pattern:** Direct `docker compose exec -T postgres psql` for dev migrations; SQL file placed in `apps/api/drizzle/` for reproducibility. Migration applied: `0012_new_integrations.sql`.
+- **Incident templates:** Client-side only (no DB). 9 templates in `IncidentCreate.tsx` using `INCIDENT_TEMPLATES` const, applied via `setValue` in react-hook-form.
+- **Telegram bot token masking:** Settings GET endpoint masks token as `••••<last4>`. Settings.tsx detects `••` prefix and skips re-sending the token on PATCH.
+- **Landing page free tier:** Hero badge explicitly states "Free forever · 10 monitors · 1 status page · 60-second checks". Logo wall uses tag-style chips for product categories instead of customer logos (no real customers yet).
+- **Comparison table:** Now has 11 rows including MCP server, PagerDuty+Teams+Telegram, incident templates, false positive prevention.
+
 ## Do-Not-Repeat
 
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->
