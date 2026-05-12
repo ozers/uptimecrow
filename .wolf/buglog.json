@@ -1232,6 +1232,54 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-12T14:02:11.444Z"
+    },
+    {
+      "id": "bug-078",
+      "timestamp": "2026-05-12T14:17:05.602Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/drizzle/0009_heartbeats_indie_plan.sql",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 5→9 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "sql"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T14:17:05.602Z"
+    },
+    {
+      "id": "bug-079",
+      "timestamp": "2026-05-12T14:17:21.404Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/api/src/db/migrate.ts",
+      "root_cause": "7 lines replaced/restructured",
+      "fix": "Rewrote 15→74 lines (7 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T14:17:21.404Z"
+    },
+    {
+      "id": "bug-080",
+      "timestamp": "2026-05-12T15:20:09.884Z",
+      "error_message": "CSS fix: grid-template-columns",
+      "file": "apps/web/src/pages/Landing.css",
+      "root_cause": "grid-template-columns: 1fr → repeat(2, 1fr)",
+      "fix": "Changed grid-template-columns: 1fr → repeat(2, 1fr)",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T15:20:09.884Z"
     }
   ]
 }

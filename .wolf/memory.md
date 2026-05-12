@@ -2,6 +2,7 @@
 
 > Chronological action log. Hooks and AI append to this file automatically.
 > Old sessions are consolidated by the daemon weekly.
+| session | Major redesign: Dashboard Overview (metric cards, visual onboarding), Landing Page (dashboard + status page mockup sections), Status Page HTML (complete rewrite - modern layout, better uptime bars, cleaner timeline) | apps/web/src/pages/dashboard/Overview.tsx, apps/web/src/pages/Landing.tsx, apps/web/src/pages/Landing.css, apps/api/src/services/static-gen.service.ts | success, both typechecks pass, designqc verified | ~25000 |
 | 14:19 | designqc: captured 0 screenshots (0KB, ~0 tok) | / | ready for eval | ~0 |
 | session | Added custom outgoing webhook support (schema, migration, notification service, notify job, settings route, settings UI) | apps/api/src/db/schema.ts, apps/api/drizzle/0011_custom_webhook.sql, apps/api/drizzle/meta/_journal.json, apps/api/src/services/notification.service.ts, apps/api/src/jobs/notify.job.ts, apps/api/src/routes/settings.ts, apps/web/src/pages/dashboard/Settings.tsx | success, both typechecks pass | ~6000 |
 | 15:00 | Created apps/api/src/utils/state-machine.test.ts | — | ~712 |
@@ -380,3 +381,27 @@
 | 17:07 | designqc: captured 2 screenshots (63KB, ~5000 tok) | / | ready for eval | ~0 |
 | $(date +%H:%M) | Dashboard UX refactor: fixed onboarding gate bug, redesigned onboarding as checklist, added feature discovery cards, late heartbeat alert, status page nudge banner, sidebar descriptions | Overview.tsx, sidebar.tsx | applied, no TS errors |  ~4000 |
 | 17:08 | Session end: 8 writes across 7 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 14 reads | ~37023 tok |
+| 17:09 | Session end: 8 writes across 7 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 16 reads | ~37763 tok |
+| 17:09 | Edited apps/web/Dockerfile | 2→2 lines | ~25 |
+| 17:10 | Session end: 9 writes across 8 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 16 reads | ~37789 tok |
+| 17:12 | Edited Dockerfile | 2→2 lines | ~25 |
+| 17:12 | Session end: 10 writes across 8 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 17 reads | ~38185 tok |
+| 17:17 | Edited apps/api/drizzle/0009_heartbeats_indie_plan.sql | 5→9 lines | ~95 |
+| 17:17 | Edited apps/api/src/db/migrate.ts | added 1 condition(s) | ~773 |
+| 17:17 | Session end: 12 writes across 9 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 18 reads | ~39653 tok |
+
+## Session: 2026-05-12 18:06
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 18:11 | designqc: captured 6 screenshots (286KB, ~15000 tok) | /, /login, /dashboard | ready for eval | ~0 |
+| 18:11 | designqc: captured 2 screenshots (63KB, ~5000 tok) | /login | ready for eval | ~0 |
+| 18:11 | designqc: captured 6 screenshots (286KB, ~15000 tok) | / | ready for eval | ~0 |
+| 18:17 | Created apps/web/src/pages/dashboard/Overview.tsx | — | ~9027 |
+| 18:19 | Created apps/web/src/pages/Landing.tsx | — | ~7987 |
+| 18:19 | Edited apps/web/src/pages/Landing.css | expanded (+328 lines) | ~2318 |
+| 18:20 | Edited apps/web/src/pages/Landing.css | CSS: order, order | ~326 |
+| 18:20 | Edited apps/api/src/services/static-gen.service.ts | modified renderStatusHtml() | ~36 |
+| 18:22 | Created apps/api/src/services/static-gen.service.ts | — | ~9810 |
+| 18:23 | designqc: captured 6 screenshots (304KB, ~15000 tok) | / | ready for eval | ~0 |
+| 18:24 | Session end: 6 writes across 4 files (Overview.tsx, Landing.tsx, Landing.css, static-gen.service.ts) | 4 reads | ~54933 tok |

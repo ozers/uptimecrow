@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T14:06:23.508Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T15:22:42.667Z
 > Files: 223 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -102,7 +102,7 @@
 - `0006_add_access_token_retry.sql` — SQL: 1 alter(s) (~29 tok)
 - `0007_overconfident_jean_grey.sql` — SQL: tables: maintenance_window_monitors, maintenance_windows (~772 tok)
 - `0008_puzzling_sharon_ventura.sql` — SQL: tables: api_keys, 2 alter(s) (~312 tok)
-- `0009_heartbeats_indie_plan.sql` — Add indie plan to plan enum (~266 tok)
+- `0009_heartbeats_indie_plan.sql` — Add indie plan to plan enum (IF NOT EXISTS requires PG 9.6+) (~309 tok)
 - `0010_ssl_monitoring.sql` (~42 tok)
 - `0011_custom_webhook.sql` (~20 tok)
 
@@ -125,7 +125,7 @@
 ## apps/api/src/db/
 
 - `index.ts` — Exports db, redis (~175 tok)
-- `migrate.ts` — Declares databaseUrl (~611 tok)
+- `migrate.ts` — Declares databaseUrl (~1199 tok)
 - `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3155 tok)
 
 ## apps/api/src/docs/
@@ -171,7 +171,7 @@
 - `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3142 tok)
 - `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~3235 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
-- `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~7625 tok)
+- `static-gen.service.ts` — Static Generation Service — pre-renders status pages; renderStatusHtml produces modern HTML with accent-bar, status-hero, ubar uptime bars, incident timeline, subscribe form (~10500 tok)
 
 ## apps/api/src/utils/
 
@@ -276,8 +276,8 @@
 ## apps/web/src/pages/
 
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
-- `Landing.css` — Styles: 95 rules, 15 vars (~4769 tok)
-- `Landing.tsx` — BRAND — renders table (~5250 tok)
+- `Landing.css` — Styles: 95 rules, 15 vars (~7119 tok)
+- `Landing.tsx` — BRAND, DashboardPreview, StatusPagePreview — renders browser mockups + comparison table (~8500 tok)
 - `Legal.tsx` — LegalShell (~2006 tok)
 - `Login.tsx` — Login — renders form (~1668 tok)
 - `Pricing.tsx` — BRAND (~2746 tok)
@@ -292,7 +292,7 @@
 
 ## apps/web/src/pages/dashboard/
 
-- `Overview.tsx` — OverviewSkeleton (~7816 tok)
+- `Overview.tsx` — MetricCards, Onboarding (visual step cards + progress bar), StatusBanner, Overview — full redesign (~9500 tok)
 - `Settings.tsx` — SectionLabel (~3474 tok)
 
 ## apps/web/src/pages/dashboard/heartbeats/

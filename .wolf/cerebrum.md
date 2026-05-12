@@ -25,6 +25,13 @@
 - **Heartbeat status field:** `HeartbeatStatus = "healthy" | "late" | "paused" | "unknown"`, `isActive: boolean` on the Heartbeat type.
 - **useHeartbeats query** is available in `apps/web/src/lib/queries/heartbeats.ts` and can be used in Overview without performance issues (parallel query).
 
+## Key Learnings
+
+- **Dashboard product preview on landing page:** Added `DashboardPreview` and `StatusPagePreview` React components as inline HTML mockups to Landing.tsx. These use dedicated CSS classes (mock-browser, mock-chrome, mock-app, mock-sidebar, mock-stat-card, etc.) added to Landing.css. They appear in two new `preview-section` sections between "How it works" and "Features".
+- **Status page HTML redesign:** The `renderStatusHtml` function in `static-gen.service.ts` uses a fully custom HTML/CSS template. Key new features: accent-bar at top, status-hero with icon+label+countdown, ubar-track for uptime bars (30px height flex divs), incident-card with left border, subscribe-section with icon+form, JS theme toggle (dark/light with icons), per-second countdown refresh timer.
+- **Dashboard MetricCards:** Replaced flat `StatRow` text row with a 2×4 responsive grid of `MetricCards`. Each card has: small icon top-left, big bold number, label, optional colored badge. Uses `bg-card border-border` Tailwind pattern.
+- **Dashboard Onboarding redesign:** Now has: gradient welcome hero card with progress bar (width driven by % of required steps done), step cards with step-number circle icon and detailed description (explaining WHY), dots progress indicator per step, "What you'll get" section at bottom showing 3 final outcome features.
+
 ## Do-Not-Repeat
 
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->

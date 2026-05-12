@@ -13,6 +13,11 @@ import {
   Clock,
   Globe,
   Heart,
+  Activity,
+  AlertTriangle,
+  CheckCircle2,
+  ArrowRight,
+  RefreshCw,
 } from "lucide-react";
 import "./Landing.css";
 
@@ -89,6 +94,164 @@ function TerminalDemo() {
     </div>
   );
 }
+
+// ─── Dashboard Preview Mockup ─────────────────────────────────────────────────
+
+function DashboardPreview() {
+  const monitors = [
+    { name: "api.yourapp.com", status: "up", uptime: "99.99%", ms: 143, pct: 99 },
+    { name: "dashboard.yourapp.com", status: "up", uptime: "100%", ms: 89, pct: 100 },
+    { name: "auth.yourapp.com", status: "up", uptime: "99.8%", ms: 201, pct: 66 },
+    { name: "payments.yourapp.com", status: "up", uptime: "99.95%", ms: 178, pct: 87 },
+  ];
+
+  return (
+    <div className="mock-browser">
+      {/* Browser chrome */}
+      <div className="mock-chrome">
+        <div className="mock-chrome-dots">
+          <span className="mock-dot r" /><span className="mock-dot a" /><span className="mock-dot g" />
+        </div>
+        <div className="mock-chrome-url">app.uptimecrow.com/dashboard</div>
+        <div className="mock-chrome-action"><RefreshCw size={10} /></div>
+      </div>
+
+      {/* App layout */}
+      <div className="mock-app">
+        {/* Sidebar */}
+        <div className="mock-sidebar">
+          <div className="mock-sidebar-brand">
+            <div className="mock-sidebar-logo-dot" />
+            <span>UptimeCrow</span>
+          </div>
+          <div className="mock-nav">
+            {["Overview", "Monitors", "Incidents", "Status Pages", "Heartbeats"].map((item, i) => (
+              <div key={item} className={`mock-nav-item ${i === 0 ? "active" : ""}`}>
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main content */}
+        <div className="mock-main">
+          {/* Status banner */}
+          <div className="mock-banner">
+            <div className="mock-banner-dot" />
+            <span className="mock-banner-text">All Systems Operational</span>
+            <span className="mock-banner-time">Updated 12s ago</span>
+          </div>
+
+          {/* Stat cards */}
+          <div className="mock-stats">
+            {[
+              { val: "4", label: "monitors" },
+              { val: "99.9%", label: "avg uptime", green: true },
+              { val: "0", label: "incidents" },
+              { val: "1", label: "status page" },
+            ].map(({ val, label, green }) => (
+              <div key={label} className="mock-stat-card">
+                <div className={`mock-stat-val ${green ? "green" : ""}`}>{val}</div>
+                <div className="mock-stat-label">{label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Section label */}
+          <div className="mock-section-label">MONITOR STATUS</div>
+
+          {/* Monitor rows */}
+          <div className="mock-monitor-list">
+            {monitors.map((m) => (
+              <div key={m.name} className="mock-monitor-row">
+                <div className="mock-monitor-left">
+                  <span className="mock-status-dot up" />
+                  <span className="mock-monitor-name">{m.name}</span>
+                </div>
+                <div className="mock-monitor-right">
+                  <span className="mock-uptime">{m.uptime}</span>
+                  <div className="mock-bar-track">
+                    <div className="mock-bar-fill" style={{ width: `${m.pct}%` }} />
+                  </div>
+                  <span className="mock-ms">{m.ms}ms</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Status Page Preview Mockup ───────────────────────────────────────────────
+
+function StatusPagePreview() {
+  const services = [
+    { name: "API Service", uptime: "99.99%", bars: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] },
+    { name: "Web Dashboard", uptime: "100%",  bars: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1] },
+    { name: "Auth Service",  uptime: "99.8%", bars: [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.5,1,1,1,1,1] },
+  ];
+
+  return (
+    <div className="mock-browser">
+      <div className="mock-chrome">
+        <div className="mock-chrome-dots">
+          <span className="mock-dot r" /><span className="mock-dot a" /><span className="mock-dot g" />
+        </div>
+        <div className="mock-chrome-url">status.yourapp.com</div>
+        <div className="mock-chrome-action" style={{ color: "var(--green)", fontSize: "9px", fontWeight: 600 }}>LIVE</div>
+      </div>
+
+      <div className="mock-status-page">
+        {/* Header */}
+        <div className="mock-sp-header">
+          <div className="mock-sp-logo-row">
+            <div className="mock-sp-logo-dot" />
+            <span className="mock-sp-brand">YourApp Status</span>
+          </div>
+          <div className="mock-sp-badge operational">
+            <span className="mock-sp-badge-dot" />
+            All Systems Operational
+          </div>
+          <div className="mock-sp-time">Last updated 30 seconds ago</div>
+        </div>
+
+        {/* Services */}
+        <div className="mock-sp-services">
+          {services.map((s) => (
+            <div key={s.name} className="mock-sp-service">
+              <div className="mock-sp-service-row">
+                <div className="mock-sp-service-left">
+                  <span className="mock-status-dot up" style={{ width: 7, height: 7 }} />
+                  <span className="mock-sp-service-name">{s.name}</span>
+                </div>
+                <span className="mock-sp-uptime">{s.uptime}</span>
+              </div>
+              <div className="mock-sp-bars">
+                {s.bars.map((v, i) => (
+                  <div
+                    key={i}
+                    className="mock-sp-bar"
+                    style={{ opacity: v < 1 ? 0.5 : 1, background: v < 1 ? "#f59e0b" : "#22c55e" }}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Subscribe */}
+        <div className="mock-sp-subscribe">
+          <div className="mock-sp-subscribe-input">your@email.com</div>
+          <div className="mock-sp-subscribe-btn">Subscribe</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Landing Page ─────────────────────────────────────────────────────────────
 
 export function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -192,6 +355,85 @@ export function LandingPage() {
               <div className="step-num">03</div>
               <h3>Subscribers stay informed</h3>
               <p>Email and Slack — your users know what's happening the moment it does. When it's resolved, everyone gets notified automatically.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DASHBOARD PREVIEW */}
+      <section className="section preview-section" id="product" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="preview-layout">
+            <div className="preview-copy">
+              <p className="section-label">The Dashboard</p>
+              <h2 className="preview-title">Your uptime<br />command center.</h2>
+              <p className="preview-desc">
+                Everything you need to stay on top of service health — at a glance.
+                Monitor status, uptime percentages, response times, and active incidents,
+                all in one view that refreshes automatically.
+              </p>
+              <ul className="preview-bullets">
+                <li>
+                  <Activity size={14} aria-hidden="true" />
+                  <span>Live status for every monitor</span>
+                </li>
+                <li>
+                  <AlertTriangle size={14} aria-hidden="true" />
+                  <span>Active incidents surfaced instantly</span>
+                </li>
+                <li>
+                  <CheckCircle2 size={14} aria-hidden="true" />
+                  <span>Uptime % and response times always visible</span>
+                </li>
+                <li>
+                  <ArrowRight size={14} aria-hidden="true" />
+                  <span>One click to drill into any monitor or incident</span>
+                </li>
+              </ul>
+              <Link to="/register" className="hero-btn primary" style={{ display: "inline-flex", marginTop: "1.5rem" }}>
+                Start monitoring free
+              </Link>
+            </div>
+            <div className="preview-mock">
+              <DashboardPreview />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* STATUS PAGE PREVIEW */}
+      <section className="section preview-section" style={{ paddingTop: 0 }}>
+        <div className="container">
+          <div className="preview-layout reverse">
+            <div className="preview-copy">
+              <p className="section-label">The Status Page</p>
+              <h2 className="preview-title">Your users stay<br />in the loop.</h2>
+              <p className="preview-desc">
+                A public status page hosted at your custom domain. When a monitor goes
+                down, the page updates automatically — your users see it before they
+                even think to email you.
+              </p>
+              <ul className="preview-bullets">
+                <li>
+                  <Globe size={14} aria-hidden="true" />
+                  <span>Custom domain (status.yourapp.com)</span>
+                </li>
+                <li>
+                  <ShieldCheck size={14} aria-hidden="true" />
+                  <span>Pre-rendered — survives origin downtime</span>
+                </li>
+                <li>
+                  <Mail size={14} aria-hidden="true" />
+                  <span>Email subscribe form built in</span>
+                </li>
+                <li>
+                  <Timer size={14} aria-hidden="true" />
+                  <span>90-day uptime bar per service</span>
+                </li>
+              </ul>
+            </div>
+            <div className="preview-mock">
+              <StatusPagePreview />
             </div>
           </div>
         </div>
