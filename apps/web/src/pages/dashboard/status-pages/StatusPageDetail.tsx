@@ -1,12 +1,13 @@
 import { Link, useParams } from "react-router-dom";
-import { ExternalLink, Pencil, Mail, Activity, Trash2, Users, Link2, RefreshCw } from "lucide-react";
+import { ExternalLink, Pencil, Mail, Activity, Trash2, Users, Link2, RefreshCw, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { useStatusPage, useSetStatusPageMonitors, useRegenerateAccessToken } from "@/lib/queries/status-pages";
+import { useStatusPage, useSetStatusPageMonitors, useRegenerateAccessToken, type StatusPageMonitorEntry } from "@/lib/queries/status-pages";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useSubscribers, useDeleteSubscriber } from "@/lib/queries/subscribers";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -62,19 +63,36 @@ export function StatusPageDetail() {
   if (isLoading) return <StatusPageDetailSkeleton />;
   if (!data) return <p className="text-muted-foreground">Status page not found</p>;
 
-  const { statusPage, monitorIds } = data;
-  const linkedSet = new Set(monitorIds);
+  const { statusPage, monitors: linkedMonitors } = data;
+  const linkedMap = new Map(linkedMonitors.map((m) => [m.monitorId, m.groupName ?? ""]));
 
   const toggleMonitor = (monitorId: string) => {
-    const next = new Set(linkedSet);
+    const next = new Map(linkedMap);
     if (next.has(monitorId)) {
       next.delete(monitorId);
     } else {
-      next.add(monitorId);
+      next.set(monitorId, "");
     }
-    setMonitors.mutate([...next], {
+    const payload: StatusPageMonitorEntry[] = [...next.entries()].map(([id, groupName]) => ({
+      monitorId: id,
+      groupName: groupName || null,
+    }));
+    setMonitors.mutate(payload, {
       onSuccess: () => toast.success("Monitors updated"),
       onError: () => toast.error("Failed to update monitors"),
+    });
+  };
+
+  const updateGroup = (monitorId: string, groupName: string) => {
+    const next = new Map(linkedMap);
+    next.set(monitorId, groupName);
+    const payload: StatusPageMonitorEntry[] = [...next.entries()].map(([id, g]) => ({
+      monitorId: id,
+      groupName: g || null,
+    }));
+    setMonitors.mutate(payload, {
+      onSuccess: () => toast.success("Group updated"),
+      onError: () => toast.error("Failed to update group"),
     });
   };
 
@@ -123,8 +141,8 @@ export function StatusPageDetail() {
       {/* Inline stats */}
       <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
         <div className="flex items-baseline gap-1.5 text-sm">
-          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{monitorIds.length}</span>
-          <span className="text-xs text-muted-foreground">monitor{monitorIds.length !== 1 ? "s" : ""}</span>
+          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{linkedMonitors.length}</span>
+          <span className="text-xs text-muted-foreground">monitor{linkedMonitors.length !== 1 ? "s" : ""}</span>
         </div>
         <div className="flex items-baseline gap-1.5 text-sm">
           <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{subscriberCount}</span>
@@ -176,9 +194,9 @@ export function StatusPageDetail() {
           <TabsTrigger value="monitors">
             <Activity className="mr-2 h-4 w-4" />
             Monitors
-            {monitorIds.length > 0 && (
+            {linkedMonitors.length > 0 && (
               <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
-                {monitorIds.length}
+                {linkedMonitors.length}
               </span>
             )}
           </TabsTrigger>
@@ -198,22 +216,22 @@ export function StatusPageDetail() {
           {allMonitors && allMonitors.length > 0 ? (
             <>
               <p className="border-t border-border py-3 text-xs text-muted-foreground">
-                Select which monitors appear on this status page
+                Select which monitors appear on this status page. Optionally assign a group label to organize them.
               </p>
               <div className="divide-y divide-border border-b border-border">
                 {allMonitors.map((monitor) => {
-                  const linked = linkedSet.has(monitor.id);
+                  const linked = linkedMap.has(monitor.id);
+                  const groupValue = linkedMap.get(monitor.id) ?? "";
                   return (
-                    <button
-                      key={monitor.id}
-                      onClick={() => toggleMonitor(monitor.id)}
-                      className={cn(
-                        "flex w-full items-center justify-between py-3 text-left transition-colors cursor-pointer group",
-                        linked ? "text-foreground" : "text-muted-foreground hover:text-foreground",
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        {/* Checkbox */}
+                    <div key={monitor.id} className={cn(
+                      "flex w-full items-center gap-3 py-3 transition-colors",
+                      linked ? "text-foreground" : "text-muted-foreground",
+                    )}>
+                      <button
+                        type="button"
+                        onClick={() => toggleMonitor(monitor.id)}
+                        className="flex items-center gap-3 flex-1 min-w-0 text-left cursor-pointer group"
+                      >
                         <div className={cn(
                           "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold transition-colors",
                           linked
@@ -222,13 +240,32 @@ export function StatusPageDetail() {
                         )}>
                           {linked && "✓"}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <span className="text-sm font-medium">{monitor.name}</span>
-                          <span className="ml-2 text-xs text-muted-foreground">{monitor.url}</span>
+                          <span className="ml-2 text-xs text-muted-foreground truncate">{monitor.url}</span>
                         </div>
+                      </button>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <MonitorStatusBadge status={monitor.status} />
+                        {linked && (
+                          <div className="flex items-center gap-1.5">
+                            <Tag className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+                            <Input
+                              className="h-7 w-32 text-xs px-2"
+                              placeholder="Group name"
+                              value={groupValue}
+                              onChange={(e) => {
+                                linkedMap.set(monitor.id, e.target.value);
+                              }}
+                              onBlur={(e) => updateGroup(monitor.id, e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                              }}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <MonitorStatusBadge status={monitor.status} />
-                    </button>
+                    </div>
                   );
                 })}
               </div>

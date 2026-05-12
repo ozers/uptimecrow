@@ -37,11 +37,11 @@ statusPageRoutes.get("/:id", async (c) => {
   }
 
   const linkedMonitors = await db
-    .select({ monitorId: statusPageMonitors.monitorId })
+    .select({ monitorId: statusPageMonitors.monitorId, groupName: statusPageMonitors.groupName })
     .from(statusPageMonitors)
     .where(eq(statusPageMonitors.statusPageId, id));
 
-  return c.json({ statusPage: page, monitorIds: linkedMonitors.map((m) => m.monitorId) });
+  return c.json({ statusPage: page, monitors: linkedMonitors });
 });
 
 // Create status page
@@ -211,7 +211,7 @@ statusPageRoutes.put("/:id/domain", async (c) => {
 statusPageRoutes.put("/:id/monitors", async (c) => {
   const { orgId } = c.get("user");
   const id = c.req.param("id");
-  const { monitorIds } = await c.req.json<{ monitorIds: string[] }>();
+  const body = await c.req.json<{ monitors: { monitorId: string; groupName?: string | null }[] }>();
 
   // Verify status page belongs to org
   const [page] = await db
@@ -224,14 +224,20 @@ statusPageRoutes.put("/:id/monitors", async (c) => {
     return c.json({ error: "Status page not found" }, 404);
   }
 
+  const monitorEntries = body.monitors ?? [];
+
   // Replace all monitor links
   await db.delete(statusPageMonitors).where(eq(statusPageMonitors.statusPageId, id));
 
-  if (monitorIds.length > 0) {
+  if (monitorEntries.length > 0) {
     await db.insert(statusPageMonitors).values(
-      monitorIds.map((monitorId) => ({ statusPageId: id, monitorId })),
+      monitorEntries.map(({ monitorId, groupName }) => ({
+        statusPageId: id,
+        monitorId,
+        groupName: groupName || null,
+      })),
     );
   }
 
-  return c.json({ ok: true, monitorIds });
+  return c.json({ ok: true, monitors: monitorEntries });
 });

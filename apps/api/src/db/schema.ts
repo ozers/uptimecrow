@@ -89,6 +89,7 @@ export const monitors = pgTable(
     isActive: boolean("is_active").notNull().default(true),
     sslExpiresAt: timestamp("ssl_expires_at", { withTimezone: true }),
     sslCheckedAt: timestamp("ssl_checked_at", { withTimezone: true }),
+    sslDaysWarning: integer("ssl_days_warning").notNull().default(30),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("monitors_org_id_idx").on(table.orgId)],
@@ -136,6 +137,7 @@ export const statusPageMonitors = pgTable(
     monitorId: uuid("monitor_id")
       .notNull()
       .references(() => monitors.id, { onDelete: "cascade" }),
+    groupName: varchar("group_name", { length: 255 }),
   },
   (table) => [
     index("spm_status_page_id_idx").on(table.statusPageId),

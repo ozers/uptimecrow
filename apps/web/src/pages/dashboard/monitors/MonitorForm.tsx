@@ -28,6 +28,7 @@ type MonitorFormData = {
   expectedStatus: number;
   confirmationCount: number;
   keyword?: string;
+  sslDaysWarning?: number;
 };
 
 interface TestResult {
@@ -72,6 +73,7 @@ export function MonitorForm({
       timeoutMs: 10000,
       expectedStatus: 200,
       confirmationCount: 2,
+      sslDaysWarning: 30,
       ...defaultValues,
     },
   });
@@ -309,6 +311,20 @@ export function MonitorForm({
           <p className="text-sm text-destructive">{errors.confirmationCount.message}</p>
         )}
       </div>
+
+      {urlValue?.startsWith("https://") && (
+        <div className="space-y-2">
+          <Label htmlFor="sslDaysWarning">SSL Warning Threshold (days)</Label>
+          <p className="text-xs text-muted-foreground">
+            Alert when the SSL certificate expires within this many days
+          </p>
+          <Input
+            id="sslDaysWarning"
+            type="number"
+            {...register("sslDaysWarning", { valueAsNumber: true })}
+          />
+        </div>
+      )}
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}

@@ -42,6 +42,7 @@ export interface Monitor {
   createdAt: Date;
   sslExpiresAt: Date | null;
   sslCheckedAt: Date | null;
+  sslDaysWarning: number;
 }
 
 export interface CheckResult {
