@@ -18,6 +18,13 @@
 - **Billing:** Self-serve billing is paused; upgrade requests go to support@uptimecrow.com (email manually). Polar is the billing provider when re-enabled
 - **Brand:** All public-facing support email must be `support@uptimecrow.com` — old references to `support@hooksense.com` were scattered across Pricing.tsx, Settings.tsx, Legal.tsx, CompareLayout.tsx
 
+## Key Learnings
+
+- **Overview gating bug:** Original code showed Onboarding when `!totalStatusPages`, meaning users with monitors but no status page lost all their monitor data. Fixed to gate on `!hasMonitors` instead.
+- **Feature discovery pattern:** Users don't know what Heartbeats/Maintenance do. Show description subtitles in sidebar + FeatureDiscoveryCard in Overview when user is "settled in" (has monitors + status pages).
+- **Heartbeat status field:** `HeartbeatStatus = "healthy" | "late" | "paused" | "unknown"`, `isActive: boolean` on the Heartbeat type.
+- **useHeartbeats query** is available in `apps/web/src/lib/queries/heartbeats.ts` and can be used in Overview without performance issues (parallel query).
+
 ## Do-Not-Repeat
 
 <!-- Mistakes made and corrected. Each entry prevents the same mistake recurring. -->

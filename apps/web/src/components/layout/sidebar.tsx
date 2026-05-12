@@ -10,6 +10,7 @@ import {
   Heart,
   Sun,
   Moon,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
@@ -17,13 +18,47 @@ import { useAuthStore } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/lib/theme";
 
-const navItems = [
-  { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Monitors", href: "/dashboard/monitors", icon: Activity },
-  { label: "Heartbeats", href: "/dashboard/heartbeats", icon: Heart },
-  { label: "Incidents", href: "/dashboard/incidents", icon: AlertTriangle },
-  { label: "Maintenance", href: "/dashboard/maintenance", icon: Wrench },
-  { label: "Status Pages", href: "/dashboard/status-pages", icon: Globe },
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  desc?: string;
+}
+
+const navItems: NavItem[] = [
+  {
+    label: "Overview",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    label: "Monitors",
+    href: "/dashboard/monitors",
+    icon: Activity,
+    desc: "HTTP, TCP & keyword checks",
+  },
+  {
+    label: "Heartbeats",
+    href: "/dashboard/heartbeats",
+    icon: Heart,
+    desc: "Cron job & scheduled task monitoring",
+  },
+  {
+    label: "Incidents",
+    href: "/dashboard/incidents",
+    icon: AlertTriangle,
+  },
+  {
+    label: "Maintenance",
+    href: "/dashboard/maintenance",
+    icon: Wrench,
+    desc: "Schedule planned downtime",
+  },
+  {
+    label: "Status Pages",
+    href: "/dashboard/status-pages",
+    icon: Globe,
+  },
 ];
 
 interface SidebarContentProps {
@@ -40,14 +75,6 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
       ? location.pathname === "/dashboard"
       : location.pathname.startsWith(href);
 
-  const linkClass = (href: string) =>
-    cn(
-      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors border-l-2",
-      isActive(href)
-        ? "border-primary bg-primary/10 text-primary"
-        : "border-transparent text-muted-foreground hover:bg-accent hover:text-foreground",
-    );
-
   return (
     <>
       {/* Logo */}
@@ -56,18 +83,41 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            to={item.href}
-            className={linkClass(item.href)}
-            onClick={onNavClick}
-          >
-            <item.icon className="h-4 w-4 shrink-0" />
-            {item.label}
-          </Link>
-        ))}
+      <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
+        {navItems.map((item) => {
+          const active = isActive(item.href);
+          return (
+            <Link
+              key={item.href}
+              to={item.href}
+              className={cn(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors border-l-2",
+                active
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-transparent text-muted-foreground hover:bg-accent hover:text-foreground",
+                item.desc && "py-2.5",
+              )}
+              onClick={onNavClick}
+            >
+              <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <span className="block leading-none">{item.label}</span>
+                {item.desc && (
+                  <span
+                    className={cn(
+                      "mt-0.5 block truncate text-[11px] font-normal leading-none",
+                      active
+                        ? "text-primary/60"
+                        : "text-muted-foreground/60",
+                    )}
+                  >
+                    {item.desc}
+                  </span>
+                )}
+              </div>
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Bottom section */}
@@ -82,25 +132,50 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
               <Zap className="h-3.5 w-3.5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-primary">Upgrade your plan</p>
-              <p className="text-xs text-muted-foreground truncate">More monitors, heartbeats & custom domain</p>
+              <p className="text-xs font-semibold text-primary">
+                Upgrade your plan
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                More monitors, heartbeats & custom domain
+              </p>
             </div>
           </Link>
         )}
-        {user?.plan !== "free" && (
-          <div className="flex items-center gap-2 px-3 py-1.5">
-            <span className="text-xs text-muted-foreground">Plan</span>
-            <Badge variant="outline" className="text-xs capitalize">{user?.plan}</Badge>
+
+        {/* User info */}
+        <div className="flex items-center gap-2.5 px-3 py-2 rounded-md">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted">
+            <User className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
-        )}
+          <div className="flex-1 min-w-0">
+            <p className="truncate text-xs font-medium leading-none text-foreground">
+              {user?.email ?? "—"}
+            </p>
+            {user?.plan && user.plan !== "free" && (
+              <Badge
+                variant="outline"
+                className="mt-0.5 h-4 px-1 text-[10px] capitalize"
+              >
+                {user.plan}
+              </Badge>
+            )}
+          </div>
+        </div>
+
         <Link
           to="/dashboard/settings"
-          className={linkClass("/dashboard/settings")}
+          className={cn(
+            "flex items-center gap-3 rounded-md border-l-2 px-3 py-2 text-sm font-medium transition-colors",
+            isActive("/dashboard/settings")
+              ? "border-primary bg-primary/10 text-primary"
+              : "border-transparent text-muted-foreground hover:bg-accent hover:text-foreground",
+          )}
           onClick={onNavClick}
         >
           <Settings className="h-4 w-4 shrink-0" />
           Settings
         </Link>
+
         <button
           type="button"
           onClick={toggle}

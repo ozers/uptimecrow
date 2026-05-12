@@ -373,3 +373,10 @@
 | 17:02 | Edited apps/api/drizzle/0009_heartbeats_indie_plan.sql | 2→1 lines | ~18 |
 | 17:02 | Edited apps/api/src/jobs/check.job.ts | added 1 condition(s) | ~323 |
 | 17:02 | Edited apps/api/src/jobs/retention.job.ts | 3→3 lines | ~55 |
+| 17:03 | Session end: 6 writes across 5 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 13 reads | ~27169 tok |
+| 17:05 | Created apps/web/src/pages/dashboard/Overview.tsx | — | ~7816 |
+| 17:06 | Created apps/web/src/components/layout/sidebar.tsx | — | ~1745 |
+| 17:07 | designqc: captured 2 screenshots (63KB, ~5000 tok) | / | ready for eval | ~0 |
+| 17:07 | designqc: captured 2 screenshots (63KB, ~5000 tok) | / | ready for eval | ~0 |
+| $(date +%H:%M) | Dashboard UX refactor: fixed onboarding gate bug, redesigned onboarding as checklist, added feature discovery cards, late heartbeat alert, status page nudge banner, sidebar descriptions | Overview.tsx, sidebar.tsx | applied, no TS errors |  ~4000 |
+| 17:08 | Session end: 8 writes across 7 files (heartbeat-check.job.ts, schema.ts, 0009_heartbeats_indie_plan.sql, check.job.ts, retention.job.ts) | 14 reads | ~37023 tok |

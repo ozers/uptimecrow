@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T14:02:16.857Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T14:06:23.508Z
 > Files: 223 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -232,7 +232,7 @@
 
 - `dashboard-layout.tsx` — DashboardLayout — uses useState (~293 tok)
 - `header.tsx` — ROUTE_LABELS — uses useNavigate (~1348 tok)
-- `sidebar.tsx` — navItems (~1227 tok)
+- `sidebar.tsx` — navItems (~1745 tok)
 
 ## apps/web/src/components/ui/
 
@@ -292,7 +292,7 @@
 
 ## apps/web/src/pages/dashboard/
 
-- `Overview.tsx` — OverviewSkeleton (~5843 tok)
+- `Overview.tsx` — OverviewSkeleton (~7816 tok)
 - `Settings.tsx` — SectionLabel (~3474 tok)
 
 ## apps/web/src/pages/dashboard/heartbeats/
