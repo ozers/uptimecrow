@@ -19,6 +19,7 @@ export const createMonitorSchema = z.object({
   confirmationCount: z.number().int().min(1).max(5).default(DEFAULT_CONFIRMATION_COUNT),
   keyword: z.string().max(500).optional().transform((v) => v || undefined),
   sslDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
+  domainDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
 });
 
 export const updateMonitorSchema = createMonitorSchema.partial();

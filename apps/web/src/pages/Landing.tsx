@@ -268,6 +268,7 @@ export function LandingPage() {
           <div className="nav-links">
             <a href="#features">Features</a>
             <Link to="/pricing">Pricing</Link>
+            <Link to="/docs">Docs</Link>
             <Link to="/login" className="nav-login">Log in</Link>
             <Link to="/register" className="nav-cta">Get Started Free</Link>
           </div>
@@ -619,7 +620,7 @@ export function LandingPage() {
                 <p className="footer-col-label">Product</p>
                 <a href="#features">Features</a>
                 <Link to="/pricing">Pricing</Link>
-                <a href="/api/docs" target="_blank" rel="noopener noreferrer">API Docs</a>
+                <Link to="/docs">API Docs</Link>
               </div>
               <div className="footer-col">
                 <p className="footer-col-label">Compare</p>

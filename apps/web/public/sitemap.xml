@@ -36,6 +36,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://uptimecrow.com/docs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://uptimecrow.com/privacy</loc>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>

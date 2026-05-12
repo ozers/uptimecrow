@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Plus, Activity, Pencil, Trash2, ShieldAlert } from "lucide-react";
+import { Plus, Activity, Pencil, Trash2, ShieldAlert, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useMonitors, useDeleteMonitor } from "@/lib/queries/monitors";
@@ -130,6 +130,7 @@ export function MonitorsList() {
                   <TableHead>Uptime 30d</TableHead>
                   <TableHead className="hidden sm:table-cell">Last Check</TableHead>
                   <TableHead className="hidden lg:table-cell">SSL</TableHead>
+                  <TableHead className="hidden lg:table-cell">Domain</TableHead>
                   <TableHead className="w-[80px] text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -210,6 +211,31 @@ export function MonitorsList() {
                               </TooltipTrigger>
                               <TooltipContent>
                                 {expired ? "SSL certificate has expired" : `SSL certificate expires in ${days} day${days !== 1 ? "s" : ""}`}
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        })() : (
+                          <span className="text-xs text-muted-foreground/40">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {monitor.domainExpiresAt != null ? (() => {
+                          const days = Math.round((new Date(monitor.domainExpiresAt).getTime() - Date.now()) / 86_400_000);
+                          const expired = days < 0;
+                          const warning = days < (monitor.domainDaysWarning ?? 30);
+                          return (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className={cn(
+                                  "inline-flex items-center gap-1 text-xs font-medium tabular-nums",
+                                  expired ? "text-red-400" : warning ? "text-yellow-400" : "text-emerald-400",
+                                )}>
+                                  <Globe className="h-3 w-3" />
+                                  {expired ? "Expired" : `${days}d`}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {expired ? "Domain has expired" : `Domain expires in ${days} day${days !== 1 ? "s" : ""}`}
                               </TooltipContent>
                             </Tooltip>
                           );

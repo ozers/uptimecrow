@@ -2,6 +2,7 @@
 
 import net from "node:net";
 import tls from "node:tls";
+import { logger } from "../utils/logger.js";
 
 export const REGIONS = ["eu-west", "us-east", "ap-southeast"] as const;
 export type Region = (typeof REGIONS)[number];
@@ -333,4 +334,58 @@ export async function checkSslExpiry(url: string): Promise<SslCheckResult> {
     socket.on("error", () => resolve({ expiresAt: null, daysRemaining: null, status: "error" }));
     socket.setTimeout(5000, () => { socket.destroy(); resolve({ expiresAt: null, daysRemaining: null, status: "error" }); });
   });
+}
+
+export interface DomainCheckResult {
+  expiresAt: Date | null;
+  daysRemaining: number | null;
+  status: "ok" | "expiring_soon" | "expired" | "error";
+}
+
+export async function checkDomainExpiry(url: string): Promise<DomainCheckResult> {
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return { expiresAt: null, daysRemaining: null, status: "error" };
+  }
+
+  // Strip www and subdomains to get registrable domain for WHOIS lookup
+  const parts = hostname.split(".");
+  const domain = parts.length >= 2 ? parts.slice(-2).join(".") : hostname;
+
+  try {
+    const { whoisDomain } = await import("whoiser");
+    const result = await Promise.race([
+      whoisDomain(domain, { timeout: 8000, follow: 1 }),
+      new Promise<null>((_, reject) => setTimeout(() => reject(new Error("timeout")), 10_000)),
+    ]) as Record<string, Record<string, unknown>>;
+
+    // whoiser returns an object keyed by WHOIS server; grab the first result
+    const data = Object.values(result ?? {})[0] ?? {};
+
+    // Look for expiry date under common field names across registrars
+    const expiryRaw =
+      (data["Registry Expiry Date"] as string | undefined) ||
+      (data["Registrar Registration Expiration Date"] as string | undefined) ||
+      (data["Expiration Date"] as string | undefined) ||
+      (data["paid-till"] as string | undefined) ||
+      (data["renewal date"] as string | undefined);
+
+    if (!expiryRaw) return { expiresAt: null, daysRemaining: null, status: "error" };
+
+    const expiresAt = new Date(expiryRaw as string);
+    if (isNaN(expiresAt.getTime())) return { expiresAt: null, daysRemaining: null, status: "error" };
+
+    const daysRemaining = Math.floor((expiresAt.getTime() - Date.now()) / 86_400_000);
+    const status: DomainCheckResult["status"] =
+      daysRemaining < 0 ? "expired" :
+      daysRemaining < 30 ? "expiring_soon" :
+      "ok";
+
+    return { expiresAt, daysRemaining, status };
+  } catch (err) {
+    logger.debug({ err, domain }, "[Domain] WHOIS lookup failed");
+    return { expiresAt: null, daysRemaining: null, status: "error" };
+  }
 }

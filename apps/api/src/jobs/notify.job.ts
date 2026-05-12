@@ -23,6 +23,7 @@ import {
   sendTeamsWebhook,
   sendTelegramMessage,
   sendSslExpiryNotification,
+  sendDomainExpiryNotification,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -31,7 +32,8 @@ export interface NotifyJobData {
     | "incident_updated"
     | "incident_resolved"
     | "verification"
-    | "ssl_expiry";
+    | "ssl_expiry"
+    | "domain_expiry";
   statusPageId?: string;
   incidentId?: string;
   // For verification emails
@@ -57,6 +59,11 @@ export async function processNotifyJob(
 
   if (type === "ssl_expiry") {
     await handleSslExpiry(job.data);
+    return;
+  }
+
+  if (type === "domain_expiry") {
+    await handleDomainExpiry(job.data);
     return;
   }
 
@@ -212,6 +219,42 @@ async function handleVerification(data: NotifyJobData): Promise<void> {
     email: data.email,
     statusPageName: page.name,
     verifyUrl: data.verifyUrl,
+  });
+}
+
+async function handleDomainExpiry(data: NotifyJobData): Promise<void> {
+  if (!data.orgId || !data.monitorName || !data.monitorUrl || data.daysRemaining == null) {
+    logger.error("[Notify] Missing fields for domain_expiry notification");
+    return;
+  }
+
+  const [org] = await db
+    .select({
+      ownerId: organizations.ownerId,
+      slackWebhookUrl: organizations.slackWebhookUrl,
+      discordWebhookUrl: organizations.discordWebhookUrl,
+    })
+    .from(organizations)
+    .where(eq(organizations.id, data.orgId))
+    .limit(1);
+
+  if (!org) return;
+
+  const [owner] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, org.ownerId))
+    .limit(1);
+
+  if (!owner) return;
+
+  await sendDomainExpiryNotification({
+    ownerEmail: owner.email,
+    monitorName: data.monitorName,
+    monitorUrl: data.monitorUrl,
+    daysRemaining: data.daysRemaining,
+    slackWebhookUrl: org.slackWebhookUrl,
+    discordWebhookUrl: org.discordWebhookUrl,
   });
 }
 

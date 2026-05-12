@@ -24,6 +24,7 @@ import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
 import { HeartbeatsList } from "./pages/dashboard/heartbeats/HeartbeatsList";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
+import { Docs } from "./pages/Docs";
 import { VsBetterStack } from "./pages/compare/VsBetterStack";
 import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
 import { VsFreshping } from "./pages/compare/VsFreshping";
@@ -39,6 +40,7 @@ export function App() {
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/docs" element={<Docs />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/vs/betterstack" element={<VsBetterStack />} />
         <Route path="/vs/uptimerobot" element={<VsUptimeRobot />} />
