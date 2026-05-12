@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +22,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/page-header";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type IncidentForm = {
   statusPageId: string;
@@ -31,11 +41,94 @@ type IncidentForm = {
   body: string;
 };
 
+const INCIDENT_TEMPLATES: Array<{
+  label: string;
+  category: string;
+  title: string;
+  status: IncidentForm["status"];
+  severity: IncidentForm["severity"];
+  body: string;
+}> = [
+  {
+    category: "Investigating",
+    label: "Elevated error rates",
+    title: "Elevated error rates on API",
+    status: "investigating",
+    severity: "major",
+    body: "We are investigating reports of elevated error rates affecting the API. Engineers have been paged and are actively investigating the cause. We will provide updates as we learn more.",
+  },
+  {
+    category: "Investigating",
+    label: "Service degradation",
+    title: "Service experiencing degraded performance",
+    status: "investigating",
+    severity: "minor",
+    body: "We are currently investigating degraded performance affecting some users. Response times may be slower than usual. We apologize for the inconvenience and are working to resolve this quickly.",
+  },
+  {
+    category: "Investigating",
+    label: "Complete outage",
+    title: "Service outage — all systems affected",
+    status: "investigating",
+    severity: "critical",
+    body: "We are experiencing a complete service outage. Our team has been notified and is actively working on a resolution. We will update this page every 15 minutes until the issue is resolved.",
+  },
+  {
+    category: "Identified",
+    label: "Root cause identified",
+    title: "Root cause identified — fix in progress",
+    status: "identified",
+    severity: "major",
+    body: "We have identified the root cause of this incident. Our engineering team is actively deploying a fix. We expect services to return to normal within the next 30 minutes.",
+  },
+  {
+    category: "Identified",
+    label: "Database issue",
+    title: "Database connection issues identified",
+    status: "identified",
+    severity: "major",
+    body: "The root cause has been identified as a database connection pool exhaustion. We are scaling up database connections and applying configuration changes. Services will recover as the fix is rolled out.",
+  },
+  {
+    category: "Monitoring",
+    label: "Fix deployed, monitoring",
+    title: "Fix deployed — monitoring recovery",
+    status: "monitoring",
+    severity: "minor",
+    body: "A fix has been deployed and we are monitoring the systems to confirm full recovery. Services should be returning to normal. We will close this incident once we confirm stability.",
+  },
+  {
+    category: "Infrastructure",
+    label: "Deployment issue",
+    title: "Deployment causing service disruption",
+    status: "investigating",
+    severity: "major",
+    body: "A recent deployment appears to be causing service disruption. We are rolling back to the previous version as a precaution while we investigate.",
+  },
+  {
+    category: "Infrastructure",
+    label: "Third-party provider issue",
+    title: "Third-party provider experiencing issues",
+    status: "investigating",
+    severity: "minor",
+    body: "We are aware of degraded performance affecting some features. This appears to be related to issues with a third-party provider. We are monitoring their status and have opened a support ticket.",
+  },
+  {
+    category: "Maintenance",
+    label: "Emergency maintenance",
+    title: "Emergency maintenance in progress",
+    status: "investigating",
+    severity: "minor",
+    body: "We are performing emergency maintenance to address a critical security or stability issue. Expected completion within 2 hours. We apologize for the short notice.",
+  },
+];
+
 export function IncidentCreate() {
   const navigate = useNavigate();
   const mutation = useCreateIncident();
   const { data: statusPages } = useStatusPages();
   const { data: monitors } = useMonitors();
+  const [templateOpen, setTemplateOpen] = useState(false);
 
   const {
     register,
@@ -51,6 +144,14 @@ export function IncidentCreate() {
     },
   });
 
+  const applyTemplate = (tpl: typeof INCIDENT_TEMPLATES[0]) => {
+    setValue("title", tpl.title);
+    setValue("status", tpl.status);
+    setValue("severity", tpl.severity);
+    setValue("body", tpl.body);
+    setTemplateOpen(false);
+  };
+
   const onSubmit = (data: IncidentForm) => {
     mutation.mutate(data, {
       onSuccess: (res) => {
@@ -62,10 +163,45 @@ export function IncidentCreate() {
     });
   };
 
+  const categories = [...new Set(INCIDENT_TEMPLATES.map((t) => t.category))];
+
   return (
     <div>
       <PageHeader title="Report Incident" description="Create a new incident report" />
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
+
+        {/* Template picker */}
+        <div className="rounded-md border border-border bg-muted/30 p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium">Quick start from a template</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Pre-fill title and update body for common incident types</p>
+            </div>
+            <DropdownMenu open={templateOpen} onOpenChange={setTemplateOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-1.5 shrink-0">
+                  Use Template
+                  <ChevronDown className="h-3.5 w-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64">
+                {categories.map((cat) => (
+                  <div key={cat}>
+                    <DropdownMenuLabel className="text-xs text-muted-foreground">{cat}</DropdownMenuLabel>
+                    {INCIDENT_TEMPLATES.filter((t) => t.category === cat).map((tpl) => (
+                      <DropdownMenuItem key={tpl.label} onClick={() => applyTemplate(tpl)} className="cursor-pointer">
+                        <span>{tpl.label}</span>
+                        <span className="ml-auto text-xs text-muted-foreground capitalize">{tpl.severity}</span>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuSeparator />
+                  </div>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label>Status Page</Label>
           <Select onValueChange={(v) => setValue("statusPageId", v)}>

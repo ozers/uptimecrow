@@ -21,6 +21,10 @@ interface OrgSettings {
   slackWebhookUrl: string | null;
   discordWebhookUrl: string | null;
   customWebhookUrl: string | null;
+  pagerdutyIntegrationKey: string | null;
+  teamsWebhookUrl: string | null;
+  telegramBotToken: string | null;
+  telegramChatId: string | null;
 }
 
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
@@ -39,6 +43,10 @@ export function Settings() {
   const [slackUrl, setSlackUrl] = useState("");
   const [discordUrl, setDiscordUrl] = useState("");
   const [customWebhookUrl, setCustomWebhookUrl] = useState("");
+  const [pagerdutyKey, setPagerdutyKey] = useState("");
+  const [teamsUrl, setTeamsUrl] = useState("");
+  const [telegramToken, setTelegramToken] = useState("");
+  const [telegramChatId, setTelegramChatId] = useState("");
   const [saving, setSaving] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -48,6 +56,10 @@ export function Settings() {
       setSlackUrl(data.organization.slackWebhookUrl || "");
       setDiscordUrl(data.organization.discordWebhookUrl || "");
       setCustomWebhookUrl(data.organization.customWebhookUrl || "");
+      setPagerdutyKey(data.organization.pagerdutyIntegrationKey || "");
+      setTeamsUrl(data.organization.teamsWebhookUrl || "");
+      setTelegramToken(data.organization.telegramBotToken ? "••••" : "");
+      setTelegramChatId(data.organization.telegramChatId || "");
     });
   }, []);
 
@@ -83,6 +95,10 @@ export function Settings() {
         slackWebhookUrl: slackUrl || null,
         discordWebhookUrl: discordUrl || null,
         customWebhookUrl: customWebhookUrl || null,
+        pagerdutyIntegrationKey: pagerdutyKey || null,
+        teamsWebhookUrl: teamsUrl || null,
+        ...(telegramToken && !telegramToken.startsWith("••") ? { telegramBotToken: telegramToken } : {}),
+        telegramChatId: telegramChatId || null,
       });
       setOrg(data.organization);
       toast.success("Webhooks saved");
@@ -93,7 +109,7 @@ export function Settings() {
     }
   };
 
-  const testWebhook = async (type: "slack" | "discord" | "custom") => {
+  const testWebhook = async (type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram") => {
     try {
       await api.post("/api/settings/test-webhook", { type });
       toast.success(`Test ${type} notification sent!`);
@@ -261,11 +277,11 @@ export function Settings() {
             </div>
 
             {/* Custom Webhook */}
-            <div className="py-4">
+            <div className="py-4 border-b border-border">
               <div className="mb-3">
                 <Label htmlFor="customWebhook" className="text-sm font-medium">Custom Webhook URL</Label>
                 <p className="mt-0.5 text-xs text-muted-foreground">
-                  POST JSON payload to any URL on incident events. Useful for PagerDuty, OpsGenie, or custom integrations.
+                  POST JSON payload to any URL on incident events.
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
@@ -282,6 +298,86 @@ export function Settings() {
                   </Button>
                 )}
               </div>
+            </div>
+
+            {/* PagerDuty */}
+            <div className="py-4 border-b border-border">
+              <div className="mb-3">
+                <Label htmlFor="pagerduty" className="text-sm font-medium">PagerDuty Integration Key</Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Events API v2 integration key. Create a new service in PagerDuty → Integrations → Events API v2.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input
+                  id="pagerduty"
+                  placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                  value={pagerdutyKey}
+                  onChange={(e) => setPagerdutyKey(e.target.value)}
+                  className="flex-1 font-mono text-sm"
+                />
+                {org?.pagerdutyIntegrationKey && (
+                  <Button variant="outline" size="sm" className="sm:shrink-0" onClick={() => testWebhook("pagerduty")}>
+                    Test
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Microsoft Teams */}
+            <div className="py-4 border-b border-border">
+              <div className="mb-3">
+                <Label htmlFor="teams" className="text-sm font-medium">Microsoft Teams Webhook URL</Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Incoming webhook URL from Teams channel settings → Connectors → Incoming Webhook.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Input
+                  id="teams"
+                  placeholder="https://outlook.office.com/webhook/..."
+                  value={teamsUrl}
+                  onChange={(e) => setTeamsUrl(e.target.value)}
+                  className="flex-1"
+                />
+                {org?.teamsWebhookUrl && (
+                  <Button variant="outline" size="sm" className="sm:shrink-0" onClick={() => testWebhook("teams")}>
+                    Test
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Telegram */}
+            <div className="py-4">
+              <div className="mb-3">
+                <Label className="text-sm font-medium">Telegram Bot</Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  Create a bot via{" "}
+                  <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">@BotFather</a>
+                  , add it to your channel/group, and paste the token + chat ID below.
+                </p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Input
+                  placeholder="Bot token (from BotFather)"
+                  value={telegramToken}
+                  onChange={(e) => setTelegramToken(e.target.value)}
+                  className="font-mono text-sm"
+                  type="password"
+                />
+                <Input
+                  placeholder="Chat ID (e.g. -1001234567890)"
+                  value={telegramChatId}
+                  onChange={(e) => setTelegramChatId(e.target.value)}
+                  className="font-mono text-sm"
+                />
+              </div>
+              {org?.telegramBotToken && org?.telegramChatId && (
+                <Button variant="outline" size="sm" className="mt-2" onClick={() => testWebhook("telegram")}>
+                  Test Telegram
+                </Button>
+              )}
             </div>
           </div>
           <div className="pt-4">
