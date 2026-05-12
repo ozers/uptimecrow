@@ -12,6 +12,8 @@ import {
   Zap,
   Heart,
   Wrench,
+  LayoutDashboard,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
@@ -39,10 +41,10 @@ import {
 function OverviewSkeleton() {
   return (
     <div>
-      <Skeleton className="mb-6 h-[72px] w-full rounded-xl" />
-      <div className="mb-8 flex items-center gap-6">
+      <Skeleton className="mb-6 h-[80px] w-full rounded-xl" />
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-4 w-28" />
+          <Skeleton key={i} className="h-[72px] rounded-xl" />
         ))}
       </div>
       <div className="mb-2 flex items-center justify-between">
@@ -63,18 +65,66 @@ function OverviewSkeleton() {
           </div>
         ))}
       </div>
-      <div className="mb-2 flex items-center justify-between">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-4 w-16" />
-      </div>
-      <div className="divide-y divide-border border-t border-b border-border">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center justify-between py-3">
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-20" />
-          </div>
-        ))}
-      </div>
+    </div>
+  );
+}
+
+// ─── Metric Cards ─────────────────────────────────────────────────────────────
+
+function MetricCards({
+  items,
+}: {
+  items: {
+    label: string;
+    value: string | number;
+    color?: string;
+    to?: string;
+    icon: React.ElementType;
+    badge?: string;
+    badgeColor?: string;
+  }[];
+}) {
+  const navigate = useNavigate();
+  return (
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {items.map((item, i) => {
+        const Icon = item.icon;
+        return (
+          <button
+            key={i}
+            onClick={item.to ? () => navigate(item.to!) : undefined}
+            className={cn(
+              "rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-all",
+              item.to
+                ? "cursor-pointer hover:border-primary/20 hover:bg-muted/40"
+                : "cursor-default",
+            )}
+          >
+            <div className="mb-2 flex items-center justify-between">
+              <Icon className="h-3.5 w-3.5 text-muted-foreground/60" />
+              {item.badge && (
+                <span
+                  className={cn(
+                    "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+                    item.badgeColor ?? "bg-primary/10 text-primary",
+                  )}
+                >
+                  {item.badge}
+                </span>
+              )}
+            </div>
+            <p
+              className={cn(
+                "text-2xl font-bold tabular-nums leading-none tracking-tight",
+                item.color ?? "text-foreground",
+              )}
+            >
+              {item.value}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">{item.label}</p>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -89,26 +139,33 @@ function Onboarding({ hasStatusPages }: { hasStatusPages: boolean }) {
     desc: string;
     done: boolean;
     optional?: boolean;
+    detail: string;
   }[] = [
     {
       icon: Activity,
       to: "/dashboard/monitors/new",
       title: "Add your first monitor",
-      desc: "Paste any HTTP URL or TCP host — UptimeCrow checks it every minute and creates an incident automatically when it goes down.",
+      desc: "Paste any HTTP URL or TCP host.",
+      detail:
+        "UptimeCrow pings your endpoint every minute from multiple regions. The moment it fails two consecutive checks, we create an incident automatically, update your status page, and alert your team via Slack or email — zero manual work.",
       done: false,
     },
     {
       icon: Globe,
       to: "/dashboard/status-pages/new",
       title: "Create a status page",
-      desc: "A public page where your users can see real-time service status. Pre-rendered so it stays online even when your origin is down.",
+      desc: "A public page for your users.",
+      detail:
+        "Your subscribers visit status.yourapp.com to see real-time service health. The page is pre-rendered, so it stays online and serves accurate data even when your origin is down.",
       done: hasStatusPages,
     },
     {
       icon: Heart,
       to: "/dashboard/heartbeats",
-      title: "Monitor cron jobs with heartbeats",
-      desc: "Your scheduled tasks ping a unique URL when they run. If no ping arrives in time, UptimeCrow alerts you.",
+      title: "Monitor cron jobs",
+      desc: "Keep scheduled tasks accountable.",
+      detail:
+        "Add one curl command to any cron job or background task. If UptimeCrow stops receiving the ping within the expected window, it pages you immediately.",
       done: false,
       optional: true,
     },
@@ -116,71 +173,122 @@ function Onboarding({ hasStatusPages }: { hasStatusPages: boolean }) {
 
   const requiredSteps = steps.filter((s) => !s.optional);
   const completedRequired = requiredSteps.filter((s) => s.done).length;
+  const progressPct = (completedRequired / requiredSteps.length) * 100;
 
   return (
     <div>
-      <div className="mb-8 rounded-xl border border-border px-6 py-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold tracking-tight">
-              Welcome to UptimeCrow
-            </h1>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Set up monitoring in a few steps — takes under 2 minutes.
-            </p>
+      {/* Welcome hero */}
+      <div className="relative mb-5 overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/8 via-transparent to-transparent px-6 py-7">
+        <div className="absolute right-6 top-6 opacity-5">
+          <LayoutDashboard className="h-24 w-24" />
+        </div>
+        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
+          <Activity className="h-4.5 w-4.5 text-primary" style={{ height: "18px", width: "18px" }} />
+        </div>
+        <h1 className="text-xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
+        <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
+          Three quick steps and your services are monitored around the clock. When
+          something breaks, we handle the incident so you don&apos;t have to.
+        </p>
+        <div className="mt-5 flex items-center gap-3">
+          <div className="h-1.5 w-40 overflow-hidden rounded-full bg-border">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-700"
+              style={{ width: `${progressPct}%` }}
+            />
           </div>
-          <div className="shrink-0 rounded-full bg-primary/10 px-3 py-1">
-            <p className="text-xs font-semibold text-primary">
-              {completedRequired}/{requiredSteps.length} done
-            </p>
-          </div>
+          <span className="text-xs font-medium text-muted-foreground">
+            {completedRequired} / {requiredSteps.length} required steps
+          </span>
         </div>
       </div>
 
-      <div className="divide-y divide-border border-t border-border">
-        {steps.map(({ icon: Icon, to, title, desc, done, optional }) => (
-          <Link
-            key={to}
-            to={to}
-            className={cn(
-              "group flex items-start gap-4 py-5 transition-colors",
-              done
-                ? "pointer-events-none opacity-50"
-                : "hover:text-primary",
-            )}
-          >
+      {/* Steps */}
+      <div className="space-y-2.5">
+        {steps.map(({ icon: Icon, to, title, desc, detail, done, optional }, index) =>
+          done ? (
             <div
-              className={cn(
-                "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                done
-                  ? "border-emerald-400 bg-emerald-400/10"
-                  : "border-border group-hover:border-primary",
-              )}
+              key={to}
+              className="flex items-start gap-4 rounded-xl border border-border bg-card/40 px-5 py-4"
             >
-              {done ? (
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/10">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-              ) : (
-                <Icon className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary" />
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-medium">{title}</p>
-                {optional && (
-                  <span className="rounded border border-border px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/70">
-                    optional
-                  </span>
-                )}
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {desc}
-              </p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">
+                    {title}
+                  </p>
+                  <span className="text-xs font-medium text-emerald-400">Done</span>
+                </div>
+                <p className="mt-0.5 text-xs text-muted-foreground/60">{desc}</p>
+              </div>
             </div>
-            {!done && (
-              <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
-            )}
-          </Link>
-        ))}
+          ) : (
+            <Link
+              key={to}
+              to={to}
+              className="group block rounded-xl border border-border bg-card px-5 py-5 transition-all hover:border-primary/25 hover:bg-muted/30"
+            >
+              <div className="flex items-start gap-4">
+                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-background transition-colors group-hover:border-primary/50 group-hover:bg-primary/5">
+                  <Icon className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-primary" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold transition-colors group-hover:text-primary">
+                        {title}
+                      </p>
+                      {optional && (
+                        <span className="rounded border border-border px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/60">
+                          optional
+                        </span>
+                      )}
+                    </div>
+                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
+                  </div>
+                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                    {detail}
+                  </p>
+                  {/* Step number indicator */}
+                  <div className="mt-3 flex items-center gap-1.5">
+                    {[0, 1, 2].map((i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-1 rounded-full transition-all",
+                          i === index
+                            ? "w-6 bg-primary"
+                            : "w-1.5 bg-border",
+                        )}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ),
+        )}
+      </div>
+
+      {/* What happens next */}
+      <div className="mt-5 rounded-xl border border-dashed border-border px-5 py-4">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+          What you&apos;ll get
+        </p>
+        <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
+          {[
+            { icon: ShieldCheck, text: "Auto incident creation when services go down" },
+            { icon: Globe, text: "A live public status page for your users" },
+            { icon: Zap, text: "Instant Slack & email alerts to your team" },
+          ].map(({ icon: I, text }) => (
+            <div key={text} className="flex items-start gap-2.5">
+              <I className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+              <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -221,18 +329,19 @@ function StatusBanner({
   let border = "border-border";
   let dot: React.ReactNode = null;
   let headline = "All systems operational";
-  let headlineColor = "";
+  let headlineColor = "text-emerald-400";
   let sub = "Everything is running smoothly.";
 
   if (!hasMonitors) {
-    headline = "Dashboard";
-    sub = "No monitors configured yet.";
+    headline = "No monitors yet";
+    headlineColor = "";
+    sub = "Add a monitor below to start tracking uptime.";
   } else if (monitorsDown > 0) {
     bg = "bg-red-500/5";
-    border = "border-red-500/30";
+    border = "border-red-500/25";
     headlineColor = "text-red-400";
     headline = `${monitorsDown} monitor${monitorsDown > 1 ? "s" : ""} down`;
-    sub = "One or more services are unreachable.";
+    sub = "One or more services are unreachable right now.";
     dot = (
       <span className="relative flex h-2.5 w-2.5 shrink-0">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
@@ -241,19 +350,24 @@ function StatusBanner({
     );
   } else if (activeIncidents > 0) {
     bg = "bg-yellow-500/5";
-    border = "border-yellow-500/30";
+    border = "border-yellow-500/25";
     headlineColor = "text-yellow-400";
     headline = `${activeIncidents} active incident${activeIncidents > 1 ? "s" : ""}`;
-    sub = "An incident is currently being tracked.";
+    sub = "An incident is being investigated.";
     dot = <AlertTriangle className="h-4 w-4 shrink-0 text-yellow-400" />;
   } else if (hasMonitors) {
-    dot = <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />;
+    dot = (
+      <span className="relative flex h-2.5 w-2.5 shrink-0">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-40" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+      </span>
+    );
   }
 
   return (
     <div
       className={cn(
-        "mb-6 flex items-center justify-between gap-4 rounded-xl border px-6 py-5 transition-colors",
+        "mb-6 flex items-center justify-between gap-4 rounded-xl border px-5 py-4 transition-colors",
         bg,
         border,
       )}
@@ -261,7 +375,7 @@ function StatusBanner({
       <div className="flex items-center gap-3">
         {dot}
         <div>
-          <p className={cn("font-bold tracking-tight", headlineColor)}>
+          <p className={cn("text-sm font-bold tracking-tight", headlineColor)}>
             {headline}
           </p>
           <p className="text-xs text-muted-foreground">{sub}</p>
@@ -275,45 +389,6 @@ function StatusBanner({
         <RefreshCw className={cn("h-3 w-3", isRefetching && "animate-spin")} />
         {isRefetching ? "Refreshing…" : `Updated ${updatedLabel}`}
       </button>
-    </div>
-  );
-}
-
-// ─── Inline Stats Row ─────────────────────────────────────────────────────────
-
-function StatRow({
-  items,
-}: {
-  items: {
-    label: string;
-    value: string | number;
-    color?: string;
-    to?: string;
-  }[];
-}) {
-  const navigate = useNavigate();
-  return (
-    <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
-      {items.map((item, i) => (
-        <button
-          key={i}
-          onClick={item.to ? () => navigate(item.to!) : undefined}
-          className={cn(
-            "flex items-baseline gap-1.5 text-sm",
-            item.to && "cursor-pointer hover:opacity-80 transition-opacity",
-          )}
-        >
-          <span
-            className={cn(
-              "text-xl font-bold tabular-nums leading-none tracking-tight",
-              item.color ?? "text-foreground",
-            )}
-          >
-            {item.value}
-          </span>
-          <span className="text-xs text-muted-foreground">{item.label}</span>
-        </button>
-      ))}
     </div>
   );
 }
@@ -378,10 +453,12 @@ function SectionHeader({
   title,
   badge,
   to,
+  addTo,
 }: {
   title: string;
   badge?: number;
   to: string;
+  addTo?: string;
 }) {
   return (
     <div className="mb-0 flex items-center justify-between pb-2">
@@ -395,12 +472,23 @@ function SectionHeader({
           </span>
         )}
       </div>
-      <Link
-        to={to}
-        className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
-      >
-        View all <ArrowRight className="h-3 w-3" />
-      </Link>
+      <div className="flex items-center gap-3">
+        {addTo && (
+          <Link
+            to={addTo}
+            className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary"
+          >
+            <Plus className="h-3 w-3" />
+            Add
+          </Link>
+        )}
+        <Link
+          to={to}
+          className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          View all <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
     </div>
   );
 }
@@ -425,7 +513,7 @@ function FeatureDiscoveryCard({
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
         <Icon className="h-4 w-4 text-muted-foreground" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{title}</p>
         <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
       </div>
@@ -436,7 +524,7 @@ function FeatureDiscoveryCard({
   );
 }
 
-// ─── Nudge Banner (inline tip) ────────────────────────────────────────────────
+// ─── Nudge Banner ─────────────────────────────────────────────────────────────
 
 function NudgeBanner({
   icon: Icon,
@@ -488,7 +576,6 @@ export function Overview() {
 
   const totalStatusPages = statusPages?.length ?? 0;
 
-  // Show onboarding only when no monitors at all
   if (!hasMonitors) {
     return <Onboarding hasStatusPages={totalStatusPages > 0} />;
   }
@@ -522,7 +609,6 @@ export function Overview() {
     heartbeats?.filter((h) => h.isActive && h.status === "late") ?? [];
   const hasHeartbeats = (heartbeats?.length ?? 0) > 0;
 
-  // Feature discovery: show only when user is "settled in" (has monitors + status pages)
   const isSettledIn = hasMonitors && totalStatusPages > 0;
 
   return (
@@ -538,7 +624,7 @@ export function Overview() {
           isRefetching={isRefetching}
         />
 
-        {/* Late heartbeats alert */}
+        {/* Alert banners */}
         {lateHeartbeats.length > 0 && (
           <NudgeBanner
             icon={Heart}
@@ -548,7 +634,7 @@ export function Overview() {
                   {lateHeartbeats.length} heartbeat
                   {lateHeartbeats.length > 1 ? "s" : ""} late
                 </span>{" "}
-                — a scheduled task hasn't pinged in time.
+                — a scheduled task hasn&apos;t pinged in time.
               </>
             }
             cta="View heartbeats"
@@ -556,7 +642,6 @@ export function Overview() {
           />
         )}
 
-        {/* Status page nudge — shown when user has monitors but no status page */}
         {!totalStatusPages && (
           <NudgeBanner
             icon={Globe}
@@ -573,47 +658,48 @@ export function Overview() {
           />
         )}
 
-        {/* Inline stats */}
-        <StatRow
+        {/* Metric cards */}
+        <MetricCards
           items={[
             {
+              icon: Activity,
               value: totalMonitors,
               label: `monitor${totalMonitors !== 1 ? "s" : ""}`,
               to: "/dashboard/monitors",
+              badge: monitorsDown > 0 ? `${monitorsDown} down` : undefined,
+              badgeColor: monitorsDown > 0 ? "bg-red-500/15 text-red-400" : undefined,
             },
             {
+              icon: TrendingUp,
               value: avgUptime,
               label: "avg uptime",
               color: "text-primary",
             },
             {
+              icon: AlertTriangle,
               value: activeIncidents.length,
               label: `active incident${activeIncidents.length !== 1 ? "s" : ""}`,
               color: activeIncidents.length > 0 ? "text-yellow-400" : undefined,
               to: "/dashboard/incidents",
+              badge: activeIncidents.length > 0 ? "live" : undefined,
+              badgeColor: "bg-yellow-400/10 text-yellow-400",
             },
             {
+              icon: Globe,
               value: totalStatusPages,
               label: `status page${totalStatusPages !== 1 ? "s" : ""}`,
               to: "/dashboard/status-pages",
             },
-            ...(hasHeartbeats
-              ? [
-                  {
-                    value: heartbeats?.filter((h) => h.status === "healthy").length ?? 0,
-                    label: `heartbeat${(heartbeats?.length ?? 0) !== 1 ? "s" : ""} healthy`,
-                    color:
-                      lateHeartbeats.length > 0 ? "text-red-400" : "text-emerald-400",
-                    to: "/dashboard/heartbeats",
-                  },
-                ]
-              : []),
           ]}
         />
 
         {/* Monitors section */}
         <div className="mb-8">
-          <SectionHeader title="Monitor Status" to="/dashboard/monitors" />
+          <SectionHeader
+            title="Monitor Status"
+            to="/dashboard/monitors"
+            addTo="/dashboard/monitors/new"
+          />
           {visibleMonitors.length === 0 ? (
             <div className="border-t border-b border-border py-10 text-center">
               <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
@@ -651,13 +737,13 @@ export function Overview() {
                         to={`/dashboard/monitors/${monitor.id}`}
                         className="group flex items-center justify-between py-3 transition-colors hover:text-primary"
                       >
-                        <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex min-w-0 items-center gap-3">
                           <StatusDot status={monitor.status} />
                           <span className="truncate text-sm font-medium">
                             {monitor.name}
                           </span>
                         </div>
-                        <div className="flex items-center gap-5 shrink-0">
+                        <div className="flex shrink-0 items-center gap-5">
                           {uptimePct != null && (
                             <span
                               className={cn(
@@ -669,7 +755,7 @@ export function Overview() {
                             </span>
                           )}
                           <ResponseBar ms={monitor.lastResponseMs} />
-                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5" />
+                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
                         </div>
                       </Link>
                     </TooltipTrigger>
@@ -698,6 +784,7 @@ export function Overview() {
             title="Recent Incidents"
             badge={activeIncidents.length}
             to="/dashboard/incidents"
+            addTo="/dashboard/incidents/new"
           />
           {recentIncidents.length === 0 ? (
             <div className="border-t border-b border-border py-10 text-center">
@@ -715,7 +802,7 @@ export function Overview() {
                   to={`/dashboard/incidents/${incident.id}`}
                   className="group flex items-center justify-between gap-4 py-3 transition-colors hover:text-primary"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex min-w-0 items-center gap-3">
                     {incident.status === "resolved" ? (
                       <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
                     ) : (
@@ -724,7 +811,7 @@ export function Overview() {
                     <span className="truncate text-sm font-medium">
                       {incident.title}
                     </span>
-                    <div className="hidden sm:flex items-center gap-1.5 shrink-0">
+                    <div className="hidden items-center gap-1.5 sm:flex shrink-0">
                       <IncidentStatusBadge status={incident.status} />
                       <SeverityBadge severity={incident.severity} />
                     </div>
@@ -733,7 +820,7 @@ export function Overview() {
                     <span className="text-xs text-muted-foreground">
                       <RelativeTime date={incident.startedAt} />
                     </span>
-                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5" />
+                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
                   </div>
                 </Link>
               ))}
@@ -741,7 +828,7 @@ export function Overview() {
           )}
         </div>
 
-        {/* Feature discovery — shown when settled in and hasn't used these features */}
+        {/* Feature discovery */}
         {isSettledIn && !hasHeartbeats && (
           <div className="mb-8 space-y-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
@@ -757,32 +844,31 @@ export function Overview() {
             <FeatureDiscoveryCard
               icon={Wrench}
               title="Maintenance windows"
-              desc="Schedule planned downtime to stop false alerts and notify your subscribers in advance."
+              desc="Schedule planned downtime to pause alerts and notify subscribers in advance."
               cta="Schedule a window"
               to="/dashboard/maintenance"
             />
           </div>
         )}
 
-        {/* Upgrade nudge — inline, no card */}
-        {plan === "free" &&
-          totalMonitors >= Math.floor(planLimit * 0.66) && (
-            <div className="flex items-center justify-between border-t border-border pt-5">
-              <div className="flex items-center gap-2.5">
-                <Zap className="h-4 w-4 shrink-0 text-primary" />
-                <p className="text-sm text-muted-foreground">
-                  Using{" "}
-                  <span className="font-semibold text-foreground">
-                    {totalMonitors} of {planLimit}
-                  </span>{" "}
-                  monitors on the free plan.
-                </p>
-              </div>
-              <Button size="sm" variant="outline" asChild>
-                <Link to="/dashboard/settings#plan">Upgrade</Link>
-              </Button>
+        {/* Upgrade nudge */}
+        {plan === "free" && totalMonitors >= Math.floor(planLimit * 0.66) && (
+          <div className="flex items-center justify-between border-t border-border pt-5">
+            <div className="flex items-center gap-2.5">
+              <Zap className="h-4 w-4 shrink-0 text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Using{" "}
+                <span className="font-semibold text-foreground">
+                  {totalMonitors} of {planLimit}
+                </span>{" "}
+                monitors on the free plan.
+              </p>
             </div>
-          )}
+            <Button size="sm" variant="outline" asChild>
+              <Link to="/dashboard/settings#plan">Upgrade</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </TooltipProvider>
   );
