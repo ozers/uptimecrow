@@ -52,6 +52,7 @@ export function CompareLayout(props: Props) {
           <div className="nav-links">
             <Link to="/#features">Features</Link>
             <Link to="/pricing">Pricing</Link>
+            <Link to="/docs">Docs</Link>
             <Link to="/login" className="nav-login">Log in</Link>
             <Link to="/register" className="nav-cta">Get Started Free</Link>
           </div>

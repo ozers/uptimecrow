@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T20:55:54.893Z
-> Files: 232 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T21:05:15.942Z
+> Files: 234 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -108,6 +108,7 @@
 - `0012_new_integrations.sql` — Add PagerDuty, Microsoft Teams, and Telegram webhook fields to organizations (~97 tok)
 - `0013_ssl_days_warning.sql` (~26 tok)
 - `0014_status_page_monitor_groups.sql` (~24 tok)
+- `0015_domain_expiry.sql` (~77 tok)
 
 ## apps/api/drizzle/meta/
 
@@ -129,18 +130,18 @@
 
 - `index.ts` — Exports db, redis (~175 tok)
 - `migrate.ts` — Declares databaseUrl (~1199 tok)
-- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3271 tok)
+- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3337 tok)
 
 ## apps/api/src/docs/
 
-- `openapi.ts` — OpenAPI 3.1 spec for the public, key-authenticated API surface. (~3774 tok)
+- `openapi.ts` — OpenAPI 3.1 spec for the public, key-authenticated API surface. (~9594 tok)
 
 ## apps/api/src/jobs/
 
-- `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~2836 tok)
+- `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~3140 tok)
 - `generate.job.ts` — Generate Job — Status page regeneration (~113 tok)
 - `heartbeat-check.job.ts` — Exports processHeartbeatCheckJob (~780 tok)
-- `notify.job.ts` — Notify Job — Email notification queue handler (~1885 tok)
+- `notify.job.ts` — Notify Job — Email notification queue handler (~2209 tok)
 - `retention.job.test.ts` — Declares cutoffs (~531 tok)
 - `retention.job.ts` — Exports RetentionCutoff, computeCutoffs, RetentionResult, pruneOldCheckResults, processRetentionJob (~524 tok)
 
@@ -172,8 +173,8 @@
 ## apps/api/src/services/
 
 - `monitor.service.test.ts` — mockFetch: respond (~2246 tok)
-- `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3142 tok)
-- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~5460 tok)
+- `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3755 tok)
+- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~6523 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
 - `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~10346 tok)
 
@@ -209,11 +210,11 @@
 ## apps/web/public/
 
 - `robots.txt` (~60 tok)
-- `sitemap.xml` (~344 tok)
+- `sitemap.xml` (~378 tok)
 
 ## apps/web/src/
 
-- `App.tsx` — App (~1262 tok)
+- `App.tsx` — App (~1287 tok)
 - `globals.css` — Styles: 6 rules, 39 vars, 1 media queries, 2 layers (~731 tok)
 - `main.tsx` — queryClient (~244 tok)
 
@@ -279,6 +280,7 @@
 
 ## apps/web/src/pages/
 
+- `Docs.tsx` — BRAND (~3556 tok)
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
 - `Landing.css` — Styles: 95 rules, 15 vars (~7364 tok)
 - `Landing.tsx` — BRAND (~8377 tok)
@@ -290,7 +292,7 @@
 
 ## apps/web/src/pages/compare/
 
-- `CompareLayout.tsx` — BRAND — renders table (~2121 tok)
+- `CompareLayout.tsx` — BRAND — renders table (~2132 tok)
 - `VsBetterStack.tsx` — VsBetterStack (~1207 tok)
 - `VsFreshping.tsx` — VsFreshping (~1295 tok)
 - `VsInstatus.tsx` — VsInstatus (~1470 tok)
@@ -321,8 +323,8 @@
 - `MonitorCreate.tsx` — MonitorCreate — uses useNavigate (~326 tok)
 - `MonitorDetail.tsx` — MonitorDetailSkeleton — renders table (~5071 tok)
 - `MonitorEdit.tsx` — MonitorEdit — uses useNavigate (~462 tok)
-- `MonitorForm.tsx` — monitorResolver — renders form (~3357 tok)
-- `MonitorsList.tsx` — UptimeBar — renders table (~3174 tok)
+- `MonitorForm.tsx` — monitorResolver — renders form (~3528 tok)
+- `MonitorsList.tsx` — UptimeBar — renders table (~3631 tok)
 
 ## apps/web/src/pages/dashboard/status-pages/
 
@@ -352,5 +354,5 @@
 
 - `constants.ts` — Exports PLANS, Plan, MONITOR_TYPES, MonitorType + 14 more (~590 tok)
 - `index.ts` (~27 tok)
-- `types.ts` — Exports User, Organization, Monitor, CheckResult + 7 more (~708 tok)
-- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1063 tok)
+- `types.ts` — Exports User, Organization, Monitor, CheckResult + 7 more (~735 tok)
+- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1086 tok)

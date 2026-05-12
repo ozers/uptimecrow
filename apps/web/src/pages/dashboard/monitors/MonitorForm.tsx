@@ -29,6 +29,7 @@ type MonitorFormData = {
   confirmationCount: number;
   keyword?: string;
   sslDaysWarning?: number;
+  domainDaysWarning?: number;
 };
 
 interface TestResult {
@@ -74,6 +75,7 @@ export function MonitorForm({
       expectedStatus: 200,
       confirmationCount: 2,
       sslDaysWarning: 30,
+      domainDaysWarning: 30,
       ...defaultValues,
     },
   });
@@ -322,6 +324,20 @@ export function MonitorForm({
             id="sslDaysWarning"
             type="number"
             {...register("sslDaysWarning", { valueAsNumber: true })}
+          />
+        </div>
+      )}
+
+      {(urlValue?.startsWith("https://") || urlValue?.startsWith("http://")) && (
+        <div className="space-y-2">
+          <Label htmlFor="domainDaysWarning">Domain Warning Threshold (days)</Label>
+          <p className="text-xs text-muted-foreground">
+            Alert when the domain registration expires within this many days
+          </p>
+          <Input
+            id="domainDaysWarning"
+            type="number"
+            {...register("domainDaysWarning", { valueAsNumber: true })}
           />
         </div>
       )}

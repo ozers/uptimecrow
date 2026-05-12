@@ -13,7 +13,7 @@ import {
   maintenanceWindowMonitors,
 } from "../db/schema.js";
 import { makeQueue } from "../utils/queues.js";
-import { checkSslExpiry, executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
+import { checkSslExpiry, checkDomainExpiry, executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
 import { organizations } from "../db/schema.js";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
@@ -114,6 +114,33 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
         if (daysRemaining < threshold) {
           await notifyQueue.add("ssl_expiry", {
             type: "ssl_expiry",
+            orgId: monitor.orgId,
+            monitorId: monitor.id,
+            monitorName: monitor.name,
+            monitorUrl: monitor.url,
+            daysRemaining,
+          });
+        }
+      }
+    }
+  }
+
+  // Domain expiry check — once per 24h, only for http/https monitors
+  if (monitor.type !== "tcp") {
+    const DOMAIN_TTL_MS = 24 * 60 * 60 * 1000;
+    const needsDomainRefresh = !monitor.domainCheckedAt ||
+      Date.now() - new Date(monitor.domainCheckedAt).getTime() > DOMAIN_TTL_MS;
+
+    if (needsDomainRefresh) {
+      const domain = await checkDomainExpiry(monitor.url);
+      await db.update(monitors).set({ domainExpiresAt: domain.expiresAt, domainCheckedAt: new Date() }).where(eq(monitors.id, monitorId));
+
+      if (domain.expiresAt) {
+        const daysRemaining = Math.floor((domain.expiresAt.getTime() - Date.now()) / 86_400_000);
+        const threshold = monitor.domainDaysWarning ?? 30;
+        if (daysRemaining < threshold) {
+          await notifyQueue.add("domain_expiry", {
+            type: "domain_expiry",
             orgId: monitor.orgId,
             monitorId: monitor.id,
             monitorName: monitor.name,

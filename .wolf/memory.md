@@ -493,3 +493,33 @@
 | 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | 4→4 lines | ~88 |
 | 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | 9→9 lines | ~108 |
 | 23:55 | Edited apps/web/src/pages/dashboard/status-pages/StatusPageDetail.tsx | added nullish coalescing | ~882 |
+| 23:56 | Session end: 33 writes across 13 files (0013_ssl_days_warning.sql, schema.ts, types.ts, validation.ts, check.job.ts) | 13 reads | ~45476 tok |
+| 23:57 | Session end: 33 writes across 13 files (0013_ssl_days_warning.sql, schema.ts, types.ts, validation.ts, check.job.ts) | 13 reads | ~45476 tok |
+| 00:00 | Created apps/api/src/docs/openapi.ts | — | ~9594 |
+| 00:01 | Created apps/web/src/pages/Docs.tsx | — | ~3556 |
+| 00:01 | Edited apps/web/src/App.tsx | added 1 import(s) | ~37 |
+| 00:01 | Edited apps/web/src/App.tsx | 2→3 lines | ~45 |
+| 00:01 | Edited apps/web/src/pages/Landing.tsx | "/api/docs" → "/docs" | ~14 |
+| 00:01 | Edited apps/web/src/pages/Landing.tsx | 6→7 lines | ~95 |
+| 00:01 | Edited apps/web/src/pages/compare/CompareLayout.tsx | 6→7 lines | ~96 |
+| 00:01 | Edited apps/web/public/sitemap.xml | 2→7 lines | ~48 |
+| 00:03 | Created apps/api/drizzle/0015_domain_expiry.sql | — | ~77 |
+| 00:03 | Edited apps/api/src/db/schema.ts | 4→7 lines | ~152 |
+| 00:03 | Edited packages/shared/src/types.ts | 4→7 lines | ~51 |
+| 00:03 | Edited apps/api/src/services/monitor.service.ts | added 1 import(s) | ~29 |
+| 00:03 | Edited apps/api/src/services/monitor.service.ts | added error handling | ~668 |
+| 00:03 | Edited apps/api/src/jobs/check.job.ts | inline fix | ~41 |
+| 00:03 | Edited apps/api/src/jobs/check.job.ts | added nullish coalescing | ~310 |
+| 00:03 | Edited apps/api/src/jobs/notify.job.ts | 2→3 lines | ~19 |
+| 00:04 | Edited apps/api/src/jobs/notify.job.ts | added 1 condition(s) | ~50 |
+| 00:04 | Edited apps/api/src/services/notification.service.ts | added error handling | ~1080 |
+| 00:04 | Edited apps/api/src/jobs/notify.job.ts | 2→3 lines | ~31 |
+| 00:04 | Edited apps/api/src/jobs/notify.job.ts | added 3 condition(s) | ~302 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | 1→2 lines | ~46 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | inline fix | ~24 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorsList.tsx | added nullish coalescing | ~471 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | 2→3 lines | ~17 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | CSS: domainDaysWarning | ~23 |
+| 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | CSS: http | ~293 |
+| 00:05 | Edited packages/shared/src/validation.ts | 2→3 lines | ~45 |
+| 00:05 | Edited apps/api/src/services/monitor.service.ts | domain() → whoisDomain() | ~43 |
