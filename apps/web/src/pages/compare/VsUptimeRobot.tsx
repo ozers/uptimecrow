@@ -36,6 +36,10 @@ export function VsUptimeRobot() {
           body: "Custom domain, brand color, logo, embeddable uptime badge, and a pre-rendered status page that survives origin downtime.",
         },
         {
+          title: "MCP server — query your monitors from any AI assistant",
+          body: "UptimeCrow is the only uptime monitor with a native MCP server. Ask Claude or Cursor 'which of my monitors is down?' without opening a dashboard.",
+        },
+        {
           title: "1-minute checks, free. 30-second on Pro+",
           body: "UptimeRobot's free tier is 5-minute intervals. UptimeCrow gives you 1-minute checks free and 30-second checks on Pro and Team plans.",
         },
@@ -54,6 +58,8 @@ export function VsUptimeRobot() {
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "Multi-region checks", us: "Team plan", them: "Higher tiers" },
         { feature: "Keyword monitoring", us: true, them: true },
+        { feature: "SMS alerts (Twilio)", us: "✓ Paid plans", them: "✓ Paid plans" },
+        { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ MIT", them: false },
         { feature: "API access", us: "Pro plan", them: "Paid plans" },
       ]}

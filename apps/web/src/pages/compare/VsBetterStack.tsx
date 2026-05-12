@@ -19,6 +19,12 @@ export function VsBetterStack() {
             does that for $12/mo instead of $29–$200/mo. The status page is pre-rendered so it stays online
             when your origin is down. And heartbeat monitors keep an eye on your cron jobs — included on every plan, even the free tier.
           </p>
+          <p style={{ marginTop: "1rem" }}>
+            UptimeCrow is also the <strong>only uptime monitor with a native MCP server</strong> — query your monitor
+            status, acknowledge incidents, and manage on-call directly from Claude, Cursor, or any AI assistant.
+            And if you'd rather not depend on another hosted service, the entire stack is{" "}
+            <strong>MIT-licensed and self-hostable</strong> with a single Docker Compose command.
+          </p>
         </>
       }
       whyUs={[
@@ -51,6 +57,8 @@ export function VsBetterStack() {
         { feature: "Scheduled maintenance windows", us: true, them: true },
         { feature: "Subscriber email notifications", us: true, them: true },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
+        { feature: "SMS alerts (Twilio)", us: "✓ All paid plans", them: "✓ Built-in" },
+        { feature: "MCP server (AI assistants)", us: "✓ Native — only uptime tool with this", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ MIT", them: false },
         { feature: "API access", us: "Pro plan", them: "Paid plans" },
         { feature: "On-call rotations", us: "Not yet", them: true },
