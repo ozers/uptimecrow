@@ -64,7 +64,7 @@ const PLANS: PlanDef[] = [
     name: "Pro",
     monthlyPrice: 29,
     annualMonthlyPrice: 24,
-    annualTotal: 288,
+    annualTotal: 290,
     per: "/mo",
     desc: "For growing SaaS teams.",
     features: [
@@ -84,7 +84,7 @@ const PLANS: PlanDef[] = [
     name: "Team",
     monthlyPrice: 79,
     annualMonthlyPrice: 66,
-    annualTotal: 792,
+    annualTotal: 790,
     per: "/mo",
     desc: "For teams that ship fast.",
     features: [
