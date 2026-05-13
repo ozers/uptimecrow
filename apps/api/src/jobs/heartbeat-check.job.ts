@@ -6,8 +6,6 @@ import { sendHeartbeatLateAlert } from "../services/notification.service.js";
 import { logger } from "../utils/logger.js";
 
 export async function processHeartbeatCheckJob(_job: Job): Promise<void> {
-  const now = new Date();
-
   // Heartbeats that pinged at least once but are now overdue and not already late/paused.
   const overdue = await db
     .select({
@@ -24,13 +22,12 @@ export async function processHeartbeatCheckJob(_job: Job): Promise<void> {
         isNotNull(heartbeats.lastPingAt),
         lt(
           sql`${heartbeats.lastPingAt} + (${heartbeats.period} + ${heartbeats.grace}) * interval '1 second'`,
-          now,
+          sql`NOW()`,
         ),
       ),
     );
 
   // Heartbeats that truly never pinged (no lastPingAt) but were created long enough ago.
-  // Excludes re-enabled heartbeats that have a previous ping — those are caught by `overdue`.
   const neverPinged = await db
     .select({
       id: heartbeats.id,
@@ -45,7 +42,7 @@ export async function processHeartbeatCheckJob(_job: Job): Promise<void> {
         isNull(heartbeats.lastPingAt),
         lt(
           sql`${heartbeats.createdAt} + (${heartbeats.period} + ${heartbeats.grace}) * interval '1 second'`,
-          now,
+          sql`NOW()`,
         ),
       ),
     );
