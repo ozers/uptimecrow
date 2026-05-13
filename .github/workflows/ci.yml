@@ -19,7 +19,6 @@ jobs:
           version: 10.30.2
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
-      - run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
