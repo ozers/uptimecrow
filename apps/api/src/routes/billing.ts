@@ -12,17 +12,38 @@ const POLAR_API = "https://api.polar.sh/v1";
 const POLAR_TOKEN = () => process.env.POLAR_ACCESS_TOKEN || "";
 const POLAR_WEBHOOK_SECRET = () => process.env.POLAR_WEBHOOK_SECRET || "";
 
-const POLAR_PRODUCT_IDS: Record<string, string> = {
-  pro: process.env.POLAR_PRO_PRODUCT_ID || "",
-  team: process.env.POLAR_TEAM_PRODUCT_ID || "",
-};
+type PaidPlan = "indie" | "pro" | "team";
+type BillingInterval = "monthly" | "yearly";
 
+// price_id → plan mapping (env vars set to Polar price IDs)
+function buildPriceMap(): Record<string, { plan: PaidPlan; interval: BillingInterval }> {
+  const map: Record<string, { plan: PaidPlan; interval: BillingInterval }> = {};
+  const entries: Array<[string, PaidPlan, BillingInterval]> = [
+    [process.env.POLAR_INDIE_MONTHLY_PRICE_ID || "", "indie", "monthly"],
+    [process.env.POLAR_INDIE_YEARLY_PRICE_ID || "", "indie", "yearly"],
+    [process.env.POLAR_PRO_MONTHLY_PRICE_ID || "", "pro", "monthly"],
+    [process.env.POLAR_PRO_YEARLY_PRICE_ID || "", "pro", "yearly"],
+    [process.env.POLAR_TEAM_MONTHLY_PRICE_ID || "", "team", "monthly"],
+    [process.env.POLAR_TEAM_YEARLY_PRICE_ID || "", "team", "yearly"],
+  ];
+  for (const [id, plan, interval] of entries) {
+    if (id) map[id] = { plan, interval };
+  }
+  return map;
+}
+
+function getPriceId(plan: PaidPlan, interval: BillingInterval): string {
+  const envKey = `POLAR_${plan.toUpperCase()}_${interval.toUpperCase()}_PRICE_ID`;
+  return process.env[envKey] || "";
+}
+
+// POST /api/billing/checkout
 billingRoutes.post("/checkout", authMiddleware, async (c) => {
   const { sub, email } = c.get("user");
-  const { plan } = await c.req.json<{ plan: "pro" | "team" }>();
+  const { plan, interval = "monthly" } = await c.req.json<{ plan: PaidPlan; interval?: BillingInterval }>();
 
-  const productId = POLAR_PRODUCT_IDS[plan];
-  if (!productId) return c.json({ error: "Billing not configured" }, 400);
+  const priceId = getPriceId(plan, interval);
+  if (!priceId) return c.json({ error: "Billing not configured" }, 400);
 
   const token = POLAR_TOKEN();
   if (!token) return c.json({ error: "Billing not configured" }, 500);
@@ -34,7 +55,7 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      product_id: productId,
+      product_price_id: priceId,
       success_url: `${process.env.APP_URL || "http://localhost:5173"}/dashboard/settings?billing=success`,
       customer_email: email,
       metadata: { user_id: sub },
@@ -51,6 +72,7 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
   return c.json({ checkoutUrl: data.url });
 });
 
+// POST /api/billing/portal
 billingRoutes.post("/portal", authMiddleware, async (c) => {
   const { sub } = c.get("user");
 
@@ -89,6 +111,7 @@ billingRoutes.post("/portal", authMiddleware, async (c) => {
   return c.json({ portalUrl });
 });
 
+// Webhook handler
 async function handlePolarWebhook(c: Context) {
   const secret = POLAR_WEBHOOK_SECRET();
   if (!secret) return c.json({ error: "Webhook not configured" }, 500);
@@ -106,8 +129,7 @@ async function handlePolarWebhook(c: Context) {
   const toSign = `${msgId}.${msgTimestamp}.${rawBody}`;
   const secretBytes = Buffer.from(secret.replace(/^whsec_/, ""), "base64");
   const expected = crypto.createHmac("sha256", secretBytes).update(toSign).digest("base64");
-  const signatures = msgSignature.split(" ");
-  const valid = signatures.some((s) => s === `v1,${expected}`);
+  const valid = msgSignature.split(" ").some((s) => s === `v1,${expected}`);
 
   if (!valid) return c.json({ error: "Invalid signature" }, 401);
 
@@ -115,21 +137,23 @@ async function handlePolarWebhook(c: Context) {
   const eventType: string = event.type;
   const userId: string | undefined = event.data?.metadata?.user_id;
   const customerId = String(event.data?.customer_id || "");
+  const priceId = String(event.data?.price_id || "");
 
-  logger.info(`[Polar] Webhook: ${eventType} for user ${userId}`);
+  logger.info(`[Polar] Webhook: ${eventType} priceId=${priceId} user=${userId}`);
   if (!userId) return c.json({ ok: true });
+
+  const priceMap = buildPriceMap();
 
   switch (eventType) {
     case "subscription.created":
     case "subscription.updated": {
-      const productId = String(event.data?.product_id || "");
       const status: string = event.data?.status;
-      const plan = Object.entries(POLAR_PRODUCT_IDS).find(([, v]) => v === productId)?.[0] as "pro" | "team" | undefined;
+      const entry = priceMap[priceId];
 
-      if (plan && (status === "active" || status === "trialing")) {
-        await db.update(users).set({ plan, stripeCustomerId: customerId }).where(eq(users.id, userId));
-        await db.update(organizations).set({ plan }).where(eq(organizations.ownerId, userId));
-        logger.info(`[Polar] Upgraded ${userId} to ${plan}`);
+      if (entry && (status === "active" || status === "trialing")) {
+        await db.update(users).set({ plan: entry.plan, stripeCustomerId: customerId }).where(eq(users.id, userId));
+        await db.update(organizations).set({ plan: entry.plan }).where(eq(organizations.ownerId, userId));
+        logger.info(`[Polar] Upgraded ${userId} to ${entry.plan} (${entry.interval})`);
       }
       break;
     }
@@ -147,5 +171,4 @@ async function handlePolarWebhook(c: Context) {
 }
 
 billingRoutes.post("/webhook", (c) => handlePolarWebhook(c));
-// Legacy path — older Polar dashboards may still point here.
 billingRoutes.post("/polar/webhook", (c) => handlePolarWebhook(c));

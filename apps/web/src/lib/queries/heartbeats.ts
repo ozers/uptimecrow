@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Heartbeat } from "@uptimecrow/shared";
 import { api } from "../api";
+import { analytics } from "../analytics";
 
 export function useHeartbeats() {
   return useQuery({
@@ -14,7 +15,10 @@ export function useCreateHeartbeat() {
   return useMutation({
     mutationFn: (data: { name: string; period: number; grace: number }) =>
       api.post<Heartbeat>("/api/heartbeats", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["heartbeats"] }),
+    onSuccess: () => {
+      analytics.heartbeatCreated();
+      qc.invalidateQueries({ queryKey: ["heartbeats"] });
+    },
   });
 }
 

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Incident, IncidentUpdate } from "@uptimecrow/shared";
 import { api } from "../api";
+import { analytics } from "../analytics";
 
 export function useIncidents() {
   return useQuery({
@@ -24,7 +25,10 @@ export function useCreateIncident() {
   return useMutation({
     mutationFn: (data: Record<string, unknown>) =>
       api.post<{ incident: Incident }>("/api/incidents", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["incidents"] }),
+    onSuccess: (_, variables) => {
+      analytics.incidentCreated(String(variables.severity ?? "minor"));
+      qc.invalidateQueries({ queryKey: ["incidents"] });
+    },
   });
 }
 
@@ -45,7 +49,8 @@ export function useCreateIncidentUpdate(incidentId: string) {
   return useMutation({
     mutationFn: (data: { status: string; body: string }) =>
       api.post<{ update: IncidentUpdate }>(`/api/incidents/${incidentId}/updates`, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      if (variables.status === "resolved") analytics.incidentResolved();
       qc.invalidateQueries({ queryKey: ["incidents"] });
       qc.invalidateQueries({ queryKey: ["incidents", incidentId] });
     },

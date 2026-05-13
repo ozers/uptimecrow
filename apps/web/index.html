@@ -102,6 +102,20 @@
       document.head.appendChild(s);
     })();
   </script>
+
+  <!-- Umami Analytics (no-op unless VITE_UMAMI_WEBSITE_ID is set at build time) -->
+  <script>
+    (function () {
+      var id = "%VITE_UMAMI_WEBSITE_ID%";
+      var url = "%VITE_UMAMI_URL%";
+      if (!id || id.charAt(0) === "%") return;
+      var s = document.createElement("script");
+      s.defer = true;
+      s.setAttribute("data-website-id", id);
+      s.src = (url && url.charAt(0) !== "%") ? url + "/script.js" : "https://cloud.umami.is/script.js";
+      document.head.appendChild(s);
+    })();
+  </script>
 </head>
 <body>
   <div id="root"></div>

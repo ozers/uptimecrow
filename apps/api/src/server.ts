@@ -38,6 +38,7 @@ app.use("*", cors({
 }));
 
 app.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
+app.get("/api/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
 
 // API docs — unauthenticated, no rate limit; pure static content.
 app.route("/api", docsRoutes);

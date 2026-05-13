@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, ExternalLink, Copy, Check } from "lucide-react";
 import "./Landing.css";
+import { analytics } from "@/lib/analytics";
 
 const BRAND = "UptimeCrow";
 
@@ -55,6 +56,7 @@ function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
 
 export function Docs() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => { analytics.docsViewed(); }, []);
 
   return (
     <div className="landing">

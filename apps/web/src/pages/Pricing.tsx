@@ -1,23 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import "./Landing.css";
+import { analytics } from "@/lib/analytics";
+import { useAuthStore } from "@/lib/auth";
 
 const BRAND = "UptimeCrow";
 
-const PLANS = [
+interface PlanDef {
+  name: string;
+  monthlyPrice: number | null;
+  annualMonthlyPrice: number | null;
+  annualTotal: number | null;
+  per: string;
+  desc: string;
+  features: string[];
+  cta: string;
+  featured: boolean;
+}
+
+const PLANS: PlanDef[] = [
   {
     name: "Free",
-    price: "$0",
+    monthlyPrice: 0,
+    annualMonthlyPrice: 0,
+    annualTotal: 0,
     per: "/mo",
     desc: "For side projects and personal apps.",
     features: [
-      "1 status page",
       "10 monitors",
+      "1 status page",
       "1-minute check intervals",
       "3 heartbeat monitors",
       "Automatic incident management",
-      "Slack & Discord alerts",
+      "Slack, Discord & email alerts",
       "Uptime badge",
       "30-day history",
     ],
@@ -26,16 +42,19 @@ const PLANS = [
   },
   {
     name: "Indie",
-    price: "$12",
+    monthlyPrice: 12,
+    annualMonthlyPrice: 10,
+    annualTotal: 120,
     per: "/mo",
     desc: "For indie hackers and solo founders.",
     features: [
-      "3 status pages",
       "25 monitors",
+      "3 status pages",
       "1-minute check intervals",
       "10 heartbeat monitors",
       "Custom domain",
-      "Slack & Discord alerts",
+      "API access",
+      "2 team seats",
       "90-day history",
     ],
     cta: "Get Started",
@@ -43,16 +62,18 @@ const PLANS = [
   },
   {
     name: "Pro",
-    price: "$29",
+    monthlyPrice: 29,
+    annualMonthlyPrice: 24,
+    annualTotal: 288,
     per: "/mo",
     desc: "For growing SaaS teams.",
     features: [
-      "10 status pages",
       "50 monitors",
+      "10 status pages",
       "30-second check intervals",
       "25 heartbeat monitors",
+      "Multi-region checks",
       "Custom domain",
-      "API access",
       "3 team seats",
       "90-day history",
     ],
@@ -61,14 +82,15 @@ const PLANS = [
   },
   {
     name: "Team",
-    price: "$79",
+    monthlyPrice: 79,
+    annualMonthlyPrice: 66,
+    annualTotal: 792,
     per: "/mo",
     desc: "For teams that ship fast.",
     features: [
       "Everything in Pro",
       "200 monitors",
       "100 heartbeat monitors",
-      "Multi-region checks",
       "10 team seats",
       "365-day history",
       "Priority support",
@@ -80,28 +102,32 @@ const PLANS = [
 
 const FAQ = [
   {
-    q: "How do I upgrade right now?",
-    a: "Online checkout and coupon redemption are temporarily paused while we migrate our billing infrastructure. In the meantime, email support@uptimecrow.com with your account email and the plan you want — we'll activate it manually, usually the same day.",
+    q: "How does annual billing work?",
+    a: "Annual plans are billed upfront for 10 months — you get 12 months of service. That's 2 months completely free. You can switch back to monthly at the end of your annual period.",
   },
   {
     q: "Is there a free trial for Pro or Team?",
-    a: "Not yet. The Free plan is free forever — use it until you outgrow the 10-monitor limit, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
+    a: "Not yet. The Free plan is free forever — use it until you outgrow it, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
   },
   {
     q: "Can I change or cancel my plan anytime?",
-    a: "Yes. Downgrades take effect at the end of your current billing period, so you keep the features you paid for. While self-serve billing is paused, email support@uptimecrow.com for plan changes and we'll process them by hand.",
+    a: "Yes. Downgrades take effect at the end of your current billing period, so you keep the features you paid for. You can manage your subscription directly from the billing portal in Settings.",
   },
   {
     q: "How does billing work?",
-    a: "Paid plans are billed monthly through Polar. You can pay by card, PayPal, or supported crypto. Invoices are emailed automatically and are also available in the customer portal — once self-serve checkout is back online.",
+    a: "Paid plans are billed through Polar. You can pay by card, PayPal, or supported crypto. Invoices are emailed automatically and are also available in the customer portal.",
   },
   {
     q: "What counts as a monitor?",
-    a: "Each HTTP, TCP, or keyword check is one monitor. If you watch the same URL with keyword matching and a status-code check, that's one monitor — not two.",
+    a: "Each HTTP, TCP, or keyword check is one monitor. Heartbeat monitors are counted separately — they track your cron jobs and scheduled tasks.",
+  },
+  {
+    q: "What is multi-region monitoring?",
+    a: "Pro and Team plans run checks from multiple geographic locations simultaneously. If only one region reports down, it's flagged as a regional issue. Only when a majority of regions agree does an incident open — drastically reducing false alarms.",
   },
   {
     q: "Do you offer annual discounts or an enterprise plan?",
-    a: "Annual billing and enterprise SLAs are on the roadmap. If you need SSO, a DPA, a custom invoice, or more than 50 monitors, email support@uptimecrow.com and we'll sort it out.",
+    a: "Annual billing gives you 2 months free (see toggle above). For SSO, a DPA, a custom invoice, or more than 200 monitors, email support@uptimecrow.com.",
   },
   {
     q: "Can I self-host UptimeCrow?",
@@ -111,6 +137,11 @@ const FAQ = [
 
 export function Pricing() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [annual, setAnnual] = useState(false);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  useEffect(() => { analytics.pricingViewed(); }, []);
+
+  const ctaHref = isAuthenticated ? "/dashboard/settings" : "/register";
 
   return (
     <div className="landing">
@@ -154,29 +185,55 @@ export function Pricing() {
           <p className="hero-sub">
             Start free forever. Upgrade when you need more monitors, faster checks, or a branded status page.
           </p>
-          <div
-            role="status"
-            style={{
-              marginTop: "1.75rem",
-              padding: "0.9rem 1.1rem",
-              background: "var(--amber)18",
-              border: "1px solid var(--amber)",
-              borderRadius: 12,
-              color: "var(--text)",
-              fontSize: "0.92rem",
-              lineHeight: 1.6,
-              maxWidth: 640,
-              marginInline: "auto",
-              textAlign: "left",
-            }}
-          >
-            <strong style={{ color: "var(--amber)" }}>Heads up:</strong> online payments and coupon
-            redemption are temporarily paused while we migrate our billing infrastructure. To upgrade or
-            use a coupon in the meantime, email{" "}
-            <a href="mailto:support@uptimecrow.com" style={{ color: "var(--green)", textDecoration: "underline" }}>
-              support@uptimecrow.com
-            </a>{" "}
-            and we'll help you out.
+
+          {/* Billing toggle */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginTop: "2rem" }}>
+            <span style={{ fontSize: "0.9rem", color: annual ? "var(--text3)" : "var(--text)", fontWeight: annual ? 400 : 600 }}>Monthly</span>
+            <button
+              type="button"
+              onClick={() => setAnnual((v) => !v)}
+              aria-label="Toggle annual billing"
+              style={{
+                position: "relative",
+                width: 44,
+                height: 24,
+                borderRadius: 12,
+                border: "none",
+                background: annual ? "var(--green)" : "var(--border)",
+                cursor: "pointer",
+                transition: "background 0.2s",
+                flexShrink: 0,
+              }}
+            >
+              <span style={{
+                position: "absolute",
+                top: 3,
+                left: annual ? 23 : 3,
+                width: 18,
+                height: 18,
+                borderRadius: "50%",
+                background: "#fff",
+                transition: "left 0.2s",
+                display: "block",
+              }} />
+            </button>
+            <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+              <span style={{ fontSize: "0.9rem", color: annual ? "var(--text)" : "var(--text3)", fontWeight: annual ? 600 : 400 }}>Annual</span>
+              {annual && (
+                <span style={{
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  color: "var(--green)",
+                  background: "var(--green)18",
+                  border: "1px solid var(--green)40",
+                  borderRadius: 6,
+                  padding: "2px 7px",
+                  letterSpacing: "0.02em",
+                }}>
+                  2 months free
+                </span>
+              )}
+            </span>
           </div>
         </div>
       </section>
@@ -184,17 +241,35 @@ export function Pricing() {
       <section className="section" style={{ paddingTop: "1rem" }}>
         <div className="container">
           <div className="pricing-cards">
-            {PLANS.map((plan) => (
-              <div key={plan.name} className={`price-card${plan.featured ? " featured" : ""}`}>
-                <p className="price-name">{plan.name}</p>
-                <p className="price-amount">{plan.price}<span>{plan.per}</span></p>
-                <p className="price-desc">{plan.desc}</p>
-                <ul className="price-features">
-                  {plan.features.map((f) => <li key={f}>{f}</li>)}
-                </ul>
-                <Link to="/register" className={`price-btn${plan.featured ? " featured-btn" : ""}`}>{plan.cta}</Link>
-              </div>
-            ))}
+            {PLANS.map((plan) => {
+              const isAnnualPaid = annual && plan.monthlyPrice !== null && plan.monthlyPrice > 0;
+              const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;
+              return (
+                <div key={plan.name} className={`price-card${plan.featured ? " featured" : ""}`}>
+                  <p className="price-name">{plan.name}</p>
+                  <p className="price-amount">
+                    {displayPrice}
+                    <span>{plan.per}</span>
+                  </p>
+                  {isAnnualPaid && (
+                    <p style={{ fontSize: "0.78rem", color: "var(--text3)", marginTop: "-0.25rem", marginBottom: "0.5rem" }}>
+                      billed ${plan.annualTotal}/yr
+                    </p>
+                  )}
+                  <p className="price-desc">{plan.desc}</p>
+                  <ul className="price-features">
+                    {plan.features.map((f) => <li key={f}>{f}</li>)}
+                  </ul>
+                  <Link
+                    to={plan.name === "Free" ? "/register" : ctaHref}
+                    className={`price-btn${plan.featured ? " featured-btn" : ""}`}
+                    onClick={() => analytics.upgradeClicked(plan.name)}
+                  >
+                    {plan.name === "Free" ? "Get Started" : isAuthenticated ? "Upgrade Now" : "Get Started"}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

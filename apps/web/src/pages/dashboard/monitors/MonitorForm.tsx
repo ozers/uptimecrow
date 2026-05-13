@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createMonitorSchema } from "@uptimecrow/shared";
 import { api } from "@/lib/api";
 import { normalizeUrl } from "@/lib/utils";
+import { analytics } from "@/lib/analytics";
 import { Loader2, Zap, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const monitorResolver = zodResolver(createMonitorSchema) as any;
@@ -97,6 +98,7 @@ export function MonitorForm({
         keyword: getValues("keyword") || undefined,
       });
       setTestResult(result);
+      analytics.monitorTested();
     } catch {
       setTestResult({
         status: "down",
