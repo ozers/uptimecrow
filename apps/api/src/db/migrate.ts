@@ -96,6 +96,117 @@ const repairs: Array<{ sql: string; desc: string }> = [
     sql: `CREATE INDEX IF NOT EXISTS heartbeats_org_id_idx ON heartbeats (org_id)`,
     desc: "heartbeats_org_id_idx",
   },
+  {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS ssl_days_warning integer NOT NULL DEFAULT 30`,
+    desc: "monitors.ssl_days_warning",
+  },
+  {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS domain_expires_at timestamp with time zone`,
+    desc: "monitors.domain_expires_at",
+  },
+  {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS domain_checked_at timestamp with time zone`,
+    desc: "monitors.domain_checked_at",
+  },
+  {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS domain_days_warning integer NOT NULL DEFAULT 30`,
+    desc: "monitors.domain_days_warning",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS pagerduty_integration_key varchar(255)`,
+    desc: "organizations.pagerduty_integration_key",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS teams_webhook_url varchar(2048)`,
+    desc: "organizations.teams_webhook_url",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS telegram_bot_token varchar(255)`,
+    desc: "organizations.telegram_bot_token",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS telegram_chat_id varchar(100)`,
+    desc: "organizations.telegram_chat_id",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS twilio_account_sid varchar(64)`,
+    desc: "organizations.twilio_account_sid",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS twilio_auth_token varchar(64)`,
+    desc: "organizations.twilio_auth_token",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS twilio_from_number varchar(32)`,
+    desc: "organizations.twilio_from_number",
+  },
+  {
+    sql: `ALTER TABLE organizations ADD COLUMN IF NOT EXISTS twilio_to_number varchar(32)`,
+    desc: "organizations.twilio_to_number",
+  },
+  {
+    sql: `ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS webhook_url varchar(2048)`,
+    desc: "subscribers.webhook_url",
+  },
+  {
+    sql: `ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id varchar(255)`,
+    desc: "users.google_id",
+  },
+  {
+    sql: `ALTER TABLE users ALTER COLUMN password_hash DROP NOT NULL`,
+    desc: "users.password_hash nullable",
+  },
+  {
+    sql: `CREATE TABLE IF NOT EXISTS org_members (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+      org_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+      user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      role varchar(20) NOT NULL DEFAULT 'member',
+      created_at timestamp with time zone NOT NULL DEFAULT now(),
+      UNIQUE(org_id, user_id)
+    )`,
+    desc: "org_members table",
+  },
+  {
+    sql: `CREATE TABLE IF NOT EXISTS org_invites (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+      org_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+      email varchar(255) NOT NULL,
+      role varchar(20) NOT NULL DEFAULT 'member',
+      token uuid NOT NULL DEFAULT gen_random_uuid(),
+      expires_at timestamp with time zone NOT NULL,
+      accepted_at timestamp with time zone,
+      created_at timestamp with time zone NOT NULL DEFAULT now(),
+      CONSTRAINT org_invites_token_unique UNIQUE(token)
+    )`,
+    desc: "org_invites table",
+  },
+  {
+    sql: `CREATE TABLE IF NOT EXISTS on_call_schedules (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+      org_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+      name varchar(255) NOT NULL DEFAULT 'Default',
+      rotation_days integer NOT NULL DEFAULT 7,
+      created_at timestamp with time zone NOT NULL DEFAULT now()
+    )`,
+    desc: "on_call_schedules table",
+  },
+  {
+    sql: `CREATE TABLE IF NOT EXISTS on_call_contacts (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+      schedule_id uuid NOT NULL REFERENCES on_call_schedules(id) ON DELETE CASCADE,
+      name varchar(255) NOT NULL,
+      email varchar(255),
+      phone varchar(32),
+      position integer NOT NULL DEFAULT 0,
+      created_at timestamp with time zone NOT NULL DEFAULT now()
+    )`,
+    desc: "on_call_contacts table",
+  },
+  {
+    sql: `ALTER TABLE check_results ADD COLUMN IF NOT EXISTS region varchar(20) NOT NULL DEFAULT 'eu-west'`,
+    desc: "check_results.region",
+  },
 ];
 
 let repairErrors = 0;
