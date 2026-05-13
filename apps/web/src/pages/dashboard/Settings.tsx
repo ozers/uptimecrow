@@ -47,7 +47,7 @@ const UPGRADE_PLANS = [
     plan: "pro" as const,
     monthly: 29,
     annual: 24,
-    annualTotal: 288,
+    annualTotal: 290,
     features: ["50 monitors", "Multi-region checks", "30s intervals", "10 status pages", "3 team seats"],
     featured: true,
   },
@@ -56,7 +56,7 @@ const UPGRADE_PLANS = [
     plan: "team" as const,
     monthly: 79,
     annual: 66,
-    annualTotal: 792,
+    annualTotal: 790,
     features: ["200 monitors", "100 heartbeats", "10 team seats", "365-day history", "Priority support"],
   },
 ];
