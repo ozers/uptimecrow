@@ -1,7 +1,7 @@
 // Notify Job — Email notification queue handler
 
 import type { Job } from "bullmq";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, desc } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { logger } from "../utils/logger.js";
 import {
@@ -126,7 +126,7 @@ export async function processNotifyJob(
     .select()
     .from(incidentUpdates)
     .where(eq(incidentUpdates.incidentId, incident.id))
-    .orderBy(incidentUpdates.createdAt)
+    .orderBy(desc(incidentUpdates.createdAt))
     .limit(1);
 
   const updateBody =
