@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Monitor, CheckResult } from "@uptimecrow/shared";
 import { api } from "../api";
+import { analytics } from "../analytics";
 
 export function useMonitors() {
   return useQuery({
@@ -34,7 +35,10 @@ export function useCreateMonitor() {
   return useMutation({
     mutationFn: (data: Record<string, unknown>) =>
       api.post<{ monitor: Monitor }>("/api/monitors", data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
+    onSuccess: (_, variables) => {
+      analytics.monitorCreated(String(variables.type ?? "http"));
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+    },
   });
 }
 
@@ -54,6 +58,9 @@ export function useDeleteMonitor() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.delete(`/api/monitors/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["monitors"] }),
+    onSuccess: () => {
+      analytics.monitorDeleted();
+      qc.invalidateQueries({ queryKey: ["monitors"] });
+    },
   });
 }

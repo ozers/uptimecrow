@@ -109,13 +109,6 @@ export function Terms() {
         remains active until the end of the current period. Refunds are handled case-by-case — email
         <a href="mailto:support@uptimecrow.com" className="text-primary"> support@uptimecrow.com</a>.
       </p>
-      <p>
-        <strong>Billing notice:</strong> online payments and coupon redemption are temporarily paused while
-        we migrate our billing infrastructure. If you'd like to upgrade during this window, email
-        <a href="mailto:support@uptimecrow.com" className="text-primary"> support@uptimecrow.com</a> and we'll
-        help you through it manually.
-      </p>
-
       <h2 className="mt-8 text-xl font-semibold">No Warranty / SLA</h2>
       <p>
         The service is provided "as is". We do not offer a guaranteed SLA on the Free plan. Paid plans may include

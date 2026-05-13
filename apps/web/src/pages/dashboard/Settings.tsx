@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useAuthStore } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
+import { analytics } from "@/lib/analytics";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { User, CreditCard, Webhook, ExternalLink, Loader2, Mail, Users, Trash2, Plus } from "lucide-react";
+import { User, CreditCard, Webhook, ExternalLink, Loader2, Users, Trash2, Plus, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,122 @@ interface OrgSettings {
   twilioAuthToken: string | null;
   twilioFromNumber: string | null;
   twilioToNumber: string | null;
+}
+
+const UPGRADE_PLANS = [
+  {
+    name: "Indie" as const,
+    plan: "indie" as const,
+    monthly: 12,
+    annual: 10,
+    annualTotal: 120,
+    features: ["25 monitors", "3 status pages", "API access", "Custom domain", "2 team seats"],
+  },
+  {
+    name: "Pro" as const,
+    plan: "pro" as const,
+    monthly: 29,
+    annual: 24,
+    annualTotal: 288,
+    features: ["50 monitors", "Multi-region checks", "30s intervals", "10 status pages", "3 team seats"],
+    featured: true,
+  },
+  {
+    name: "Team" as const,
+    plan: "team" as const,
+    monthly: 79,
+    annual: 66,
+    annualTotal: 792,
+    features: ["200 monitors", "100 heartbeats", "10 team seats", "365-day history", "Priority support"],
+  },
+];
+
+function UpgradeOptions() {
+  const [annual, setAnnual] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (plan: "indie" | "pro" | "team") => {
+    setLoading(plan);
+    try {
+      const data = await api.post<{ checkoutUrl: string }>("/api/billing/checkout", {
+        plan,
+        interval: annual ? "yearly" : "monthly",
+      });
+      window.location.href = data.checkoutUrl;
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : "Failed to start checkout");
+      setLoading(null);
+    }
+  };
+
+  return (
+    <div className="border-t border-border/50 pt-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium text-muted-foreground">Upgrade your plan</p>
+        <div className="flex items-center gap-2">
+          <span className={`text-xs ${annual ? "text-muted-foreground" : "text-foreground font-medium"}`}>Monthly</span>
+          <button
+            type="button"
+            onClick={() => setAnnual((v) => !v)}
+            aria-label="Toggle annual billing"
+            className="relative h-5 w-9 rounded-full border-none cursor-pointer transition-colors"
+            style={{ background: annual ? "hsl(var(--primary))" : "hsl(var(--border))" }}
+          >
+            <span
+              className="absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all"
+              style={{ left: annual ? "calc(100% - 18px)" : "2px" }}
+            />
+          </button>
+          <span className={`text-xs ${annual ? "text-foreground font-medium" : "text-muted-foreground"}`}>
+            Annual
+            {annual && <span className="ml-1 text-primary font-semibold">2 mo free</span>}
+          </span>
+        </div>
+      </div>
+
+      <div className="grid gap-2 sm:grid-cols-3">
+        {UPGRADE_PLANS.map((p) => (
+          <div
+            key={p.plan}
+            className={`rounded-lg border p-3 space-y-2 ${p.featured ? "border-primary/50 bg-primary/5" : "border-border"}`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold">{p.name}</span>
+              {p.featured && <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Popular</span>}
+            </div>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xl font-bold">${annual ? p.annual : p.monthly}</span>
+              <span className="text-xs text-muted-foreground">/mo</span>
+            </div>
+            {annual && (
+              <p className="text-[11px] text-muted-foreground -mt-1">billed ${p.annualTotal}/yr</p>
+            )}
+            <ul className="space-y-0.5">
+              {p.features.map((f) => (
+                <li key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
+                  <span className="text-primary">✓</span> {f}
+                </li>
+              ))}
+            </ul>
+            <Button
+              size="sm"
+              className={`w-full gap-1.5 ${p.featured ? "" : "variant-outline"}`}
+              variant={p.featured ? "default" : "outline"}
+              onClick={() => handleCheckout(p.plan)}
+              disabled={loading !== null}
+            >
+              {loading === p.plan ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Zap className="h-3.5 w-3.5" />
+              )}
+              Upgrade to {p.name}
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
@@ -118,6 +235,7 @@ export function Settings() {
         twilioToNumber: twilioTo || null,
       });
       setOrg(data.organization);
+      analytics.integrationSaved("webhook");
       toast.success("Webhooks saved");
     } catch (e) {
       toast.error(e instanceof ApiError ? e.message : "Failed to save");
@@ -129,6 +247,7 @@ export function Settings() {
   const testWebhook = async (type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram" | "sms") => {
     try {
       await api.post("/api/settings/test-webhook", { type });
+      analytics.integrationTested(type);
       toast.success(`Test ${type} notification sent!`);
     } catch (e) {
       toast.error(e instanceof ApiError ? e.message : `Failed to test ${type}`);
@@ -206,28 +325,8 @@ export function Settings() {
               ))}
             </div>
 
-            {/* Upgrade options for free plan — self-serve checkout is paused for
-                billing-infra migration; we direct users to email support. */}
             {plan === "free" && (
-              <div className="border-t border-border/50 py-4">
-                <div className="rounded-md border border-amber-500/30 bg-amber-500/10 p-3">
-                  <div className="mb-2 flex items-center gap-2 text-sm font-medium text-amber-400">
-                    <Mail className="h-4 w-4" />
-                    Upgrades and coupons temporarily via email
-                  </div>
-                  <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
-                    Online payments and coupon redemption are paused while we migrate our billing
-                    infrastructure. Send us the plan you want from your account email and we'll activate
-                    it manually — usually the same day.
-                  </p>
-                  <Button size="sm" variant="outline" asChild className="gap-1.5">
-                    <a href="mailto:support@uptimecrow.com?subject=UptimeCrow%20upgrade%20request">
-                      <Mail className="h-3.5 w-3.5" />
-                      Email support@uptimecrow.com
-                    </a>
-                  </Button>
-                </div>
-              </div>
+              <UpgradeOptions />
             )}
           </div>
         </div>

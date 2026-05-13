@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { User } from "@uptimecrow/shared";
 import { api, ApiError } from "./api";
+import { analytics } from "./analytics";
 
 interface AuthState {
   user: User | null;
@@ -33,11 +34,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (email: string, password: string) => {
     const data = await api.post<{ user: User }>("/api/auth/login", { email, password });
+    analytics.login("email");
     set({ user: data.user, isAuthenticated: true, isLoading: false });
   },
 
   register: async (email: string, password: string, name: string, inviteToken?: string) => {
     const data = await api.post<{ user: User }>("/api/auth/register", { email, password, name, ...(inviteToken ? { inviteToken } : {}) });
+    analytics.register();
     set({ user: data.user, isAuthenticated: true, isLoading: false });
   },
 
