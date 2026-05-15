@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 Allow: /pricing
+Allow: /docs
+Allow: /mcp
+Allow: /self-host
+Allow: /heartbeat-monitoring
 Allow: /privacy
 Allow: /terms
 Allow: /vs/*

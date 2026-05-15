@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, X, ExternalLink, Copy, Check } from "lucide-react";
 import "./Landing.css";
 import { analytics } from "@/lib/analytics";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -57,6 +58,13 @@ function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
 export function Docs() {
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => { analytics.docsViewed(); }, []);
+
+  usePageMeta({
+    title: "API Documentation — UptimeCrow Developer Docs",
+    description:
+      "UptimeCrow REST API reference for monitors, incidents, status pages, and heartbeats. Authenticate with API keys. Full OpenAPI spec available.",
+    canonical: "https://uptimecrow.com/docs",
+  });
 
   return (
     <div className="landing">

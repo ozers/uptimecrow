@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { usePageMeta } from "@/lib/meta";
 import {
   Radio,
   Palette,
@@ -253,8 +254,87 @@ function StatusPagePreview() {
 
 // ─── Landing Page ─────────────────────────────────────────────────────────────
 
+const LANDING_FAQ_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is UptimeCrow?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "UptimeCrow is a developer-first uptime monitoring and status page platform. It automatically monitors your APIs and websites, creates incidents when downtime is detected, updates your status page, and notifies subscribers — all without any manual intervention.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is UptimeCrow free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. UptimeCrow has a free plan that includes 10 monitors, 1 status page, 1-minute check intervals, 3 heartbeat monitors, Slack & Discord alerts, and 30-day history — free forever with no credit card required.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How often does UptimeCrow check my website or API?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "UptimeCrow checks your endpoints every 60 seconds on Free and Indie plans, and every 30 seconds on Pro and Team plans. Checks are performed from multiple regions to reduce false positives.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is heartbeat monitoring?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Heartbeat monitoring tracks cron jobs, background workers, and scheduled tasks. Your job pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including the free tier.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I self-host UptimeCrow?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. UptimeCrow's core is MIT-licensed and fully self-hostable with a single Docker Compose command. You bring your own Postgres and Redis. No vendor lock-in.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What is a pre-rendered status page?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "A pre-rendered status page is generated as static HTML ahead of time, so it continues to serve correctly even if your origin server is completely down. UptimeCrow pre-renders your status pages and updates them automatically on incidents.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How does UptimeCrow notify me when my site goes down?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "UptimeCrow sends alerts via Email, Slack, Discord, PagerDuty, Microsoft Teams, Telegram, and SMS (Twilio). Subscribers can opt in to email notifications from your status page and are automatically notified when incidents open and resolve.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does UptimeCrow have an MCP server for AI assistants?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Yes. UptimeCrow is the only uptime monitoring tool with a native MCP (Model Context Protocol) server. You can query your monitor status, active incidents, and heartbeats directly from Claude Code, Cursor, Windsurf, or any AI assistant that supports MCP.",
+      },
+    },
+  ],
+};
+
 export function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  usePageMeta({
+    title: "UptimeCrow — Uptime Monitoring & Status Pages for Developers",
+    description:
+      "Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down. Free forever with 10 monitors.",
+    canonical: "https://uptimecrow.com/",
+    jsonLd: LANDING_FAQ_LD,
+  });
 
   return (
     <div className="landing">

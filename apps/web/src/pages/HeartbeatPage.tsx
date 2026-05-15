@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import "./Landing.css";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -51,6 +52,13 @@ const USE_CASES = [
 export default function HeartbeatPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+
+  usePageMeta({
+    title: "Heartbeat Monitoring — Monitor Cron Jobs & Scheduled Tasks | UptimeCrow",
+    description:
+      "Monitor your cron jobs, background workers, and scheduled tasks with UptimeCrow heartbeat monitoring. Get alerted the moment a job fails to check in. Free on all plans.",
+    canonical: "https://uptimecrow.com/heartbeat-monitoring",
+  });
 
   return (
     <div className="landing">
