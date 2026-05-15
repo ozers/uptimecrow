@@ -2,6 +2,7 @@
 
 > Chronological action log. Hooks and AI append to this file automatically.
 > Old sessions are consolidated by the daemon weekly.
+| 22:22 | SEO/GEO audit & updates: created usePageMeta hook, added per-page titles/descriptions for all public pages (Landing, Pricing, Docs, McpPage, SelfHostPage, HeartbeatPage, CompareLayout), FAQ JSON-LD (8 Q&A) for landing, BreadcrumbList for compare pages, Organization + WebSite schemas in index.html, sitemap lastmod dates, robots.txt explicit allows | apps/web/src/lib/meta.ts (new), apps/web/index.html, Landing.tsx, CompareLayout.tsx, Pricing.tsx, Docs.tsx, McpPage.tsx, SelfHostPage.tsx, HeartbeatPage.tsx, sitemap.xml, robots.txt | success, tsc clean | ~8000 |
 | session | Major redesign: Dashboard Overview (metric cards, visual onboarding), Landing Page (dashboard + status page mockup sections), Status Page HTML (complete rewrite - modern layout, better uptime bars, cleaner timeline) | apps/web/src/pages/dashboard/Overview.tsx, apps/web/src/pages/Landing.tsx, apps/web/src/pages/Landing.css, apps/api/src/services/static-gen.service.ts | success, both typechecks pass, designqc verified | ~25000 |
 | 14:19 | designqc: captured 0 screenshots (0KB, ~0 tok) | / | ready for eval | ~0 |
 | session | Added custom outgoing webhook support (schema, migration, notification service, notify job, settings route, settings UI) | apps/api/src/db/schema.ts, apps/api/drizzle/0011_custom_webhook.sql, apps/api/drizzle/meta/_journal.json, apps/api/src/services/notification.service.ts, apps/api/src/jobs/notify.job.ts, apps/api/src/routes/settings.ts, apps/web/src/pages/dashboard/Settings.tsx | success, both typechecks pass | ~6000 |
@@ -523,3 +524,212 @@
 | 00:04 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | CSS: http | ~293 |
 | 00:05 | Edited packages/shared/src/validation.ts | 2→3 lines | ~45 |
 | 00:05 | Edited apps/api/src/services/monitor.service.ts | domain() → whoisDomain() | ~43 |
+| 00:05 | Session end: 61 writes across 21 files (0013_ssl_days_warning.sql, schema.ts, types.ts, validation.ts, check.job.ts) | 19 reads | ~85201 tok |
+| 00:17 | Created apps/web/src/pages/McpPage.tsx | — | ~3000 |
+| 00:18 | Created apps/web/src/pages/SelfHostPage.tsx | — | ~3436 |
+
+## Session: 2026-05-12 00:18
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 00:19 | Created apps/web/src/pages/HeartbeatPage.tsx | — | ~4141 |
+| 00:19 | Created apps/api/drizzle/0016_twilio_sms.sql | — | ~92 |
+| 00:19 | Created apps/api/drizzle/0017_subscriber_webhook.sql | — | ~22 |
+| 00:19 | Edited apps/api/src/db/schema.ts | 4→8 lines | ~138 |
+| 00:19 | Edited apps/api/src/db/schema.ts | 3→4 lines | ~73 |
+| 00:19 | Edited apps/api/src/services/notification.service.ts | added 1 condition(s) | ~682 |
+| 00:19 | Edited apps/api/src/routes/settings.ts | modified slice() | ~214 |
+| 00:20 | Edited apps/api/src/routes/settings.ts | added 4 condition(s) | ~437 |
+| 00:20 | Edited apps/api/src/routes/settings.ts | 14→18 lines | ~251 |
+| 00:20 | Edited apps/api/src/routes/settings.ts | added 2 condition(s) | ~312 |
+| 00:20 | Edited apps/api/src/jobs/notify.job.ts | 13→14 lines | ~100 |
+| 00:20 | Edited apps/api/src/jobs/notify.job.ts | 13→17 lines | ~214 |
+| 00:20 | Edited apps/api/src/jobs/notify.job.ts | added 1 condition(s) | ~188 |
+| 00:20 | Edited apps/web/src/pages/dashboard/Settings.tsx | 13→17 lines | ~136 |
+| 00:20 | Edited apps/web/src/pages/dashboard/Settings.tsx | 3→7 lines | ~106 |
+| 00:20 | Edited apps/web/src/pages/dashboard/Settings.tsx | 2→6 lines | ~113 |
+| 00:20 | Edited apps/web/src/pages/dashboard/Settings.tsx | 2→6 lines | ~110 |
+| 00:20 | Edited apps/web/src/pages/dashboard/Settings.tsx | inline fix | ~34 |
+| 00:21 | Edited apps/web/src/pages/dashboard/Settings.tsx | expanded (+44 lines) | ~1013 |
+| 00:21 | Edited packages/shared/src/validation.ts | 3→4 lines | ~49 |
+| 00:21 | Edited apps/api/src/routes/public.ts | 7→8 lines | ~58 |
+| 00:21 | Edited apps/api/src/jobs/notify.job.ts | 12→13 lines | ~129 |
+| 00:21 | Edited apps/api/src/jobs/notify.job.ts | added 1 condition(s) | ~271 |
+| 00:21 | Edited apps/web/src/App.tsx | added 3 import(s) | ~130 |
+| 00:21 | Edited apps/web/src/App.tsx | 1→4 lines | ~72 |
+| 00:22 | Edited apps/web/public/sitemap.xml | expanded (+15 lines) | ~140 |
+| 00:22 | Edited apps/api/src/services/static-gen.service.ts | expanded (+6 lines) | ~307 |
+| 00:22 | Edited apps/web/src/App.tsx | 3→3 lines | ~40 |
+| 00:23 | Commit d3614be: SMS alerts (Twilio), Slack subscriber webhooks, 3 SEO pages, RSS footer link | multiple | pushed |
+| 00:23 | Session end: 28 writes across 13 files (HeartbeatPage.tsx, 0016_twilio_sms.sql, 0017_subscriber_webhook.sql, schema.ts, notification.service.ts) | 8 reads | ~43703 tok |
+| 00:25 | Session end: 28 writes across 13 files (HeartbeatPage.tsx, 0016_twilio_sms.sql, 0017_subscriber_webhook.sql, schema.ts, notification.service.ts) | 8 reads | ~43703 tok |
+| 00:26 | Edited apps/web/src/pages/compare/VsBetterStack.tsx | expanded (+6 lines) | ~363 |
+| 00:26 | Edited apps/web/src/pages/compare/VsBetterStack.tsx | 3→5 lines | ~119 |
+| 00:27 | Edited apps/web/src/pages/compare/VsUptimeRobot.tsx | 18→22 lines | ~372 |
+| 00:27 | Edited apps/web/src/pages/compare/VsUptimeRobot.tsx | 3→5 lines | ~109 |
+| 00:27 | Created apps/web/src/pages/compare/VsPingdom.tsx | — | ~1453 |
+| 00:27 | Created apps/web/src/pages/compare/VsCronitor.tsx | — | ~1497 |
+| 00:28 | Edited apps/web/src/App.tsx | added 2 import(s) | ~60 |
+| 00:28 | Edited apps/web/src/App.tsx | 2→4 lines | ~68 |
+| 00:28 | Edited apps/web/public/sitemap.xml | expanded (+10 lines) | ~106 |
+| 00:28 | Edited apps/web/index.html | 5→8 lines | ~152 |
+| 00:28 | Edited apps/web/index.html | 4→5 lines | ~120 |
+| 00:28 | Edited apps/web/src/pages/compare/CompareLayout.tsx | 2→4 lines | ~65 |
+| 00:28 | Session end: 40 writes across 19 files (HeartbeatPage.tsx, 0016_twilio_sms.sql, 0017_subscriber_webhook.sql, schema.ts, notification.service.ts) | 12 reads | ~53916 tok |
+| 00:39 | Created apps/api/drizzle/0018_team_members.sql | — | ~276 |
+| 00:39 | Created apps/api/drizzle/0019_google_oauth.sql | — | ~38 |
+| 00:39 | Created apps/api/drizzle/0020_oncall.sql | — | ~246 |
+| 00:39 | Edited apps/api/src/db/schema.ts | 9→10 lines | ~152 |
+| 00:39 | Edited apps/api/src/db/schema.ts | expanded (+62 lines) | ~746 |
+| 00:39 | Edited apps/api/src/db/schema.ts | 11→12 lines | ~43 |
+| 00:40 | Created apps/api/src/routes/team.ts | — | ~2167 |
+| 00:40 | Created apps/api/src/routes/oncall.ts | — | ~1491 |
+| 00:40 | Edited apps/api/src/routes/auth.ts | 13→13 lines | ~182 |
+| 00:40 | Edited apps/api/src/routes/auth.ts | added 2 condition(s) | ~526 |
+| 00:40 | Edited apps/api/src/routes/auth.ts | added 4 condition(s) | ~456 |
+| 00:40 | Edited apps/api/src/routes/auth.ts | added 2 condition(s) | ~286 |
+| 00:41 | Edited apps/api/src/routes/auth.ts | added nullish coalescing | ~1256 |
+| 00:41 | Edited apps/api/src/server.ts | added 2 import(s) | ~41 |
+| 00:41 | Edited apps/api/src/server.ts | 1→3 lines | ~32 |
+| 00:41 | Edited apps/api/src/jobs/notify.job.ts | 8→11 lines | ~62 |
+| 00:41 | Edited apps/api/src/jobs/notify.job.ts | inline fix | ~13 |
+| 00:41 | Edited apps/api/src/jobs/notify.job.ts | added 6 condition(s) | ~691 |
+| 00:41 | Created apps/web/src/lib/queries/team.ts | — | ~475 |
+| 00:41 | Created apps/web/src/lib/queries/oncall.ts | — | ~526 |
+| 00:42 | Created apps/web/src/pages/AcceptInvite.tsx | — | ~1457 |
+| 00:42 | Created apps/web/src/pages/dashboard/oncall/OnCallPage.tsx | — | ~2930 |
+| 00:43 | Edited apps/web/src/pages/Login.tsx | expanded (+13 lines) | ~450 |
+| 00:43 | Edited apps/web/src/pages/Register.tsx | 2→2 lines | ~30 |
+| 00:43 | Edited apps/web/src/pages/Register.tsx | modified Register() | ~75 |
+| 00:43 | Edited apps/web/src/lib/auth.ts | 1→2 lines | ~40 |
+| 00:43 | Edited apps/web/src/lib/auth.ts | 4→6 lines | ~99 |
+| 00:43 | Edited apps/web/src/pages/Register.tsx | added nullish coalescing | ~70 |
+| 00:43 | Edited apps/web/src/pages/Register.tsx | expanded (+13 lines) | ~495 |
+| 00:43 | Edited apps/web/src/pages/dashboard/Settings.tsx | inline fix | ~31 |
+| 00:43 | Edited apps/web/src/pages/dashboard/Settings.tsx | added 1 import(s) | ~46 |
+| 00:44 | Edited apps/web/src/pages/dashboard/Settings.tsx | added error handling | ~1246 |
+| 00:44 | Edited apps/web/src/App.tsx | added 1 import(s) | ~52 |
+| 00:44 | Edited apps/web/src/App.tsx | added 1 import(s) | ~41 |
+| 00:44 | Edited apps/web/src/App.tsx | 1→2 lines | ~40 |
+| 00:44 | Edited apps/web/src/App.tsx | 1→2 lines | ~44 |
+| 00:44 | Edited apps/web/src/components/layout/sidebar.tsx | 12→13 lines | ~44 |
+| 00:44 | Edited apps/web/src/components/layout/sidebar.tsx | CSS: desc | ~62 |
+| 00:45 | Session end: 78 writes across 31 files (HeartbeatPage.tsx, 0016_twilio_sms.sql, 0017_subscriber_webhook.sql, schema.ts, notification.service.ts) | 20 reads | ~80865 tok |
+| 01:02 | Session end: 78 writes across 31 files (HeartbeatPage.tsx, 0016_twilio_sms.sql, 0017_subscriber_webhook.sql, schema.ts, notification.service.ts) | 20 reads | ~80865 tok |
+| 03:34 | Edited apps/web/index.html | added 1 condition(s) | ~254 |
+| 03:34 | Created apps/web/src/lib/analytics.ts | — | ~455 |
+| 03:34 | Edited apps/web/src/lib/auth.ts | added 1 import(s) | ~46 |
+| 03:35 | Edited apps/web/src/lib/auth.ts | 9→11 lines | ~167 |
+
+## Session: 2026-05-13 03:37
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 03:37 | Edited apps/web/src/lib/queries/monitors.ts | added 1 import(s) | ~62 |
+| 03:37 | Edited apps/web/src/lib/queries/incidents.ts | added 1 import(s) | ~63 |
+| 03:37 | Edited apps/web/src/lib/queries/status-pages.ts | added 1 import(s) | ~59 |
+| 03:37 | Edited apps/web/src/lib/queries/heartbeats.ts | added 1 import(s) | ~58 |
+| 03:37 | Edited apps/web/src/lib/queries/monitors.ts | added nullish coalescing | ~107 |
+| 03:37 | Edited apps/web/src/lib/queries/monitors.ts | modified useDeleteMonitor() | ~82 |
+| 03:37 | Edited apps/web/src/lib/queries/incidents.ts | added nullish coalescing | ~110 |
+| 03:37 | Edited apps/web/src/lib/queries/incidents.ts | added 1 condition(s) | ~147 |
+| 03:37 | Edited apps/web/src/lib/queries/status-pages.ts | modified useCreateStatusPage() | ~100 |
+| 03:37 | Edited apps/web/src/lib/queries/heartbeats.ts | modified useCreateHeartbeat() | ~101 |
+| 03:38 | Edited apps/web/src/pages/dashboard/Settings.tsx | added 1 import(s) | ~65 |
+| 03:38 | Edited apps/web/src/pages/dashboard/Settings.tsx | modified catch() | ~39 |
+| 03:38 | Edited apps/web/src/pages/dashboard/Settings.tsx | modified catch() | ~113 |
+| 03:38 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | added 1 import(s) | ~89 |
+| 03:38 | Edited apps/web/src/pages/dashboard/monitors/MonitorForm.tsx | 2→3 lines | ~22 |
+| 03:38 | Edited apps/web/src/pages/Pricing.tsx | added 1 import(s) | ~56 |
+| 03:38 | Edited apps/web/src/pages/Pricing.tsx | modified Pricing() | ~40 |
+| 03:38 | Edited apps/web/src/pages/Pricing.tsx | inline fix | ~49 |
+| 03:38 | Edited apps/web/src/pages/Docs.tsx | added 1 import(s) | ~64 |
+| 03:38 | Edited apps/web/src/pages/Docs.tsx | modified Docs() | ~38 |
+| 03:40 | Added analytics events to monitors/incidents/status-pages/heartbeats queries | monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts | success | ~120 |
+| 03:40 | Added integrationSaved+integrationTested to Settings.tsx | Settings.tsx | success | ~80 |
+| 03:40 | Added monitorTested to MonitorForm.tsx | MonitorForm.tsx | success | ~60 |
+| 03:40 | All typecheck clean — Umami analytics integration complete | all web | success | ~200 |
+| 04:13 | Session end: 20 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 6 reads | ~19177 tok |
+| 12:14 | Session end: 20 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 6 reads | ~19177 tok |
+| 12:19 | Session end: 20 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 6 reads | ~19177 tok |
+| 12:22 | Created apps/web/src/pages/Pricing.tsx | — | ~3458 |
+| 12:23 | Session end: 21 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 10 reads | ~34311 tok |
+| 12:37 | Session end: 21 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 10 reads | ~34311 tok |
+| 12:39 | Session end: 21 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 10 reads | ~34311 tok |
+| 12:39 | Session end: 21 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 10 reads | ~34311 tok |
+| 12:39 | Session end: 21 writes across 8 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 10 reads | ~34311 tok |
+| 12:46 | Created apps/api/src/routes/billing.ts | — | ~1814 |
+| 12:46 | Edited apps/web/src/pages/dashboard/Settings.tsx | inline fix | ~32 |
+| 12:46 | Edited apps/web/src/pages/dashboard/Settings.tsx | removed 23 lines | ~24 |
+| 12:46 | Edited apps/web/src/pages/dashboard/Settings.tsx | added error handling | ~1259 |
+| 12:46 | Edited apps/web/src/pages/dashboard/Settings.tsx | inline fix | ~31 |
+| 12:47 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:04 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:07 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:07 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:08 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:12 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:20 | Session end: 26 writes across 9 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 11 reads | ~38672 tok |
+| 13:22 | Edited apps/api/src/server.ts | 1→2 lines | ~53 |
+| 13:22 | Edited apps/web/src/pages/Legal.tsx | removed 8 lines | ~3 |
+| 13:22 | Edited apps/web/src/pages/Pricing.tsx | added 1 import(s) | ~68 |
+| 13:23 | Edited apps/web/src/pages/Pricing.tsx | modified Pricing() | ~93 |
+| 13:23 | Edited apps/web/src/pages/Pricing.tsx | 7→7 lines | ~115 |
+| 13:23 | Session end: 31 writes across 11 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 13 reads | ~42261 tok |
+| 13:44 | Session end: 31 writes across 11 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 13 reads | ~42261 tok |
+| 13:45 | Edited apps/web/src/pages/Pricing.tsx | 2→2 lines | ~14 |
+| 13:45 | Edited apps/web/src/pages/Pricing.tsx | 2→2 lines | ~14 |
+| 13:45 | Edited apps/web/src/pages/dashboard/Settings.tsx | 2→2 lines | ~11 |
+| 13:45 | Edited apps/web/src/pages/dashboard/Settings.tsx | 2→2 lines | ~11 |
+| 13:46 | Edited apps/api/src/db/migrate.ts | expanded (+111 lines) | ~1247 |
+| 13:46 | Edited apps/api/src/jobs/heartbeat-check.job.ts | Date() → NOW() | ~354 |
+| 13:47 | Session end: 37 writes across 13 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 15 reads | ~45891 tok |
+| 14:32 | Edited apps/api/src/jobs/notify.job.ts | inline fix | ~14 |
+| 14:33 | Edited apps/api/src/jobs/notify.job.ts | 2→2 lines | ~18 |
+| 14:33 | Session end: 39 writes across 14 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 16 reads | ~49209 tok |
+| 14:40 | Edited .github/workflows/deploy.yml | 5→8 lines | ~44 |
+| 14:40 | Edited .github/workflows/ci.yml | 20 → 22 | ~8 |
+| 14:41 | Session end: 41 writes across 16 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 18 reads | ~50232 tok |
+| 14:43 | Created .github/workflows/ci.yml | — | ~621 |
+| 14:43 | Session end: 42 writes across 16 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 18 reads | ~50853 tok |
+| 15:14 | Edited packages/shared/package.json | 3→2 lines | ~15 |
+| 15:14 | Session end: 43 writes across 17 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 18 reads | ~50868 tok |
+| 15:23 | Edited .github/workflows/ci.yml | 3→2 lines | ~21 |
+| 15:23 | Edited apps/api/package.json | 3→2 lines | ~17 |
+| 15:23 | Edited apps/web/package.json | 2→1 lines | ~9 |
+| 15:23 | Edited package.json | 2→1 lines | ~11 |
+| 15:24 | Session end: 47 writes across 17 files (monitors.ts, incidents.ts, status-pages.ts, heartbeats.ts, Settings.tsx) | 21 reads | ~51445 tok |
+| 17:28 | Created TEST_CHECKLIST.md | — | ~2576 |
+
+## Session: 2026-05-13 17:30
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 17:32 | Created TEST_CHECKLIST.html | — | ~7460 |
+| 17:32 | Created TEST_CHECKLIST.html — interactive dark-theme checklist with click-to-cycle state, progress bar, localStorage persistence, and print support | TEST_CHECKLIST.html | created | ~3k |
+| 17:32 | Session end: 1 writes across 1 files (TEST_CHECKLIST.html) | 1 reads | ~10407 tok |
+
+## Session: 2026-05-13 01:15
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 01:19 | Created apps/web/src/lib/meta.ts | — | ~607 |
+| 01:19 | Edited apps/web/index.html | 1→3 lines | ~73 |
+| 01:19 | Edited apps/web/index.html | expanded (+28 lines) | ~246 |
+| 01:19 | Edited apps/web/src/pages/Landing.tsx | added 1 import(s) | ~39 |
+| 01:20 | Edited apps/web/src/pages/Landing.tsx | modified LandingPage() | ~1058 |
+| 01:20 | Edited apps/web/src/pages/compare/CompareLayout.tsx | added 1 import(s) | ~61 |
+| 01:20 | Edited apps/web/src/pages/compare/CompareLayout.tsx | modified CompareLayout() | ~295 |
+| 01:20 | Edited apps/web/src/pages/Pricing.tsx | added 1 import(s) | ~80 |
+| 01:21 | Edited apps/web/src/pages/Pricing.tsx | modified Pricing() | ~129 |
+| 01:21 | Edited apps/web/src/pages/Docs.tsx | added 1 import(s) | ~76 |
+| 01:21 | Edited apps/web/src/pages/Docs.tsx | modified Docs() | ~123 |
+| 01:21 | Edited apps/web/src/pages/McpPage.tsx | added 1 import(s) | ~52 |
+| 01:21 | Edited apps/web/src/pages/McpPage.tsx | modified McpPage() | ~122 |
+| 01:21 | Edited apps/web/src/pages/SelfHostPage.tsx | added 1 import(s) | ~52 |
+| 01:21 | Edited apps/web/src/pages/SelfHostPage.tsx | modified SelfHostPage() | ~125 |
+| 01:21 | Edited apps/web/src/pages/HeartbeatPage.tsx | added 1 import(s) | ~52 |
+| 01:21 | Edited apps/web/src/pages/HeartbeatPage.tsx | modified HeartbeatPage() | ~146 |
+| 01:21 | Created apps/web/public/sitemap.xml | — | ~691 |
+| 01:21 | Created apps/web/public/robots.txt | — | ~83 |
+| 01:23 | Session end: 19 writes across 11 files (meta.ts, index.html, Landing.tsx, CompareLayout.tsx, Pricing.tsx) | 12 reads | ~37290 tok |

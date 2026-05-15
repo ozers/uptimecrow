@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import "./Landing.css";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -49,6 +50,13 @@ const EXAMPLE_PROMPTS = [
 
 export default function McpPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  usePageMeta({
+    title: "MCP Server — UptimeCrow AI Assistant Integration",
+    description:
+      "Query your monitor status, active incidents, and heartbeats directly from Claude Code, Cursor, or any AI assistant using UptimeCrow's native MCP (Model Context Protocol) server.",
+    canonical: "https://uptimecrow.com/mcp",
+  });
 
   return (
     <div className="landing">

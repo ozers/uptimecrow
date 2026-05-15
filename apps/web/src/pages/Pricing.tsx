@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import "./Landing.css";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -138,6 +139,13 @@ const FAQ = [
 export function Pricing() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [annual, setAnnual] = useState(false);
+
+  usePageMeta({
+    title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
+    description:
+      "Start free with 10 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
+    canonical: "https://uptimecrow.com/pricing",
+  });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   useEffect(() => { analytics.pricingViewed(); }, []);
 

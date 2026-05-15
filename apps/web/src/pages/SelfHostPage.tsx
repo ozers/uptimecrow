@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import "./Landing.css";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -78,6 +79,13 @@ docker compose ps`;
 
 export default function SelfHostPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  usePageMeta({
+    title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
+    description:
+      "Run UptimeCrow on your own infrastructure with a single Docker Compose command. MIT-licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
+    canonical: "https://uptimecrow.com/self-host",
+  });
 
   return (
     <div className="landing">

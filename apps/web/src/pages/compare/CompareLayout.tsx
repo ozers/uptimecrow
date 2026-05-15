@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Check, Minus } from "lucide-react";
 import "../Landing.css";
+import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
 
@@ -38,6 +39,22 @@ function Cell({ value }: { value: string | boolean }) {
 export function CompareLayout(props: Props) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { competitor, competitorShort, headline, subhead, pitch, whyUs, rows, whenThem } = props;
+
+  const canonicalUrl = `https://uptimecrow.com${typeof window !== "undefined" ? window.location.pathname : ""}`;
+  usePageMeta({
+    title: `UptimeCrow vs ${competitor} — Uptime Monitoring Comparison 2026`,
+    description: `Compare UptimeCrow vs ${competitor} side-by-side. Features, pricing, heartbeat monitoring, and status pages. Free plan with 10 monitors, forever.`,
+    canonical: canonicalUrl,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://uptimecrow.com/" },
+        { "@type": "ListItem", position: 2, name: "Compare", item: "https://uptimecrow.com/vs/" },
+        { "@type": "ListItem", position: 3, name: `UptimeCrow vs ${competitor}`, item: canonicalUrl },
+      ],
+    },
+  });
 
   return (
     <div className="landing">

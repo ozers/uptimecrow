@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-12T21:05:15.942Z
-> Files: 234 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-13T22:21:57.484Z
+> Files: 254 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -11,10 +11,12 @@
 - `CLAUDE.md` — OpenWolf (~1459 tok)
 - `docker-compose.yml` — Docker Compose services (~601 tok)
 - `Dockerfile` — Docker container definition (~370 tok)
-- `package.json` — Node.js package manifest (~173 tok)
+- `package.json` — Node.js package manifest (~165 tok)
 - `pnpm-lock.yaml` — pnpm lock file (~63271 tok)
 - `pnpm-workspace.yaml` (~12 tok)
 - `README.md` — Project documentation (~3127 tok)
+- `TEST_CHECKLIST.html` — UptimeCrow — Test Checklist (~7460 tok)
+- `TEST_CHECKLIST.md` — UptimeCrow — Test Checklist (~2415 tok)
 - `tsconfig.base.json` (~106 tok)
 
 ## .claude/
@@ -75,8 +77,8 @@
 
 ## .github/workflows/
 
-- `ci.yml` — CI: CI (~633 tok)
-- `deploy.yml` — CI: Deploy (~338 tok)
+- `ci.yml` — CI: CI (~615 tok)
+- `deploy.yml` — CI: Deploy (~356 tok)
 
 ## apps/
 
@@ -86,7 +88,7 @@
 
 - `Dockerfile` — Docker container definition (~371 tok)
 - `drizzle.config.ts` — Drizzle ORM configuration (~82 tok)
-- `package.json` — Node.js package manifest (~320 tok)
+- `package.json` — Node.js package manifest (~322 tok)
 - `railway.toml` (~85 tok)
 - `tsconfig.json` — TypeScript configuration (~41 tok)
 - `vitest.config.ts` — Vitest test configuration (~148 tok)
@@ -109,6 +111,11 @@
 - `0013_ssl_days_warning.sql` (~26 tok)
 - `0014_status_page_monitor_groups.sql` (~24 tok)
 - `0015_domain_expiry.sql` (~77 tok)
+- `0016_twilio_sms.sql` (~92 tok)
+- `0017_subscriber_webhook.sql` (~22 tok)
+- `0018_team_members.sql` — SQL: tables: org_members, org_invites (~276 tok)
+- `0019_google_oauth.sql` (~38 tok)
+- `0020_oncall.sql` — SQL: tables: on_call_schedules, on_call_contacts (~246 tok)
 
 ## apps/api/drizzle/meta/
 
@@ -123,14 +130,14 @@
 ## apps/api/src/
 
 - `index.ts` — mode: assertProductionSecrets, main (~309 tok)
-- `server.ts` — API routes: GET (3 endpoints) (~1201 tok)
+- `server.ts` — API routes: GET (4 endpoints) (~1278 tok)
 - `worker.ts` — Exports startWorker (~1323 tok)
 
 ## apps/api/src/db/
 
 - `index.ts` — Exports db, redis (~175 tok)
-- `migrate.ts` — Declares databaseUrl (~1199 tok)
-- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 17 more (~3337 tok)
+- `migrate.ts` — Declares databaseUrl (~2408 tok)
+- `schema.ts` — Exports planEnum, monitorTypeEnum, monitorStatusEnum, checkStatusEnum + 18 more (~4144 tok)
 
 ## apps/api/src/docs/
 
@@ -140,8 +147,8 @@
 
 - `check.job.ts` — Check Job — Monitor ping execution + incident creation + notifications (~3140 tok)
 - `generate.job.ts` — Generate Job — Status page regeneration (~113 tok)
-- `heartbeat-check.job.ts` — Exports processHeartbeatCheckJob (~780 tok)
-- `notify.job.ts` — Notify Job — Email notification queue handler (~2209 tok)
+- `heartbeat-check.job.ts` — Exports processHeartbeatCheckJob (~749 tok)
+- `notify.job.ts` — Notify Job — Email notification queue handler (~3289 tok)
 - `retention.job.test.ts` — Declares cutoffs (~531 tok)
 - `retention.job.ts` — Exports RetentionCutoff, computeCutoffs, RetentionResult, pruneOldCheckResults, processRetentionJob (~524 tok)
 
@@ -157,26 +164,28 @@
 
 - `analytics.ts` — API routes: GET (2 endpoints) (~1011 tok)
 - `api-keys.ts` — API routes: GET, POST, DELETE (7 endpoints) (~962 tok)
-- `auth.ts` — API routes: POST, GET (8 endpoints) (~1816 tok)
-- `billing.ts` — API routes: POST, GET (6 endpoints) (~1526 tok)
+- `auth.ts` — API routes: POST, GET (11 endpoints) (~3968 tok)
+- `billing.ts` — API routes: POST, GET (6 endpoints) (~1814 tok)
 - `docs.ts` — API routes: GET (2 endpoints) (~440 tok)
 - `heartbeats.ts` — API routes: GET, POST, PATCH, DELETE (8 endpoints) (~872 tok)
 - `incidents.ts` — API routes: GET, POST, PATCH (10 endpoints) (~1175 tok)
 - `maintenance.ts` — API routes: GET, POST, PATCH, DELETE (8 endpoints) (~1557 tok)
 - `mcp.ts` — MCP (Model Context Protocol) Server — exposes UptimeCrow data to AI assistants (~3332 tok)
 - `monitors.ts` — API routes: GET, POST, PATCH, DELETE (13 endpoints) (~2013 tok)
-- `public.ts` — API routes: GET, POST (4 endpoints) (~5777 tok)
-- `settings.ts` — API routes: GET, PATCH, POST (6 endpoints) (~1695 tok)
+- `oncall.ts` — API routes: GET, PUT, POST, PATCH, DELETE (10 endpoints) (~1491 tok)
+- `public.ts` — API routes: GET, POST (4 endpoints) (~5792 tok)
+- `settings.ts` — API routes: GET, PATCH, POST (6 endpoints) (~2179 tok)
 - `status-pages.ts` — API routes: GET, POST, PATCH, DELETE, PUT (16 endpoints) (~2016 tok)
 - `subscribers.ts` — API routes: GET, DELETE (4 endpoints) (~552 tok)
+- `team.ts` — API routes: GET, POST, DELETE (9 endpoints) (~2167 tok)
 
 ## apps/api/src/services/
 
 - `monitor.service.test.ts` — mockFetch: respond (~2246 tok)
 - `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3755 tok)
-- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~6523 tok)
+- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~6956 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
-- `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~10346 tok)
+- `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~10555 tok)
 
 ## apps/api/src/utils/
 
@@ -198,9 +207,9 @@
 
 - `components.json` (~114 tok)
 - `Dockerfile` — Docker container definition (~333 tok)
-- `index.html` — UptimeCrow — Uptime Monitoring &amp; Status Pages for Developers (~1117 tok)
+- `index.html` — UptimeCrow — Uptime Monitoring &amp; Status Pages for Developers (~1600 tok)
 - `nginx.conf` — Nginx configuration (~331 tok)
-- `package.json` — Node.js package manifest (~448 tok)
+- `package.json` — Node.js package manifest (~440 tok)
 - `postcss.config.js` — PostCSS configuration (~24 tok)
 - `railway.toml` (~54 tok)
 - `tailwind.config.ts` — Tailwind CSS configuration (~606 tok)
@@ -209,12 +218,12 @@
 
 ## apps/web/public/
 
-- `robots.txt` (~60 tok)
-- `sitemap.xml` (~378 tok)
+- `robots.txt` (~78 tok)
+- `sitemap.xml` (~691 tok)
 
 ## apps/web/src/
 
-- `App.tsx` — App (~1287 tok)
+- `App.tsx` — App (~1522 tok)
 - `globals.css` — Styles: 6 rules, 39 vars, 1 media queries, 2 layers (~731 tok)
 - `main.tsx` — queryClient (~244 tok)
 
@@ -237,7 +246,7 @@
 
 - `dashboard-layout.tsx` — DashboardLayout — uses useState (~293 tok)
 - `header.tsx` — ROUTE_LABELS — uses useNavigate (~1348 tok)
-- `sidebar.tsx` — navItems (~1745 tok)
+- `sidebar.tsx` — navItems (~1784 tok)
 
 ## apps/web/src/components/ui/
 
@@ -262,8 +271,11 @@
 
 ## apps/web/src/lib/
 
+- `analytics.ts` — Thin wrapper around Umami's window.umami tracker. (~455 tok)
 - `api.ts` — Exports ApiError, api (~329 tok)
-- `auth.ts` — API routes: POST (1 endpoints) (~440 tok)
+- `auth.ts` — API routes: POST (1 endpoints) (~514 tok)
+- `meta.ts` — `usePageMeta(title, description, canonical?, jsonLd?)` hook — updates document head on mount, restores defaults on unmount. Used in all public pages for SEO/GEO. (~150 tok)
+- `meta.ts` — Exports usePageMeta (~607 tok)
 - `theme.tsx` — STORAGE_KEY — uses useEffect, useContext (~601 tok)
 - `utils.ts` — Exports cn, normalizeUrl (~106 tok)
 
@@ -271,38 +283,46 @@
 
 - `analytics.ts` — Exports useUptime (~236 tok)
 - `api-keys.ts` — Exports ApiKeyRow, useApiKeys, useCreateApiKey, useRevokeApiKey (~285 tok)
-- `heartbeats.ts` — API routes: DELETE (1 endpoints) (~348 tok)
-- `incidents.ts` — Exports useIncidents, useIncident, useCreateIncident, useUpdateIncident, useCreateIncidentUpdate (~489 tok)
+- `heartbeats.ts` — API routes: DELETE (1 endpoints) (~374 tok)
+- `incidents.ts` — Exports useIncidents, useIncident, useCreateIncident, useUpdateIncident, useCreateIncidentUpdate (~554 tok)
 - `maintenance.ts` — Exports useMaintenanceWindows, useCreateMaintenanceWindow, useUpdateMaintenanceWindow, useDeleteMaintenanceWindow (~441 tok)
-- `monitors.ts` — API routes: DELETE (1 endpoints) (~512 tok)
-- `status-pages.ts` — API routes: DELETE (1 endpoints) (~682 tok)
+- `monitors.ts` — API routes: DELETE (1 endpoints) (~565 tok)
+- `oncall.ts` — API routes: PUT, POST, PATCH, DELETE (4 endpoints) (~526 tok)
+- `status-pages.ts` — API routes: DELETE (1 endpoints) (~709 tok)
 - `subscribers.ts` — API routes: DELETE (1 endpoints) (~216 tok)
+- `team.ts` — API routes: POST, DELETE (3 endpoints) (~475 tok)
 
 ## apps/web/src/pages/
 
-- `Docs.tsx` — BRAND (~3556 tok)
+- `AcceptInvite.tsx` — AcceptInvite (~1457 tok)
+- `Docs.tsx` — BRAND (~3684 tok)
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
+- `HeartbeatPage.tsx` — BRAND — renders table (~4258 tok)
 - `Landing.css` — Styles: 95 rules, 15 vars (~7364 tok)
-- `Landing.tsx` — BRAND (~8377 tok)
-- `Legal.tsx` — LegalShell (~2006 tok)
-- `Login.tsx` — Login — renders form (~1668 tok)
-- `Pricing.tsx` — BRAND (~2746 tok)
-- `Register.tsx` — PERKS — renders form — uses useNavigate, useState (~1472 tok)
+- `Landing.tsx` — BRAND (~9422 tok)
+- `Legal.tsx` — LegalShell (~1899 tok)
+- `Login.tsx` — Login — renders form (~1995 tok)
+- `McpPage.tsx` — BRAND (~3108 tok)
+- `Pricing.tsx` — BRAND (~3646 tok)
+- `Register.tsx` — PERKS — renders form (~1879 tok)
 - `ResetPassword.tsx` — ResetPassword — renders form — uses useSearchParams, useNavigate, useState (~961 tok)
+- `SelfHostPage.tsx` — BRAND — renders table (~3545 tok)
 
 ## apps/web/src/pages/compare/
 
-- `CompareLayout.tsx` — BRAND — renders table (~2132 tok)
-- `VsBetterStack.tsx` — VsBetterStack (~1207 tok)
+- `CompareLayout.tsx` — BRAND — renders table (~2414 tok)
+- `VsBetterStack.tsx` — VsBetterStack (~1405 tok)
+- `VsCronitor.tsx` — VsCronitor (~1497 tok)
 - `VsFreshping.tsx` — VsFreshping (~1295 tok)
 - `VsInstatus.tsx` — VsInstatus (~1470 tok)
+- `VsPingdom.tsx` — VsPingdom (~1453 tok)
 - `VsUptimeKuma.tsx` — VsUptimeKuma (~1492 tok)
-- `VsUptimeRobot.tsx` — VsUptimeRobot (~1245 tok)
+- `VsUptimeRobot.tsx` — VsUptimeRobot (~1370 tok)
 
 ## apps/web/src/pages/dashboard/
 
 - `Overview.tsx` — MetricCards, Onboarding (visual step cards + progress bar), StatusBanner, Overview — full redesign (~9500 tok)
-- `Settings.tsx` — SectionLabel (~4770 tok)
+- `Settings.tsx` — UPGRADE_PLANS (~7759 tok)
 
 ## apps/web/src/pages/dashboard/heartbeats/
 
@@ -323,8 +343,12 @@
 - `MonitorCreate.tsx` — MonitorCreate — uses useNavigate (~326 tok)
 - `MonitorDetail.tsx` — MonitorDetailSkeleton — renders table (~5071 tok)
 - `MonitorEdit.tsx` — MonitorEdit — uses useNavigate (~462 tok)
-- `MonitorForm.tsx` — monitorResolver — renders form (~3528 tok)
+- `MonitorForm.tsx` — monitorResolver — renders form (~3550 tok)
 - `MonitorsList.tsx` — UptimeBar — renders table (~3631 tok)
+
+## apps/web/src/pages/dashboard/oncall/
+
+- `OnCallPage.tsx` — nextRotationDate (~2930 tok)
 
 ## apps/web/src/pages/dashboard/status-pages/
 
@@ -347,7 +371,7 @@
 
 ## packages/shared/
 
-- `package.json` — Node.js package manifest (~102 tok)
+- `package.json` — Node.js package manifest (~94 tok)
 - `tsconfig.json` — TypeScript configuration (~34 tok)
 
 ## packages/shared/src/
@@ -355,4 +379,4 @@
 - `constants.ts` — Exports PLANS, Plan, MONITOR_TYPES, MonitorType + 14 more (~590 tok)
 - `index.ts` (~27 tok)
 - `types.ts` — Exports User, Organization, Monitor, CheckResult + 7 more (~735 tok)
-- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1086 tok)
+- `validation.ts` — Zod schemas: createMonitorSchema, createIncidentSchema, updateIncidentSchema, createIncidentUpdateSc (~1110 tok)

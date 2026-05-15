@@ -51,6 +51,12 @@
 
 [2026-05-12] Tried `openwolf designqc` without `--url` when port 5173 was running a different project (HookSense). Always check which app is at which port; UptimeCrow dev runs on 5174 here.
 
+## Key Learnings
+
+- **SEO/GEO hook:** `usePageMeta()` in `apps/web/src/lib/meta.ts` — updates document.title, all meta/og/twitter tags, canonical link, and optionally injects page-specific JSON-LD `<script id="__page_ld__">` on mount; cleans up on unmount. Empty deps `[]` is correct since each route unmounts/remounts on navigation.
+- **GEO strategy:** FAQ JSON-LD on Landing.tsx (8 Q&A covering "What is UptimeCrow?", "Is it free?", heartbeat, MCP, self-host, etc.) is the primary GEO signal for AI search engines (Perplexity, Google AI Overview, ChatGPT).
+- **CompareLayout SEO:** Per-competitor title/desc derived from `competitor` prop. Canonical URL uses `window.location.pathname`. BreadcrumbList JSON-LD included. No need to touch individual Vs*.tsx files.
+
 ## Decision Log
 
 [2026-05-12] Added social proof strip between terminal demo and "How it works" section using flex layout with nowrap + dividers. Used honest feature claims (30s checks, auto incidents, free forever) rather than fake user counts.
