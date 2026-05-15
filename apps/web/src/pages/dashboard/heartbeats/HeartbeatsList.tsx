@@ -30,10 +30,10 @@ import { ApiError } from "@/lib/api";
 import type { Heartbeat } from "@uptimecrow/shared";
 
 const STATUS_COLORS: Record<string, string> = {
-  healthy: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-  late: "bg-red-500/15 text-red-400 border-red-500/30",
-  paused: "bg-zinc-500/15 text-zinc-400 border-zinc-500/30",
-  unknown: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
+  healthy: "bg-success/15 text-success-foreground border-success/30",
+  late: "bg-danger/15 text-danger-foreground border-danger/30",
+  paused: "bg-muted-foreground/15 text-muted-foreground border-border/30",
+  unknown: "bg-warning/15 text-warning-foreground border-warning/30",
 };
 
 function formatSeconds(s: number): string {
@@ -62,7 +62,7 @@ function PingUrl({ slug }: { slug: string }) {
         className="shrink-0 rounded p-1 text-muted-foreground hover:text-foreground transition-colors"
         title="Copy ping URL"
       >
-        {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+        {copied ? <Check className="h-3.5 w-3.5 text-success-foreground" /> : <Copy className="h-3.5 w-3.5" />}
       </button>
     </div>
   );
@@ -124,7 +124,7 @@ function HeartbeatRow({
           trigger={
             <button
               type="button"
-              className="shrink-0 rounded p-1.5 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              className="shrink-0 rounded p-1.5 text-muted-foreground hover:text-danger-foreground hover:bg-danger/10 transition-colors"
               title="Delete"
             >
               <Trash2 className="h-4 w-4" />
@@ -245,7 +245,7 @@ function CreateDialog({
           <p className="text-xs text-muted-foreground">
             Your service must ping the URL every <strong>{formatSeconds(period)}</strong>.
             If no ping is received within <strong>{formatSeconds(grace)}</strong> of the deadline,
-            the heartbeat goes <span className="text-red-400">late</span>.
+            the heartbeat goes <span className="text-danger-foreground">late</span>.
           </p>
         </div>
 

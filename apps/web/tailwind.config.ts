@@ -47,6 +47,21 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Semantic status palette. Use `text-success`, `bg-success/10`, etc.
+        // instead of hardcoded `text-emerald-400` so light/dark themes both
+        // render readable colors.
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-fg))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-fg))",
+        },
+        danger: {
+          DEFAULT: "hsl(var(--danger))",
+          foreground: "hsl(var(--danger-fg))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

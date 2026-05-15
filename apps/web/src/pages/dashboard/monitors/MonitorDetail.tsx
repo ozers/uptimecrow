@@ -104,18 +104,18 @@ export function MonitorDetail() {
   const recentFailures = failedChecks.slice(0, 10);
 
   const statusColor = {
-    up: "text-emerald-400",
-    down: "text-red-400",
-    degraded: "text-yellow-400",
-    unknown: "text-zinc-400",
-  }[monitor.status] ?? "text-zinc-400";
+    up: "text-success-foreground",
+    down: "text-danger-foreground",
+    degraded: "text-warning-foreground",
+    unknown: "text-muted-foreground",
+  }[monitor.status] ?? "text-muted-foreground";
 
   const statusDotColor = {
-    up: "bg-emerald-400",
-    down: "bg-red-400",
-    degraded: "bg-yellow-400",
-    unknown: "bg-zinc-500",
-  }[monitor.status] ?? "bg-zinc-500";
+    up: "bg-success",
+    down: "bg-danger",
+    degraded: "bg-warning",
+    unknown: "bg-muted-foreground",
+  }[monitor.status] ?? "bg-muted-foreground";
 
   return (
     <TooltipProvider>
@@ -206,7 +206,7 @@ export function MonitorDetail() {
             const warning = days < 14;
             return (
               <div className="flex items-baseline gap-1.5 text-sm">
-                <span className={cn("text-xl font-bold tabular-nums leading-none tracking-tight", expired ? "text-destructive" : warning ? "text-yellow-500" : "")}>
+                <span className={cn("text-xl font-bold tabular-nums leading-none tracking-tight", expired ? "text-destructive" : warning ? "text-warning-foreground" : "")}>
                   {expired ? "Expired" : `${days}d`}
                 </span>
                 <span className="text-xs text-muted-foreground">SSL expiry</span>
@@ -266,7 +266,7 @@ export function MonitorDetail() {
               )}
             </div>
             {recentFailures.length === 0 ? (
-              <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-400">
+              <div className="rounded-md border border-success/20 bg-success/5 px-4 py-3 text-sm text-success-foreground">
                 No failures in the last {checks.length} checks.
               </div>
             ) : (
@@ -287,7 +287,7 @@ export function MonitorDetail() {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className="bg-red-500/15 text-red-400 border-red-500/30"
+                            className="bg-danger/15 text-danger-foreground border-danger/30"
                           >
                             {check.status}
                           </Badge>
@@ -360,8 +360,8 @@ export function MonitorDetail() {
                             variant="outline"
                             className={
                               check.status === "up"
-                                ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                                : "bg-red-500/15 text-red-400 border-red-500/30"
+                                ? "bg-success/15 text-success-foreground border-success/30"
+                                : "bg-danger/15 text-danger-foreground border-danger/30"
                             }
                           >
                             {check.status}

@@ -86,7 +86,7 @@ export function IncidentDetail() {
         action={
           isActive && (
             <Button
-              className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              className="bg-success hover:bg-success text-white"
               onClick={() =>
                 updateIncident.mutate(
                   { status: "resolved" },
@@ -131,10 +131,10 @@ export function IncidentDetail() {
                           <div
                             className={`h-3 w-3 rounded-full ${
                               update.status === "resolved"
-                                ? "bg-emerald-400"
+                                ? "bg-success"
                                 : update.status === "investigating"
-                                  ? "bg-red-400"
-                                  : "bg-yellow-400"
+                                  ? "bg-danger"
+                                  : "bg-warning"
                             }`}
                           />
                           {i < updates.length - 1 && (

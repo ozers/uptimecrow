@@ -27,28 +27,48 @@
     --input: 240 5% 18%;
     --ring: 151 100% 45%;
     --radius: 0.5rem;
+
+    /* Semantic status colors — tuned per theme so the same `text-success`
+       class reads well on dark and light backgrounds. */
+    --success: 151 90% 50%;
+    --success-fg: 151 90% 60%;
+    --warning: 38 95% 60%;
+    --warning-fg: 38 95% 60%;
+    --danger: 0 84% 65%;
+    --danger-fg: 0 84% 70%;
+    --neutral-fg: 240 5% 55%;
   }
 
   .light {
-    --background: 0 0% 100%;
+    /* Slightly off-white background so cards (pure white) stand out via
+       elevation, not just borders. Previously both were `0 0% 100%`. */
+    --background: 220 14% 96%;
     --foreground: 240 10% 8%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 8%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 8%;
-    --primary: 151 82% 34%;
+    --primary: 151 82% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
+    --secondary: 220 14% 93%;
     --secondary-foreground: 240 10% 8%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 5% 40%;
-    --accent: 240 5% 93%;
+    --muted: 220 14% 93%;
+    --muted-foreground: 240 5% 38%;
+    --accent: 220 14% 90%;
     --accent-foreground: 240 10% 8%;
-    --destructive: 0 72% 51%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 151 82% 34%;
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 151 82% 30%;
+
+    --success: 151 82% 30%;
+    --success-fg: 151 82% 28%;
+    --warning: 32 95% 38%;
+    --warning-fg: 32 95% 35%;
+    --danger: 0 72% 45%;
+    --danger-fg: 0 72% 42%;
+    --neutral-fg: 240 5% 38%;
   }
 }
 
