@@ -23,6 +23,68 @@
   min-height: 100vh;
 }
 
+/* Light theme overrides for the landing page. The marketing CSS uses its own
+   palette so each token gets a light-mode counterpart; the rest of the
+   stylesheet keeps using var(--bg|surface|text|...) untouched. The brand
+   green is darkened so it carries enough contrast on a light background. */
+.light .landing {
+  --bg: #ffffff;
+  --surface: #f7f8fa;
+  --surface2: #eef0f4;
+  --border: #e3e5ea;
+  --border2: #cdd1d8;
+  --text: #0e0f13;
+  --text2: #4a4f5a;
+  --text3: #7a7f8b;
+  --green: #00a85a;
+  --green2: #008a4a;
+  --green-dim: rgba(0, 168, 90, 0.10);
+  --red: #d23030;
+  --amber: #b06800;
+}
+
+.light .landing::before {
+  display: none;
+}
+
+/* Header/menu backdrops baked literal dark RGBA values; redo for light. */
+.light .landing nav {
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom-color: var(--border);
+}
+.light .nav-mobile {
+  background: rgba(255, 255, 255, 0.97);
+}
+
+/* Aurora/glow effects use a hardcoded saturated green that turns into a
+   muddy haze on a white background. Tone them down. */
+.light .aurora,
+.light .aurora-2,
+.light .glow,
+.light .terminal-glow {
+  opacity: 0.35;
+  filter: blur(80px) saturate(0.5);
+}
+
+/* Subtle code-block / callout overlays designed for dark mode read as harsh
+   green tints on white — soften them. */
+.light .code-block,
+.light .callout-success,
+.light .demo-strip {
+  background: rgba(0, 168, 90, 0.05) !important;
+  border-color: rgba(0, 168, 90, 0.18) !important;
+}
+
+/* Card shadow tuned for dark mode (heavy black drop) is invisible on light;
+   give marketing cards a real elevation shadow instead. */
+.light .demo,
+.light .mock-browser,
+.light .pricing-card,
+.light .feature-card,
+.light .step-card {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
 /* Noise texture overlay */
 .landing::before {
   content: '';

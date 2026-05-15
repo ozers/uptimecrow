@@ -46,9 +46,9 @@ function IncidentsListSkeleton() {
 type Filter = "all" | "active" | "resolved";
 
 const severityDotColor: Record<string, string> = {
-  critical: "bg-red-400",
-  major: "bg-yellow-400",
-  minor: "bg-zinc-400",
+  critical: "bg-danger",
+  major: "bg-warning",
+  minor: "bg-muted-foreground",
 };
 
 const statusRowAccent: Record<string, string> = {
@@ -95,7 +95,7 @@ export function IncidentsList() {
           <TabsTrigger value="active" className="gap-1.5">
             Active
             {activeCount > 0 && (
-              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500/20 px-1 text-[10px] font-semibold text-red-400">
+              <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-danger/20 px-1 text-[10px] font-semibold text-danger-foreground">
                 {activeCount}
               </span>
             )}
@@ -127,7 +127,7 @@ export function IncidentsList() {
             <TableBody>
               {filtered.map((incident) => {
                 const isActive = incident.status !== "resolved";
-                const dotColor = severityDotColor[incident.severity] ?? "bg-zinc-400";
+                const dotColor = severityDotColor[incident.severity] ?? "bg-muted-foreground";
                 const rowAccent = statusRowAccent[incident.status] ?? "";
                 return (
                   <TableRow key={incident.id} className={cn(rowAccent)}>
@@ -162,7 +162,7 @@ export function IncidentsList() {
                     {showResolved && (
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
                         {incident.resolvedAt ? (
-                          <div className="flex items-center gap-1.5 text-emerald-400/80">
+                          <div className="flex items-center gap-1.5 text-success-foreground/80">
                             <CheckCircle2 className="h-3 w-3 shrink-0" />
                             <RelativeTime date={incident.resolvedAt} />
                           </div>

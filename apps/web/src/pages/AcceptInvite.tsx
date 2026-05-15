@@ -48,7 +48,7 @@ export function AcceptInvite() {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-4">
-          <XCircle className="h-12 w-12 text-red-400 mx-auto" />
+          <XCircle className="h-12 w-12 text-danger-foreground mx-auto" />
           <h1 className="text-xl font-semibold">Invite not found</h1>
           <p className="text-muted-foreground text-sm">
             This invite link is invalid, expired, or already accepted.
@@ -65,7 +65,7 @@ export function AcceptInvite() {
     return (
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="max-w-md w-full text-center space-y-4">
-          <CheckCircle2 className="h-12 w-12 text-emerald-400 mx-auto" />
+          <CheckCircle2 className="h-12 w-12 text-success-foreground mx-auto" />
           <h1 className="text-xl font-semibold">Invite accepted!</h1>
           <p className="text-muted-foreground text-sm">Redirecting to dashboard…</p>
         </div>
@@ -98,7 +98,7 @@ export function AcceptInvite() {
         </div>
 
         {acceptError && (
-          <p className="text-sm text-red-400">{acceptError}</p>
+          <p className="text-sm text-danger-foreground">{acceptError}</p>
         )}
 
         {user ? (

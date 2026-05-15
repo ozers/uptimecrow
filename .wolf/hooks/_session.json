@@ -126,6 +126,36 @@
       "count": 1,
       "tokens": 2246,
       "first_read": "2026-05-15T16:38:24.321Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/globals.css": {
+      "count": 1,
+      "tokens": 731,
+      "first_read": "2026-05-15T20:01:00.788Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx": {
+      "count": 1,
+      "tokens": 601,
+      "first_read": "2026-05-15T20:01:00.883Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/tailwind.config.ts": {
+      "count": 1,
+      "tokens": 606,
+      "first_read": "2026-05-15T20:02:16.896Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/status-badge.tsx": {
+      "count": 1,
+      "tokens": 474,
+      "first_read": "2026-05-15T20:02:28.672Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/severity-badge.tsx": {
+      "count": 1,
+      "tokens": 222,
+      "first_read": "2026-05-15T20:02:29.108Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css": {
+      "count": 2,
+      "tokens": 7796,
+      "first_read": "2026-05-15T20:03:25.760Z"
     }
   },
   "files_written": [
@@ -224,6 +254,54 @@
       "action": "edit",
       "tokens": 49,
       "at": "2026-05-15T16:39:58.589Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/globals.css",
+      "action": "edit",
+      "tokens": 554,
+      "at": "2026-05-15T20:02:12.822Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/tailwind.config.ts",
+      "action": "edit",
+      "tokens": 193,
+      "at": "2026-05-15T20:02:24.177Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/status-badge.tsx",
+      "action": "create",
+      "tokens": 479,
+      "at": "2026-05-15T20:02:37.932Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/severity-badge.tsx",
+      "action": "create",
+      "tokens": 225,
+      "at": "2026-05-15T20:02:44.087Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+      "action": "edit",
+      "tokens": 331,
+      "at": "2026-05-15T20:03:39.012Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+      "action": "edit",
+      "tokens": 331,
+      "at": "2026-05-15T20:04:06.966Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx",
+      "action": "edit",
+      "tokens": 122,
+      "at": "2026-05-15T20:04:45.871Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx",
+      "action": "edit",
+      "tokens": 86,
+      "at": "2026-05-15T20:05:18.250Z"
     }
   ],
   "edit_counts": {
@@ -234,11 +312,17 @@
     "apps/api/src/services/notification.service.ts": 1,
     "apps/api/src/services/monitor.service.test.ts": 1,
     "apps/api/src/utils/ssrf.test.ts": 1,
-    "apps/web/src/components/layout/sidebar.tsx": 1
+    "apps/web/src/components/layout/sidebar.tsx": 1,
+    "apps/web/src/globals.css": 1,
+    "apps/web/tailwind.config.ts": 1,
+    "apps/web/src/components/status-badge.tsx": 1,
+    "apps/web/src/components/severity-badge.tsx": 1,
+    "apps/web/src/pages/Landing.css": 2,
+    "apps/web/src/lib/theme.tsx": 2
   },
-  "anatomy_hits": 24,
+  "anatomy_hits": 30,
   "anatomy_misses": 0,
-  "repeated_reads_warned": 8,
+  "repeated_reads_warned": 9,
   "cerebrum_warnings": 0,
-  "stop_count": 1
+  "stop_count": 3
 }

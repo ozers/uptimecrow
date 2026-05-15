@@ -306,8 +306,8 @@ export function StatusPageDetail() {
                           variant="outline"
                           className={
                             sub.isVerified
-                              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-                              : "bg-yellow-500/15 text-yellow-400 border-yellow-500/30"
+                              ? "bg-success/15 text-success-foreground border-success/30"
+                              : "bg-warning/15 text-warning-foreground border-warning/30"
                           }
                         >
                           {sub.isVerified ? "Verified" : "Pending"}

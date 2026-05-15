@@ -143,14 +143,14 @@ export function MonitorForm({
       {testResult && (
         <div className={`rounded-lg border p-4 ${
           testResult.status === "up"
-            ? "border-emerald-500/30 bg-emerald-500/5"
-            : "border-red-500/30 bg-red-500/5"
+            ? "border-success/30 bg-success/5"
+            : "border-danger/30 bg-danger/5"
         }`}>
           <div className="mb-2 flex items-center gap-2">
             {testResult.status === "up" ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+              <CheckCircle2 className="h-4 w-4 text-success-foreground" />
             ) : (
-              <XCircle className="h-4 w-4 text-red-400" />
+              <XCircle className="h-4 w-4 text-danger-foreground" />
             )}
             <span className="text-sm font-medium">
               {testResult.status === "up" ? "Reachable" : "Unreachable"}
@@ -158,12 +158,12 @@ export function MonitorForm({
             {testResult.statusCode && (
               <span className={`text-xs px-2 py-0.5 rounded-full ${
                 testResult.statusCode >= 200 && testResult.statusCode < 300
-                  ? "bg-emerald-500/15 text-emerald-400"
+                  ? "bg-success/15 text-success-foreground"
                   : testResult.statusCode >= 400 && testResult.statusCode < 500
-                    ? "bg-yellow-500/15 text-yellow-400"
+                    ? "bg-warning/15 text-warning-foreground"
                     : testResult.statusCode >= 500
-                      ? "bg-red-500/15 text-red-400"
-                      : "bg-zinc-500/15 text-zinc-400"
+                      ? "bg-danger/15 text-danger-foreground"
+                      : "bg-muted-foreground/15 text-muted-foreground"
               }`}>
                 {testResult.statusCode}
               </span>
@@ -173,13 +173,13 @@ export function MonitorForm({
             )}
           </div>
           {testResult.errorMessage && (
-            <p className="mb-2 flex items-center gap-1 text-xs text-red-400">
+            <p className="mb-2 flex items-center gap-1 text-xs text-danger-foreground">
               <AlertTriangle className="h-3 w-3" />
               {testResult.errorMessage}
             </p>
           )}
           {testResult.warnings?.map((warning, i) => (
-            <p key={i} className="mb-1 flex items-start gap-1 text-xs text-yellow-400">
+            <p key={i} className="mb-1 flex items-start gap-1 text-xs text-warning-foreground">
               <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
               {warning}
             </p>

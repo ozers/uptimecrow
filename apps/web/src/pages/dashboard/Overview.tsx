@@ -211,15 +211,15 @@ function Onboarding({ hasStatusPages }: { hasStatusPages: boolean }) {
               key={to}
               className="flex items-start gap-4 rounded-xl border border-border bg-card/40 px-5 py-4"
             >
-              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/10">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success/10">
+                <CheckCircle2 className="h-3.5 w-3.5 text-success-foreground" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">
                     {title}
                   </p>
-                  <span className="text-xs font-medium text-emerald-400">Done</span>
+                  <span className="text-xs font-medium text-success-foreground">Done</span>
                 </div>
                 <p className="mt-0.5 text-xs text-muted-foreground/60">{desc}</p>
               </div>
@@ -329,7 +329,7 @@ function StatusBanner({
   let border = "border-border";
   let dot: React.ReactNode = null;
   let headline = "All systems operational";
-  let headlineColor = "text-emerald-400";
+  let headlineColor = "text-success-foreground";
   let sub = "Everything is running smoothly.";
 
   if (!hasMonitors) {
@@ -337,29 +337,29 @@ function StatusBanner({
     headlineColor = "";
     sub = "Add a monitor below to start tracking uptime.";
   } else if (monitorsDown > 0) {
-    bg = "bg-red-500/5";
-    border = "border-red-500/25";
-    headlineColor = "text-red-400";
+    bg = "bg-danger/5";
+    border = "border-danger/25";
+    headlineColor = "text-danger-foreground";
     headline = `${monitorsDown} monitor${monitorsDown > 1 ? "s" : ""} down`;
     sub = "One or more services are unreachable right now.";
     dot = (
       <span className="relative flex h-2.5 w-2.5 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-400" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger" />
       </span>
     );
   } else if (activeIncidents > 0) {
-    bg = "bg-yellow-500/5";
-    border = "border-yellow-500/25";
-    headlineColor = "text-yellow-400";
+    bg = "bg-warning/5";
+    border = "border-warning/25";
+    headlineColor = "text-warning-foreground";
     headline = `${activeIncidents} active incident${activeIncidents > 1 ? "s" : ""}`;
     sub = "An incident is being investigated.";
-    dot = <AlertTriangle className="h-4 w-4 shrink-0 text-yellow-400" />;
+    dot = <AlertTriangle className="h-4 w-4 shrink-0 text-warning-foreground" />;
   } else if (hasMonitors) {
     dot = (
       <span className="relative flex h-2.5 w-2.5 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-40" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-40" />
+        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-success" />
       </span>
     );
   }
@@ -397,12 +397,12 @@ function StatusBanner({
 
 function StatusDot({ status }: { status: string }) {
   const colorMap: Record<string, string> = {
-    up: "bg-emerald-400",
-    down: "bg-red-400",
-    degraded: "bg-yellow-400",
-    unknown: "bg-zinc-500",
+    up: "bg-success",
+    down: "bg-danger",
+    degraded: "bg-warning",
+    unknown: "bg-muted-foreground",
   };
-  const color = colorMap[status] ?? "bg-zinc-500";
+  const color = colorMap[status] ?? "bg-muted-foreground";
   return (
     <span className="relative flex h-2 w-2 shrink-0">
       {status === "down" && (
@@ -428,10 +428,10 @@ function ResponseBar({ ms }: { ms: number | null | undefined }) {
   const pct = Math.min(100, (ms / 1500) * 100);
   const barColor =
     ms < 300
-      ? "bg-emerald-400"
+      ? "bg-success"
       : ms < 800
-        ? "bg-yellow-400"
-        : "bg-red-400";
+        ? "bg-warning"
+        : "bg-danger";
   return (
     <div className="flex items-center gap-2">
       <span className="w-12 text-right text-xs tabular-nums text-muted-foreground">
@@ -467,7 +467,7 @@ function SectionHeader({
           {title}
         </p>
         {badge != null && badge > 0 && (
-          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500/20 px-1 text-[10px] font-bold text-red-400">
+          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-danger/20 px-1 text-[10px] font-bold text-danger-foreground">
             {badge}
           </span>
         )}
@@ -630,7 +630,7 @@ export function Overview() {
             icon={Heart}
             text={
               <>
-                <span className="font-semibold text-red-400">
+                <span className="font-semibold text-danger-foreground">
                   {lateHeartbeats.length} heartbeat
                   {lateHeartbeats.length > 1 ? "s" : ""} late
                 </span>{" "}
@@ -667,7 +667,7 @@ export function Overview() {
               label: `monitor${totalMonitors !== 1 ? "s" : ""}`,
               to: "/dashboard/monitors",
               badge: monitorsDown > 0 ? `${monitorsDown} down` : undefined,
-              badgeColor: monitorsDown > 0 ? "bg-red-500/15 text-red-400" : undefined,
+              badgeColor: monitorsDown > 0 ? "bg-danger/15 text-danger-foreground" : undefined,
             },
             {
               icon: TrendingUp,
@@ -679,10 +679,10 @@ export function Overview() {
               icon: AlertTriangle,
               value: activeIncidents.length,
               label: `active incident${activeIncidents.length !== 1 ? "s" : ""}`,
-              color: activeIncidents.length > 0 ? "text-yellow-400" : undefined,
+              color: activeIncidents.length > 0 ? "text-warning-foreground" : undefined,
               to: "/dashboard/incidents",
               badge: activeIncidents.length > 0 ? "live" : undefined,
-              badgeColor: "bg-yellow-400/10 text-yellow-400",
+              badgeColor: "bg-warning/10 text-warning-foreground",
             },
             {
               icon: Globe,
@@ -726,10 +726,10 @@ export function Overview() {
                   uptimePct == null
                     ? "text-muted-foreground/50"
                     : uptimePct >= 99.9
-                      ? "text-emerald-400"
+                      ? "text-success-foreground"
                       : uptimePct >= 99
-                        ? "text-yellow-400"
-                        : "text-red-400";
+                        ? "text-warning-foreground"
+                        : "text-danger-foreground";
                 return (
                   <Tooltip key={monitor.id}>
                     <TooltipTrigger asChild>
@@ -788,7 +788,7 @@ export function Overview() {
           />
           {recentIncidents.length === 0 ? (
             <div className="border-t border-b border-border py-10 text-center">
-              <ShieldCheck className="mx-auto mb-3 h-7 w-7 text-emerald-400/50" />
+              <ShieldCheck className="mx-auto mb-3 h-7 w-7 text-success-foreground/50" />
               <p className="text-sm font-medium">All clear</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 No incidents recorded.
@@ -804,9 +804,9 @@ export function Overview() {
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     {incident.status === "resolved" ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                      <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success-foreground" />
                     ) : (
-                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+                      <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-danger-foreground" />
                     )}
                     <span className="truncate text-sm font-medium">
                       {incident.title}

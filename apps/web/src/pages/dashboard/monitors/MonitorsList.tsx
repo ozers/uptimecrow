@@ -31,9 +31,9 @@ function UptimeBar({ percent }: { percent: number | null }) {
   }
   const pct = Number(percent);
   const barColor =
-    pct >= 99.9 ? "bg-emerald-400" : pct >= 99 ? "bg-yellow-400" : "bg-red-400";
+    pct >= 99.9 ? "bg-success" : pct >= 99 ? "bg-warning" : "bg-danger";
   const textColor =
-    pct >= 99.9 ? "text-emerald-400" : pct >= 99 ? "text-yellow-400" : "text-red-400";
+    pct >= 99.9 ? "text-success-foreground" : pct >= 99 ? "text-warning-foreground" : "text-danger-foreground";
 
   return (
     <div className="flex items-center gap-2">
@@ -149,13 +149,13 @@ export function MonitorsList() {
                         <div className="flex items-center gap-2.5">
                           <span className="relative flex h-2 w-2 shrink-0">
                             {monitor.status === "down" && (
-                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
                             )}
                             <span className={cn("relative inline-flex h-2 w-2 rounded-full", {
-                              "bg-emerald-400": monitor.status === "up",
-                              "bg-red-400": monitor.status === "down",
-                              "bg-yellow-400": monitor.status === "degraded",
-                              "bg-zinc-500": monitor.status === "unknown",
+                              "bg-success": monitor.status === "up",
+                              "bg-danger": monitor.status === "down",
+                              "bg-warning": monitor.status === "degraded",
+                              "bg-muted-foreground": monitor.status === "unknown",
                             })} />
                           </span>
                           <Link
@@ -172,10 +172,10 @@ export function MonitorsList() {
                       <TableCell>
                         <span className={cn(
                           "text-xs font-semibold uppercase tracking-wide",
-                          monitor.status === "up" && "text-emerald-400",
-                          monitor.status === "down" && "text-red-400",
-                          monitor.status === "degraded" && "text-yellow-400",
-                          monitor.status === "unknown" && "text-zinc-400",
+                          monitor.status === "up" && "text-success-foreground",
+                          monitor.status === "down" && "text-danger-foreground",
+                          monitor.status === "degraded" && "text-warning-foreground",
+                          monitor.status === "unknown" && "text-muted-foreground",
                         )}>
                           {monitor.status}
                         </span>
@@ -203,7 +203,7 @@ export function MonitorsList() {
                               <TooltipTrigger asChild>
                                 <span className={cn(
                                   "inline-flex items-center gap-1 text-xs font-medium tabular-nums",
-                                  expired ? "text-red-400" : warning ? "text-yellow-400" : "text-emerald-400",
+                                  expired ? "text-danger-foreground" : warning ? "text-warning-foreground" : "text-success-foreground",
                                 )}>
                                   <ShieldAlert className="h-3 w-3" />
                                   {expired ? "Expired" : `${days}d`}
@@ -228,7 +228,7 @@ export function MonitorsList() {
                               <TooltipTrigger asChild>
                                 <span className={cn(
                                   "inline-flex items-center gap-1 text-xs font-medium tabular-nums",
-                                  expired ? "text-red-400" : warning ? "text-yellow-400" : "text-emerald-400",
+                                  expired ? "text-danger-foreground" : warning ? "text-warning-foreground" : "text-success-foreground",
                                 )}>
                                   <Globe className="h-3 w-3" />
                                   {expired ? "Expired" : `${days}d`}

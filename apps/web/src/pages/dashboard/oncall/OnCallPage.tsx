@@ -98,10 +98,10 @@ export function OnCallPage() {
 
       {/* Current on-call */}
       {current && (
-        <div className="mb-6 rounded-xl border border-emerald-500/30 bg-emerald-500/5 p-4">
+        <div className="mb-6 rounded-xl border border-success/30 bg-success/5 p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Bell className="h-4 w-4 text-emerald-400" />
-            <span className="text-sm font-semibold text-emerald-400">Currently On-Call</span>
+            <Bell className="h-4 w-4 text-success-foreground" />
+            <span className="text-sm font-semibold text-success-foreground">Currently On-Call</span>
           </div>
           <p className="text-base font-medium">{current.name}</p>
           <div className="mt-1 flex flex-wrap gap-3">
@@ -179,7 +179,7 @@ export function OnCallPage() {
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-sm">{contact.name}</span>
                   {current?.id === contact.id && (
-                    <Badge className="text-[10px] h-4 bg-emerald-500/15 text-emerald-400 border-emerald-500/30">on-call</Badge>
+                    <Badge className="text-[10px] h-4 bg-success/15 text-success-foreground border-success/30">on-call</Badge>
                   )}
                 </div>
                 <div className="flex flex-wrap gap-3 mt-0.5">

@@ -2224,6 +2224,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-15T16:38:48.388Z"
+    },
+    {
+      "id": "bug-140",
+      "timestamp": "2026-05-15T20:02:12.824Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/globals.css",
+      "root_cause": "10 lines replaced/restructured",
+      "fix": "Rewrote 47→67 lines (10 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "css"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-15T20:02:12.824Z"
     }
   ]
 }

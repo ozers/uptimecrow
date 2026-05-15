@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-15T16:39:58.580Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-15T20:05:18.240Z
 > Files: 258 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -214,7 +214,7 @@
 - `package.json` — Node.js package manifest (~440 tok)
 - `postcss.config.js` — PostCSS configuration (~24 tok)
 - `railway.toml` (~54 tok)
-- `tailwind.config.ts` — Tailwind CSS configuration (~606 tok)
+- `tailwind.config.ts` — /*.{ts,tsx}"], (~762 tok)
 - `tsconfig.json` — TypeScript configuration (~60 tok)
 - `vite.config.ts` — Vite build configuration (~193 tok)
 
@@ -226,7 +226,7 @@
 ## apps/web/src/
 
 - `App.tsx` — App (~1566 tok)
-- `globals.css` — Styles: 6 rules, 39 vars, 1 media queries, 2 layers (~731 tok)
+- `globals.css` — Styles: 6 rules, 53 vars (~927 tok)
 - `main.tsx` — queryClient (~244 tok)
 
 ## apps/web/src/components/
@@ -241,8 +241,8 @@
 - `public-route.tsx` — PublicRoute — uses useEffect (~190 tok)
 - `relative-time.tsx` — RelativeTime (~217 tok)
 - `response-chart.tsx` — ResponseChart — renders chart (~453 tok)
-- `severity-badge.tsx` — severityConfig (~222 tok)
-- `status-badge.tsx` — monitorStatusConfig (~474 tok)
+- `severity-badge.tsx` — severityConfig (~225 tok)
+- `status-badge.tsx` — monitorStatusConfig (~479 tok)
 
 ## apps/web/src/components/layout/
 
@@ -278,7 +278,7 @@
 - `auth.ts` — API routes: POST (1 endpoints) (~514 tok)
 - `meta.ts` — `usePageMeta(title, description, canonical?, jsonLd?)` hook — updates document head on mount, restores defaults on unmount. Used in all public pages for SEO/GEO. (~150 tok)
 - `meta.ts` — Exports usePageMeta (~607 tok)
-- `theme.tsx` — STORAGE_KEY — uses useEffect, useContext (~601 tok)
+- `theme.tsx` — STORAGE_KEY (~601 tok)
 - `utils.ts` — Exports cn, normalizeUrl (~106 tok)
 
 ## apps/web/src/lib/queries/
@@ -301,7 +301,7 @@
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
 - `FreshpingAlternative.tsx` — BRAND (~2444 tok)
 - `HeartbeatPage.tsx` — BRAND — renders table (~4258 tok)
-- `Landing.css` — Styles: 95 rules, 15 vars (~7364 tok)
+- `Landing.css` — Styles: 95 rules, 28 vars (~8114 tok)
 - `Landing.tsx` — BRAND (~9682 tok)
 - `Legal.tsx` — LegalShell (~1899 tok)
 - `Login.tsx` — Login — renders form (~1995 tok)
