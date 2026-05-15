@@ -5,6 +5,7 @@ Allow: /docs
 Allow: /mcp
 Allow: /self-host
 Allow: /heartbeat-monitoring
+Allow: /freshping-alternative
 Allow: /privacy
 Allow: /terms
 Allow: /vs/*

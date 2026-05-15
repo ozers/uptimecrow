@@ -254,84 +254,91 @@ function StatusPagePreview() {
 
 // ─── Landing Page ─────────────────────────────────────────────────────────────
 
+const FAQ_ITEMS = [
+  {
+    q: "What is UptimeCrow?",
+    a: "UptimeCrow is a developer-first uptime monitoring and status page platform. It automatically monitors your APIs, websites, and cron jobs — creating incidents, updating your status page, and alerting subscribers the moment downtime is detected. No manual work needed.",
+  },
+  {
+    q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
+    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $29/mo for serious use.",
+  },
+  {
+    q: "Is UptimeCrow really free? What's in the free plan?",
+    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 1-minute check intervals, 3 heartbeat monitors, Slack & Discord alerts, and 30-day history.",
+  },
+  {
+    q: "What is heartbeat monitoring and cron job monitoring?",
+    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (3 heartbeats).",
+  },
+  {
+    q: "How does UptimeCrow prevent false alarms?",
+    a: "UptimeCrow uses a consecutive-failure state machine. By default, a monitor must fail 2 consecutive checks before an incident is created — a single network blip never pages your team. The confirmation count is configurable per monitor.",
+  },
+  {
+    q: "Can I self-host UptimeCrow?",
+    a: "Yes. UptimeCrow's full stack is MIT-licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure.",
+  },
+  {
+    q: "What is the MCP server and how does it work with Claude?",
+    a: "UptimeCrow exposes a native MCP (Model Context Protocol) server. AI assistants — Claude Code, Cursor, Windsurf — can query your monitor status, list active incidents, and check heartbeat health without leaving the editor. Authenticate with an API key.",
+  },
+  {
+    q: "How often does UptimeCrow check my websites and APIs?",
+    a: "Every 60 seconds on Free and Indie plans. Every 30 seconds on Pro and Team. Checks run from multiple regions to reduce false positives — a single regional failure won't trigger an incident.",
+  },
+  {
+    q: "How do status pages stay online when my origin is down?",
+    a: "UptimeCrow pre-renders your status page as static HTML on every incident update. The pre-rendered page is served completely decoupled from your origin. Even if your app, API, and database are all down, subscribers can still view your status page and incident updates.",
+  },
+];
+
 const LANDING_FAQ_LD = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is UptimeCrow?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "UptimeCrow is a developer-first uptime monitoring and status page platform. It automatically monitors your APIs and websites, creates incidents when downtime is detected, updates your status page, and notifies subscribers — all without any manual intervention.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Is UptimeCrow free?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. UptimeCrow has a free plan that includes 10 monitors, 1 status page, 1-minute check intervals, 3 heartbeat monitors, Slack & Discord alerts, and 30-day history — free forever with no credit card required.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How often does UptimeCrow check my website or API?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "UptimeCrow checks your endpoints every 60 seconds on Free and Indie plans, and every 30 seconds on Pro and Team plans. Checks are performed from multiple regions to reduce false positives.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is heartbeat monitoring?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Heartbeat monitoring tracks cron jobs, background workers, and scheduled tasks. Your job pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including the free tier.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I self-host UptimeCrow?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. UptimeCrow's core is MIT-licensed and fully self-hostable with a single Docker Compose command. You bring your own Postgres and Redis. No vendor lock-in.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is a pre-rendered status page?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "A pre-rendered status page is generated as static HTML ahead of time, so it continues to serve correctly even if your origin server is completely down. UptimeCrow pre-renders your status pages and updates them automatically on incidents.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How does UptimeCrow notify me when my site goes down?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "UptimeCrow sends alerts via Email, Slack, Discord, PagerDuty, Microsoft Teams, Telegram, and SMS (Twilio). Subscribers can opt in to email notifications from your status page and are automatically notified when incidents open and resolve.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Does UptimeCrow have an MCP server for AI assistants?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. UptimeCrow is the only uptime monitoring tool with a native MCP (Model Context Protocol) server. You can query your monitor status, active incidents, and heartbeats directly from Claude Code, Cursor, Windsurf, or any AI assistant that supports MCP.",
-      },
-    },
-  ],
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
 };
+
+function FAQSection() {
+  const [open, setOpen] = useState<number | null>(null);
+  const toggle = (i: number) => setOpen((prev) => (prev === i ? null : i));
+
+  return (
+    <section className="section" id="faq" style={{ paddingTop: 0 }}>
+      <div className="container">
+        <p className="section-label">FAQ</p>
+        <h2 className="section-title">Common questions.</h2>
+        <div className="faq-list">
+          {FAQ_ITEMS.map((item, i) => (
+            <div className="faq-item" key={i}>
+              <button
+                className="faq-q"
+                onClick={() => toggle(i)}
+                aria-expanded={open === i}
+              >
+                <span>{item.q}</span>
+                <span className="faq-icon" aria-hidden="true">{open === i ? "−" : "+"}</span>
+              </button>
+              {open === i && <p className="faq-a">{item.a}</p>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   usePageMeta({
-    title: "UptimeCrow — Uptime Monitoring & Status Pages for Developers",
+    title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
     description:
-      "Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down. Free forever with 10 monitors.",
+      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 10 monitors free forever.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });
@@ -602,6 +609,9 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ */}
+      <FAQSection />
 
       {/* PRICING */}
       <section className="section" id="pricing" style={{ paddingTop: 0 }}>
