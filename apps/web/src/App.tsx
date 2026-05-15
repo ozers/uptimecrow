@@ -37,6 +37,7 @@ import { VsCronitor } from "./pages/compare/VsCronitor";
 import McpPage from "./pages/McpPage";
 import SelfHostPage from "./pages/SelfHostPage";
 import HeartbeatPage from "./pages/HeartbeatPage";
+import { FreshpingAlternative } from "./pages/FreshpingAlternative";
 
 export function App() {
   return (
@@ -59,6 +60,7 @@ export function App() {
         <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
         <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />
+        <Route path="/freshping-alternative" element={<FreshpingAlternative />} />
         <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
