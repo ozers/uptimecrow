@@ -3,6 +3,7 @@
 import net from "node:net";
 import tls from "node:tls";
 import { logger } from "../utils/logger.js";
+import { assertPublicUrl, assertPublicHost, SsrfBlockedError } from "../utils/ssrf.js";
 
 export const REGIONS = ["eu-west", "us-east", "ap-southeast"] as const;
 export type Region = (typeof REGIONS)[number];
@@ -38,13 +39,15 @@ export async function executeHttpCheck(
   const start = Date.now();
 
   try {
+    await assertPublicUrl(url);
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), options.timeoutMs);
 
     const response = await fetch(url, {
       method: "GET",
       signal: controller.signal,
-      redirect: "follow",
+      redirect: "manual",
       headers: {
         "User-Agent": `UptimeCrow/1.0 (${region})`,
       },
@@ -82,6 +85,9 @@ export async function executeHttpCheck(
     return { status, responseMs, statusCode: response.status, errorMessage, region };
   } catch (err: any) {
     const responseMs = Date.now() - start;
+    if (err instanceof SsrfBlockedError) {
+      return { status: "down", responseMs, statusCode: null, errorMessage: `Target rejected: ${err.message}`, region };
+    }
     return {
       status: "down",
       responseMs,
@@ -100,13 +106,15 @@ export async function executeTestCheck(
   const start = Date.now();
 
   try {
+    await assertPublicUrl(url);
+
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), options.timeoutMs);
 
     const response = await fetch(url, {
       method: "GET",
       signal: controller.signal,
-      redirect: "follow",
+      redirect: "manual",
       headers: { "User-Agent": "UptimeCrow/1.0 (test)" },
     });
 
@@ -192,6 +200,14 @@ export async function executeTestCheck(
     };
   } catch (err: any) {
     const responseMs = Date.now() - start;
+    if (err instanceof SsrfBlockedError) {
+      return {
+        status: "down", responseMs, statusCode: null,
+        errorMessage: `Target rejected: ${err.message}`,
+        region: "eu-west", bodyPreview: "", bodyLength: 0,
+        warnings: ["This target points to a private/internal address and is blocked for security reasons."],
+      };
+    }
     return {
       status: "down",
       responseMs,
@@ -236,7 +252,17 @@ export async function executeTcpCheck(
         region,
       };
     }
+    await assertPublicHost(host);
   } catch (err: unknown) {
+    if (err instanceof SsrfBlockedError) {
+      return {
+        status: "down",
+        responseMs: Date.now() - start,
+        statusCode: null,
+        errorMessage: `Target rejected: ${err.message}`,
+        region,
+      };
+    }
     return {
       status: "down",
       responseMs: Date.now() - start,
@@ -310,6 +336,12 @@ export async function checkSslExpiry(url: string): Promise<SslCheckResult> {
     if (parsed.protocol !== "https:") return { expiresAt: null, daysRemaining: null, status: "ok" };
     hostname = parsed.hostname;
     if (parsed.port) port = parseInt(parsed.port, 10);
+  } catch {
+    return { expiresAt: null, daysRemaining: null, status: "error" };
+  }
+
+  try {
+    await assertPublicHost(hostname);
   } catch {
     return { expiresAt: null, daysRemaining: null, status: "error" };
   }

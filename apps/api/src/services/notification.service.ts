@@ -2,6 +2,16 @@
 
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { logger } from "../utils/logger.js";
+import { assertPublicUrl } from "../utils/ssrf.js";
+
+// User-controlled webhook URLs (Slack, Discord, custom, Teams) must be
+// validated against private/internal address ranges before we dial them —
+// otherwise an attacker can configure a webhook that points at the metadata
+// service or an internal admin panel and turn our notifier into an SSRF probe.
+async function fetchUserWebhook(url: string, init: RequestInit): Promise<Response> {
+  await assertPublicUrl(url);
+  return fetch(url, init);
+}
 
 function getClient(): SESv2Client | null {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -177,7 +187,7 @@ export async function sendSlackWebhook(params: {
   };
 
   try {
-    const res = await fetch(params.webhookUrl, {
+    const res = await fetchUserWebhook(params.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -220,7 +230,7 @@ export async function sendDiscordWebhook(params: {
   };
 
   try {
-    const res = await fetch(params.webhookUrl, {
+    const res = await fetchUserWebhook(params.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -252,7 +262,7 @@ export async function sendCustomWebhook(params: {
     source: "UptimeCrow",
   };
   try {
-    const res = await fetch(params.webhookUrl, {
+    const res = await fetchUserWebhook(params.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -337,7 +347,7 @@ export async function sendTeamsWebhook(params: {
   };
 
   try {
-    const res = await fetch(params.webhookUrl, {
+    const res = await fetchUserWebhook(params.webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -402,7 +412,7 @@ export async function sendHeartbeatLateAlert(params: {
       }],
     };
     try {
-      const res = await fetch(params.slackWebhookUrl, {
+      const res = await fetchUserWebhook(params.slackWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -424,7 +434,7 @@ export async function sendHeartbeatLateAlert(params: {
       }],
     };
     try {
-      const res = await fetch(params.discordWebhookUrl, {
+      const res = await fetchUserWebhook(params.discordWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -491,7 +501,7 @@ export async function sendDomainExpiryNotification(params: {
       }],
     };
     try {
-      const res = await fetch(params.slackWebhookUrl, {
+      const res = await fetchUserWebhook(params.slackWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -515,7 +525,7 @@ export async function sendDomainExpiryNotification(params: {
       }],
     };
     try {
-      const res = await fetch(params.discordWebhookUrl, {
+      const res = await fetchUserWebhook(params.discordWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -582,7 +592,7 @@ export async function sendSslExpiryNotification(params: {
       }],
     };
     try {
-      const res = await fetch(params.slackWebhookUrl, {
+      const res = await fetchUserWebhook(params.slackWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -606,7 +616,7 @@ export async function sendSslExpiryNotification(params: {
       }],
     };
     try {
-      const res = await fetch(params.discordWebhookUrl, {
+      const res = await fetchUserWebhook(params.discordWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -30,10 +30,21 @@ const app = new Hono();
 
 app.use("*", honoLogger());
 app.use("*", securityHeaders);
+// CORS allowlist — production requires APP_URL to be set; we never default to
+// "" because hono/cors treats an empty allowlist entry as "match any origin"
+// while still echoing credentials, which is a critical misconfiguration.
+const corsOrigins: string[] = (() => {
+  if (process.env.NODE_ENV === "production") {
+    const appUrl = process.env.APP_URL;
+    if (!appUrl) {
+      throw new Error("APP_URL environment variable is required in production for CORS");
+    }
+    return [appUrl];
+  }
+  return ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"];
+})();
 app.use("*", cors({
-  origin: process.env.NODE_ENV === "production"
-    ? [process.env.APP_URL || ""]
-    : ["http://localhost:5173", "http://localhost:3000"],
+  origin: corsOrigins,
   credentials: true,
 }));
 

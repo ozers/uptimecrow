@@ -1,3 +1,8 @@
+// Tests exercise loopback addresses (127.0.0.1), which the SSRF guard would
+// normally reject. Setting ALLOW_PRIVATE_TARGETS before importing the service
+// disables the guard so the existing happy-path assertions still work.
+process.env.ALLOW_PRIVATE_TARGETS = "1";
+
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import net from "node:net";
 import { executeHttpCheck, executeTcpCheck } from "./monitor.service.js";
