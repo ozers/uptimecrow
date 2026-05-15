@@ -131,7 +131,10 @@ authRoutes.post("/login", async (c) => {
   }
 
   if (!user.passwordHash) {
-    return c.json({ error: "This account uses Google sign-in. Please log in with Google." }, 401);
+    // Same generic error as below to prevent account enumeration via the
+    // "this email uses Google" leak. Users who sign in with Google won't try
+    // password login anyway; legitimate confusion is rare.
+    return c.json({ error: "Invalid email or password" }, 401);
   }
 
   const valid = await bcrypt.compare(password, user.passwordHash);

@@ -745,3 +745,32 @@
 | 03:12 | Edited apps/web/src/App.tsx | 1→2 lines | ~45 |
 | 03:12 | Edited apps/web/public/sitemap.xml | expanded (+6 lines) | ~94 |
 | 03:12 | Edited apps/web/public/robots.txt | 1→2 lines | ~16 |
+| 03:13 | Session end: 30 writes across 13 files (meta.ts, index.html, Landing.tsx, CompareLayout.tsx, Pricing.tsx) | 13 reads | ~48898 tok |
+
+## Session: 2026-05-15 18:54
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+
+## Session: 2026-05-15 19:30
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
+| 19:35 | designqc: captured 6 screenshots (324KB, ~15000 tok) | /, /pricing, /docs, /login, /register | ready for eval | ~0 |
+| 19:36 | Created apps/api/src/utils/ssrf.ts | — | ~1227 |
+| 19:36 | Edited apps/api/src/services/monitor.service.ts | added 1 import(s) | ~54 |
+| 19:36 | Edited apps/api/src/services/monitor.service.ts | 14→16 lines | ~114 |
+| 19:36 | Edited apps/api/src/services/monitor.service.ts | added 1 condition(s) | ~168 |
+| 19:36 | Edited apps/api/src/services/monitor.service.ts | 12→14 lines | ~109 |
+| 19:37 | Edited apps/api/src/services/monitor.service.ts | added 1 condition(s) | ~200 |
+| 19:37 | Edited apps/api/src/services/monitor.service.ts | added 1 condition(s) | ~157 |
+| 19:37 | Edited apps/api/src/services/monitor.service.ts | expanded (+6 lines) | ~98 |
+| 19:37 | Edited apps/api/src/server.ts | added 2 condition(s) | ~188 |
+| 19:37 | Edited apps/api/src/routes/auth.ts | modified if() | ~88 |
+| 19:37 | Edited apps/api/src/services/notification.service.ts | modified fetchUserWebhook() | ~176 |
+| 19:38 | Edited apps/api/src/services/monitor.service.test.ts | 3→8 lines | ~128 |
+| 19:38 | Edited apps/api/src/utils/ssrf.ts | 3→5 lines | ~73 |
+| 19:38 | Edited apps/api/src/utils/ssrf.ts | modified assertPublicHost() | ~29 |
+| 19:39 | Created apps/api/src/utils/ssrf.test.ts | — | ~768 |
+| 19:39 | Edited apps/web/src/components/layout/sidebar.tsx | 1→6 lines | ~49 |
+| 19:40 | Session end: 16 writes across 8 files (ssrf.ts, monitor.service.ts, server.ts, auth.ts, notification.service.ts) | 25 reads | ~74103 tok |

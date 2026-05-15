@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-13T22:21:57.484Z
-> Files: 254 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-15T16:39:58.580Z
+> Files: 258 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -130,7 +130,7 @@
 ## apps/api/src/
 
 - `index.ts` — mode: assertProductionSecrets, main (~309 tok)
-- `server.ts` — API routes: GET (4 endpoints) (~1278 tok)
+- `server.ts` — API routes: GET (4 endpoints) (~1412 tok)
 - `worker.ts` — Exports startWorker (~1323 tok)
 
 ## apps/api/src/db/
@@ -164,7 +164,7 @@
 
 - `analytics.ts` — API routes: GET (2 endpoints) (~1011 tok)
 - `api-keys.ts` — API routes: GET, POST, DELETE (7 endpoints) (~962 tok)
-- `auth.ts` — API routes: POST, GET (11 endpoints) (~3968 tok)
+- `auth.ts` — API routes: POST, GET (11 endpoints) (~4018 tok)
 - `billing.ts` — API routes: POST, GET (6 endpoints) (~1814 tok)
 - `docs.ts` — API routes: GET (2 endpoints) (~440 tok)
 - `heartbeats.ts` — API routes: GET, POST, PATCH, DELETE (8 endpoints) (~872 tok)
@@ -181,9 +181,9 @@
 
 ## apps/api/src/services/
 
-- `monitor.service.test.ts` — mockFetch: respond (~2246 tok)
-- `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~3755 tok)
-- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~6956 tok)
+- `monitor.service.test.ts` — Tests exercise loopback addresses (127.0.0.1), which the SSRF guard would (~2323 tok)
+- `monitor.service.ts` — Monitor Service — HTTP/TCP check execution with multi-region + keyword support (~4063 tok)
+- `notification.service.ts` — Notification Service — Email via Amazon SES + Slack/Discord webhooks (~7099 tok)
 - `static-gen.render.test.ts` — StaticStatusPage: baseData (~1237 tok)
 - `static-gen.service.ts` — Static Generation Service — Pre-render status pages as JSON + HTML (~10555 tok)
 
@@ -199,6 +199,8 @@
 - `markdown.ts` — Tiny, safe-by-construction markdown renderer for incident bodies. Escapes (~859 tok)
 - `queues.test.ts` (~309 tok)
 - `queues.ts` — Shared retry/backoff policy for one-shot jobs. Repeatable jobs (monitor (~362 tok)
+- `ssrf.test.ts` (~768 tok)
+- `ssrf.ts` — SSRF guard — resolves a URL/host and rejects targets that point at private, (~1269 tok)
 - `state-machine.test.ts` (~713 tok)
 - `state-machine.ts` — API routes: GET (1 endpoints) (~195 tok)
 - `state-transition.ts` — Exports StateTransition, evaluateTransition (~144 tok)
@@ -207,7 +209,7 @@
 
 - `components.json` (~114 tok)
 - `Dockerfile` — Docker container definition (~333 tok)
-- `index.html` — UptimeCrow — Uptime Monitoring &amp; Status Pages for Developers (~1600 tok)
+- `index.html` — UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages (~1616 tok)
 - `nginx.conf` — Nginx configuration (~331 tok)
 - `package.json` — Node.js package manifest (~440 tok)
 - `postcss.config.js` — PostCSS configuration (~24 tok)
@@ -218,12 +220,12 @@
 
 ## apps/web/public/
 
-- `robots.txt` (~78 tok)
-- `sitemap.xml` (~691 tok)
+- `robots.txt` (~85 tok)
+- `sitemap.xml` (~738 tok)
 
 ## apps/web/src/
 
-- `App.tsx` — App (~1522 tok)
+- `App.tsx` — App (~1566 tok)
 - `globals.css` — Styles: 6 rules, 39 vars, 1 media queries, 2 layers (~731 tok)
 - `main.tsx` — queryClient (~244 tok)
 
@@ -246,7 +248,7 @@
 
 - `dashboard-layout.tsx` — DashboardLayout — uses useState (~293 tok)
 - `header.tsx` — ROUTE_LABELS — uses useNavigate (~1348 tok)
-- `sidebar.tsx` — navItems (~1784 tok)
+- `sidebar.tsx` — navItems (~1815 tok)
 
 ## apps/web/src/components/ui/
 
@@ -297,9 +299,10 @@
 - `AcceptInvite.tsx` — AcceptInvite (~1457 tok)
 - `Docs.tsx` — BRAND (~3684 tok)
 - `ForgotPassword.tsx` — ForgotPassword — renders form — uses useState (~742 tok)
+- `FreshpingAlternative.tsx` — BRAND (~2444 tok)
 - `HeartbeatPage.tsx` — BRAND — renders table (~4258 tok)
 - `Landing.css` — Styles: 95 rules, 15 vars (~7364 tok)
-- `Landing.tsx` — BRAND (~9422 tok)
+- `Landing.tsx` — BRAND (~9682 tok)
 - `Legal.tsx` — LegalShell (~1899 tok)
 - `Login.tsx` — Login — renders form (~1995 tok)
 - `McpPage.tsx` — BRAND (~3108 tok)

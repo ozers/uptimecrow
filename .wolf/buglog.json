@@ -1648,6 +1648,582 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-12T21:04:58.151Z"
+    },
+    {
+      "id": "bug-104",
+      "timestamp": "2026-05-12T21:19:46.474Z",
+      "error_message": "Function not marked async",
+      "file": "apps/api/src/services/notification.service.ts",
+      "root_cause": "Function uses await but wasn't declared async",
+      "fix": "Added async modifier",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:19:46.474Z"
+    },
+    {
+      "id": "bug-105",
+      "timestamp": "2026-05-12T21:20:30.895Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/jobs/notify.job.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation | Also: .select({ email: subscribers.email, webhookUrl: subscribers.; const subscriberWebhooks = subscriberList.map((s) => s.webho",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-12T21:21:34.930Z"
+    },
+    {
+      "id": "bug-106",
+      "timestamp": "2026-05-12T21:20:56.542Z",
+      "error_message": "CSS fix: type",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "type: \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\") => { → \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\" | \"sms\") => {",
+      "fix": "Changed type: \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\") => { → \"slack\" | \"discord\" | \"custom\" | \"pagerduty\" | \"teams\" | \"telegram\" | \"sms\") => {",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-12T21:21:10.148Z"
+    },
+    {
+      "id": "bug-107",
+      "timestamp": "2026-05-12T21:21:42.197Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "apps/api/src/jobs/notify.job.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:21:42.197Z"
+    },
+    {
+      "id": "bug-108",
+      "timestamp": "2026-05-12T21:40:32.856Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/routes/auth.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:40:32.856Z"
+    },
+    {
+      "id": "bug-109",
+      "timestamp": "2026-05-12T21:40:42.359Z",
+      "error_message": "Missing guard clause",
+      "file": "apps/api/src/routes/auth.ts",
+      "root_cause": "No early return/throw for edge case: !invite",
+      "fix": "Added guard clause: if (!invite)",
+      "tags": [
+        "auto-detected",
+        "guard-clause",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-12T21:40:49.581Z"
+    },
+    {
+      "id": "bug-110",
+      "timestamp": "2026-05-12T21:41:04.302Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/api/src/routes/auth.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:41:04.302Z"
+    },
+    {
+      "id": "bug-111",
+      "timestamp": "2026-05-12T21:41:32.718Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "apps/api/src/jobs/notify.job.ts",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:41:32.718Z"
+    },
+    {
+      "id": "bug-112",
+      "timestamp": "2026-05-12T21:43:31.503Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/lib/auth.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 4→6 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:43:31.503Z"
+    },
+    {
+      "id": "bug-113",
+      "timestamp": "2026-05-12T21:43:35.653Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/pages/Register.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:43:35.653Z"
+    },
+    {
+      "id": "bug-114",
+      "timestamp": "2026-05-12T21:43:48.613Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/pages/Register.tsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 11→24 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:43:48.613Z"
+    },
+    {
+      "id": "bug-115",
+      "timestamp": "2026-05-12T21:44:11.533Z",
+      "error_message": "Missing error handling in TeamSection",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:44:11.533Z"
+    },
+    {
+      "id": "bug-116",
+      "timestamp": "2026-05-12T21:44:22.406Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/src/App.tsx",
+      "root_cause": "Had \"/forgot-password\"",
+      "fix": "Changed to \"/invite/:token\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:44:22.406Z"
+    },
+    {
+      "id": "bug-117",
+      "timestamp": "2026-05-12T21:44:43.877Z",
+      "error_message": "CSS fix: label, href, icon",
+      "file": "apps/web/src/components/layout/sidebar.tsx",
+      "root_cause": "label: \"Status Pages\", → \"On-Call\",; href: \"/dashboard/status-pages\", → \"/dashboard/oncall\",; icon: Globe, → PhoneCall,",
+      "fix": "Changed label: \"Status Pages\", → \"On-Call\",; href: \"/dashboard/status-pages\", → \"/dashboard/oncall\",; icon: Globe, → PhoneCall,",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-12T21:44:43.877Z"
+    },
+    {
+      "id": "bug-118",
+      "timestamp": "2026-05-13T00:37:32.162Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/lib/queries/monitors.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T00:37:32.162Z"
+    },
+    {
+      "id": "bug-119",
+      "timestamp": "2026-05-13T00:37:37.692Z",
+      "error_message": "Null/undefined access in ",
+      "file": "apps/web/src/lib/queries/incidents.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T00:37:37.692Z"
+    },
+    {
+      "id": "bug-120",
+      "timestamp": "2026-05-13T00:38:26.339Z",
+      "error_message": "Wrong reference: catch should be analytics",
+      "file": "apps/web/src/pages/dashboard/monitors/MonitorForm.tsx",
+      "root_cause": "Used \"catch\" instead of \"analytics\"",
+      "fix": "Changed catch → analytics",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T00:38:26.339Z"
+    },
+    {
+      "id": "bug-121",
+      "timestamp": "2026-05-13T09:46:27.066Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "21 lines replaced/restructured",
+      "fix": "Rewrote 23→3 lines (21 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T09:46:27.066Z"
+    },
+    {
+      "id": "bug-122",
+      "timestamp": "2026-05-13T09:46:46.414Z",
+      "error_message": "Missing error handling in UpgradeOptions",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T09:46:46.414Z"
+    },
+    {
+      "id": "bug-123",
+      "timestamp": "2026-05-13T10:23:07.893Z",
+      "error_message": "Significant refactor of ",
+      "file": "apps/web/src/pages/Pricing.tsx",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 7→7 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T10:23:07.893Z"
+    },
+    {
+      "id": "bug-124",
+      "timestamp": "2026-05-13T10:45:17.989Z",
+      "error_message": "Wrong reference: 288 should be 290",
+      "file": "apps/web/src/pages/Pricing.tsx",
+      "root_cause": "Used \"288\" instead of \"290\"",
+      "fix": "Changed 288 → 290",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-13T10:45:18.672Z"
+    },
+    {
+      "id": "bug-125",
+      "timestamp": "2026-05-13T10:45:22.207Z",
+      "error_message": "Wrong reference: 288 should be 290",
+      "file": "apps/web/src/pages/dashboard/Settings.tsx",
+      "root_cause": "Used \"288\" instead of \"290\"",
+      "fix": "Changed 288 → 290",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-13T10:45:23.150Z"
+    },
+    {
+      "id": "bug-126",
+      "timestamp": "2026-05-13T12:23:56.074Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/package.json",
+      "root_cause": "Had \"lint\"",
+      "fix": "Changed to \"test\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-13T12:23:57.839Z"
+    },
+    {
+      "id": "bug-127",
+      "timestamp": "2026-05-13T22:20:12.061Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/Landing.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:20:12.061Z"
+    },
+    {
+      "id": "bug-128",
+      "timestamp": "2026-05-13T22:21:03.800Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/Pricing.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:21:03.800Z"
+    },
+    {
+      "id": "bug-129",
+      "timestamp": "2026-05-13T22:21:12.732Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/Docs.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:21:12.732Z"
+    },
+    {
+      "id": "bug-130",
+      "timestamp": "2026-05-13T22:21:24.060Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/McpPage.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:21:24.060Z"
+    },
+    {
+      "id": "bug-131",
+      "timestamp": "2026-05-13T22:21:32.241Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/SelfHostPage.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:21:32.241Z"
+    },
+    {
+      "id": "bug-132",
+      "timestamp": "2026-05-13T22:21:40.982Z",
+      "error_message": "Type error",
+      "file": "apps/web/src/pages/HeartbeatPage.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-13T22:21:40.982Z"
+    },
+    {
+      "id": "bug-133",
+      "timestamp": "2026-05-15T00:11:07.554Z",
+      "error_message": "CSS fix: mainEntity, name, acceptedAnswer",
+      "file": "apps/web/src/pages/Landing.tsx",
+      "root_cause": "mainEntity: [ → FAQ_ITEMS.map((item) => ({; name: \"Does UptimeCrow have an MCP server for AI assistants?\", → item.q,; acceptedAnswer: { → { \"@type\": \"Answer\", text: item.a",
+      "fix": "Changed mainEntity: [ → FAQ_ITEMS.map((item) => ({; name: \"Does UptimeCrow have an MCP server for AI assistants?\", → item.q,; acceptedAnswer: { → { \"@type\": \"Answer\", text: item.a",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-15T00:11:18.727Z"
+    },
+    {
+      "id": "bug-134",
+      "timestamp": "2026-05-15T00:11:28.930Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/web/index.html",
+      "root_cause": "Had \"Monitor your APIs and websites, alert on incident",
+      "fix": "Changed to \"Free uptime monitoring for developers — open sour",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "html"
+      ],
+      "related_bugs": [],
+      "occurrences": 3,
+      "last_seen": "2026-05-15T00:11:37.708Z"
+    },
+    {
+      "id": "bug-135",
+      "timestamp": "2026-05-15T16:37:10.386Z",
+      "error_message": "Missing await",
+      "file": "apps/api/src/services/monitor.service.ts",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call | Also: try {; await assertPublicHost(hostname);",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-05-15T16:37:20.228Z"
+    },
+    {
+      "id": "bug-136",
+      "timestamp": "2026-05-15T16:37:28.625Z",
+      "error_message": "Type error",
+      "file": "apps/api/src/server.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-15T16:37:28.625Z"
+    },
+    {
+      "id": "bug-137",
+      "timestamp": "2026-05-15T16:37:34.866Z",
+      "error_message": "Wrong return value",
+      "file": "apps/api/src/routes/auth.ts",
+      "root_cause": "Was returning: c.json({ error: \"This account uses Google sign-in.",
+      "fix": "Now returns: c.json({ error: \"Invalid email or password\" }, 401",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-15T16:37:34.866Z"
+    },
+    {
+      "id": "bug-138",
+      "timestamp": "2026-05-15T16:37:52.587Z",
+      "error_message": "Missing await",
+      "file": "apps/api/src/services/notification.service.ts",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-15T16:37:52.587Z"
+    },
+    {
+      "id": "bug-139",
+      "timestamp": "2026-05-15T16:38:48.388Z",
+      "error_message": "Wrong reference: ALLOW_PRIVATE should be allowPrivate",
+      "file": "apps/api/src/utils/ssrf.ts",
+      "root_cause": "Used \"ALLOW_PRIVATE\" instead of \"allowPrivate\"",
+      "fix": "Changed ALLOW_PRIVATE → allowPrivate",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-15T16:38:48.388Z"
     }
   ]
 }

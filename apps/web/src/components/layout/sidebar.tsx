@@ -106,7 +106,12 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
               )}
               onClick={onNavClick}
             >
-              <item.icon className="h-4 w-4 shrink-0 mt-0.5" />
+              <item.icon
+                className={cn(
+                  "h-4 w-4 shrink-0",
+                  item.desc && "mt-0.5",
+                )}
+              />
               <div className="min-w-0">
                 <span className="block leading-none">{item.label}</span>
                 {item.desc && (
