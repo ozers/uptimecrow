@@ -1,3 +1,5 @@
+# Default crawl policy — search engines welcome on public pages,
+# blocked from the authenticated dashboard and auth flows.
 User-agent: *
 Allow: /
 Allow: /pricing
@@ -9,10 +11,106 @@ Allow: /freshping-alternative
 Allow: /privacy
 Allow: /terms
 Allow: /vs/*
+Allow: /llms.txt
+Allow: /llms-full.txt
 Disallow: /dashboard
 Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
 Disallow: /reset-password
+Disallow: /invite/
+
+# AI assistants and answer engines — explicitly welcome.
+# UptimeCrow benefits from being cited in AI-generated answers, so we
+# allow the major training and retrieval crawlers on the public pages.
+User-agent: GPTBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: GoogleOther
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: Bytespider
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: CCBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: meta-externalagent
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: Cohere-AI
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+
+User-agent: MistralAI-User
+Allow: /
 
 Sitemap: https://uptimecrow.com/sitemap.xml

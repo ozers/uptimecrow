@@ -113,7 +113,7 @@
       "first_read": "2026-05-15T16:34:26.874Z"
     },
     "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx": {
-      "count": 1,
+      "count": 3,
       "tokens": 9682,
       "first_read": "2026-05-15T16:34:34.544Z"
     },
@@ -156,6 +156,21 @@
       "count": 2,
       "tokens": 7796,
       "first_read": "2026-05-15T20:03:25.760Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/sitemap.xml": {
+      "count": 1,
+      "tokens": 738,
+      "first_read": "2026-05-17T22:55:18.317Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/robots.txt": {
+      "count": 1,
+      "tokens": 85,
+      "first_read": "2026-05-17T22:55:19.441Z"
+    },
+    "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/index.html": {
+      "count": 1,
+      "tokens": 1616,
+      "first_read": "2026-05-17T22:55:36.230Z"
     }
   },
   "files_written": [
@@ -302,6 +317,42 @@
       "action": "edit",
       "tokens": 86,
       "at": "2026-05-15T20:05:18.250Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/sitemap.xml",
+      "action": "create",
+      "tokens": 790,
+      "at": "2026-05-17T22:56:05.785Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/llms.txt",
+      "action": "create",
+      "tokens": 1311,
+      "at": "2026-05-17T22:56:37.693Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/llms-full.txt",
+      "action": "create",
+      "tokens": 2355,
+      "at": "2026-05-17T22:57:30.161Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/public/robots.txt",
+      "action": "create",
+      "tokens": 584,
+      "at": "2026-05-17T22:57:47.302Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/index.html",
+      "action": "edit",
+      "tokens": 143,
+      "at": "2026-05-17T22:58:02.238Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/index.html",
+      "action": "edit",
+      "tokens": 1158,
+      "at": "2026-05-17T22:59:22.183Z"
     }
   ],
   "edit_counts": {
@@ -318,11 +369,16 @@
     "apps/web/src/components/status-badge.tsx": 1,
     "apps/web/src/components/severity-badge.tsx": 1,
     "apps/web/src/pages/Landing.css": 2,
-    "apps/web/src/lib/theme.tsx": 2
+    "apps/web/src/lib/theme.tsx": 2,
+    "apps/web/public/sitemap.xml": 1,
+    "apps/web/public/llms.txt": 1,
+    "apps/web/public/llms-full.txt": 1,
+    "apps/web/public/robots.txt": 1,
+    "apps/web/index.html": 2
   },
-  "anatomy_hits": 30,
+  "anatomy_hits": 33,
   "anatomy_misses": 0,
-  "repeated_reads_warned": 9,
+  "repeated_reads_warned": 11,
   "cerebrum_warnings": 0,
-  "stop_count": 3
+  "stop_count": 4
 }

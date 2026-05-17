@@ -1,7 +1,7 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-15T20:05:18.240Z
-> Files: 258 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-17T22:59:22.172Z
+> Files: 260 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
@@ -209,7 +209,7 @@
 
 - `components.json` (~114 tok)
 - `Dockerfile` — Docker container definition (~333 tok)
-- `index.html` — UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages (~1616 tok)
+- `index.html` — UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages (~2787 tok)
 - `nginx.conf` — Nginx configuration (~331 tok)
 - `package.json` — Node.js package manifest (~440 tok)
 - `postcss.config.js` — PostCSS configuration (~24 tok)
@@ -220,8 +220,10 @@
 
 ## apps/web/public/
 
-- `robots.txt` (~85 tok)
-- `sitemap.xml` (~738 tok)
+- `llms-full.txt` — UptimeCrow — Full Reference for AI Assistants (~2061 tok)
+- `llms.txt` — UptimeCrow (~1147 tok)
+- `robots.txt` — Default crawl policy — search engines welcome on public pages, (~511 tok)
+- `sitemap.xml` (~737 tok)
 
 ## apps/web/src/
 

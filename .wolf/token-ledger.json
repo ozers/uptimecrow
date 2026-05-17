@@ -2,14 +2,14 @@
   "version": 1,
   "created_at": "2026-04-13T11:18:30.889Z",
   "lifetime": {
-    "total_tokens_estimated": 2660828,
-    "total_reads": 798,
-    "total_writes": 1444,
+    "total_tokens_estimated": 2747682,
+    "total_reads": 829,
+    "total_writes": 1468,
     "total_sessions": 16,
-    "anatomy_hits": 787,
+    "anatomy_hits": 817,
     "anatomy_misses": 4,
-    "repeated_reads_blocked": 315,
-    "estimated_savings_vs_bare_cli": 1561211
+    "repeated_reads_blocked": 324,
+    "estimated_savings_vs_bare_cli": 1615985
   },
   "sessions": [
     {
@@ -13120,6 +13120,329 @@
         "writes_count": 16,
         "repeated_reads_blocked": 8,
         "anatomy_lookups": 24
+      }
+    },
+    {
+      "id": "session-2026-05-15-1930",
+      "started": "2026-05-15T16:30:17.978Z",
+      "ended": "2026-05-15T20:05:56.766Z",
+      "reads": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/index.ts",
+          "tokens_estimated": 309,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/server.ts",
+          "tokens_estimated": 1278,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/middleware/auth.ts",
+          "tokens_estimated": 588,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/auth.ts",
+          "tokens_estimated": 216,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/auth.ts",
+          "tokens_estimated": 3968,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/monitors.ts",
+          "tokens_estimated": 2013,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/api-keys.ts",
+          "tokens_estimated": 962,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/dashboard/Overview.tsx",
+          "tokens_estimated": 9500,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/middleware/rate-limit.ts",
+          "tokens_estimated": 460,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/middleware/custom-domain.ts",
+          "tokens_estimated": 1100,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/mcp.ts",
+          "tokens_estimated": 3332,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 3755,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/api-key.ts",
+          "tokens_estimated": 256,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/escape.ts",
+          "tokens_estimated": 736,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/static-gen.service.ts",
+          "tokens_estimated": 10555,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/public.ts",
+          "tokens_estimated": 5792,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/incidents.ts",
+          "tokens_estimated": 1175,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/subscribers.ts",
+          "tokens_estimated": 552,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/notification.service.ts",
+          "tokens_estimated": 6956,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/middleware/security.ts",
+          "tokens_estimated": 387,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/status-pages.ts",
+          "tokens_estimated": 2016,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/markdown.ts",
+          "tokens_estimated": 859,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.tsx",
+          "tokens_estimated": 9682,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 1784,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.test.ts",
+          "tokens_estimated": 2246,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/globals.css",
+          "tokens_estimated": 731,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx",
+          "tokens_estimated": 601,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/tailwind.config.ts",
+          "tokens_estimated": 606,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/status-badge.tsx",
+          "tokens_estimated": 474,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/severity-badge.tsx",
+          "tokens_estimated": 222,
+          "was_repeated": false,
+          "anatomy_had_description": false
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 7796,
+          "was_repeated": true,
+          "anatomy_had_description": false
+        }
+      ],
+      "writes": [
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/ssrf.ts",
+          "tokens_estimated": 1227,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 54,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 114,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 168,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 109,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 200,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 157,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.ts",
+          "tokens_estimated": 98,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/server.ts",
+          "tokens_estimated": 188,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/routes/auth.ts",
+          "tokens_estimated": 88,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/notification.service.ts",
+          "tokens_estimated": 176,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/services/monitor.service.test.ts",
+          "tokens_estimated": 128,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/ssrf.ts",
+          "tokens_estimated": 73,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/ssrf.ts",
+          "tokens_estimated": 29,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/src/utils/ssrf.test.ts",
+          "tokens_estimated": 768,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/layout/sidebar.tsx",
+          "tokens_estimated": 49,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/globals.css",
+          "tokens_estimated": 554,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/tailwind.config.ts",
+          "tokens_estimated": 193,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/status-badge.tsx",
+          "tokens_estimated": 479,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/components/severity-badge.tsx",
+          "tokens_estimated": 225,
+          "action": "create"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 331,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/pages/Landing.css",
+          "tokens_estimated": 331,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx",
+          "tokens_estimated": 122,
+          "action": "edit"
+        },
+        {
+          "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/web/src/lib/theme.tsx",
+          "tokens_estimated": 86,
+          "action": "edit"
+        }
+      ],
+      "totals": {
+        "input_tokens_estimated": 80907,
+        "output_tokens_estimated": 5947,
+        "reads_count": 31,
+        "writes_count": 24,
+        "repeated_reads_blocked": 9,
+        "anatomy_lookups": 30
       }
     }
   ],
