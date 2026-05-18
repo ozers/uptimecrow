@@ -61,7 +61,7 @@ export function VsUptimeKuma() {
         { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "✗ Not available" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered" },
         { feature: "Database", us: "PostgreSQL", them: "SQLite / MariaDB" },
-        { feature: "Free tier", us: "10 monitors, SaaS", them: "Unlimited, self-host" },
+        { feature: "Free tier", us: "25 monitors, SaaS", them: "Unlimited, self-host" },
       ]}
       whenThem={
         <>

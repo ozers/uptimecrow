@@ -261,15 +261,15 @@ const FAQ_ITEMS = [
   },
   {
     q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
-    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $29/mo for serious use.",
+    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 25 monitors — BetterStack starts at $29/mo for serious use.",
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 1-minute check intervals, 3 heartbeat monitors, Slack & Discord alerts, and 30-day history.",
+    a: "Yes — free forever, no credit card required. The free plan includes 25 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord alerts, and 60-day history.",
   },
   {
     q: "What is heartbeat monitoring and cron job monitoring?",
-    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (3 heartbeats).",
+    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (5 heartbeats).",
   },
   {
     q: "How does UptimeCrow prevent false alarms?",
@@ -338,7 +338,7 @@ export function LandingPage() {
   usePageMeta({
     title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
     description:
-      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 10 monitors free forever.",
+      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 25 monitors free forever.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });
@@ -381,7 +381,7 @@ export function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● Free forever · 10 monitors · 1 status page · 60-second checks</div>
+          <div className="hero-badge">● Free forever · 25 monitors · 1 status page · 60-second checks</div>
           <h1>Your site went down.<br /><span className="highlight">We caught it first.</span></h1>
           <p className="hero-sub">
             Downtime detected → incident created → status page updated → subscribers notified. <strong>All before you wake up.</strong>
@@ -625,12 +625,12 @@ export function LandingPage() {
               <p className="price-desc">For side projects and personal apps.</p>
               <ul className="price-features">
                 <li>1 status page</li>
-                <li>10 monitors</li>
+                <li>25 monitors</li>
                 <li>1-minute check intervals</li>
-                <li>3 heartbeat monitors</li>
+                <li>5 heartbeat monitors</li>
                 <li>Slack & Discord alerts</li>
                 <li>Uptime badge</li>
-                <li>30-day history</li>
+                <li>60-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>

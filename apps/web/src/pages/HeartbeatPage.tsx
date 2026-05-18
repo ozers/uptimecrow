@@ -309,7 +309,7 @@ export default function HeartbeatPage() {
       <section className="final-cta">
         <div className="container">
           <h2>Stop finding out about failures the hard way.</h2>
-          <p>3 heartbeat monitors free, forever. Add the first one in under a minute.</p>
+          <p>5 heartbeat monitors free, forever. Add the first one in under a minute.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/pricing" className="hero-btn secondary">See full pricing</Link>

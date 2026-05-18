@@ -99,6 +99,7 @@ export const monitors = pgTable(
     domainExpiresAt: timestamp("domain_expires_at", { withTimezone: true }),
     domainCheckedAt: timestamp("domain_checked_at", { withTimezone: true }),
     domainDaysWarning: integer("domain_days_warning").notNull().default(30),
+    slowResponseThresholdMs: integer("slow_response_threshold_ms"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [index("monitors_org_id_idx").on(table.orgId)],

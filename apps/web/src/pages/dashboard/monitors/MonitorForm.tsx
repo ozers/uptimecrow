@@ -31,6 +31,7 @@ type MonitorFormData = {
   keyword?: string;
   sslDaysWarning?: number;
   domainDaysWarning?: number;
+  slowResponseThresholdMs?: number | null;
 };
 
 interface TestResult {
@@ -343,6 +344,24 @@ export function MonitorForm({
           />
         </div>
       )}
+
+      <div className="space-y-2">
+        <Label htmlFor="slowResponseThresholdMs">Slow Response Alert (ms, optional)</Label>
+        <p className="text-xs text-muted-foreground">
+          Send a notification when a successful check takes longer than this. Leave empty to disable.
+        </p>
+        <Input
+          id="slowResponseThresholdMs"
+          type="number"
+          placeholder="e.g. 2000"
+          {...register("slowResponseThresholdMs", {
+            setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+          })}
+        />
+        {errors.slowResponseThresholdMs && (
+          <p className="text-sm text-destructive">{errors.slowResponseThresholdMs.message}</p>
+        )}
+      </div>
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}

@@ -46,6 +46,7 @@ export interface Monitor {
   domainExpiresAt: Date | null;
   domainCheckedAt: Date | null;
   domainDaysWarning: number;
+  slowResponseThresholdMs: number | null;
 }
 
 export interface CheckResult {

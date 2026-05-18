@@ -29,14 +29,14 @@ const PLANS: PlanDef[] = [
     per: "/mo",
     desc: "For side projects and personal apps.",
     features: [
-      "10 monitors",
+      "25 monitors",
       "1 status page",
       "1-minute check intervals",
-      "3 heartbeat monitors",
+      "5 heartbeat monitors",
       "Automatic incident management",
       "Slack, Discord & email alerts",
       "Uptime badge",
-      "30-day history",
+      "60-day history",
     ],
     cta: "Get Started",
     featured: false,
@@ -143,7 +143,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
+      "Start free with 25 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
     canonical: "https://uptimecrow.com/pricing",
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -318,7 +318,7 @@ export function Pricing() {
       <section className="final-cta">
         <div className="container">
           <h2>Ready to know when you're down?</h2>
-          <p>10 monitors, 1-min checks, forever free. No credit card needed.</p>
+          <p>25 monitors, 1-min checks, forever free. No credit card needed.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/login" className="hero-btn secondary">Log in</Link>

@@ -18,12 +18,12 @@ describe("computeCutoffs", () => {
     }
   });
 
-  it("free tier prunes at 30 days", () => {
+  it("free tier prunes at 60 days", () => {
     const now = new Date("2026-04-13T00:00:00.000Z");
     const cutoffs = computeCutoffs(now);
     const free = cutoffs.find((c) => c.plan === "free")!;
-    // 30 days back from 2026-04-13 is 2026-03-14
-    expect(free.cutoff.toISOString()).toBe("2026-03-14T00:00:00.000Z");
+    // 60 days back from 2026-04-13 is 2026-02-12
+    expect(free.cutoff.toISOString()).toBe("2026-02-12T00:00:00.000Z");
   });
 
   it("team tier retains a full year", () => {
@@ -39,7 +39,7 @@ describe("computeCutoffs", () => {
     const free = cutoffs.find((c) => c.plan === "free")!.cutoff.getTime();
     const pro = cutoffs.find((c) => c.plan === "pro")!.cutoff.getTime();
     const team = cutoffs.find((c) => c.plan === "team")!.cutoff.getTime();
-    // free = 30d, pro/indie = 90d, team = 365d
+    // free = 60d, pro/indie = 90d, team = 365d
     expect(free).toBeGreaterThan(pro);
     expect(pro).toBeGreaterThan(team);
   });

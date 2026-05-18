@@ -43,7 +43,7 @@ export function CompareLayout(props: Props) {
   const canonicalUrl = `https://uptimecrow.com${typeof window !== "undefined" ? window.location.pathname : ""}`;
   usePageMeta({
     title: `UptimeCrow vs ${competitor} — Uptime Monitoring Comparison 2026`,
-    description: `Compare UptimeCrow vs ${competitor} side-by-side. Features, pricing, heartbeat monitoring, and status pages. Free plan with 10 monitors, forever.`,
+    description: `Compare UptimeCrow vs ${competitor} side-by-side. Features, pricing, heartbeat monitoring, and status pages. Free plan with 25 monitors, forever.`,
     canonical: canonicalUrl,
     jsonLd: {
       "@context": "https://schema.org",
@@ -173,7 +173,7 @@ export function CompareLayout(props: Props) {
 
       <section className="final-cta">
         <div className="container">
-          <h2>Try {BRAND} free — 10 monitors, forever.</h2>
+          <h2>Try {BRAND} free — 25 monitors, forever.</h2>
           <p>No credit card. If it fits, upgrade in one click. If not, delete your account in Settings.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>

@@ -628,6 +628,89 @@ export async function sendSslExpiryNotification(params: {
   }
 }
 
+export async function sendSlowResponseNotification(params: {
+  ownerEmail: string;
+  monitorName: string;
+  monitorUrl: string;
+  responseMs: number;
+  thresholdMs: number;
+  slackWebhookUrl?: string | null;
+  discordWebhookUrl?: string | null;
+}): Promise<void> {
+  const { responseMs, thresholdMs, monitorName, monitorUrl } = params;
+  const subject = `🐢 Slow response on ${monitorName} — ${responseMs}ms`;
+  const detail = `<strong>${monitorUrl}</strong> responded in <strong>${responseMs}ms</strong>, exceeding the configured threshold of <strong>${thresholdMs}ms</strong>. The check still succeeded, but performance has degraded.`;
+
+  const client = getClient();
+  if (client) {
+    try {
+      await sendEmail(
+        client,
+        params.ownerEmail,
+        subject,
+        `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
+          <h2 style="color:#1a1a1a">${subject}</h2>
+          <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${detail}</p>
+          <p style="color:#4a4a4a;line-height:1.6">Log in to UptimeCrow to adjust the slow-response threshold or investigate the regression.</p>
+          <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
+          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${monitorName}</strong> on UptimeCrow.</p>
+        </div>`,
+      );
+      logger.info(`[Notification] Slow-response email sent for "${monitorName}" (${responseMs}ms)`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] Slow-response email failed");
+    }
+  }
+
+  if (params.slackWebhookUrl) {
+    const payload = {
+      attachments: [{
+        color: "#ffab40",
+        pretext: subject,
+        fields: [
+          { title: "Monitor", value: monitorName, short: true },
+          { title: "URL", value: monitorUrl, short: true },
+          { title: "Response", value: `${responseMs}ms (threshold ${thresholdMs}ms)`, short: false },
+        ],
+        footer: "UptimeCrow Slow-Response Alert",
+        ts: Math.floor(Date.now() / 1000),
+      }],
+    };
+    try {
+      const res = await fetchUserWebhook(params.slackWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] Slow-response Slack alert failed");
+    }
+  }
+
+  if (params.discordWebhookUrl) {
+    const payload = {
+      embeds: [{
+        title: subject,
+        description: `**${monitorUrl}** responded in **${responseMs}ms** (threshold: ${thresholdMs}ms).`,
+        color: 0xffab40,
+        timestamp: new Date().toISOString(),
+        footer: { text: "UptimeCrow Slow-Response Alert" },
+      }],
+    };
+    try {
+      const res = await fetchUserWebhook(params.discordWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
+    } catch (err) {
+      logger.error({ err }, "[Notification] Slow-response Discord alert failed");
+    }
+  }
+}
+
 export interface SmsAlertParams {
   accountSid: string;
   authToken: string;
