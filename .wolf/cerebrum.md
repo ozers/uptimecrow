@@ -57,8 +57,26 @@
 - **GEO strategy:** FAQ JSON-LD on Landing.tsx (8 Q&A covering "What is UptimeCrow?", "Is it free?", heartbeat, MCP, self-host, etc.) is the primary GEO signal for AI search engines (Perplexity, Google AI Overview, ChatGPT).
 - **CompareLayout SEO:** Per-competitor title/desc derived from `competitor` prop. Canonical URL uses `window.location.pathname`. BreadcrumbList JSON-LD included. No need to touch individual Vs*.tsx files.
 
+## Key Learnings
+
+- **Free tier is now 25 monitors** (not 3 as old docs claimed). Indie is 30, Pro is 50, Team is 200. Plan ladder: free=25/indie=30/pro=50/team=200.
+- **CSS vars --accent and --danger are NOT defined in globals.css** — they must be added to Landing.css `:root` and `.light .landing` blocks as `--accent: var(--green); --danger: var(--red)`. Without this, all tools pages, Changelog, McpPage, HeartbeatPage have broken color references.
+- **og-image.png never existed** — og:image references point at /og-image.svg (created in this session). Do not reference /og-image.png.
+- **notification.service.ts email XSS fixed** — all user-controlled values now wrapped in escapeHtml(). This was a P0 security issue: incident titles, update bodies, status page names, monitor URLs were all interpolated raw into HTML email templates.
+- **Static page store is in-process Map** — not Redis. This means /health/ready can pass but static pages go stale in multi-container deploys (MODE=api + MODE=worker separate containers). Long-term: move to Redis key storage. Tracked in ASSESSMENT_2026Q2_TECH.md.
+- **SIGTERM handlers added** — index.ts and worker.ts now have SIGTERM/SIGINT handlers. startWorker() returns all 5 worker handles. startServer() returns server handle.
+- **CompareLayout footer** needed manual update — when new Vs pages are added, update both App.tsx routes AND CompareLayout.tsx footer-links block.
+- **RSS feed endpoint** already existed (as RSS 2.0) at `/status/:slug/rss` — was rewritten to Atom 1.0 in this session.
+- **Pricing.tsx inline style CSS var concat** was invalid: `"var(--green)18"` — correct pattern: use `"var(--green-dim)"` or `rgba(0, 230, 118, 0.25)` for dimmed color variants.
+- **BetterStack pricing in 2026**: $34/mo (raised from $29). Correct this in any compare copy.
+- **OneUptime** is a new serious OSS competitor (Apache 2.0, Growth $22/mo, full observability). Add /vs/oneuptime done.
+
 ## Decision Log
 
 [2026-05-12] Added social proof strip between terminal demo and "How it works" section using flex layout with nowrap + dividers. Used honest feature claims (30s checks, auto incidents, free forever) rather than fake user counts.
 
 [2026-05-12] Redesigned footer from minimal single-row to structured 3-column layout (Product, Compare, Legal) matching modern SaaS landing page conventions.
+
+[2026-05-19] Indie tier 25→30 monitors: free and indie were both at 25 creating zero upgrade signal. 30 creates visible differentiation without undercutting pro (50). This was a deliberate plan-design fix, not a marketing claim.
+
+[2026-05-19] Chose to NOT move static page store to Redis in this session — it's a P2 architectural item, risk-free in single-container deploy (default). Documented in assessment; tackle when multi-container scaling is planned.
