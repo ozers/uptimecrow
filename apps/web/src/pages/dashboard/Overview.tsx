@@ -12,7 +12,6 @@ import {
   Zap,
   Heart,
   Wrench,
-  LayoutDashboard,
   TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -129,166 +128,50 @@ function MetricCards({
   );
 }
 
-// ─── Onboarding ──────────────────────────────────────────────────────────────
+// ─── Empty Overview ──────────────────────────────────────────────────────────
+// Shown when the org has no monitors yet. The persistent SetupChecklist banner
+// in DashboardLayout handles step-by-step guidance — this is just a friendly
+// hero pointing to the first action.
 
-function Onboarding({ hasStatusPages }: { hasStatusPages: boolean }) {
-  const steps: {
-    icon: React.ElementType;
-    to: string;
-    title: string;
-    desc: string;
-    done: boolean;
-    optional?: boolean;
-    detail: string;
-  }[] = [
-    {
-      icon: Activity,
-      to: "/dashboard/monitors/new",
-      title: "Add your first monitor",
-      desc: "Paste any HTTP URL or TCP host.",
-      detail:
-        "UptimeCrow pings your endpoint every minute from multiple regions. The moment it fails two consecutive checks, we create an incident automatically, update your status page, and alert your team via Slack or email — zero manual work.",
-      done: false,
-    },
-    {
-      icon: Globe,
-      to: "/dashboard/status-pages/new",
-      title: "Create a status page",
-      desc: "A public page for your users.",
-      detail:
-        "Your subscribers visit status.yourapp.com to see real-time service health. The page is pre-rendered, so it stays online and serves accurate data even when your origin is down.",
-      done: hasStatusPages,
-    },
-    {
-      icon: Heart,
-      to: "/dashboard/heartbeats",
-      title: "Monitor cron jobs",
-      desc: "Keep scheduled tasks accountable.",
-      detail:
-        "Add one curl command to any cron job or background task. If UptimeCrow stops receiving the ping within the expected window, it pages you immediately.",
-      done: false,
-      optional: true,
-    },
-  ];
-
-  const requiredSteps = steps.filter((s) => !s.optional);
-  const completedRequired = requiredSteps.filter((s) => s.done).length;
-  const progressPct = (completedRequired / requiredSteps.length) * 100;
-
+function EmptyOverview() {
   return (
-    <div>
-      {/* Welcome hero */}
-      <div className="relative mb-5 overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/8 via-transparent to-transparent px-6 py-7">
-        <div className="absolute right-6 top-6 opacity-5">
-          <LayoutDashboard className="h-24 w-24" />
-        </div>
-        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-          <Activity className="h-4.5 w-4.5 text-primary" style={{ height: "18px", width: "18px" }} />
-        </div>
-        <h1 className="text-xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
-        <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
-          Three quick steps and your services are monitored around the clock. When
-          something breaks, we handle the incident so you don&apos;t have to.
-        </p>
-        <div className="mt-5 flex items-center gap-3">
-          <div className="h-1.5 w-40 overflow-hidden rounded-full bg-border">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-700"
-              style={{ width: `${progressPct}%` }}
-            />
+    <div className="mx-auto max-w-2xl py-12 text-center">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+        <Activity className="h-5 w-5 text-primary" />
+      </div>
+      <h1 className="text-2xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
+      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+        Use the setup guide above to get going. Start by adding a monitor — paste
+        any HTTP URL, and we&apos;ll watch it around the clock.
+      </p>
+      <div className="mt-6 flex items-center justify-center gap-3">
+        <Button asChild>
+          <Link to="/dashboard/monitors/new">
+            <Plus className="mr-1.5 h-4 w-4" />
+            Add your first monitor
+          </Link>
+        </Button>
+        <Button variant="outline" asChild>
+          <Link to="/dashboard/status-pages/new">
+            <Globe className="mr-1.5 h-4 w-4" />
+            Create status page
+          </Link>
+        </Button>
+      </div>
+      <div className="mx-auto mt-10 grid max-w-xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
+        {[
+          { icon: ShieldCheck, text: "Auto incident creation when services go down" },
+          { icon: Globe, text: "A live public status page for your users" },
+          { icon: Zap, text: "Instant Slack & email alerts to your team" },
+        ].map(({ icon: I, text }) => (
+          <div
+            key={text}
+            className="flex items-start gap-2.5 rounded-lg border border-dashed border-border px-3 py-3"
+          >
+            <I className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+            <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
           </div>
-          <span className="text-xs font-medium text-muted-foreground">
-            {completedRequired} / {requiredSteps.length} required steps
-          </span>
-        </div>
-      </div>
-
-      {/* Steps */}
-      <div className="space-y-2.5">
-        {steps.map(({ icon: Icon, to, title, desc, detail, done, optional }, index) =>
-          done ? (
-            <div
-              key={to}
-              className="flex items-start gap-4 rounded-xl border border-border bg-card/40 px-5 py-4"
-            >
-              <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-success/10">
-                <CheckCircle2 className="h-3.5 w-3.5 text-success-foreground" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-muted-foreground line-through decoration-muted-foreground/40">
-                    {title}
-                  </p>
-                  <span className="text-xs font-medium text-success-foreground">Done</span>
-                </div>
-                <p className="mt-0.5 text-xs text-muted-foreground/60">{desc}</p>
-              </div>
-            </div>
-          ) : (
-            <Link
-              key={to}
-              to={to}
-              className="group block rounded-xl border border-border bg-card px-5 py-5 transition-all hover:border-primary/25 hover:bg-muted/30"
-            >
-              <div className="flex items-start gap-4">
-                <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-border bg-background transition-colors group-hover:border-primary/50 group-hover:bg-primary/5">
-                  <Icon className="h-3.5 w-3.5 text-muted-foreground transition-colors group-hover:text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold transition-colors group-hover:text-primary">
-                        {title}
-                      </p>
-                      {optional && (
-                        <span className="rounded border border-border px-1 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground/60">
-                          optional
-                        </span>
-                      )}
-                    </div>
-                    <ArrowRight className="h-4 w-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:text-primary" />
-                  </div>
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                    {detail}
-                  </p>
-                  {/* Step number indicator */}
-                  <div className="mt-3 flex items-center gap-1.5">
-                    {[0, 1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className={cn(
-                          "h-1 rounded-full transition-all",
-                          i === index
-                            ? "w-6 bg-primary"
-                            : "w-1.5 bg-border",
-                        )}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ),
-        )}
-      </div>
-
-      {/* What happens next */}
-      <div className="mt-5 rounded-xl border border-dashed border-border px-5 py-4">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          What you&apos;ll get
-        </p>
-        <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-          {[
-            { icon: ShieldCheck, text: "Auto incident creation when services go down" },
-            { icon: Globe, text: "A live public status page for your users" },
-            { icon: Zap, text: "Instant Slack & email alerts to your team" },
-          ].map(({ icon: I, text }) => (
-            <div key={text} className="flex items-start gap-2.5">
-              <I className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
-              <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -577,7 +460,7 @@ export function Overview() {
   const totalStatusPages = statusPages?.length ?? 0;
 
   if (!hasMonitors) {
-    return <Onboarding hasStatusPages={totalStatusPages > 0} />;
+    return <EmptyOverview />;
   }
 
   const monitorsDown = monitors?.filter((m) => m.status === "down").length ?? 0;
