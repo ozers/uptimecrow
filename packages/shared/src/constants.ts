@@ -36,7 +36,7 @@ export const PLAN_LIMITS = {
   },
   indie: {
     statusPages: 3,
-    monitors: 25,
+    monitors: 30,
     minInterval: 60,
     customDomain: true,
     slackWebhook: true,
