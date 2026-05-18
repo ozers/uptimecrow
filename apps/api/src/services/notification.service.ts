@@ -3,6 +3,7 @@
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { logger } from "../utils/logger.js";
 import { assertPublicUrl } from "../utils/ssrf.js";
+import { escapeHtml } from "../utils/escape.js";
 
 // User-controlled webhook URLs (Slack, Discord, custom, Teams) must be
 // validated against private/internal address ranges before we dial them —
@@ -78,11 +79,11 @@ export async function sendIncidentNotification(params: {
 
   const subject = `[${params.statusPageName}] ${severityLabel}: ${params.incidentTitle}`;
   const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
-    <h2 style="color:#1a1a1a">${params.incidentTitle}</h2>
+    <h2 style="color:#1a1a1a">${escapeHtml(params.incidentTitle)}</h2>
     <span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600;background:${severityBg};color:${severityColor}">${severityLabel}</span>
-    <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${params.updateBody}</p>
+    <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${escapeHtml(params.updateBody)}</p>
     <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
-    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
+    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${escapeHtml(params.statusPageName)} status updates.</p>
   </div>`;
 
   const results = await Promise.allSettled(
@@ -109,10 +110,10 @@ export async function sendIncidentResolvedNotification(params: {
 
   const subject = `[${params.statusPageName}] ✅ Resolved: ${params.incidentTitle}`;
   const html = `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
-    <h2 style="color:#1a1a1a">✅ Resolved: ${params.incidentTitle}</h2>
-    <p style="color:#4a4a4a;line-height:1.6">${params.updateBody}</p>
+    <h2 style="color:#1a1a1a">✅ Resolved: ${escapeHtml(params.incidentTitle)}</h2>
+    <p style="color:#4a4a4a;line-height:1.6">${escapeHtml(params.updateBody)}</p>
     <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
-    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${params.statusPageName} status updates.</p>
+    <p style="color:#9a9a9a;font-size:12px">You are receiving this because you subscribed to ${escapeHtml(params.statusPageName)} status updates.</p>
   </div>`;
 
   const results = await Promise.allSettled(
@@ -141,7 +142,7 @@ export async function sendVerificationEmail(params: {
       `Confirm your subscription to ${params.statusPageName}`,
       `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
         <h2 style="color:#1a1a1a">Confirm your subscription</h2>
-        <p style="color:#4a4a4a;line-height:1.6">You requested to receive status updates for <strong>${params.statusPageName}</strong>.</p>
+        <p style="color:#4a4a4a;line-height:1.6">You requested to receive status updates for <strong>${escapeHtml(params.statusPageName)}</strong>.</p>
         <p style="margin:24px 0">
           <a href="${params.verifyUrl}" style="display:inline-block;padding:12px 24px;background:#00e676;color:#000;text-decoration:none;border-radius:6px;font-weight:600">Confirm Subscription</a>
         </p>
@@ -461,8 +462,8 @@ export async function sendDomainExpiryNotification(params: {
     ? `⚠️ Domain expired: ${domain}`
     : `⚠️ Domain expiring in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}: ${domain}`;
   const detail = expired
-    ? `The domain <strong>${domain}</strong> (monitored as <strong>${monitorName}</strong>) has expired. Renew it immediately to avoid service loss.`
-    : `The domain <strong>${domain}</strong> (monitored as <strong>${monitorName}</strong>) expires in <strong>${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}</strong>. Renew it before it expires.`;
+    ? `The domain <strong>${escapeHtml(domain)}</strong> (monitored as <strong>${escapeHtml(monitorName)}</strong>) has expired. Renew it immediately to avoid service loss.`
+    : `The domain <strong>${escapeHtml(domain)}</strong> (monitored as <strong>${escapeHtml(monitorName)}</strong>) expires in <strong>${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}</strong>. Renew it before it expires.`;
 
   const client = getClient();
   if (client) {
@@ -472,10 +473,10 @@ export async function sendDomainExpiryNotification(params: {
         params.ownerEmail,
         subject,
         `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
-          <h2 style="color:#1a1a1a">${subject}</h2>
+          <h2 style="color:#1a1a1a">${escapeHtml(subject)}</h2>
           <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${detail}</p>
           <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
-          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${monitorName}</strong> on UptimeCrow.</p>
+          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${escapeHtml(monitorName)}</strong> on UptimeCrow.</p>
         </div>`,
       );
       logger.info(`[Notification] Domain expiry email sent to ${params.ownerEmail} for "${domain}"`);
@@ -551,8 +552,8 @@ export async function sendSslExpiryNotification(params: {
     ? `⚠️ SSL certificate expired: ${monitorName}`
     : `⚠️ SSL certificate expiring in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}: ${monitorName}`;
   const detail = expired
-    ? `The SSL certificate for <strong>${monitorUrl}</strong> has expired. Visitors will see a security warning.`
-    : `The SSL certificate for <strong>${monitorUrl}</strong> expires in <strong>${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}</strong>. Renew it before it expires to avoid service disruption.`;
+    ? `The SSL certificate for <strong>${escapeHtml(monitorUrl)}</strong> has expired. Visitors will see a security warning.`
+    : `The SSL certificate for <strong>${escapeHtml(monitorUrl)}</strong> expires in <strong>${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}</strong>. Renew it before it expires to avoid service disruption.`;
 
   const client = getClient();
   if (client) {
@@ -562,11 +563,11 @@ export async function sendSslExpiryNotification(params: {
         params.ownerEmail,
         subject,
         `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
-          <h2 style="color:#1a1a1a">${subject}</h2>
+          <h2 style="color:#1a1a1a">${escapeHtml(subject)}</h2>
           <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${detail}</p>
           <p style="color:#4a4a4a;line-height:1.6">Log in to UptimeCrow to update the SSL warning threshold or silence this alert.</p>
           <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
-          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${monitorName}</strong> on UptimeCrow.</p>
+          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${escapeHtml(monitorName)}</strong> on UptimeCrow.</p>
         </div>`,
       );
       logger.info(`[Notification] SSL expiry email sent to ${params.ownerEmail} for "${monitorName}"`);
@@ -639,7 +640,7 @@ export async function sendSlowResponseNotification(params: {
 }): Promise<void> {
   const { responseMs, thresholdMs, monitorName, monitorUrl } = params;
   const subject = `🐢 Slow response on ${monitorName} — ${responseMs}ms`;
-  const detail = `<strong>${monitorUrl}</strong> responded in <strong>${responseMs}ms</strong>, exceeding the configured threshold of <strong>${thresholdMs}ms</strong>. The check still succeeded, but performance has degraded.`;
+  const detail = `<strong>${escapeHtml(monitorUrl)}</strong> responded in <strong>${responseMs}ms</strong>, exceeding the configured threshold of <strong>${thresholdMs}ms</strong>. The check still succeeded, but performance has degraded.`;
 
   const client = getClient();
   if (client) {
@@ -649,11 +650,11 @@ export async function sendSlowResponseNotification(params: {
         params.ownerEmail,
         subject,
         `<div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto">
-          <h2 style="color:#1a1a1a">${subject}</h2>
+          <h2 style="color:#1a1a1a">${escapeHtml(subject)}</h2>
           <p style="color:#4a4a4a;line-height:1.6;margin-top:16px">${detail}</p>
           <p style="color:#4a4a4a;line-height:1.6">Log in to UptimeCrow to adjust the slow-response threshold or investigate the regression.</p>
           <hr style="border:none;border-top:1px solid #e5e5e5;margin:24px 0">
-          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${monitorName}</strong> on UptimeCrow.</p>
+          <p style="color:#9a9a9a;font-size:12px">You are receiving this because you own the monitor <strong>${escapeHtml(monitorName)}</strong> on UptimeCrow.</p>
         </div>`,
       );
       logger.info(`[Notification] Slow-response email sent for "${monitorName}" (${responseMs}ms)`);
