@@ -303,7 +303,7 @@ publicRoutes.get("/:slug/incidents", async (c) => {
   return c.json({ incidents: incidentsWithUpdates });
 });
 
-// RSS feed for incidents
+// Atom 1.0 feed for incidents
 publicRoutes.get("/:slug/rss", async (c) => {
   const slug = c.req.param("slug");
   const token = c.req.query("token");
@@ -330,14 +330,14 @@ publicRoutes.get("/:slug/rss", async (c) => {
     .from(incidents)
     .where(eq(incidents.statusPageId, page.id))
     .orderBy(desc(incidents.startedAt))
-    .limit(50);
+    .limit(20);
 
   const appUrl = process.env.APP_URL || "http://localhost:5173";
   const feedUrl = `${appUrl}/status/${slug}/rss`;
   const pageUrl = `${appUrl}/status/${slug}`;
 
-  const items = await Promise.all(rows.map(async (inc) => {
-    // Latest update body (fall back to title)
+  const entries = await Promise.all(rows.map(async (inc) => {
+    // Latest update body (fall back to severity + title)
     const [latest] = await db
       .select({ body: incidentUpdates.body, createdAt: incidentUpdates.createdAt })
       .from(incidentUpdates)
@@ -345,33 +345,38 @@ publicRoutes.get("/:slug/rss", async (c) => {
       .orderBy(desc(incidentUpdates.createdAt))
       .limit(1);
 
-    const description = latest?.body ?? `${inc.severity} incident: ${inc.title}`;
-    const pubDate = (latest?.createdAt ?? inc.startedAt).toUTCString();
+    const summary = latest?.body ?? `${inc.severity} incident: ${inc.title}`;
+    const updated = (latest?.createdAt ?? inc.startedAt).toISOString();
+    const entryId = `${appUrl}/status/${slug}#incident-${inc.id}`;
+    const titleWithSeverity = `${escapeHtml(inc.title)} — ${inc.severity.charAt(0).toUpperCase() + inc.severity.slice(1)}`;
 
-    return `    <item>
-      <title>${escapeHtml(inc.title)}</title>
-      <link>${pageUrl}#incident-${inc.id}</link>
-      <guid isPermaLink="false">${inc.id}</guid>
-      <pubDate>${pubDate}</pubDate>
-      <category>${inc.severity}</category>
-      <description>${escapeHtml(description)}</description>
-    </item>`;
+    return `  <entry>
+    <id>${entryId}</id>
+    <title>${titleWithSeverity}</title>
+    <updated>${updated}</updated>
+    <summary type="text">${escapeHtml(summary)}</summary>
+    <link href="${pageUrl}#incident-${inc.id}"/>
+    <category term="${inc.severity}"/>
+  </entry>`;
   }));
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>${escapeHtml(page.name)} — Incident feed</title>
-    <link>${pageUrl}</link>
-    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>
-    <description>Incident history and updates for ${escapeHtml(page.name)}</description>
-    <language>en</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-${items.join("\n")}
-  </channel>
-</rss>`;
+  // Feed-level updated = most recent entry timestamp, or now if no incidents
+  const feedUpdated = rows.length > 0
+    ? (rows[0].startedAt).toISOString()
+    : new Date().toISOString();
 
-  c.header("Content-Type", "application/rss+xml; charset=UTF-8");
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>${feedUrl}</id>
+  <title>${escapeHtml(page.name)} — Incident History</title>
+  <updated>${feedUpdated}</updated>
+  <link href="${pageUrl}"/>
+  <link rel="self" type="application/atom+xml" href="${feedUrl}"/>
+  <generator>UptimeCrow</generator>
+${entries.join("\n")}
+</feed>`;
+
+  c.header("Content-Type", "application/atom+xml; charset=UTF-8");
   c.header("Cache-Control", "public, max-age=300");
   return c.body(xml);
 });

@@ -696,6 +696,46 @@ export function buildOpenApiDocument(): unknown {
           responses: { 200: { description: "Status page data" }, 404: { $ref: "#/components/responses/NotFound" } },
         },
       },
+      "/status/{slug}/rss": {
+        parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" }, description: "Status page slug" }],
+        get: {
+          summary: "Atom 1.0 incident feed",
+          operationId: "getStatusPageRssFeed",
+          tags: ["Public"],
+          security: [],
+          description:
+            "Returns an Atom 1.0 XML feed of the last 20 incidents (active and resolved) for the status page, " +
+            "ordered newest-first. Subscribe to this URL in any RSS/Atom reader to receive incident notifications.\n\n" +
+            "Private status pages require a `?token=<accessToken>` query parameter.",
+          parameters: [
+            {
+              name: "token",
+              in: "query",
+              required: false,
+              schema: { type: "string" },
+              description: "Access token for private status pages.",
+            },
+          ],
+          responses: {
+            200: {
+              description: "Atom 1.0 XML feed",
+              content: {
+                "application/atom+xml": {
+                  schema: { type: "string", description: "Atom 1.0 XML document" },
+                  example:
+                    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+                    '<feed xmlns="http://www.w3.org/2005/Atom">\n' +
+                    "  <id>https://uptimecrow.com/status/acme/rss</id>\n" +
+                    "  <title>Acme Status — Incident History</title>\n" +
+                    "  ...\n" +
+                    "</feed>",
+                },
+              },
+            },
+            404: { description: "Status page not found or private (wrong/missing token)" },
+          },
+        },
+      },
       "/badge/{slug}.svg": {
         parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" } }],
         get: {
