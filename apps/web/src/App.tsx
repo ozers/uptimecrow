@@ -36,6 +36,9 @@ import { VsPingdom } from "./pages/compare/VsPingdom";
 import { VsCronitor } from "./pages/compare/VsCronitor";
 import { VsHealthchecks } from "./pages/compare/VsHealthchecks";
 import { VsStatusCake } from "./pages/compare/VsStatusCake";
+import { VsHyperping } from "./pages/compare/VsHyperping";
+import { VsCheckly } from "./pages/compare/VsCheckly";
+import { VsOneUptime } from "./pages/compare/VsOneUptime";
 import McpPage from "./pages/McpPage";
 import SelfHostPage from "./pages/SelfHostPage";
 import HeartbeatPage from "./pages/HeartbeatPage";
@@ -66,6 +69,9 @@ export function App() {
         <Route path="/vs/cronitor" element={<VsCronitor />} />
         <Route path="/vs/healthchecks" element={<VsHealthchecks />} />
         <Route path="/vs/statuscake" element={<VsStatusCake />} />
+        <Route path="/vs/hyperping" element={<VsHyperping />} />
+        <Route path="/vs/checkly" element={<VsCheckly />} />
+        <Route path="/vs/oneuptime" element={<VsOneUptime />} />
         <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
         <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />

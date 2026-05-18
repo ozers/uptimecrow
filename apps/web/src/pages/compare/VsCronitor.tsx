@@ -43,6 +43,18 @@ export function VsCronitor() {
           body: "When any monitor (uptime or heartbeat) trips, an incident is created, the status page updates, and subscribers are notified — zero manual steps.",
         },
         {
+          title: "On-call scheduling built in",
+          body: "Route alerts to the right engineer at the right time with on-call rotations. No separate PagerDuty account needed — on-call scheduling is included on paid plans.",
+        },
+        {
+          title: "Slow response threshold alerting",
+          body: "Know when your endpoint is technically up but sluggish. Set a response time threshold per monitor and get alerted before users start complaining.",
+        },
+        {
+          title: "Tools suite: SSL checker, DNS lookup, uptime tester",
+          body: "Public diagnostic tools at /tools — no login required. Check a certificate expiry, run a DNS lookup, or run a one-shot uptime test from an external IP in seconds.",
+        },
+        {
           title: "MCP server for AI-assisted operations",
           body: "The only monitoring tool with a native MCP server. Query which monitors are down, acknowledge incidents, or check uptime percentages directly from Claude or Cursor.",
         },
@@ -61,10 +73,13 @@ export function VsCronitor() {
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "PagerDuty (paid)" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
+        { feature: "On-call scheduling", us: "✓ All paid plans", them: "✗ Not available" },
+        { feature: "Slow response threshold", us: "✓ All plans", them: "Paid plans" },
+        { feature: "Tools suite (SSL, DNS, uptime)", us: "✓ Public, no login", them: "✗ Not available" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "Not available" },
         { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
-        { feature: "API access", us: "Pro plan ($29/mo)", them: "Pro plan" },
+        { feature: "API access", us: "Indie plan ($12/mo)", them: "Pro plan" },
         { feature: "Telemetry SDK", us: "✗ REST API only", them: "✓ Native SDKs" },
       ]}
       whenThem={
