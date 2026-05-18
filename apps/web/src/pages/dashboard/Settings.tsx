@@ -5,7 +5,8 @@ import { api, ApiError } from "@/lib/api";
 import { analytics } from "@/lib/analytics";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { User, CreditCard, Webhook, ExternalLink, Loader2, Users, Trash2, Plus, Zap } from "lucide-react";
+import { User, CreditCard, Webhook, ExternalLink, Loader2, Users, Trash2, Plus, Zap, Sparkles } from "lucide-react";
+import { restartOnboarding } from "@/components/setup-checklist";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -275,6 +276,19 @@ export function Settings() {
             <div className="flex items-center justify-between py-3.5">
               <span className="text-xs text-muted-foreground w-28">Organization</span>
               <span className="text-sm font-medium">{org?.name ?? "—"}</span>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-xs text-muted-foreground w-28">Setup guide</span>
+              <button
+                onClick={() => {
+                  restartOnboarding();
+                  toast.success("Setup guide reopened");
+                }}
+                className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Show setup guide
+              </button>
             </div>
           </div>
         </div>
