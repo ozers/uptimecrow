@@ -50,7 +50,7 @@ export function VsInstatus() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$0 free tier" },
-        { feature: "Free monitors", us: "10 monitors, 1-min checks", them: "15 monitors, 2-min checks" },
+        { feature: "Free monitors", us: "25 monitors, 1-min checks", them: "15 monitors, 2-min checks" },
         { feature: "Free status page", us: "1 status page", them: "1 status page" },
         { feature: "Free subscribers", us: "Unlimited", them: "200 subscribers" },
         { feature: "Auto-created incidents", us: "✓ From monitor checks", them: "✗ Manual only" },

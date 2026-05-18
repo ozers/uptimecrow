@@ -12,15 +12,15 @@ export function FreshpingAlternative() {
   usePageMeta({
     title: "Best Freshping Alternative 2026 — UptimeCrow | Free Uptime Monitoring",
     description:
-      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free plan with 10 monitors, heartbeat monitoring, pre-rendered status pages, and open-source core.",
+      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free plan with 25 monitors, heartbeat monitoring, pre-rendered status pages, and open-source core.",
     canonical: "https://uptimecrow.com/freshping-alternative",
   });
 
   const features = [
     {
       Icon: CheckCircle2,
-      title: "10 monitors, free forever",
-      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow gives you 10 monitors on a permanent free tier with no time limit and no credit card.",
+      title: "25 monitors, free forever",
+      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow gives you 25 monitors on a permanent free tier with no time limit and no credit card.",
     },
     {
       Icon: Globe,
@@ -30,7 +30,7 @@ export function FreshpingAlternative() {
     {
       Icon: Heart,
       title: "Heartbeat & cron job monitoring",
-      body: "Monitor your cron jobs, backups, and background workers. A missed ping triggers an immediate alert. Included on every plan, even free (3 heartbeats).",
+      body: "Monitor your cron jobs, backups, and background workers. A missed ping triggers an immediate alert. Included on every plan, even free (5 heartbeats).",
     },
     {
       Icon: Zap,
@@ -122,12 +122,12 @@ export function FreshpingAlternative() {
               <p className="price-amount">$0<span>/mo</span></p>
               <p className="price-desc">Replacing Freshping's free plan.</p>
               <ul className="price-features">
-                <li>10 monitors</li>
+                <li>25 monitors</li>
                 <li>1 status page</li>
                 <li>1-minute checks</li>
-                <li>3 heartbeat monitors</li>
+                <li>5 heartbeat monitors</li>
                 <li>Slack & Discord alerts</li>
-                <li>30-day history</li>
+                <li>60-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started Free</Link>
             </div>

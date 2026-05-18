@@ -34,7 +34,7 @@ export function VsBetterStack() {
         },
         {
           title: "Heartbeat monitoring on every plan",
-          body: "Monitor cron jobs, backups, and scheduled tasks. BetterStack restricts heartbeats to paid plans. We include 3 heartbeats on the free tier.",
+          body: "Monitor cron jobs, backups, and scheduled tasks. BetterStack restricts heartbeats to paid plans. We include 5 heartbeats on the free tier.",
         },
         {
           title: "Transparent, flat pricing",

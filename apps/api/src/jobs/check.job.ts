@@ -2,7 +2,7 @@
 
 import type { Job } from "bullmq";
 import { eq, and, isNull, sql } from "drizzle-orm";
-import { db } from "../db/index.js";
+import { db, redis } from "../db/index.js";
 import {
   monitors,
   checkResults,
@@ -149,6 +149,34 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
           });
         }
       }
+    }
+  }
+
+  // Slow-response detection: if a successful check exceeded the monitor's
+  // configured threshold, enqueue a one-shot slow-response notification.
+  // Deduplicated for 1h via Redis so we don't spam on every check while
+  // latency stays high. Does NOT affect the up/down state machine — slow
+  // is still up. The check_results row keeps its "up" status; latency is
+  // visible via lastResponseMs and the ResponseChart history.
+  if (
+    result.status === "up" &&
+    monitor.slowResponseThresholdMs != null &&
+    result.responseMs != null &&
+    result.responseMs > monitor.slowResponseThresholdMs
+  ) {
+    const cooldownKey = `slow_resp_cooldown:${monitorId}`;
+    const alreadyAlerted = await redis.get(cooldownKey);
+    if (!alreadyAlerted) {
+      await redis.set(cooldownKey, "1", "EX", 3600);
+      await notifyQueue.add("slow_response", {
+        type: "slow_response",
+        orgId: monitor.orgId,
+        monitorId: monitor.id,
+        monitorName: monitor.name,
+        monitorUrl: monitor.url,
+        responseMs: result.responseMs,
+        thresholdMs: monitor.slowResponseThresholdMs,
+      });
     }
   }
 

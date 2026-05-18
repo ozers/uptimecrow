@@ -24,15 +24,15 @@ export const DEFAULT_EXPECTED_STATUS = 200;
 export const PLAN_LIMITS = {
   free: {
     statusPages: 1,
-    monitors: 10,
+    monitors: 25,
     minInterval: 60,
     customDomain: false,
     slackWebhook: true,
     teamSeats: 1,
-    retentionDays: 30,
+    retentionDays: 60,
     apiAccess: false,
     multiRegion: false,
-    heartbeats: 3,
+    heartbeats: 5,
   },
   indie: {
     statusPages: 3,

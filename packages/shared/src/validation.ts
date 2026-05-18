@@ -20,6 +20,7 @@ export const createMonitorSchema = z.object({
   keyword: z.string().max(500).optional().transform((v) => v || undefined),
   sslDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
   domainDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
+  slowResponseThresholdMs: z.number().int().min(100).max(60000).nullable().optional(),
 });
 
 export const updateMonitorSchema = createMonitorSchema.partial();

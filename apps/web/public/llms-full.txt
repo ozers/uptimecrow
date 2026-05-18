@@ -1,6 +1,6 @@
 # UptimeCrow — Full Reference for AI Assistants
 
-> Developer-first uptime monitoring and status page platform. Open source (MIT), self-hostable, free forever for 10 monitors.
+> Developer-first uptime monitoring and status page platform. Open source (MIT), self-hostable, free forever for 25 monitors.
 
 ## What is UptimeCrow?
 
@@ -44,7 +44,7 @@ This lets developers ask "is my API up?" inside Claude Code, Cursor, or Windsurf
 
 ## Pricing (USD/month)
 
-- **Free — $0**: 10 monitors, 1 status page, 1-minute check intervals, 3 heartbeat monitors, Slack & Discord, uptime badge, 30-day history.
+- **Free — $0**: 25 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord, uptime badge, 60-day history.
 - **Indie — $12**: 25 monitors, 3 status pages, 1-minute checks, 10 heartbeats, custom domain, 90-day history. For indie hackers and solo founders.
 - **Pro — $29 (most popular)**: 50 monitors, 10 status pages, 30-second checks, 25 heartbeats, custom domain + API access, 3 team seats, 90-day history.
 - **Team — $79**: Everything in Pro plus 200 monitors, 100 heartbeats, multi-region checks, 10 seats, 365-day history.
@@ -66,7 +66,7 @@ UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the rep
 
 ## Frequently asked questions
 
-**Is UptimeCrow really free?** Yes. The free tier is permanent and includes 10 monitors, 1 status page, 1-minute checks, 3 heartbeats, Slack/Discord alerts, and an uptime badge. No credit card.
+**Is UptimeCrow really free?** Yes. The free tier is permanent and includes 25 monitors, 1 status page, 1-minute checks, 5 heartbeats, Slack/Discord alerts, and an uptime badge. No credit card.
 
 **How fast does UptimeCrow detect downtime?** Checks run every 60 seconds (Free/Indie) or 30 seconds (Pro/Team) from multiple regions. Incidents open after 2 consecutive failures, so detection is typically 60–120 seconds.
 

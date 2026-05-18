@@ -28,6 +28,7 @@ import {
   sendSmsAlert,
   sendSslExpiryNotification,
   sendDomainExpiryNotification,
+  sendSlowResponseNotification,
 } from "../services/notification.service.js";
 
 export interface NotifyJobData {
@@ -37,18 +38,22 @@ export interface NotifyJobData {
     | "incident_resolved"
     | "verification"
     | "ssl_expiry"
-    | "domain_expiry";
+    | "domain_expiry"
+    | "slow_response";
   statusPageId?: string;
   incidentId?: string;
   // For verification emails
   email?: string;
   verifyUrl?: string;
-  // For ssl_expiry
+  // For ssl_expiry / domain_expiry / slow_response
   orgId?: string;
   monitorId?: string;
   monitorName?: string;
   monitorUrl?: string;
   daysRemaining?: number;
+  // For slow_response
+  responseMs?: number;
+  thresholdMs?: number;
 }
 
 export async function processNotifyJob(
@@ -68,6 +73,11 @@ export async function processNotifyJob(
 
   if (type === "domain_expiry") {
     await handleDomainExpiry(job.data);
+    return;
+  }
+
+  if (type === "slow_response") {
+    await handleSlowResponse(job.data);
     return;
   }
 
@@ -339,6 +349,43 @@ async function handleDomainExpiry(data: NotifyJobData): Promise<void> {
     monitorName: data.monitorName,
     monitorUrl: data.monitorUrl,
     daysRemaining: data.daysRemaining,
+    slackWebhookUrl: org.slackWebhookUrl,
+    discordWebhookUrl: org.discordWebhookUrl,
+  });
+}
+
+async function handleSlowResponse(data: NotifyJobData): Promise<void> {
+  if (!data.orgId || !data.monitorName || !data.monitorUrl || data.responseMs == null || data.thresholdMs == null) {
+    logger.error("[Notify] Missing fields for slow_response notification");
+    return;
+  }
+
+  const [org] = await db
+    .select({
+      ownerId: organizations.ownerId,
+      slackWebhookUrl: organizations.slackWebhookUrl,
+      discordWebhookUrl: organizations.discordWebhookUrl,
+    })
+    .from(organizations)
+    .where(eq(organizations.id, data.orgId))
+    .limit(1);
+
+  if (!org) return;
+
+  const [owner] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, org.ownerId))
+    .limit(1);
+
+  if (!owner) return;
+
+  await sendSlowResponseNotification({
+    ownerEmail: owner.email,
+    monitorName: data.monitorName,
+    monitorUrl: data.monitorUrl,
+    responseMs: data.responseMs,
+    thresholdMs: data.thresholdMs,
     slackWebhookUrl: org.slackWebhookUrl,
     discordWebhookUrl: org.discordWebhookUrl,
   });
