@@ -14,6 +14,9 @@
   --amber: #ffab40;
   --font: 'Sora', sans-serif;
   --mono: 'IBM Plex Mono', monospace;
+  /* Semantic aliases used by tools pages, Changelog, McpPage, HeartbeatPage */
+  --accent: var(--green);
+  --danger: var(--red);
 
   font-family: var(--font);
   background: var(--bg);
@@ -41,6 +44,9 @@
   --green-dim: rgba(0, 168, 90, 0.10);
   --red: #d23030;
   --amber: #b06800;
+  /* Semantic aliases used by tools pages, Changelog, McpPage, HeartbeatPage */
+  --accent: var(--green);
+  --danger: var(--red);
 }
 
 .light .landing::before {

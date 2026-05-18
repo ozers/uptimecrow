@@ -587,7 +587,7 @@ export function LandingPage() {
                 { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Uptime monitoring", us: "✓ 60s free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
-                { feature: "Free monitors", us: "✓ 10 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
+                { feature: "Free monitors", us: "✓ 25 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
                 { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Heartbeat monitoring", us: "✓ All plans", bs: "✓ Paid only", ins: "✗", sp: "✗" },
                 { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
