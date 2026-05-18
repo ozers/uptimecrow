@@ -1,5 +1,6 @@
 import { startServer } from "./server.js";
 import { startWorker } from "./worker.js";
+import { redis, db } from "./db/index.js";
 import { logger } from "./utils/logger.js";
 
 const mode = process.env.MODE || "all";
@@ -24,15 +25,49 @@ async function main() {
   assertProductionSecrets();
   logger.info(`[UptimeCrow] Starting in ${mode} mode...`);
 
+  let httpServer: { close: (cb?: () => void) => void } | undefined;
+  let workerHandles: Awaited<ReturnType<typeof startWorker>> | undefined;
+
   if (mode === "api" || mode === "all") {
-    await startServer();
+    httpServer = await startServer();
   }
 
   if (mode === "worker" || mode === "all") {
-    await startWorker();
+    workerHandles = await startWorker();
   }
 
   logger.info(`[UptimeCrow] Running (mode=${mode})`);
+
+  const shutdown = async (signal: string) => {
+    logger.info({ signal }, "[UptimeCrow] Shutting down gracefully");
+    try {
+      if (workerHandles) {
+        await Promise.all([
+          workerHandles.checkWorker.close(),
+          workerHandles.notifyWorker.close(),
+          workerHandles.generateWorker.close(),
+          workerHandles.retentionWorker.close(),
+          workerHandles.heartbeatCheckWorker.close(),
+        ]);
+        logger.info("[UptimeCrow] BullMQ workers closed");
+      }
+      if (httpServer) {
+        await new Promise<void>((resolve) => httpServer!.close(() => resolve()));
+        logger.info("[UptimeCrow] HTTP server closed");
+      }
+      await redis.quit();
+      // db uses postgres-js; the underlying client is not directly exposed from
+      // drizzle, so we rely on the process exiting to release the pool.
+      logger.info("[UptimeCrow] Redis disconnected");
+    } catch (err) {
+      logger.error({ err }, "[UptimeCrow] Error during shutdown");
+    } finally {
+      process.exit(0);
+    }
+  };
+
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }
 
 main().catch((err) => {

@@ -19,9 +19,9 @@ import { teamRoutes } from "./routes/team.js";
 import { oncallRoutes } from "./routes/oncall.js";
 import { toolsRoutes } from "./routes/tools.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
-import { db } from "./db/index.js";
+import { db, redis } from "./db/index.js";
 import { heartbeats } from "./db/schema.js";
-import { eq } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { authRateLimit, apiRateLimit, publicRateLimit, toolsRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
@@ -49,8 +49,33 @@ app.use("*", cors({
   credentials: true,
 }));
 
+// Shallow liveness probe — always fast, no external dependency.
 app.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
 app.get("/api/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
+
+// Deep readiness probe — checks DB and Redis connectivity within 2 seconds.
+// Returns 200 { status: "ok", db: "ok", redis: "ok" } or 503 { status: "degraded" }.
+app.get("/health/ready", async (c) => {
+  const TIMEOUT_MS = 2000;
+  const withTimeout = <T>(promise: Promise<T>, label: string): Promise<T> =>
+    Promise.race([
+      promise,
+      new Promise<T>((_, reject) =>
+        setTimeout(() => reject(new Error(`${label} ping timed out`)), TIMEOUT_MS),
+      ),
+    ]);
+  try {
+    await Promise.all([
+      withTimeout(db.execute(sql`SELECT 1`), "db"),
+      withTimeout(redis.ping(), "redis"),
+    ]);
+    return c.json({ status: "ok", db: "ok", redis: "ok", ts: new Date().toISOString() });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    logger.error({ err }, "[Health] Readiness probe failed");
+    return c.json({ status: "degraded", error: message, ts: new Date().toISOString() }, 503);
+  }
+});
 
 // API docs — unauthenticated, no rate limit; pure static content.
 app.route("/api", docsRoutes);
@@ -128,7 +153,8 @@ export async function startServer() {
   logger.info(`[Server] Listening on port ${port}`);
 
   const { serve } = await import("@hono/node-server");
-  serve({ fetch: app.fetch, port });
+  const server = serve({ fetch: app.fetch, port });
+  return server;
 }
 
 export { app };

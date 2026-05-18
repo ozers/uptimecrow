@@ -146,4 +146,6 @@ export async function startWorker() {
   logger.info(
     "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention, heartbeat-checks",
   );
+
+  return { checkWorker, notifyWorker, generateWorker, retentionWorker, heartbeatCheckWorker };
 }
