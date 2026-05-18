@@ -82,11 +82,27 @@ UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the rep
 
 **How do I migrate from Freshping / UptimeRobot / Pingdom?** Each comparison page at `/vs/<competitor>` lists the migration path. The /freshping-alternative page has a step-by-step guide for users whose Freshping account is shutting down.
 
-**Is there an API?** Yes — a REST API documented with OpenAPI 3.1, plus the MCP endpoint. Both authenticate with the same API key. API access is included on Pro and Team.
+**Is there an API?** Yes — a REST API documented with OpenAPI 3.1, plus the MCP endpoint. Both authenticate with the same API key. API access is included on Indie and above.
 
 **Where is UptimeCrow hosted, and where do checks come from?** The managed product is multi-region. Self-hosters run checks from wherever they deploy the worker container.
 
 **What happens to my data if I cancel?** Personal data and monitors are deleted on account deletion. Status pages can be exported as JSON before deletion.
+
+**Does UptimeCrow have on-call scheduling?** Yes. Paid plans include on-call rotation scheduling so the right engineer is paged at the right time without needing a separate PagerDuty account for basic rotations.
+
+**Can UptimeCrow alert on slow responses, not just downtime?** Yes. Each monitor has a configurable slow response threshold. If the endpoint responds but takes longer than the threshold, an alert fires — catching degradation before users complain.
+
+**Are there free tools?** Yes. /tools includes a public SSL certificate checker, DNS lookup, and one-shot uptime tester. No account needed; 10 requests/min per IP.
+
+## Competitor comparisons
+
+UptimeCrow maintains detailed side-by-side comparison pages for the most commonly evaluated alternatives:
+
+**vs Hyperping** (`/vs/hyperping`): Hyperping's Essentials plan is $24/mo for 50 monitors; UptimeCrow Indie is $12/mo for 25 monitors. For teams that don't need the extra monitor headroom, UptimeCrow is half the price with a more permissive MIT license, a self-host option, and a native MCP server. Hyperping is closed-source with no self-host path. Their Business plan at $249/mo includes SAML and mature on-call; UptimeCrow's Team plan at $79/mo covers comparable on-call for most teams.
+
+**vs Checkly** (`/vs/checkly`): Checkly is a Playwright-based synthetic end-to-end testing platform. It answers "does my user journey work?" not "is my server up?" UptimeCrow covers the uptime/heartbeat/status-page use case that many teams reach for Checkly to fill — at $0–$29/mo vs $40–$120/mo — while adding status pages and heartbeat monitoring that Checkly doesn't offer. If you need Playwright browser automation or monitoring-as-code with a Terraform provider, Checkly is the right tool. If you need "is it up, can customers see a status page, did my cron run" — UptimeCrow is the right fit.
+
+**vs OneUptime** (`/vs/oneuptime`): OneUptime is an open-source (Apache 2.0) full observability platform targeting Datadog/New Relic territory — logs, traces, metrics, on-call, and uptime all in one self-hosted stack. UptimeCrow is MIT-licensed, more narrowly focused on uptime + status pages + heartbeats, and runs with a single `docker compose up` command against a smaller stack (Postgres + Redis vs MongoDB). For teams that only need uptime monitoring and status pages, UptimeCrow is faster to set up and cheaper to run. For teams replacing a full observability platform, OneUptime's scope is closer to what they need.
 
 ## Brand
 

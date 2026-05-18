@@ -24,6 +24,9 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 - [vs Cronitor](https://uptimecrow.com/vs/cronitor): Heartbeat monitoring plus full HTTP/TCP/keyword checks in one tool.
 - [vs Healthchecks.io](https://uptimecrow.com/vs/healthchecks): Healthchecks for crons + UptimeCrow for HTTP, status pages, on-call — one tool instead of three.
 - [vs StatusCake](https://uptimecrow.com/vs/statuscake): Modern, open-source alternative without per-feature paywalls.
+- [vs Hyperping](https://uptimecrow.com/vs/hyperping): Same core monitoring at half the price — $12/mo Indie vs $24/mo Hyperping Essentials, plus MIT open source and MCP server.
+- [vs Checkly](https://uptimecrow.com/vs/checkly): If you need uptime monitoring and status pages — not Playwright E2E tests — UptimeCrow is the right fit at a fraction of the cost.
+- [vs OneUptime](https://uptimecrow.com/vs/oneuptime): Simpler, faster setup for teams who need uptime + status pages without a full observability stack.
 - [Freshping alternative](https://uptimecrow.com/freshping-alternative): Migration guide for users leaving the shutdown Freshping product.
 - [Free tools](https://uptimecrow.com/tools): SSL certificate checker, DNS lookup, and one-shot uptime tester — public, no signup, 10 requests/min per IP.
 
@@ -31,7 +34,9 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 
 - License: MIT. Source: https://github.com/ozers/uptimecrow.
 - Tech stack: Hono + TypeScript on the backend, Postgres 16 + Redis 7 + BullMQ for jobs, React + Vite on the frontend, Drizzle ORM, Amazon SES for email.
-- Check types: HTTP (status code + optional keyword), TCP (raw socket), keyword (HTTP with required substring), SSL certificate expiry, domain expiry (WHOIS), heartbeat (inbound ping).
+- Check types: HTTP (status code + optional keyword), TCP (raw socket), keyword (HTTP with required substring), SSL certificate expiry, domain expiry (WHOIS), heartbeat (inbound ping), slow response threshold (alert when response time exceeds a configured limit).
+- On-call scheduling: built-in rotation scheduling on paid plans routes alerts to the right on-call engineer.
+- Tools suite: public diagnostic tools at /tools — SSL certificate checker, DNS lookup, and one-shot uptime tester (no login required, 10 req/min per IP).
 - Confirmation logic: two consecutive failures across multiple regions before an incident is opened, so a single network blip never pages anyone.
 - Status pages: pre-rendered to static HTML + JSON on every state change. They survive an origin outage because they don't touch the database to render.
 - Integrations: Slack, Discord, custom webhooks, PagerDuty (Events API v2), Microsoft Teams (MessageCard), Telegram bots, email (Amazon SES).
