@@ -17,11 +17,12 @@ import heartbeatRoutes from "./routes/heartbeats.js";
 import { mcpRoutes } from "./routes/mcp.js";
 import { teamRoutes } from "./routes/team.js";
 import { oncallRoutes } from "./routes/oncall.js";
+import { toolsRoutes } from "./routes/tools.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { db } from "./db/index.js";
 import { heartbeats } from "./db/schema.js";
 import { eq } from "drizzle-orm";
-import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
+import { authRateLimit, apiRateLimit, publicRateLimit, toolsRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
 import { logger } from "./utils/logger.js";
@@ -93,6 +94,11 @@ app.get("/hb/:slug", publicRateLimit, async (c) => {
 // Public API routes (no auth)
 app.use("/status/*", publicRateLimit);
 app.route("/status", publicRoutes);
+
+// Free public tools — strict rate limit, no auth. Used by SEO landing
+// pages at /tools/* to drive organic traffic and showcase capabilities.
+app.use("/api/tools/*", toolsRateLimit);
+app.route("/api/tools", toolsRoutes);
 
 // Auth routes (strict rate limit on login/register, not on /me)
 app.use("/api/auth/login", authRateLimit);

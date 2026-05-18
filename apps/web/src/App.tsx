@@ -34,10 +34,17 @@ import { VsUptimeKuma } from "./pages/compare/VsUptimeKuma";
 import { VsInstatus } from "./pages/compare/VsInstatus";
 import { VsPingdom } from "./pages/compare/VsPingdom";
 import { VsCronitor } from "./pages/compare/VsCronitor";
+import { VsHealthchecks } from "./pages/compare/VsHealthchecks";
+import { VsStatusCake } from "./pages/compare/VsStatusCake";
 import McpPage from "./pages/McpPage";
 import SelfHostPage from "./pages/SelfHostPage";
 import HeartbeatPage from "./pages/HeartbeatPage";
 import { FreshpingAlternative } from "./pages/FreshpingAlternative";
+import ToolsIndex from "./pages/tools/ToolsIndex";
+import SslChecker from "./pages/tools/SslChecker";
+import DnsLookup from "./pages/tools/DnsLookup";
+import UptimeTest from "./pages/tools/UptimeTest";
+import Changelog from "./pages/Changelog";
 
 export function App() {
   return (
@@ -57,10 +64,17 @@ export function App() {
         <Route path="/vs/instatus" element={<VsInstatus />} />
         <Route path="/vs/pingdom" element={<VsPingdom />} />
         <Route path="/vs/cronitor" element={<VsCronitor />} />
+        <Route path="/vs/healthchecks" element={<VsHealthchecks />} />
+        <Route path="/vs/statuscake" element={<VsStatusCake />} />
         <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
         <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />
         <Route path="/freshping-alternative" element={<FreshpingAlternative />} />
+        <Route path="/tools" element={<ToolsIndex />} />
+        <Route path="/tools/ssl-checker" element={<SslChecker />} />
+        <Route path="/tools/dns-lookup" element={<DnsLookup />} />
+        <Route path="/tools/uptime-test" element={<UptimeTest />} />
+        <Route path="/changelog" element={<Changelog />} />
         <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
