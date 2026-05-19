@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import "./Landing.css";
 import { usePageMeta } from "@/lib/meta";
+import { MarketingLayout } from "@/components/layout/MarketingLayout";
 
 const BRAND = "UptimeCrow";
 
@@ -49,8 +49,22 @@ const USE_CASES = [
   "Cache warm-up jobs",
 ];
 
+const HEARTBEAT_NAV_LINKS = [
+  { label: "Features", to: "/#features" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "Docs", to: "/docs" },
+];
+
+const HEARTBEAT_FOOTER_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "Docs", to: "/docs" },
+  { label: "vs BetterStack", to: "/vs/betterstack" },
+  { label: "Privacy", to: "/privacy" },
+  { label: "Log in", to: "/login" },
+];
+
 export default function HeartbeatPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
 
   usePageMeta({
@@ -61,42 +75,7 @@ export default function HeartbeatPage() {
   });
 
   return (
-    <div className="landing">
-      <nav>
-        <div className="nav-inner">
-          <div className="logo">
-            <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "inherit", textDecoration: "none" }}>
-              <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
-              <span>{BRAND}</span>
-            </Link>
-          </div>
-          <div className="nav-links">
-            <Link to="/#features">Features</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/docs">Docs</Link>
-            <Link to="/login" className="nav-login">Log in</Link>
-            <Link to="/register" className="nav-cta">Get Started Free</Link>
-          </div>
-          <button
-            className="nav-hamburger"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
-            <Link to="/#features" onClick={() => setMobileOpen(false)}>Features</Link>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link to="/docs" onClick={() => setMobileOpen(false)}>Docs</Link>
-            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
-            <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
-          </div>
-        )}
-      </nav>
-
+    <MarketingLayout navLinks={HEARTBEAT_NAV_LINKS} footerLinks={HEARTBEAT_FOOTER_LINKS}>
       {/* Hero */}
       <section className="hero">
         <div className="container">
@@ -316,22 +295,6 @@ export default function HeartbeatPage() {
           </div>
         </div>
       </section>
-
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/docs">Docs</Link>
-              <Link to="/vs/betterstack">vs BetterStack</Link>
-              <Link to="/privacy">Privacy</Link>
-              <Link to="/login">Log in</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </MarketingLayout>
   );
 }

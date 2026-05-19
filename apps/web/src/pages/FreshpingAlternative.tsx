@@ -1,26 +1,39 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, CheckCircle2, Globe, Heart, Zap, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Globe, Heart, Zap, ShieldCheck } from "lucide-react";
 import "./Landing.css";
 import { usePageMeta } from "@/lib/meta";
+import { MarketingLayout } from "@/components/layout/MarketingLayout";
 
 const BRAND = "UptimeCrow";
 
-export function FreshpingAlternative() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+const FRESHPING_NAV_LINKS = [
+  { label: "Features", to: "/#features" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "Docs", to: "/docs" },
+];
 
+const FRESHPING_FOOTER_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "vs Freshping", to: "/vs/freshping" },
+  { label: "vs BetterStack", to: "/vs/betterstack" },
+  { label: "vs UptimeRobot", to: "/vs/uptimerobot" },
+  { label: "Privacy", to: "/privacy" },
+];
+
+export function FreshpingAlternative() {
   usePageMeta({
     title: "Best Freshping Alternative 2026 — UptimeCrow | Free Uptime Monitoring",
     description:
-      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free plan with 25 monitors, heartbeat monitoring, pre-rendered status pages, and open-source core.",
+      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free plan with 50 monitors, heartbeat monitoring, pre-rendered status pages, and open-source core.",
     canonical: "https://uptimecrow.com/freshping-alternative",
   });
 
   const features = [
     {
       Icon: CheckCircle2,
-      title: "25 monitors, free forever",
-      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow gives you 25 monitors on a permanent free tier with no time limit and no credit card.",
+      title: "50 monitors, free forever",
+      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow gives you 50 monitors on a permanent free tier with no time limit and no credit card.",
     },
     {
       Icon: Globe,
@@ -45,41 +58,7 @@ export function FreshpingAlternative() {
   ];
 
   return (
-    <div className="landing">
-      <nav>
-        <div className="nav-inner">
-          <div className="logo">
-            <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "inherit", textDecoration: "none" }}>
-              <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
-              <span>{BRAND}</span>
-            </Link>
-          </div>
-          <div className="nav-links">
-            <Link to="/#features">Features</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/docs">Docs</Link>
-            <Link to="/login" className="nav-login">Log in</Link>
-            <Link to="/register" className="nav-cta">Get Started Free</Link>
-          </div>
-          <button
-            className="nav-hamburger"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
-            <Link to="/#features" onClick={() => setMobileOpen(false)}>Features</Link>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
-            <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
-          </div>
-        )}
-      </nav>
-
+    <MarketingLayout navLinks={FRESHPING_NAV_LINKS} footerLinks={FRESHPING_FOOTER_LINKS}>
       <section className="hero" style={{ paddingBottom: "2rem" }}>
         <div className="container">
           <div className="hero-badge">● Freshping alternative</div>
@@ -122,7 +101,7 @@ export function FreshpingAlternative() {
               <p className="price-amount">$0<span>/mo</span></p>
               <p className="price-desc">Replacing Freshping's free plan.</p>
               <ul className="price-features">
-                <li>25 monitors</li>
+                <li>50 monitors</li>
                 <li>1 status page</li>
                 <li>1-minute checks</li>
                 <li>5 heartbeat monitors</li>
@@ -136,7 +115,7 @@ export function FreshpingAlternative() {
               <p className="price-amount">$12<span>/mo</span></p>
               <p className="price-desc">For indie hackers and solo founders.</p>
               <ul className="price-features">
-                <li>25 monitors</li>
+                <li>30 monitors</li>
                 <li>3 status pages</li>
                 <li>Custom domain</li>
                 <li>10 heartbeat monitors</li>
@@ -171,22 +150,6 @@ export function FreshpingAlternative() {
           </div>
         </div>
       </section>
-
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/vs/freshping">vs Freshping</Link>
-              <Link to="/vs/betterstack">vs BetterStack</Link>
-              <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
-              <Link to="/privacy">Privacy</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </MarketingLayout>
   );
 }

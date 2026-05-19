@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import "./Landing.css";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
 import { usePageMeta } from "@/lib/meta";
+import { MarketingLayout } from "@/components/layout/MarketingLayout";
 
 const BRAND = "UptimeCrow";
 
@@ -29,7 +29,7 @@ const PLANS: PlanDef[] = [
     per: "/mo",
     desc: "For side projects and personal apps.",
     features: [
-      "25 monitors",
+      "50 monitors",
       "1 status page",
       "1-minute check intervals",
       "5 heartbeat monitors",
@@ -136,15 +136,34 @@ const FAQ = [
   },
 ];
 
+const PRICING_NAV_LINKS = [
+  { label: "Features", to: "/#features" },
+  { label: "Pricing", to: "/pricing" },
+];
+
+const PRICING_FOOTER_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "vs Betterstack", to: "/vs/betterstack" },
+  { label: "vs UptimeRobot", to: "/vs/uptimerobot" },
+  { label: "Privacy", to: "/privacy" },
+  { label: "Terms", to: "/terms" },
+  { label: "Log in", to: "/login" },
+];
+
 export function Pricing() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [annual, setAnnual] = useState(false);
 
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 25 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
+      "Start free with 50 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
     canonical: "https://uptimecrow.com/pricing",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "UptimeCrow Pricing",
+      url: "https://uptimecrow.com/pricing",
+    },
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   useEffect(() => { analytics.pricingViewed(); }, []);
@@ -152,40 +171,7 @@ export function Pricing() {
   const ctaHref = isAuthenticated ? "/dashboard/settings" : "/register";
 
   return (
-    <div className="landing">
-      <nav>
-        <div className="nav-inner">
-          <div className="logo">
-            <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "inherit", textDecoration: "none" }}>
-              <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
-              <span>{BRAND}</span>
-            </Link>
-          </div>
-          <div className="nav-links">
-            <Link to="/#features">Features</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/login" className="nav-login">Log in</Link>
-            <Link to="/register" className="nav-cta">Get Started Free</Link>
-          </div>
-          <button
-            className="nav-hamburger"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
-            <Link to="/#features" onClick={() => setMobileOpen(false)}>Features</Link>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
-            <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
-          </div>
-        )}
-      </nav>
-
+    <MarketingLayout navLinks={PRICING_NAV_LINKS} footerLinks={PRICING_FOOTER_LINKS}>
       <section className="hero" style={{ paddingBottom: "2rem" }}>
         <div className="container">
           <div className="hero-badge">● Fair pricing, no lock-in</div>
@@ -318,29 +304,13 @@ export function Pricing() {
       <section className="final-cta">
         <div className="container">
           <h2>Ready to know when you're down?</h2>
-          <p>25 monitors, 1-min checks, forever free. No credit card needed.</p>
+          <p>50 monitors, 1-min checks, forever free. No credit card needed.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/login" className="hero-btn secondary">Log in</Link>
           </div>
         </div>
       </section>
-
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/vs/betterstack">vs Betterstack</Link>
-              <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
-              <Link to="/privacy">Privacy</Link>
-              <Link to="/terms">Terms</Link>
-              <Link to="/login">Log in</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </MarketingLayout>
   );
 }

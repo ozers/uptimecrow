@@ -261,11 +261,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
-    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 25 monitors — BetterStack starts at $29/mo for serious use.",
+    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 50 monitors — BetterStack starts at $34/mo for serious use.",
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 25 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord alerts, and 60-day history.",
+    a: "Yes — free forever, no credit card required. The free plan includes 50 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord alerts, and 60-day history.",
   },
   {
     q: "What is heartbeat monitoring and cron job monitoring?",
@@ -338,7 +338,7 @@ export function LandingPage() {
   usePageMeta({
     title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
     description:
-      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 25 monitors free forever.",
+      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 50 monitors free forever.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });
@@ -381,7 +381,7 @@ export function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● Free forever · 25 monitors · 1 status page · 60-second checks</div>
+          <div className="hero-badge">● Free forever · 50 monitors · 1 status page · 60-second checks</div>
           <h1>Your site went down.<br /><span className="highlight">We caught it first.</span></h1>
           <p className="hero-sub">
             Downtime detected → incident created → status page updated → subscribers notified. <strong>All before you wake up.</strong>
@@ -587,7 +587,7 @@ export function LandingPage() {
                 { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Uptime monitoring", us: "✓ 60s free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
-                { feature: "Free monitors", us: "✓ 25 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
+                { feature: "Free monitors", us: "✓ 50 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
                 { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
                 { feature: "Heartbeat monitoring", us: "✓ All plans", bs: "✓ Paid only", ins: "✗", sp: "✗" },
                 { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
@@ -625,7 +625,7 @@ export function LandingPage() {
               <p className="price-desc">For side projects and personal apps.</p>
               <ul className="price-features">
                 <li>1 status page</li>
-                <li>25 monitors</li>
+                <li>50 monitors</li>
                 <li>1-minute check intervals</li>
                 <li>5 heartbeat monitors</li>
                 <li>Slack & Discord alerts</li>
@@ -640,7 +640,7 @@ export function LandingPage() {
               <p className="price-desc">For indie hackers and solo founders.</p>
               <ul className="price-features">
                 <li>3 status pages</li>
-                <li>25 monitors</li>
+                <li>30 monitors</li>
                 <li>1-minute check intervals</li>
                 <li>10 heartbeat monitors</li>
                 <li>Custom domain</li>
