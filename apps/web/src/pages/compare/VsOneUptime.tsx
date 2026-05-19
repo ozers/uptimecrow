@@ -48,7 +48,7 @@ export function VsOneUptime() {
         },
         {
           title: "Genuinely free cloud tier",
-          body: "UptimeCrow's managed cloud offers 25 monitors, 1 status page, heartbeats, and alerts at $0 — permanently. OneUptime's cloud free tier is more limited, and their Growth plan starts at $22/mo.",
+          body: "UptimeCrow's managed cloud offers 50 monitors, 1 status page, heartbeats, and alerts at $0 — permanently. OneUptime's cloud free tier is more limited, and their Growth plan starts at $22/mo.",
         },
         {
           title: "Pre-rendered status pages",
@@ -56,7 +56,7 @@ export function VsOneUptime() {
         },
       ]}
       rows={[
-        { feature: "Starting price (cloud)", us: "$0 free forever · 25 monitors", them: "Free (limited) · Growth $22/mo" },
+        { feature: "Starting price (cloud)", us: "$0 free forever · 50 monitors", them: "Free (limited) · Growth $22/mo" },
         { feature: "Pro / Scale plan", us: "$29/mo · 50 monitors", them: "$99/mo · Scale" },
         { feature: "Team plan", us: "$79/mo · 200 monitors · 10 seats", them: "Enterprise (custom)" },
         { feature: "License", us: "✓ MIT", them: "Apache 2.0" },

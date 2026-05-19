@@ -27,8 +27,8 @@ export function VsFreshping() {
       }
       whyUs={[
         {
-          title: "Generous free tier — 25 monitors forever",
-          body: "25 uptime monitors, 5 heartbeat monitors, 1 status page, and 1-minute checks. No trial period. No credit card.",
+          title: "Generous free tier — 50 monitors forever",
+          body: "50 uptime monitors, 5 heartbeat monitors, 1 status page, and 1-minute checks. No trial period. No credit card.",
         },
         {
           title: "Automatic incident management",
@@ -45,7 +45,7 @@ export function VsFreshping() {
       ]}
       rows={[
         { feature: "Service status", us: "✓ Active", them: "✗ Shut down March 2026" },
-        { feature: "Free tier monitors", us: "25 monitors forever", them: "Was 50 monitors" },
+        { feature: "Free tier monitors", us: "50 monitors forever", them: "Was 50 monitors" },
         { feature: "Free check interval", us: "1 minute", them: "Was 1 minute" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },

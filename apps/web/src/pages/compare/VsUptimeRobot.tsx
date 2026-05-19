@@ -45,7 +45,7 @@ export function VsUptimeRobot() {
         },
       ]}
       rows={[
-        { feature: "Free tier", us: "25 monitors, 1-min checks", them: "50 monitors, 5-min checks" },
+        { feature: "Free tier", us: "50 monitors, 1-min checks", them: "50 monitors, 5-min checks" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$7/mo · 10 monitors" },
         { feature: "Team plan", us: "$79/mo · 200 monitors", them: "$15/mo · 50 monitors" },

@@ -25,7 +25,7 @@ export function VsCheckly() {
             they're paying $40–$120/mo and missing features like <strong>public status pages,
             heartbeat monitoring, and on-call scheduling</strong> that Checkly simply doesn't
             offer. UptimeCrow starts at{" "}
-            <strong>$0 with 25 monitors</strong>, includes pre-rendered status pages on every plan,
+            <strong>$0 with 50 monitors</strong>, includes pre-rendered status pages on every plan,
             and ships a <strong>native MCP server</strong> so your AI assistant always knows your
             production health.
           </p>
@@ -42,7 +42,7 @@ export function VsCheckly() {
         },
         {
           title: "Simpler, lower-cost uptime monitoring",
-          body: "Checkly Starter is $40/mo for 50 uptime checks. UptimeCrow Free gives you 25 monitors for $0, and Pro gives you 50 monitors for $29/mo. If you don't need Playwright browser tests, you're overpaying.",
+          body: "Checkly Starter is $40/mo for 50 uptime checks. UptimeCrow Free gives you 50 monitors for $0, and Pro gives you 50 monitors for $29/mo. If you don't need Playwright browser tests, you're overpaying.",
         },
         {
           title: "On-call scheduling built in",
@@ -59,7 +59,7 @@ export function VsCheckly() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "Hobby free (10 checks, limited)" },
-        { feature: "First paid tier", us: "$12/mo — Indie (25 monitors)", them: "$40/mo — Starter (50 uptime checks)" },
+        { feature: "First paid tier", us: "$12/mo — Indie (30 monitors)", them: "$40/mo — Starter (50 uptime checks)" },
         { feature: "Pro / Team plan", us: "$29/mo · 50 monitors", them: "$120/mo · Team (50 uptime + browser)" },
         { feature: "HTTP / TCP uptime monitoring", us: "✓ All plans incl. free", them: "✓ All plans" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },

@@ -58,7 +58,7 @@ export function VsHyperping() {
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "Free (20 monitors, limited)" },
         { feature: "First paid tier", us: "$12/mo — Indie", them: "$24/mo — Essentials" },
-        { feature: "Monitors on first paid tier", us: "25 monitors", them: "50 monitors" },
+        { feature: "Monitors on first paid tier", us: "30 monitors", them: "50 monitors" },
         { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$74/mo · more monitors" },
         { feature: "Business / Team plan", us: "$79/mo · 200 monitors · 10 seats", them: "$249/mo · on-call + SAML" },
         { feature: "Minimum check interval", us: "30s Pro/Team · 60s Free/Indie", them: "30s Essentials+" },
@@ -90,7 +90,7 @@ export function VsHyperping() {
           <p style={{ marginTop: "0.75rem" }}>
             If your priority is price, open-source trust, AI-assistant integration, or self-hosting,
             UptimeCrow is the stronger choice — and for most developer teams and small businesses,
-            25 monitors at $12/mo is more than enough.
+            30 monitors at $12/mo is more than enough.
           </p>
         </>
       }

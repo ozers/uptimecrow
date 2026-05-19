@@ -24,7 +24,7 @@ export const DEFAULT_EXPECTED_STATUS = 200;
 export const PLAN_LIMITS = {
   free: {
     statusPages: 1,
-    monitors: 25,
+    monitors: 50,
     minInterval: 60,
     customDomain: false,
     slackWebhook: true,

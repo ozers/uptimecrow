@@ -45,7 +45,7 @@
 
   <!-- Feature pills -->
   <rect x="84" y="445" width="170" height="36" rx="18" fill="#0c0c10" stroke="#2a2a35" stroke-width="1"/>
-  <text x="169" y="468" font-family="'Sora', system-ui, sans-serif" font-size="15" fill="#9393a0" text-anchor="middle">25 monitors free</text>
+  <text x="169" y="468" font-family="'Sora', system-ui, sans-serif" font-size="15" fill="#9393a0" text-anchor="middle">50 monitors free</text>
 
   <rect x="266" y="445" width="160" height="36" rx="18" fill="#0c0c10" stroke="#2a2a35" stroke-width="1"/>
   <text x="346" y="468" font-family="'Sora', system-ui, sans-serif" font-size="15" fill="#9393a0" text-anchor="middle">Self-hostable</text>

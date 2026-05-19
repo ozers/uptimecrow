@@ -70,7 +70,7 @@ export default function ToolsIndex() {
       <section className="final-cta">
         <div className="container">
           <h2>Need ongoing monitoring?</h2>
-          <p>UptimeCrow runs these checks every 60 seconds, opens incidents, and updates a status page automatically. Free for 25 monitors.</p>
+          <p>UptimeCrow runs these checks every 60 seconds, opens incidents, and updates a status page automatically. Free for 50 monitors.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/pricing" className="hero-btn secondary">See pricing</Link>

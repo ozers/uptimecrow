@@ -6,7 +6,7 @@ export function VsStatusCake() {
       competitor="StatusCake"
       competitorShort="StatusCake"
       headline={<>StatusCake without the<br /><span className="highlight">enterprise pricing.</span></>}
-      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, MIT open-source, MCP-native, free for 25 monitors."
+      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, MIT open-source, MCP-native, free for 50 monitors."
       pitch={
         <>
           <p>
@@ -46,8 +46,8 @@ export function VsStatusCake() {
         },
       ]}
       rows={[
-        { feature: "Free tier", us: "✓ 25 monitors, 1-min checks", them: "✓ 10 tests, 5-min checks" },
-        { feature: "Indie/Solo plan", us: "$12/mo · 25 monitors + API + custom domain", them: "$24.49/mo · Superior plan" },
+        { feature: "Free tier", us: "✓ 50 monitors, 1-min checks", them: "✓ 10 tests, 5-min checks" },
+        { feature: "Indie/Solo plan", us: "$12/mo · 30 monitors + API + custom domain", them: "$24.49/mo · Superior plan" },
         { feature: "Pro plan", us: "$29/mo · 50 monitors · 30s checks", them: "$66.66/mo · Business plan" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✓ Paid plans" },
         { feature: "SSL & domain expiry alerts", us: "✓ All plans incl. free", them: "✓ All plans" },

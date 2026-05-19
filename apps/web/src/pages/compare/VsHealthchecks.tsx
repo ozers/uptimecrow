@@ -30,7 +30,7 @@ export function VsHealthchecks() {
       whyUs={[
         {
           title: "Uptime + heartbeats, one bill",
-          body: "Most teams end up with Healthchecks + UptimeRobot + a status page tool — that's three vendors. UptimeCrow does all three from a single dashboard, free for 25 monitors.",
+          body: "Most teams end up with Healthchecks + UptimeRobot + a status page tool — that's three vendors. UptimeCrow does all three from a single dashboard, free for 50 monitors.",
         },
         {
           title: "Pre-rendered status page included",

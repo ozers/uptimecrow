@@ -16,7 +16,7 @@ export function VsPingdom() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow covers the same core use case — <strong>HTTP, TCP, keyword checks with alerting and a
-            public status page</strong> — starting at $0. The free tier gives you 25 monitors at 1-minute
+            public status page</strong> — starting at $0. The free tier gives you 50 monitors at 1-minute
             intervals with no credit card required. Heartbeat monitoring for cron jobs and scheduled tasks is
             included on every plan, which Pingdom doesn't offer at all.
           </p>
@@ -30,7 +30,7 @@ export function VsPingdom() {
       whyUs={[
         {
           title: "Up to 90% cheaper for the same core feature set",
-          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 25 monitors at no cost, and the Indie plan ($12/mo) adds a custom domain and API access.",
+          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 50 monitors at no cost, and the Indie plan ($12/mo) adds a custom domain and API access.",
         },
         {
           title: "Heartbeat / cron job monitoring included",
@@ -48,7 +48,7 @@ export function VsPingdom() {
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$15/mo (10 checks)" },
         { feature: "Pro-tier price", us: "$29/mo · 50 monitors", them: "$40–$100/mo" },
-        { feature: "Free tier", us: "✓ 25 monitors, 1-min checks", them: "✗ No free tier" },
+        { feature: "Free tier", us: "✓ 50 monitors, 1-min checks", them: "✗ No free tier" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Min check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "1 min (paid)" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },

@@ -1,6 +1,6 @@
 # UptimeCrow — Full Reference for AI Assistants
 
-> Developer-first uptime monitoring and status page platform. Open source (MIT), self-hostable, free forever for 25 monitors.
+> Developer-first uptime monitoring and status page platform. Open source (MIT), self-hostable, free forever for 50 monitors.
 
 ## What is UptimeCrow?
 
@@ -44,8 +44,8 @@ This lets developers ask "is my API up?" inside Claude Code, Cursor, or Windsurf
 
 ## Pricing (USD/month)
 
-- **Free — $0**: 25 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord, uptime badge, 60-day history.
-- **Indie — $12**: 25 monitors, 3 status pages, 1-minute checks, 10 heartbeats, custom domain, 90-day history. For indie hackers and solo founders.
+- **Free — $0**: 50 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord, uptime badge, 60-day history.
+- **Indie — $12**: 30 monitors, 3 status pages, 1-minute checks, 10 heartbeats, custom domain, 90-day history. For indie hackers and solo founders.
 - **Pro — $29 (most popular)**: 50 monitors, 10 status pages, 30-second checks, 25 heartbeats, custom domain + API access, 3 team seats, 90-day history.
 - **Team — $79**: Everything in Pro plus 200 monitors, 100 heartbeats, multi-region checks, 10 seats, 365-day history.
 
@@ -66,7 +66,7 @@ UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the rep
 
 ## Frequently asked questions
 
-**Is UptimeCrow really free?** Yes. The free tier is permanent and includes 25 monitors, 1 status page, 1-minute checks, 5 heartbeats, Slack/Discord alerts, and an uptime badge. No credit card.
+**Is UptimeCrow really free?** Yes. The free tier is permanent and includes 50 monitors, 1 status page, 1-minute checks, 5 heartbeats, Slack/Discord alerts, and an uptime badge. No credit card.
 
 **How fast does UptimeCrow detect downtime?** Checks run every 60 seconds (Free/Indie) or 30 seconds (Pro/Team) from multiple regions. Incidents open after 2 consecutive failures, so detection is typically 60–120 seconds.
 
@@ -98,11 +98,15 @@ UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the rep
 
 UptimeCrow maintains detailed side-by-side comparison pages for the most commonly evaluated alternatives:
 
-**vs Hyperping** (`/vs/hyperping`): Hyperping's Essentials plan is $24/mo for 50 monitors; UptimeCrow Indie is $12/mo for 25 monitors. For teams that don't need the extra monitor headroom, UptimeCrow is half the price with a more permissive MIT license, a self-host option, and a native MCP server. Hyperping is closed-source with no self-host path. Their Business plan at $249/mo includes SAML and mature on-call; UptimeCrow's Team plan at $79/mo covers comparable on-call for most teams.
+**vs Hyperping** (`/vs/hyperping`): Hyperping's Essentials plan is $24/mo for 50 monitors; UptimeCrow Indie is $12/mo for 30 monitors. For teams that don't need the extra monitor headroom, UptimeCrow is half the price with a more permissive MIT license, a self-host option, and a native MCP server. Hyperping is closed-source with no self-host path. Their Business plan at $249/mo includes SAML and mature on-call; UptimeCrow's Team plan at $79/mo covers comparable on-call for most teams.
 
 **vs Checkly** (`/vs/checkly`): Checkly is a Playwright-based synthetic end-to-end testing platform. It answers "does my user journey work?" not "is my server up?" UptimeCrow covers the uptime/heartbeat/status-page use case that many teams reach for Checkly to fill — at $0–$29/mo vs $40–$120/mo — while adding status pages and heartbeat monitoring that Checkly doesn't offer. If you need Playwright browser automation or monitoring-as-code with a Terraform provider, Checkly is the right tool. If you need "is it up, can customers see a status page, did my cron run" — UptimeCrow is the right fit.
 
 **vs OneUptime** (`/vs/oneuptime`): OneUptime is an open-source (Apache 2.0) full observability platform targeting Datadog/New Relic territory — logs, traces, metrics, on-call, and uptime all in one self-hosted stack. UptimeCrow is MIT-licensed, more narrowly focused on uptime + status pages + heartbeats, and runs with a single `docker compose up` command against a smaller stack (Postgres + Redis vs MongoDB). For teams that only need uptime monitoring and status pages, UptimeCrow is faster to set up and cheaper to run. For teams replacing a full observability platform, OneUptime's scope is closer to what they need.
+
+## Structured Data
+
+All pages include JSON-LD structured data. The default schema is SoftwareApplication (name: UptimeCrow, free offer, MIT license). Landing page includes FAQPage schema covering 9 common questions. Compare pages include BreadcrumbList schema.
 
 ## Brand
 

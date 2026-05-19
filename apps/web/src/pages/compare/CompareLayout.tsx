@@ -43,7 +43,7 @@ export function CompareLayout(props: Props) {
   const canonicalUrl = `https://uptimecrow.com${typeof window !== "undefined" ? window.location.pathname : ""}`;
   usePageMeta({
     title: `UptimeCrow vs ${competitor} — Uptime Monitoring Comparison 2026`,
-    description: `Compare UptimeCrow vs ${competitor} side-by-side. Features, pricing, heartbeat monitoring, and status pages. Free plan with 25 monitors, forever.`,
+    description: `Compare UptimeCrow vs ${competitor} side-by-side. Features, pricing, heartbeat monitoring, and status pages. Free plan with 50 monitors, forever.`,
     canonical: canonicalUrl,
     jsonLd: {
       "@context": "https://schema.org",
@@ -173,7 +173,7 @@ export function CompareLayout(props: Props) {
 
       <section className="final-cta">
         <div className="container">
-          <h2>Try {BRAND} free — 25 monitors, forever.</h2>
+          <h2>Try {BRAND} free — 50 monitors, forever.</h2>
           <p>No credit card. If it fits, upgrade in one click. If not, delete your account in Settings.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
@@ -199,6 +199,7 @@ export function CompareLayout(props: Props) {
               <Link to="/vs/hyperping">vs Hyperping</Link>
               <Link to="/vs/checkly">vs Checkly</Link>
               <Link to="/vs/oneuptime">vs OneUptime</Link>
+              <Link to="/vs/statuspage">vs Statuspage</Link>
               <Link to="/privacy">Privacy</Link>
               <Link to="/login">Log in</Link>
             </div>
