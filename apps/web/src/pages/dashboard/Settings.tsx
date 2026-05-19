@@ -41,7 +41,7 @@ const UPGRADE_PLANS = [
     monthly: 12,
     annual: 10,
     annualTotal: 120,
-    features: ["25 monitors", "3 status pages", "API access", "Custom domain", "2 team seats"],
+    features: ["30 monitors", "3 status pages", "API access", "Custom domain", "2 team seats"],
   },
   {
     name: "Pro" as const,
@@ -159,6 +159,62 @@ function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: s
   );
 }
 
+const SETTINGS_SECTIONS = [
+  { id: "settings-account", label: "Account", icon: User },
+  { id: "settings-plan", label: "Plan", icon: CreditCard },
+  { id: "settings-integrations", label: "Integrations", icon: Webhook },
+  { id: "settings-api-keys", label: "API Keys", icon: Zap },
+  { id: "settings-team", label: "Team", icon: Users },
+] as const;
+
+function SettingsNav() {
+  const [active, setActive] = useState("settings-account");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+    );
+    SETTINGS_SECTIONS.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <aside className="hidden lg:block w-44 shrink-0">
+      <div className="sticky top-20 space-y-1">
+        {SETTINGS_SECTIONS.map(({ id, label, icon: Icon }) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+              setActive(id);
+            }}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
+              active === id
+                ? "bg-accent text-accent-foreground font-medium"
+                : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+            }`}
+          >
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            {label}
+          </a>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 export function Settings() {
   const user = useAuthStore((s) => s.user);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -259,10 +315,12 @@ export function Settings() {
     <div>
       <PageHeader title="Settings" description="Account, plan, and integrations" />
 
-      <div className="max-w-2xl space-y-10">
+      <div className="flex gap-10 items-start">
+        <SettingsNav />
+        <div className="min-w-0 flex-1 max-w-2xl space-y-10">
 
         {/* Account */}
-        <div>
+        <div id="settings-account">
           <SectionLabel icon={User} title="Account" />
           <div className="divide-y divide-border border-t border-b border-border">
             <div className="flex items-center justify-between py-3.5">
@@ -294,7 +352,7 @@ export function Settings() {
         </div>
 
         {/* Plan */}
-        <div>
+        <div id="settings-plan">
           <SectionLabel icon={CreditCard} title="Plan" />
           <div className="border-t border-b border-border">
             {/* Plan header */}
@@ -346,7 +404,7 @@ export function Settings() {
         </div>
 
         {/* Integrations */}
-        <div>
+        <div id="settings-integrations">
           <SectionLabel icon={Webhook} title="Integrations" />
           <div className="border-t border-border">
             {/* Slack */}
@@ -561,10 +619,11 @@ export function Settings() {
           </div>
         </div>
 
-        <ApiKeysSection enabled={limits.apiAccess} />
+        <div id="settings-api-keys"><ApiKeysSection enabled={limits.apiAccess} /></div>
 
-        <TeamSection orgPlan={plan} />
+        <div id="settings-team"><TeamSection orgPlan={plan} /></div>
 
+        </div>
       </div>
     </div>
   );
