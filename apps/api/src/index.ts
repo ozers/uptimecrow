@@ -1,3 +1,5 @@
+import { initSentry } from "./utils/sentry.js";
+initSentry();
 import { startServer } from "./server.js";
 import { startWorker } from "./worker.js";
 import { redis, db } from "./db/index.js";
