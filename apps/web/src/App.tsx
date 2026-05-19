@@ -39,6 +39,7 @@ import { VsStatusCake } from "./pages/compare/VsStatusCake";
 import { VsHyperping } from "./pages/compare/VsHyperping";
 import { VsCheckly } from "./pages/compare/VsCheckly";
 import { VsOneUptime } from "./pages/compare/VsOneUptime";
+import { VsStatuspage } from "./pages/compare/VsStatuspage";
 import McpPage from "./pages/McpPage";
 import SelfHostPage from "./pages/SelfHostPage";
 import HeartbeatPage from "./pages/HeartbeatPage";
@@ -72,6 +73,7 @@ export function App() {
         <Route path="/vs/hyperping" element={<VsHyperping />} />
         <Route path="/vs/checkly" element={<VsCheckly />} />
         <Route path="/vs/oneuptime" element={<VsOneUptime />} />
+        <Route path="/vs/statuspage" element={<VsStatuspage />} />
         <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
         <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />

@@ -13,6 +13,28 @@ const DEFAULT_DESC =
   "Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down. Developer-first, open-source core.";
 const DEFAULT_CANONICAL = "https://uptimecrow.com/";
 
+const DEFAULT_SOFTWARE_APP_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "UptimeCrow",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  description:
+    "Open-source uptime monitoring and status page platform. Monitor HTTP endpoints, get alerted on incidents, and serve pre-rendered status pages that stay online when your origin goes down.",
+  url: "https://uptimecrow.com",
+  softwareVersion: "1.0",
+  license: "https://opensource.org/licenses/MIT",
+  author: {
+    "@type": "Organization",
+    name: "UptimeCrow",
+  },
+};
+
 export function usePageMeta({ title, description, canonical, jsonLd }: PageMeta) {
   useEffect(() => {
     document.title = title;
@@ -26,14 +48,14 @@ export function usePageMeta({ title, description, canonical, jsonLd }: PageMeta)
     const link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (link && canonical) link.href = canonical;
 
+    // Inject page-specific JSON-LD (or fall back to default SoftwareApplication schema)
     document.getElementById("__page_ld__")?.remove();
-    if (jsonLd) {
-      const s = document.createElement("script");
-      s.type = "application/ld+json";
-      s.id = "__page_ld__";
-      s.textContent = JSON.stringify(jsonLd);
-      document.head.appendChild(s);
-    }
+    const ld = jsonLd ?? DEFAULT_SOFTWARE_APP_LD;
+    const s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.id = "__page_ld__";
+    s.textContent = JSON.stringify(ld);
+    document.head.appendChild(s);
 
     return () => {
       document.title = DEFAULT_TITLE;
