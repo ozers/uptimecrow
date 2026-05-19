@@ -1,9 +1,9 @@
 // Static Generation Service — Pre-render status pages as JSON + HTML
-// Renders are stored in-memory (Map) and served by a dedicated route.
-// Can be swapped to Cloudflare R2 / S3 in production.
+// Renders are stored in Redis (key = uc:sp:<slug>) for multi-container support.
+// 7-day TTL; regenerated on every incident/monitor change event.
 
 import { eq, and, desc, sql } from "drizzle-orm";
-import { db } from "../db/index.js";
+import { db, redis } from "../db/index.js";
 import {
   statusPages,
   monitors,
@@ -72,11 +72,18 @@ export interface StaticStatusPage {
   }>;
 }
 
-// In-memory store for rendered pages. Key = slug.
-const pageStore = new Map<string, { json: StaticStatusPage; html: string }>();
+export async function getRenderedPage(slug: string): Promise<{ json: StaticStatusPage; html: string } | null> {
+  try {
+    const raw = await redis.get(`uc:sp:${slug}`);
+    if (!raw) return null;
+    return JSON.parse(raw) as { json: StaticStatusPage; html: string };
+  } catch {
+    return null;
+  }
+}
 
-export function getRenderedPage(slug: string) {
-  return pageStore.get(slug) ?? null;
+export async function deleteRenderedPage(slug: string): Promise<void> {
+  await redis.del(`uc:sp:${slug}`);
 }
 
 export async function regenerateStatusPage(
@@ -231,7 +238,7 @@ export async function regenerateStatusPage(
 
   const html = renderStatusHtml(jsonData);
 
-  pageStore.set(page.slug, { json: jsonData, html });
+  await redis.set(`uc:sp:${page.slug}`, JSON.stringify({ json: jsonData, html }), "EX", 604800); // 7-day TTL
   logger.info(`[StaticGen] Regenerated status page: ${page.slug}`);
 }
 

@@ -26,8 +26,15 @@ import { authRateLimit, apiRateLimit, publicRateLimit, toolsRateLimit } from "./
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
 import { logger } from "./utils/logger.js";
+import { Sentry } from "./utils/sentry.js";
 
 const app = new Hono();
+
+app.onError((err, c) => {
+  Sentry.captureException(err);
+  logger.error({ err }, "[Server] Unhandled error");
+  return c.json({ error: "Internal server error" }, 500);
+});
 
 app.use("*", honoLogger());
 app.use("*", securityHeaders);
@@ -86,9 +93,9 @@ app.route("/api", docsRoutes);
 app.use("*", customDomainRouter(app));
 
 // Pre-rendered static status pages (HTML + JSON)
-app.get("/s/:slug", (c) => {
+app.get("/s/:slug", async (c) => {
   const slug = c.req.param("slug");
-  const rendered = getRenderedPage(slug);
+  const rendered = await getRenderedPage(slug);
   if (!rendered) {
     return c.text("Status page not found", 404);
   }

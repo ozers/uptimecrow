@@ -30,6 +30,8 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 - [UptimeCrow vs Statuspage.io](/vs/statuspage): All-in-one monitoring + status pages vs Atlassian's status-page-only product — with a free tier Statuspage.io doesn't offer.
 - [Freshping alternative](https://uptimecrow.com/freshping-alternative): Migration guide for users leaving the shutdown Freshping product.
 - [Free tools](https://uptimecrow.com/tools): SSL certificate checker, DNS lookup, and one-shot uptime tester — public, no signup, 10 requests/min per IP.
+- [Founding member lifetime deal](https://uptimecrow.com/founding): One-time payment for permanent cloud access — Indie Lifetime $99, Pro Lifetime $199. Limited to 250 spots.
+- [Blog](https://uptimecrow.com/blog): Guides on uptime monitoring, reliability engineering, and SRE best practices.
 
 ## Key facts
 

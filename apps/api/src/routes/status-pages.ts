@@ -4,6 +4,7 @@ import { db } from "../db/index.js";
 import { statusPages, statusPageMonitors, monitors, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { createStatusPageSchema, updateStatusPageSchema, PLAN_LIMITS } from "@uptimecrow/shared";
+import { deleteRenderedPage } from "../services/static-gen.service.js";
 
 export const statusPageRoutes = new Hono();
 
@@ -136,11 +137,14 @@ statusPageRoutes.delete("/:id", async (c) => {
   const [deleted] = await db
     .delete(statusPages)
     .where(and(eq(statusPages.id, id), eq(statusPages.orgId, orgId)))
-    .returning({ id: statusPages.id });
+    .returning({ id: statusPages.id, slug: statusPages.slug });
 
   if (!deleted) {
     return c.json({ error: "Status page not found" }, 404);
   }
+
+  // Remove cached render from Redis so stale HTML is not served after deletion
+  await deleteRenderedPage(deleted.slug);
 
   return c.json({ ok: true });
 });

@@ -151,6 +151,24 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://uptimecrow.com/founding</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://uptimecrow.com/blog</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://uptimecrow.com/blog/open-source-uptime-monitoring-guide</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://uptimecrow.com/privacy</loc>
     <lastmod>2026-05-01</lastmod>
     <changefreq>yearly</changefreq>
