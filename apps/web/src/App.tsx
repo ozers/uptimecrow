@@ -49,6 +49,9 @@ import SslChecker from "./pages/tools/SslChecker";
 import DnsLookup from "./pages/tools/DnsLookup";
 import UptimeTest from "./pages/tools/UptimeTest";
 import Changelog from "./pages/Changelog";
+import { Founding } from "./pages/Founding";
+import BlogIndex from "./pages/blog/BlogIndex";
+import OpenSourceUptimeGuide from "./pages/blog/posts/OpenSourceUptimeGuide";
 
 export function App() {
   return (
@@ -83,6 +86,9 @@ export function App() {
         <Route path="/tools/dns-lookup" element={<DnsLookup />} />
         <Route path="/tools/uptime-test" element={<UptimeTest />} />
         <Route path="/changelog" element={<Changelog />} />
+        <Route path="/founding" element={<Founding />} />
+        <Route path="/blog" element={<BlogIndex />} />
+        <Route path="/blog/open-source-uptime-monitoring-guide" element={<OpenSourceUptimeGuide />} />
         <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
