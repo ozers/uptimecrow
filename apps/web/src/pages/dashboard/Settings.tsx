@@ -120,6 +120,21 @@ function UpgradeOptions() {
           </div>
         ))}
       </div>
+
+      <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+        <div>
+          <p className="text-xs font-semibold text-foreground">Need more than Pro?</p>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            More monitors, custom data retention, SSO, DPA, or a custom invoice — tell us what you need.
+          </p>
+        </div>
+        <a
+          href="mailto:support@uptimecrow.com?subject=Custom plan inquiry"
+          className="shrink-0 text-xs font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
+        >
+          Contact us →
+        </a>
+      </div>
     </div>
   );
 }
