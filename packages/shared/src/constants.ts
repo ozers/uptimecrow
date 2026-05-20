@@ -73,7 +73,7 @@ export const PLAN_LIMITS = {
 } as const;
 
 export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
-  indie: 19,
-  pro: 49,
+  indie: 12,
+  pro: 29,
   team: 79,
 };

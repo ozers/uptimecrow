@@ -7,7 +7,7 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 ## Core pages
 
 - [Home](https://uptimecrow.com/): Product overview, "your site went down — we caught it first" positioning, hero demo, social proof, dashboard preview, and call-to-action.
-- [Pricing](https://uptimecrow.com/pricing): Three tiers — Free ($0, 10 monitors, 5-min checks, 7-day history, email only), Indie ($19/mo, 25 monitors, 1-min checks, Slack/Discord/webhooks, custom domain, 90-day history), Pro ($49/mo, 100 monitors, 30s checks, multi-region, 1-year history, 5 seats). Custom plans via email.
+- [Pricing](https://uptimecrow.com/pricing): Three tiers — Free ($0, 10 monitors, 5-min checks, 7-day history, email only), Indie ($12/mo, 25 monitors, 1-min checks, Slack/Discord/PagerDuty/webhooks, custom domain, 90-day history), Pro ($29/mo, 100 monitors, 30s checks, multi-region, 1-year history, 5 seats). Custom plans via email.
 - [Docs](https://uptimecrow.com/docs): How to add monitors, configure alerts, create status pages, embed badges, use the REST API and MCP server, and self-host with Docker Compose.
 - [MCP Server](https://uptimecrow.com/mcp): Native Model Context Protocol endpoint at /api/mcp (POST JSON-RPC, Bearer-token auth). Tools: get_status_summary, list_monitors, list_active_incidents, get_monitor_detail, list_heartbeats. Lets AI assistants answer "is my API up?" without leaving the editor.
 - [Self-Host](https://uptimecrow.com/self-host): MIT-licensed Docker Compose stack — API + Postgres + Redis + BullMQ worker + Vite/nginx web. One command up; deploy to your own VPS in minutes.
