@@ -15,11 +15,10 @@ const codeBlockStyle: React.CSSProperties = {
   fontSize: "0.82rem",
 };
 
-const COMPOSE_SNIPPET = `version: "3.9"
-
-services:
+const COMPOSE_SNIPPET = `services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: uptimecrow
       POSTGRES_USER: uptimecrow
@@ -29,14 +28,17 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     volumes:
       - redisdata:/data
 
   api:
-    image: ghcr.io/uptimecrow/api:latest
+    image: ghcr.io/ozers/uptimecrow/api:latest
+    restart: unless-stopped
     depends_on: [postgres, redis]
     environment:
       MODE: all
+      NODE_ENV: production
       DATABASE_URL: postgres://uptimecrow:\${POSTGRES_PASSWORD}@postgres:5432/uptimecrow
       REDIS_URL: redis://redis:6379
       JWT_SECRET: \${JWT_SECRET}
@@ -50,8 +52,11 @@ services:
       - "3000:3000"
 
   web:
-    image: ghcr.io/uptimecrow/web:latest
+    image: ghcr.io/ozers/uptimecrow/web:latest
+    restart: unless-stopped
     depends_on: [api]
+    environment:
+      API_URL: http://api:3000
     ports:
       - "80:80"
 
@@ -59,22 +64,24 @@ volumes:
   pgdata:
   redisdata:`;
 
-const ENV_SNIPPET = `# .env
-POSTGRES_PASSWORD=change_me_in_production
-JWT_SECRET=at_least_32_random_characters_here
+const ENV_SNIPPET = `# .env — generate strong secrets with openssl
+POSTGRES_PASSWORD=$(openssl rand -hex 24)
+JWT_SECRET=$(openssl rand -hex 32)
 APP_URL=https://uptime.yourdomain.com
 
-# Optional: Amazon SES for email alerts
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...`;
+# Optional: Amazon SES for email alerts. Slack/Discord/PagerDuty/Teams/
+# Telegram work without these — leave blank to disable email.
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=`;
 
-const START_SNIPPET = `# Pull images and start all 4 containers
+const START_SNIPPET = `# Pull images and start all 4 containers.
+# Migrations run automatically on API startup — no extra step needed.
 docker compose up -d
 
-# Run database migrations
-docker compose exec api pnpm db:migrate
+# Watch logs while it warms up
+docker compose logs -f api
 
-# Check everything is healthy
+# Verify everything is healthy
 docker compose ps`;
 
 export default function SelfHostPage() {
