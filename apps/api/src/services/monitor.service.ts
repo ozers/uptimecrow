@@ -92,7 +92,7 @@ export async function executeHttpCheck(
       status: "down",
       responseMs,
       statusCode: null,
-      errorMessage: err.name === "AbortError" ? `Timeout after ${options.timeoutMs}ms` : err.message,
+      errorMessage: err.name === "AbortError" ? `Timeout after ${options.timeoutMs / 1000}s` : err.message,
       region,
     };
   }
@@ -212,7 +212,7 @@ export async function executeTestCheck(
       status: "down",
       responseMs,
       statusCode: null,
-      errorMessage: err.name === "AbortError" ? `Timeout after ${options.timeoutMs}ms` : err.message,
+      errorMessage: err.name === "AbortError" ? `Timeout after ${options.timeoutMs / 1000}s` : err.message,
       region: "eu-west",
       bodyPreview: "",
       bodyLength: 0,
@@ -291,7 +291,7 @@ export async function executeTcpCheck(
 
     socket.setTimeout(options.timeoutMs);
     socket.once("connect", () => done("up", null));
-    socket.once("timeout", () => done("down", `Timeout after ${options.timeoutMs}ms`));
+    socket.once("timeout", () => done("down", `Timeout after ${options.timeoutMs / 1000}s`));
     socket.once("error", (err) => done("down", err.message));
     socket.connect(port, host);
   });
