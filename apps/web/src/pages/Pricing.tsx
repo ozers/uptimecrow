@@ -42,20 +42,20 @@ const PLANS: PlanDef[] = [
   },
   {
     name: "Indie",
-    monthlyPrice: 12,
-    annualMonthlyPrice: 10,
-    annualTotal: 120,
+    monthlyPrice: 9,
+    annualMonthlyPrice: 7,
+    annualTotal: 84,
     per: "/mo",
     desc: "For indie hackers and solo founders.",
     features: [
       "25 monitors",
-      "3 status pages + custom domain",
+      "5 status pages + custom domain",
       "1-minute check intervals",
       "10 heartbeat monitors",
       "Slack, Discord, PagerDuty, webhooks",
       "API access",
       "2 team seats",
-      "90-day history",
+      "1-year history",
     ],
     cta: "Get Started",
     featured: false,
@@ -124,7 +124,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($12/mo) for 1-minute checks and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks, multi-region monitoring, and 1-year history.",
+      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and multi-region monitoring.",
     canonical: "https://uptimecrow.com/pricing",
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);

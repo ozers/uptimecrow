@@ -35,13 +35,13 @@ export const PLAN_LIMITS = {
     heartbeats: 3,
   },
   indie: {
-    statusPages: 3,
+    statusPages: 5,
     monitors: 25,
     minInterval: 60,       // 1-minute checks
     customDomain: true,
     slackWebhook: true,
     teamSeats: 2,
-    retentionDays: 90,
+    retentionDays: 365,
     apiAccess: true,
     multiRegion: false,
     heartbeats: 10,
@@ -73,7 +73,7 @@ export const PLAN_LIMITS = {
 } as const;
 
 export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
-  indie: 12,
+  indie: 9,
   pro: 29,
   team: 79,
 };
