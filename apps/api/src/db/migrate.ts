@@ -186,6 +186,10 @@ const repairs: Array<{ sql: string; desc: string }> = [
     sql: `ALTER TABLE check_results ADD COLUMN IF NOT EXISTS region varchar(20) NOT NULL DEFAULT 'eu-west'`,
     desc: "check_results.region",
   },
+  {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS slow_response_threshold_ms integer`,
+    desc: "monitors.slow_response_threshold_ms",
+  },
 ];
 
 async function runMigrations(): Promise<void> {
