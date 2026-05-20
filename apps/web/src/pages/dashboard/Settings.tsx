@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useAuthStore } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
 import { analytics } from "@/lib/analytics";
-import { PLAN_LIMITS } from "@uptimecrow/shared";
+import { PLAN_LIMITS, PLAN_CATALOG } from "@uptimecrow/shared";
 import { toast } from "sonner";
 import { User, CreditCard, Webhook, ExternalLink, Loader2, Users, Trash2, Plus, Zap, Sparkles } from "lucide-react";
 import { restartOnboarding } from "@/components/setup-checklist";
@@ -34,39 +34,13 @@ interface OrgSettings {
   twilioToNumber: string | null;
 }
 
-const UPGRADE_PLANS = [
-  {
-    name: "Indie" as const,
-    plan: "indie" as const,
-    monthly: 12,
-    annual: 10,
-    annualTotal: 120,
-    features: ["25 monitors", "3 status pages", "API access", "Custom domain", "2 team seats"],
-  },
-  {
-    name: "Pro" as const,
-    plan: "pro" as const,
-    monthly: 29,
-    annual: 24,
-    annualTotal: 290,
-    features: ["50 monitors", "Multi-region checks", "30s intervals", "10 status pages", "3 team seats"],
-    featured: true,
-  },
-  {
-    name: "Team" as const,
-    plan: "team" as const,
-    monthly: 79,
-    annual: 66,
-    annualTotal: 790,
-    features: ["200 monitors", "100 heartbeats", "10 team seats", "365-day history", "Priority support"],
-  },
-];
+const UPGRADE_PLANS = PLAN_CATALOG.filter((p) => p.plan !== "free");
 
 function UpgradeOptions() {
   const [annual, setAnnual] = useState(false);
   const [loading, setLoading] = useState<string | null>(null);
 
-  const handleCheckout = async (plan: "indie" | "pro" | "team") => {
+  const handleCheckout = async (plan: string) => {
     setLoading(plan);
     try {
       const data = await api.post<{ checkoutUrl: string }>("/api/billing/checkout", {
@@ -116,7 +90,7 @@ function UpgradeOptions() {
               {p.featured && <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Popular</span>}
             </div>
             <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-bold">${annual ? p.annual : p.monthly}</span>
+              <span className="text-xl font-bold">${annual ? p.annualMonthlyPrice : p.monthlyPrice}</span>
               <span className="text-xs text-muted-foreground">/mo</span>
             </div>
             {annual && (

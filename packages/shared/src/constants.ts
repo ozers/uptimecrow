@@ -77,3 +77,73 @@ export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
   pro: 29,
   team: 79,
 };
+
+export interface PlanCatalogEntry {
+  plan: Plan;
+  name: string;
+  monthlyPrice: number;
+  annualMonthlyPrice: number;
+  annualTotal: number;
+  desc: string;
+  features: string[];
+  featured: boolean;
+}
+
+export const PLAN_CATALOG: PlanCatalogEntry[] = [
+  {
+    plan: "free",
+    name: "Free",
+    monthlyPrice: 0,
+    annualMonthlyPrice: 0,
+    annualTotal: 0,
+    desc: "Try it out. No credit card.",
+    features: [
+      "10 monitors",
+      "1 status page",
+      "5-minute check intervals",
+      "3 heartbeat monitors",
+      "Email alerts",
+      "Uptime badge",
+      "7-day history",
+    ],
+    featured: false,
+  },
+  {
+    plan: "indie",
+    name: "Indie",
+    monthlyPrice: 9,
+    annualMonthlyPrice: 7,
+    annualTotal: 84,
+    desc: "For indie hackers and solo founders.",
+    features: [
+      "25 monitors",
+      "5 status pages + custom domain",
+      "1-minute check intervals",
+      "10 heartbeat monitors",
+      "Slack, Discord, PagerDuty, webhooks",
+      "API access",
+      "2 team seats",
+      "1-year history",
+    ],
+    featured: false,
+  },
+  {
+    plan: "pro",
+    name: "Pro",
+    monthlyPrice: 29,
+    annualMonthlyPrice: 24,
+    annualTotal: 288,
+    desc: "For teams that take uptime seriously.",
+    features: [
+      "100 monitors",
+      "10 status pages + custom domain",
+      "30-second check intervals",
+      "25 heartbeat monitors",
+      "Multi-region checks",
+      "5 team seats",
+      "1-year history",
+      "Priority support",
+    ],
+    featured: true,
+  },
+];
