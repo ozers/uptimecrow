@@ -12,12 +12,13 @@ if (!databaseUrl) {
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const client = postgres(databaseUrl, { max: 1 });
-const db = drizzle(client);
+const RETRYABLE_CODES = new Set(["CONNECT_TIMEOUT", "ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT"]);
+const MAX_RETRIES = 12;
+const RETRY_DELAY_MS = 5000;
 
-// Postgres error codes that mean "the desired schema state is already in
-// place" — safe to log and continue on Railway where WAL loss can wipe
-// __drizzle_migrations while leaving the actual schema intact.
+// Postgres error codes that mean the desired schema state is already in place —
+// safe to log and continue on Railway where WAL loss can wipe __drizzle_migrations
+// while leaving the actual schema intact.
 const TOLERABLE_CODES = new Set([
   "42701", // duplicate_column
   "42P07", // duplicate_table
@@ -25,28 +26,6 @@ const TOLERABLE_CODES = new Set([
   "42P06", // duplicate_schema
 ]);
 
-logger.info("Running migrations...");
-try {
-  await migrate(db, { migrationsFolder: path.join(__dirname, "../../drizzle") });
-  logger.info("Migrations complete.");
-} catch (err: unknown) {
-  const code = (err as { code?: string } | null)?.code;
-  if (code && TOLERABLE_CODES.has(code)) {
-    logger.warn(
-      { code, err },
-      "Migration step hit a duplicate-object error — schema already has the target state, continuing",
-    );
-  } else {
-    logger.error({ err }, "Migration failed");
-    await client.end();
-    process.exit(1);
-  }
-}
-
-// Post-migration schema repair: idempotent DDL for columns/types that Drizzle may
-// have skipped if a previous migration hit a tolerable error and halted early.
-// Runs every startup — all statements use IF NOT EXISTS so they are no-ops when
-// the schema is already correct.
 const repairs: Array<{ sql: string; desc: string }> = [
   {
     sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS access_token uuid DEFAULT gen_random_uuid()`,
@@ -209,25 +188,72 @@ const repairs: Array<{ sql: string; desc: string }> = [
   },
 ];
 
-let repairErrors = 0;
-for (const { sql, desc } of repairs) {
-  try {
-    await client.unsafe(sql);
-  } catch (repairErr: unknown) {
-    const repairCode = (repairErr as { code?: string } | null)?.code;
-    if (repairCode === "42P01") {
-      logger.warn(`Schema repair skipped [${desc}] — base table not yet created`);
-    } else {
-      logger.error({ err: repairErr }, `Schema repair failed [${desc}]`);
-      repairErrors++;
+async function runMigrations(): Promise<void> {
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const client = postgres(databaseUrl, { max: 1, connect_timeout: 30 });
+    try {
+      logger.info(`Running migrations... (attempt ${attempt}/${MAX_RETRIES})`);
+      const db = drizzle(client);
+
+      try {
+        await migrate(db, { migrationsFolder: path.join(__dirname, "../../drizzle") });
+        logger.info("Migrations complete.");
+      } catch (err: unknown) {
+        const code = (err as { code?: string } | null)?.code;
+        if (code && TOLERABLE_CODES.has(code)) {
+          logger.warn(
+            { code, err },
+            "Migration step hit a duplicate-object error — schema already has the target state, continuing",
+          );
+        } else {
+          throw err;
+        }
+      }
+
+      let repairErrors = 0;
+      for (const { sql, desc } of repairs) {
+        try {
+          await client.unsafe(sql);
+        } catch (repairErr: unknown) {
+          const repairCode = (repairErr as { code?: string } | null)?.code;
+          if (repairCode === "42P01") {
+            logger.warn(`Schema repair skipped [${desc}] — base table not yet created`);
+          } else {
+            logger.error({ err: repairErr }, `Schema repair failed [${desc}]`);
+            repairErrors++;
+          }
+        }
+      }
+
+      if (repairErrors === 0) {
+        logger.info("Schema repair complete.");
+      } else {
+        logger.warn(`Schema repair finished with ${repairErrors} error(s) — check logs above`);
+      }
+
+      await client.end();
+      return;
+    } catch (err: unknown) {
+      await client.end().catch(() => {});
+      const code = (err as { code?: string } | null)?.code;
+
+      if (code && RETRYABLE_CODES.has(code) && attempt < MAX_RETRIES) {
+        logger.warn(
+          { code, attempt, maxRetries: MAX_RETRIES },
+          `DB not reachable, retrying in ${RETRY_DELAY_MS / 1000}s...`,
+        );
+        await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        continue;
+      }
+
+      logger.error({ err }, "Migration failed");
+      process.exit(1);
     }
   }
-}
-if (repairErrors === 0) {
-  logger.info("Schema repair complete.");
-} else {
-  logger.warn(`Schema repair finished with ${repairErrors} error(s) — check logs above`);
+
+  logger.error("Migration failed: max retries exhausted");
+  process.exit(1);
 }
 
-await client.end();
+await runMigrations();
 process.exit(0);
