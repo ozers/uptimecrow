@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-05-17T22:59:22.172Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-05-20T07:40:54.344Z
 > Files: 260 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
@@ -88,7 +88,7 @@
 
 - `Dockerfile` — Docker container definition (~371 tok)
 - `drizzle.config.ts` — Drizzle ORM configuration (~82 tok)
-- `package.json` — Node.js package manifest (~322 tok)
+- `package.json` — Node.js package manifest (~317 tok)
 - `railway.toml` (~85 tok)
 - `tsconfig.json` — TypeScript configuration (~41 tok)
 - `vitest.config.ts` — Vitest test configuration (~148 tok)

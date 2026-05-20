@@ -353,6 +353,12 @@
       "action": "edit",
       "tokens": 1158,
       "at": "2026-05-17T22:59:22.183Z"
+    },
+    {
+      "file": "/Volumes/KIOXIA/repos/dev-tools/uptimecrow/apps/api/package.json",
+      "action": "edit",
+      "tokens": 13,
+      "at": "2026-05-20T07:40:54.354Z"
     }
   ],
   "edit_counts": {
@@ -374,7 +380,8 @@
     "apps/web/public/llms.txt": 1,
     "apps/web/public/llms-full.txt": 1,
     "apps/web/public/robots.txt": 1,
-    "apps/web/index.html": 2
+    "apps/web/index.html": 2,
+    "apps/api/package.json": 1
   },
   "anatomy_hits": 33,
   "anatomy_misses": 0,

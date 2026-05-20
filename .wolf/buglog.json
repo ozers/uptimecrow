@@ -2240,6 +2240,22 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-05-15T20:02:12.824Z"
+    },
+    {
+      "id": "bug-141",
+      "timestamp": "2026-05-20T07:40:54.356Z",
+      "error_message": "Incorrect value in code",
+      "file": "apps/api/package.json",
+      "root_cause": "Had \"node --import tsx/esm src/db/migrate.ts\"",
+      "fix": "Changed to \"node dist/db/migrate.js\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-05-20T07:40:54.356Z"
     }
   ]
 }
