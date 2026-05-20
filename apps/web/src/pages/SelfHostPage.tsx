@@ -92,6 +92,49 @@ export default function SelfHostPage() {
     description:
       "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     canonical: "https://uptimecrow.com/self-host",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      name: "Self-host UptimeCrow with Docker Compose",
+      description:
+        "Run the full UptimeCrow stack (Postgres, Redis, API+worker, nginx web) on your own VPS with one command.",
+      totalTime: "PT5M",
+      supply: [
+        { "@type": "HowToSupply", name: "A VPS or machine running Docker 24+" },
+        { "@type": "HowToSupply", name: "512 MB RAM minimum" },
+      ],
+      tool: [
+        { "@type": "HowToTool", name: "Docker Engine 24+" },
+        { "@type": "HowToTool", name: "Docker Compose v2" },
+      ],
+      step: [
+        {
+          "@type": "HowToStep",
+          position: 1,
+          name: "Download the compose file and env template",
+          text: "Fetch docker-compose.prod.yml and .env.prod.example from the GitHub repository.",
+          url: "https://github.com/ozers/uptimecrow#production-self-host",
+        },
+        {
+          "@type": "HowToStep",
+          position: 2,
+          name: "Generate strong secrets",
+          text: "Run `openssl rand -hex 32` for JWT_SECRET and `openssl rand -hex 24` for POSTGRES_PASSWORD. Set APP_URL to your public URL.",
+        },
+        {
+          "@type": "HowToStep",
+          position: 3,
+          name: "Start the stack",
+          text: "Run `docker compose -f docker-compose.prod.yml up -d`. Database migrations run automatically on API startup.",
+        },
+        {
+          "@type": "HowToStep",
+          position: 4,
+          name: "Verify",
+          text: "Check `docker compose ps` — four healthy containers. Open APP_URL in a browser, register a user, create a monitor.",
+        },
+      ],
+    },
   });
 
   return (

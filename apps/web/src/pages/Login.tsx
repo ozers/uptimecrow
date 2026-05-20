@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Activity, Shield, Zap } from "lucide-react";
 import { useAuthStore } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
+import { usePageMeta } from "@/lib/meta";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,11 @@ import type { z } from "zod";
 type LoginForm = z.infer<typeof loginSchema>;
 
 export function Login() {
+  usePageMeta({
+    title: "Log in — UptimeCrow",
+    description: "Sign in to your UptimeCrow account.",
+    robots: "noindex,nofollow",
+  });
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
   const [loading, setLoading] = useState(false);
