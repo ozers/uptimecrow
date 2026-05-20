@@ -9,6 +9,7 @@ const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL environment variable is required");
 }
+const dbUrl: string = databaseUrl;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -194,7 +195,7 @@ const repairs: Array<{ sql: string; desc: string }> = [
 
 async function runMigrations(): Promise<void> {
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-    const client = postgres(databaseUrl, { max: 1, connect_timeout: 30 });
+    const client = postgres(dbUrl, { max: 1, connect_timeout: 30 });
     try {
       logger.info(`Running migrations... (attempt ${attempt}/${MAX_RETRIES})`);
       const db = drizzle(client);
