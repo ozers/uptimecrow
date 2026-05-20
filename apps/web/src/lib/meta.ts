@@ -5,6 +5,8 @@ interface PageMeta {
   description: string;
   canonical?: string;
   jsonLd?: object | object[];
+  /** robots meta value (e.g. "noindex,nofollow"). Omit to leave the default. */
+  robots?: string;
 }
 
 const DEFAULT_TITLE =
@@ -13,7 +15,7 @@ const DEFAULT_DESC =
   "Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down. Developer-first, open-source core.";
 const DEFAULT_CANONICAL = "https://uptimecrow.com/";
 
-export function usePageMeta({ title, description, canonical, jsonLd }: PageMeta) {
+export function usePageMeta({ title, description, canonical, jsonLd, robots }: PageMeta) {
   useEffect(() => {
     document.title = title;
 
@@ -25,6 +27,8 @@ export function usePageMeta({ title, description, canonical, jsonLd }: PageMeta)
 
     const link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (link && canonical) link.href = canonical;
+
+    if (robots) setMeta("name", "robots", robots);
 
     document.getElementById("__page_ld__")?.remove();
     if (jsonLd) {
@@ -43,6 +47,7 @@ export function usePageMeta({ title, description, canonical, jsonLd }: PageMeta)
       setMeta("name", "twitter:title", DEFAULT_TITLE);
       setMeta("name", "twitter:description", DEFAULT_DESC);
       if (link) link.href = DEFAULT_CANONICAL;
+      if (robots) document.querySelector('meta[name="robots"]')?.remove();
       document.getElementById("__page_ld__")?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -53,6 +53,32 @@ export function Pricing() {
     description:
       "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and multi-region monitoring.",
     canonical: "https://uptimecrow.com/pricing",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "UptimeCrow",
+      url: "https://uptimecrow.com",
+      applicationCategory: "DeveloperApplication",
+      applicationSubCategory: "Uptime monitoring and status pages",
+      operatingSystem: "Any (web, Docker)",
+      description:
+        "Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints; auto-create incidents; serve pre-rendered status pages that survive origin downtime; native MCP server for AI assistants.",
+      offers: PLAN_CATALOG.map((p) => ({
+        "@type": "Offer",
+        name: p.name,
+        price: p.monthlyPrice,
+        priceCurrency: "USD",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: p.monthlyPrice,
+          priceCurrency: "USD",
+          unitText: "MONTH",
+        },
+        description: p.desc,
+        availability: "https://schema.org/InStock",
+        category: p.plan === "free" ? "FreeTier" : "Subscription",
+      })),
+    },
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   useEffect(() => { analytics.pricingViewed(); }, []);

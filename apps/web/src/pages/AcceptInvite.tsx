@@ -2,11 +2,17 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api, ApiError } from "@/lib/api";
 import { useAuthStore } from "@/lib/auth";
+import { usePageMeta } from "@/lib/meta";
 import { useInviteInfo } from "@/lib/queries/team";
 import { Loader2, Users, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function AcceptInvite() {
+  usePageMeta({
+    title: "Accept team invite — UptimeCrow",
+    description: "Join a team on UptimeCrow.",
+    robots: "noindex,nofollow",
+  });
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);

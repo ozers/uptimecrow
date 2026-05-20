@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 import { useAuthStore } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
+import { usePageMeta } from "@/lib/meta";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,6 +26,11 @@ const PERKS = [
 ];
 
 export function Register() {
+  usePageMeta({
+    title: "Create your account — UptimeCrow",
+    description: "Sign up free — 10 monitors, 1 status page, 5-minute checks, no credit card required.",
+    robots: "noindex,nofollow",
+  });
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const inviteToken = searchParams.get("invite");
