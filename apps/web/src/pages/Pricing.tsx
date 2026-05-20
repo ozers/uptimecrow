@@ -81,24 +81,6 @@ const PLANS: PlanDef[] = [
     cta: "Get Started",
     featured: true,
   },
-  {
-    name: "Team",
-    monthlyPrice: 79,
-    annualMonthlyPrice: 66,
-    annualTotal: 790,
-    per: "/mo",
-    desc: "For teams that ship fast.",
-    features: [
-      "Everything in Pro",
-      "200 monitors",
-      "100 heartbeat monitors",
-      "10 team seats",
-      "365-day history",
-      "Priority support",
-    ],
-    cta: "Get Started",
-    featured: false,
-  },
 ];
 
 const FAQ = [
@@ -107,7 +89,7 @@ const FAQ = [
     a: "Annual plans are billed upfront for 10 months — you get 12 months of service. That's 2 months completely free. You can switch back to monthly at the end of your annual period.",
   },
   {
-    q: "Is there a free trial for Pro or Team?",
+    q: "Is there a free trial for paid plans?",
     a: "Not yet. The Free plan is free forever — use it until you outgrow it, then upgrade. Refunds on paid plans are handled case-by-case within 14 days of purchase.",
   },
   {
@@ -124,11 +106,11 @@ const FAQ = [
   },
   {
     q: "What is multi-region monitoring?",
-    a: "Pro and Team plans run checks from multiple geographic locations simultaneously. If only one region reports down, it's flagged as a regional issue. Only when a majority of regions agree does an incident open — drastically reducing false alarms.",
+    a: "Pro plan runs checks from multiple geographic locations simultaneously. If only one region reports down, it's flagged as a regional issue. Only when a majority of regions agree does an incident open — drastically reducing false alarms.",
   },
   {
-    q: "Do you offer annual discounts or an enterprise plan?",
-    a: "Annual billing gives you 2 months free (see toggle above). For SSO, a DPA, a custom invoice, or more than 200 monitors, email support@uptimecrow.com.",
+    q: "Do you offer annual discounts or a custom plan?",
+    a: "Annual billing gives you 2 months free (see toggle above). For SSO, a DPA, a custom invoice, or more monitors than Pro allows, email support@uptimecrow.com and we'll sort it out.",
   },
   {
     q: "Can I self-host UptimeCrow?",
@@ -143,7 +125,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 25 monitors and 1 status page. Upgrade to Indie ($12/mo), Pro ($29/mo), or Team ($79/mo) for more monitors, faster checks, and custom domains.",
+      "Start free with 25 monitors and 1 status page. Upgrade to Indie ($12/mo) or Pro ($29/mo) for more monitors, faster checks, and custom domains. Custom plans available.",
     canonical: "https://uptimecrow.com/pricing",
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -248,7 +230,7 @@ export function Pricing() {
 
       <section className="section" style={{ paddingTop: "1rem" }}>
         <div className="container">
-          <div className="pricing-cards">
+          <div className="pricing-cards" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
             {PLANS.map((plan) => {
               const isAnnualPaid = annual && plan.monthlyPrice !== null && plan.monthlyPrice > 0;
               const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;
@@ -278,6 +260,57 @@ export function Pricing() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Enterprise / Custom hook */}
+          <div style={{
+            marginTop: "1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1.25rem",
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "16px",
+            padding: "1.5rem 2rem",
+          }}>
+            <div>
+              <p style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", marginBottom: "0.25rem" }}>
+                Need more than Pro?
+              </p>
+              <p style={{ color: "var(--text2)", fontSize: "0.92rem", margin: 0 }}>
+                More monitors, custom data retention, SSO, DPA, or a custom invoice — tell us what you need.
+              </p>
+            </div>
+            <a
+              href="mailto:support@uptimecrow.com?subject=Custom plan inquiry"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.4rem",
+                padding: "0.65rem 1.4rem",
+                borderRadius: "10px",
+                border: "1.5px solid var(--border)",
+                background: "var(--bg)",
+                color: "var(--text)",
+                fontWeight: 600,
+                fontSize: "0.9rem",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                transition: "border-color 0.15s, color 0.15s",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--green)";
+                (e.currentTarget as HTMLAnchorElement).style.color = "var(--green)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)";
+              }}
+            >
+              Contact us →
+            </a>
           </div>
         </div>
       </section>
