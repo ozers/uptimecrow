@@ -24,20 +24,20 @@ export const DEFAULT_EXPECTED_STATUS = 200;
 export const PLAN_LIMITS = {
   free: {
     statusPages: 1,
-    monitors: 25,
-    minInterval: 60,
+    monitors: 10,
+    minInterval: 300,      // 5-minute checks
     customDomain: false,
-    slackWebhook: true,
+    slackWebhook: false,   // email only on free
     teamSeats: 1,
-    retentionDays: 60,
+    retentionDays: 7,
     apiAccess: false,
     multiRegion: false,
-    heartbeats: 5,
+    heartbeats: 3,
   },
   indie: {
     statusPages: 3,
     monitors: 25,
-    minInterval: 60,
+    minInterval: 60,       // 1-minute checks
     customDomain: true,
     slackWebhook: true,
     teamSeats: 2,
@@ -48,12 +48,12 @@ export const PLAN_LIMITS = {
   },
   pro: {
     statusPages: 10,
-    monitors: 50,
-    minInterval: 30,
+    monitors: 100,
+    minInterval: 30,       // 30-second checks
     customDomain: true,
     slackWebhook: true,
-    teamSeats: 3,
-    retentionDays: 90,
+    teamSeats: 5,
+    retentionDays: 365,
     apiAccess: true,
     multiRegion: true,
     heartbeats: 25,
@@ -73,7 +73,7 @@ export const PLAN_LIMITS = {
 } as const;
 
 export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
-  indie: 12,
-  pro: 29,
+  indie: 19,
+  pro: 49,
   team: 79,
 };
