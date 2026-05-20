@@ -83,7 +83,7 @@ export default function SelfHostPage() {
   usePageMeta({
     title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
     description:
-      "Run UptimeCrow on your own infrastructure with a single Docker Compose command. MIT-licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
+      "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     canonical: "https://uptimecrow.com/self-host",
   });
 
@@ -127,7 +127,7 @@ export default function SelfHostPage() {
       {/* Hero */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● MIT Licensed — own your monitoring stack</div>
+          <div className="hero-badge">● AGPL-3.0 Licensed — own your monitoring stack</div>
           <h1>Run your own uptime<br />monitor in 5 minutes.</h1>
           <p className="hero-sub">
             4 Docker containers. 512 MB RAM. Any VPS. Full source code included —
@@ -136,7 +136,7 @@ export default function SelfHostPage() {
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Use the cloud version free</Link>
             <a
-              href="https://github.com/uptimecrow/uptimecrow"
+              href="https://github.com/ozers/uptimecrow"
               className="hero-btn secondary"
               target="_blank"
               rel="noopener noreferrer"
@@ -251,7 +251,7 @@ export default function SelfHostPage() {
                 </tr>
                 <tr>
                   <td>License</td>
-                  <td className="you-col"><span className="check">✓</span> MIT — no restrictions</td>
+                  <td className="you-col"><span className="check">✓</span> AGPL-3.0 — full source access</td>
                   <td>SaaS ToS</td>
                 </tr>
               </tbody>

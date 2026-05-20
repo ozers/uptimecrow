@@ -60,7 +60,7 @@ export function VsHealthchecks() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✓ Built-in" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✓ BSD-licensed" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✓ BSD-licensed" },
         { feature: "API access", us: "Indie plan ($12/mo)", them: "✓ All plans" },
         { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
       ]}

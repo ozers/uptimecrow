@@ -10,3 +10,19 @@ coverage/
 .vite/
 *.tsbuildinfo
 .claude/
+
+# OpenWolf local context (not for public repo)
+.wolf/
+
+# Internal-only docs (planning, competitor analysis, pricing strategy)
+# Keep these in a private repo, not the public mirror.
+docs/PROJECT_ANALYSIS.md
+docs/competitor-analysis.md
+docs/competitor-analysis-report.html
+docs/degerlendirme-v3.html
+docs/pricing-analysis.html
+docs/before-after.html
+docs/ai-status-page-landing.html
+docs/lovable-prompt.md
+TEST_CHECKLIST.md
+TEST_CHECKLIST.html

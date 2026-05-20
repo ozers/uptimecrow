@@ -261,7 +261,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
-    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $24/mo for serious use.",
+    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an AGPL-3.0 open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $24/mo for serious use.",
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
@@ -277,7 +277,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Can I self-host UptimeCrow?",
-    a: "Yes. UptimeCrow's full stack is MIT-licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure.",
+    a: "Yes. UptimeCrow's full stack is AGPL-3.0 licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure.",
   },
   {
     q: "What is the MCP server and how does it work with Claude?",
