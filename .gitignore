@@ -11,7 +11,7 @@ coverage/
 *.tsbuildinfo
 .claude/
 
-# OpenWolf local context (not for public repo)
+# Local AI tooling scratch dirs (Claude Code, Cursor, OpenWolf, etc.)
 .wolf/
 
 # Internal-only docs (planning, competitor analysis, pricing strategy)
