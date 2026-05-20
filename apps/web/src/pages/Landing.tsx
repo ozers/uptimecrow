@@ -261,15 +261,15 @@ const FAQ_ITEMS = [
   },
   {
     q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
-    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 25 monitors — BetterStack starts at $29/mo for serious use.",
+    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an MIT open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $24/mo for serious use.",
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 25 monitors, 1 status page, 1-minute check intervals, 5 heartbeat monitors, Slack & Discord alerts, and 60-day history.",
+    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history. Upgrade to Indie ($12/mo) for 1-minute checks and Slack/Discord.",
   },
   {
     q: "What is heartbeat monitoring and cron job monitoring?",
-    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (5 heartbeats).",
+    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (3 heartbeats).",
   },
   {
     q: "How does UptimeCrow prevent false alarms?",
@@ -285,7 +285,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How often does UptimeCrow check my websites and APIs?",
-    a: "Every 60 seconds on Free and Indie plans. Every 30 seconds on Pro and Team. Checks run from multiple regions to reduce false positives — a single regional failure won't trigger an incident.",
+    a: "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro. Multi-region checks on Pro — a single regional failure won't trigger an incident.",
   },
   {
     q: "How do status pages stay online when my origin is down?",
@@ -381,7 +381,7 @@ export function LandingPage() {
       {/* HERO */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● Free forever · 25 monitors · 1 status page · 60-second checks</div>
+          <div className="hero-badge">● Free forever · 10 monitors · 1 status page · no credit card</div>
           <h1>Your site went down.<br /><span className="highlight">We caught it first.</span></h1>
           <p className="hero-sub">
             Downtime detected → incident created → status page updated → subscribers notified. <strong>All before you wake up.</strong>
@@ -419,7 +419,7 @@ export function LandingPage() {
           <div className="proof-divider" aria-hidden="true" />
           <div className="proof-item">
             <Clock size={14} aria-hidden="true" />
-            <span>1-minute checks free · 30-second checks Pro+</span>
+            <span>1-minute checks on Indie · 30-second checks on Pro</span>
           </div>
           <div className="proof-divider" aria-hidden="true" />
           <div className="proof-item">
@@ -586,10 +586,10 @@ export function LandingPage() {
               {[
                 { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
                 { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
-                { feature: "Uptime monitoring", us: "✓ 60s free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
+                { feature: "Uptime monitoring", us: "✓ 5min free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
                 { feature: "Free monitors", us: "✓ 10 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
                 { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
-                { feature: "Heartbeat monitoring", us: "✓ All plans", bs: "✓ Paid only", ins: "✗", sp: "✗" },
+                { feature: "Heartbeat monitoring", us: "✓ All plans (3 free)", bs: "✓ Paid only", ins: "✗", sp: "✗" },
                 { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
                 { feature: "PagerDuty + Teams + Telegram", us: "✓ Built-in", bs: "✓ Paid", ins: "✗ Partial", sp: "✓ Enterprise" },
                 { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
