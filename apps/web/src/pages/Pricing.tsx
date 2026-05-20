@@ -5,82 +5,9 @@ import "./Landing.css";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
 import { usePageMeta } from "@/lib/meta";
+import { PLAN_CATALOG } from "@uptimecrow/shared";
 
 const BRAND = "UptimeCrow";
-
-interface PlanDef {
-  name: string;
-  monthlyPrice: number | null;
-  annualMonthlyPrice: number | null;
-  annualTotal: number | null;
-  per: string;
-  desc: string;
-  features: string[];
-  cta: string;
-  featured: boolean;
-}
-
-const PLANS: PlanDef[] = [
-  {
-    name: "Free",
-    monthlyPrice: 0,
-    annualMonthlyPrice: 0,
-    annualTotal: 0,
-    per: "/mo",
-    desc: "Try it out. No credit card.",
-    features: [
-      "10 monitors",
-      "1 status page",
-      "5-minute check intervals",
-      "3 heartbeat monitors",
-      "Email alerts",
-      "Uptime badge",
-      "7-day history",
-    ],
-    cta: "Get Started Free",
-    featured: false,
-  },
-  {
-    name: "Indie",
-    monthlyPrice: 9,
-    annualMonthlyPrice: 7,
-    annualTotal: 84,
-    per: "/mo",
-    desc: "For indie hackers and solo founders.",
-    features: [
-      "25 monitors",
-      "5 status pages + custom domain",
-      "1-minute check intervals",
-      "10 heartbeat monitors",
-      "Slack, Discord, PagerDuty, webhooks",
-      "API access",
-      "2 team seats",
-      "1-year history",
-    ],
-    cta: "Get Started",
-    featured: false,
-  },
-  {
-    name: "Pro",
-    monthlyPrice: 29,
-    annualMonthlyPrice: 24,
-    annualTotal: 288,
-    per: "/mo",
-    desc: "For teams that take uptime seriously.",
-    features: [
-      "100 monitors",
-      "10 status pages + custom domain",
-      "30-second check intervals",
-      "25 heartbeat monitors",
-      "Multi-region checks",
-      "5 team seats",
-      "1-year history",
-      "Priority support",
-    ],
-    cta: "Get Started",
-    featured: true,
-  },
-];
 
 const FAQ = [
   {
@@ -230,15 +157,15 @@ export function Pricing() {
       <section className="section" style={{ paddingTop: "1rem" }}>
         <div className="container">
           <div className="pricing-cards" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
-            {PLANS.map((plan) => {
-              const isAnnualPaid = annual && plan.monthlyPrice !== null && plan.monthlyPrice > 0;
+            {PLAN_CATALOG.map((plan) => {
+              const isAnnualPaid = annual && plan.monthlyPrice > 0;
               const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;
               return (
-                <div key={plan.name} className={`price-card${plan.featured ? " featured" : ""}`}>
+                <div key={plan.plan} className={`price-card${plan.featured ? " featured" : ""}`}>
                   <p className="price-name">{plan.name}</p>
                   <p className="price-amount">
                     {displayPrice}
-                    <span>{plan.per}</span>
+                    <span>/mo</span>
                   </p>
                   {isAnnualPaid && (
                     <p style={{ fontSize: "0.78rem", color: "var(--text3)", marginTop: "-0.25rem", marginBottom: "0.5rem" }}>
@@ -250,11 +177,11 @@ export function Pricing() {
                     {plan.features.map((f) => <li key={f}>{f}</li>)}
                   </ul>
                   <Link
-                    to={plan.name === "Free" ? "/register" : ctaHref}
+                    to={plan.plan === "free" ? "/register" : ctaHref}
                     className={`price-btn${plan.featured ? " featured-btn" : ""}`}
                     onClick={() => analytics.upgradeClicked(plan.name)}
                   >
-                    {plan.name === "Free" ? "Get Started" : isAuthenticated ? "Upgrade Now" : "Get Started"}
+                    {plan.plan === "free" ? "Get Started Free" : isAuthenticated ? "Upgrade Now" : "Get Started"}
                   </Link>
                 </div>
               );
