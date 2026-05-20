@@ -4,8 +4,11 @@ RUN corepack enable && corepack prepare pnpm@10.30.2 --activate
 WORKDIR /app
 
 # ── Dependencies ──
+# All workspace package.jsons must be present for pnpm to resolve peer
+# dependencies correctly across the monorepo.
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY apps/api/package.json apps/api/
 COPY apps/web/package.json apps/web/
 COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile
