@@ -6,7 +6,7 @@ export function VsStatusCake() {
       competitor="StatusCake"
       competitorShort="StatusCake"
       headline={<>StatusCake without the<br /><span className="highlight">enterprise pricing.</span></>}
-      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, MIT open-source, MCP-native, free for 25 monitors."
+      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, AGPL-3.0 open-source, MCP-native, free for 25 monitors."
       pitch={
         <>
           <p>
@@ -17,7 +17,7 @@ export function VsStatusCake() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow is what an uptime monitor looks like when you start from a developer's workflow:
-            <strong> 60-second checks on the free tier, every notification channel on every plan, MIT
+            <strong> 60-second checks on the free tier, every notification channel on every plan, AGPL-3.0
             open-source so you can self-host, and a native MCP server</strong> for AI assistants. No
             "contact sales" tier.
           </p>
@@ -34,7 +34,7 @@ export function VsStatusCake() {
         },
         {
           title: "Open source, self-hostable",
-          body: "MIT-licensed on GitHub. Run UptimeCrow in your own Docker stack with zero vendor lock-in. StatusCake is closed source.",
+          body: "AGPL-3.0 licensed on GitHub. Run UptimeCrow in your own Docker stack with zero vendor lock-in. StatusCake is closed source.",
         },
         {
           title: "Pre-rendered status pages",
@@ -61,7 +61,7 @@ export function VsStatusCake() {
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Pay-per-SMS extra" },
         { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Indie plan ($12/mo)", them: "Paid plans" },
         { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "✓ All plans" },
       ]}

@@ -1,10 +1,10 @@
 # UptimeCrow — Full Reference for AI Assistants
 
-> Developer-first uptime monitoring and status page platform. Open source (MIT), self-hostable, free forever for 25 monitors.
+> Developer-first uptime monitoring and status page platform. Open source (AGPL-3.0), self-hostable, free forever for 25 monitors.
 
 ## What is UptimeCrow?
 
-UptimeCrow is an uptime monitoring service for developers and small teams. It watches HTTP endpoints, TCP ports, and keyword-on-page checks, opens incidents automatically when something breaks (with multi-region confirmation so a single failed check never pages anyone), notifies the right channels, and updates a public status page — all without manual intervention. The same product also runs heartbeat monitoring for cron jobs and scheduled tasks. It is offered as a managed cloud at https://uptimecrow.com and as an MIT-licensed Docker stack you can run yourself.
+UptimeCrow is an uptime monitoring service for developers and small teams. It watches HTTP endpoints, TCP ports, and keyword-on-page checks, opens incidents automatically when something breaks (with multi-region confirmation so a single failed check never pages anyone), notifies the right channels, and updates a public status page — all without manual intervention. The same product also runs heartbeat monitoring for cron jobs and scheduled tasks. It is offered as a managed cloud at https://uptimecrow.com and as an AGPL-3.0 licensed Docker stack you can run yourself.
 
 ## Who is it for?
 
@@ -53,7 +53,7 @@ All plans include unlimited subscribers on the status pages they're entitled to,
 
 ## Self-hosting
 
-UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the repo, run `docker compose up`, and you have the full stack: Postgres 16, Redis 7, the API on port 3000, BullMQ workers, and the Vite/nginx web app. Production deploys use multi-stage Dockerfiles for both API and web; the web image is nginx with SPA fallback and a reverse proxy to the API. Database migrations live in `apps/api/drizzle/` and are applied with `pnpm db:migrate`.
+UptimeCrow is AGPL-3.0 licensed at https://github.com/ozers/uptimecrow. Clone the repo, run `docker compose up`, and you have the full stack: Postgres 16, Redis 7, the API on port 3000, BullMQ workers, and the Vite/nginx web app. Production deploys use multi-stage Dockerfiles for both API and web; the web image is nginx with SPA fallback and a reverse proxy to the API. Database migrations live in `apps/api/drizzle/` and are applied with `pnpm db:migrate`.
 
 ## Tech stack
 
@@ -76,7 +76,7 @@ UptimeCrow is MIT-licensed at https://github.com/ozers/uptimecrow. Clone the rep
 
 **Does UptimeCrow integrate with AI assistants?** Yes. The built-in MCP server exposes monitor state to Claude Code, Cursor, Windsurf, and any other MCP-aware client over JSON-RPC.
 
-**Can I self-host?** Yes. The full source is MIT-licensed on GitHub; everything runs with `docker compose up`.
+**Can I self-host?** Yes. The full source is AGPL-3.0 licensed on GitHub; everything runs with `docker compose up`.
 
 **What notification channels are supported?** Email (Amazon SES), Slack, Discord, custom webhooks, PagerDuty Events API v2, Microsoft Teams (MessageCard webhooks), and Telegram bots.
 

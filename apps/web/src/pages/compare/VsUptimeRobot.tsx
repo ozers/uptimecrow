@@ -60,7 +60,7 @@ export function VsUptimeRobot() {
         { feature: "Keyword monitoring", us: true, them: true },
         { feature: "SMS alerts (Twilio)", us: "✓ Paid plans", them: "✓ Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Self-host option", us: "✓ MIT", them: false },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: false },
         { feature: "API access", us: "Pro plan", them: "Paid plans" },
       ]}
       whenThem={

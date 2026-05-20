@@ -1,6 +1,6 @@
 # UptimeCrow
 
-> Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints from multiple regions; alert on incidents via email, Slack, Discord, PagerDuty, Microsoft Teams, and Telegram; and serve pre-rendered status pages that stay online even when your origin goes down. MIT open-source, self-hostable with Docker. Free forever: 25 monitors, 1 status page, 60-second checks, 60-day history.
+> Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints from multiple regions; alert on incidents via email, Slack, Discord, PagerDuty, Microsoft Teams, and Telegram; and serve pre-rendered status pages that stay online even when your origin goes down. AGPL-3.0 open-source, self-hostable with Docker. Free forever: 25 monitors, 1 status page, 60-second checks, 60-day history.
 
 UptimeCrow is built for developers and small teams who want production-grade monitoring without the enterprise pricing. The platform pairs a managed cloud offering at uptimecrow.com with a fully self-hostable container stack on GitHub. Status pages are pre-rendered to disk so they remain available even during a customer-side outage. A built-in MCP server exposes monitor state to AI assistants like Claude Code, Cursor, and Windsurf via JSON-RPC over HTTP.
 
@@ -10,7 +10,7 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 - [Pricing](https://uptimecrow.com/pricing): Three tiers — Free ($0, 10 monitors, 5-min checks, 7-day history, email only), Indie ($9/mo, 25 monitors, 1-min checks, 5 status pages, 1-year history, Slack/Discord/PagerDuty/webhooks, custom domain), Pro ($29/mo, 100 monitors, 30s checks, multi-region, 1-year history, 5 seats). Custom plans via email.
 - [Docs](https://uptimecrow.com/docs): How to add monitors, configure alerts, create status pages, embed badges, use the REST API and MCP server, and self-host with Docker Compose.
 - [MCP Server](https://uptimecrow.com/mcp): Native Model Context Protocol endpoint at /api/mcp (POST JSON-RPC, Bearer-token auth). Tools: get_status_summary, list_monitors, list_active_incidents, get_monitor_detail, list_heartbeats. Lets AI assistants answer "is my API up?" without leaving the editor.
-- [Self-Host](https://uptimecrow.com/self-host): MIT-licensed Docker Compose stack — API + Postgres + Redis + BullMQ worker + Vite/nginx web. One command up; deploy to your own VPS in minutes.
+- [Self-Host](https://uptimecrow.com/self-host): AGPL-3.0 licensed Docker Compose stack — API + Postgres + Redis + BullMQ worker + Vite/nginx web. One command up; deploy to your own VPS in minutes.
 - [Heartbeat Monitoring](https://uptimecrow.com/heartbeat-monitoring): Cron and scheduled-task accountability. Tasks ping a unique URL on a schedule; UptimeCrow pages you when the ping is late.
 
 ## Comparisons
@@ -29,7 +29,7 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 
 ## Key facts
 
-- License: MIT. Source: https://github.com/ozers/uptimecrow.
+- License: AGPL-3.0. Source: https://github.com/ozers/uptimecrow.
 - Tech stack: Hono + TypeScript on the backend, Postgres 16 + Redis 7 + BullMQ for jobs, React + Vite on the frontend, Drizzle ORM, Amazon SES for email.
 - Check types: HTTP (status code + optional keyword), TCP (raw socket), keyword (HTTP with required substring), SSL certificate expiry, domain expiry (WHOIS), heartbeat (inbound ping).
 - Confirmation logic: two consecutive failures across multiple regions before an incident is opened, so a single network blip never pages anyone.

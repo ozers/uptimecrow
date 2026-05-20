@@ -40,7 +40,7 @@ const FAQ = [
   },
   {
     q: "Can I self-host UptimeCrow?",
-    a: "Yes. The core is MIT-licensed and the entire stack runs on Docker Compose. See the README on GitHub for the self-host guide.",
+    a: "Yes. The core is AGPL-3.0 licensed and the entire stack runs on Docker Compose. See the README on GitHub for the self-host guide.",
   },
 ];
 

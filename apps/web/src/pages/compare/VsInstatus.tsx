@@ -25,8 +25,8 @@ export function VsInstatus() {
             reflect reality, the monitoring feeding it should be first-class.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Plus the whole stack is <strong>MIT-licensed and self-hostable</strong>. Instatus is fully
-            closed source.
+            Plus the whole stack is <strong>AGPL-3.0 licensed and self-hostable</strong>. Instatus is
+            fully closed source.
           </p>
         </>
       }
@@ -44,7 +44,7 @@ export function VsInstatus() {
           body: "Monitor cron jobs, backups, and scheduled tasks with unique ping URLs. Available on every plan, including free. Instatus doesn't offer heartbeat monitoring at any tier.",
         },
         {
-          title: "Open-source core, MIT-licensed",
+          title: "Open-source core, AGPL-3.0",
           body: "Self-host the entire stack with Docker Compose. No vendor lock-in, no closed-source dependency. Instatus is fully proprietary.",
         },
       ]}
@@ -62,7 +62,7 @@ export function VsInstatus() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "Partial (higher tiers)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "Limited" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "Status page languages", us: "English", them: "30+ languages" },
       ]}
       whenThem={
