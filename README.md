@@ -348,6 +348,10 @@ UptimeCrow is licensed under the **GNU Affero General Public License v3.0**. See
 - If you offer a modified version of UptimeCrow as a network service to third parties, AGPL requires you to publish your modifications under the same license.
 - If your organization cannot use AGPL software, [contact us](mailto:hello@uptimecrow.com) about a commercial license.
 
+## Supporting the project
+
+If UptimeCrow is useful to you, the simplest way to support it is to [use the managed cloud](https://uptimecrow.com/pricing) — those plans fund the time spent here. A sponsor program for self-hosters is on the roadmap.
+
 ## Contributing
 
 PRs and issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md), and report security issues per [SECURITY.md](./SECURITY.md).
