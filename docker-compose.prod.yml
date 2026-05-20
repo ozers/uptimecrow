@@ -1,0 +1,85 @@
+# Production self-host compose.
+#
+# This pulls pre-built images from GitHub Container Registry and is the
+# file the SelfHost page links to. For local development, use the
+# default docker-compose.yml (which uses bind mounts and dev mode).
+#
+# Quick start:
+#   1. Copy .env.example to .env, set POSTGRES_PASSWORD, JWT_SECRET, APP_URL.
+#   2. docker compose -f docker-compose.prod.yml up -d
+#   3. Open APP_URL in your browser.
+#
+# JWT_SECRET must be at least 32 random characters (the API refuses to
+# start in production mode with a known default).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: uptimecrow
+      POSTGRES_USER: uptimecrow
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uptimecrow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    image: ghcr.io/ozers/uptimecrow/api:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      MODE: all
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: postgres://uptimecrow:${POSTGRES_PASSWORD}@postgres:5432/uptimecrow
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required (>= 32 random chars)}
+      APP_URL: ${APP_URL:?APP_URL is required for CORS in production}
+      STATUS_PAGE_URL: ${STATUS_PAGE_URL:-${APP_URL}/status}
+      # Optional — email alerts via Amazon SES. Slack/Discord/PagerDuty/Teams/
+      # Telegram work without any of these. Leave blank to disable email.
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
+      # Optional — paid plan upgrades via Polar. Leave blank to disable billing.
+      POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN:-}
+      POLAR_WEBHOOK_SECRET: ${POLAR_WEBHOOK_SECRET:-}
+    ports:
+      - "3000:3000"
+
+  web:
+    image: ghcr.io/ozers/uptimecrow/web:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # Nginx inside this image proxies /api, /status, /badge, /hb, /s to
+      # the API service (set via the API_URL env var the entrypoint substitutes).
+      API_URL: http://api:3000
+    ports:
+      - "80:80"
+
+volumes:
+  pgdata:
+  redisdata:
