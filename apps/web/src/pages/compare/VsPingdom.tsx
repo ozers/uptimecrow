@@ -16,8 +16,8 @@ export function VsPingdom() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow covers the same core use case — <strong>HTTP, TCP, keyword checks with alerting and a
-            public status page</strong> — starting at $0. The free tier gives you 25 monitors at 1-minute
-            intervals with no credit card required. Heartbeat monitoring for cron jobs and scheduled tasks is
+            public status page</strong> — starting at $0. The hosted free tier gives you 10 monitors with no
+            credit card required — and the open-source core lets you self-host unlimited monitors for free. Heartbeat monitoring for cron jobs and scheduled tasks is
             included on every plan, which Pingdom doesn't offer at all.
           </p>
           <p style={{ marginTop: "1rem" }}>
@@ -30,7 +30,7 @@ export function VsPingdom() {
       whyUs={[
         {
           title: "Up to 90% cheaper for the same core feature set",
-          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 25 monitors at no cost, and the Indie plan ($12/mo) adds a custom domain and API access.",
+          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 25 monitors at no cost, and the Indie plan ($9/mo) adds a custom domain and API access.",
         },
         {
           title: "Heartbeat / cron job monitoring included",
@@ -47,13 +47,13 @@ export function VsPingdom() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$15/mo (10 checks)" },
-        { feature: "Pro-tier price", us: "$29/mo · 50 monitors", them: "$40–$100/mo" },
-        { feature: "Free tier", us: "✓ 25 monitors, 1-min checks", them: "✗ No free tier" },
+        { feature: "Pro-tier price", us: "$29/mo · 100 monitors", them: "$40–$100/mo" },
+        { feature: "Free tier", us: "✓ 10 monitors · unlimited self-host", them: "✗ No free tier" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Min check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "1 min (paid)" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered" },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Paid plans" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Paid plans" },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "PagerDuty only" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "✓ Built-in (extra cost)" },

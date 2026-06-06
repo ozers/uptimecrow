@@ -49,13 +49,13 @@ export function VsCronitor() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$0 free (3 monitors)" },
-        { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$29/mo · limited monitors" },
+        { feature: "Pro plan", us: "$29/mo · 100 monitors", them: "$29/mo · limited monitors" },
         { feature: "HTTP / TCP uptime monitoring", us: "✓ All plans incl. free", them: "✓ Available" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✓ Core product" },
         { feature: "Min check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "1 min paid" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Alert only" },
         { feature: "Status page", us: "✓ Pre-rendered, all plans", them: "Paid add-on, live-rendered" },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Paid plans" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Paid plans" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "✗ Live-rendered" },
         { feature: "Subscriber email notifications", us: true, them: true },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
