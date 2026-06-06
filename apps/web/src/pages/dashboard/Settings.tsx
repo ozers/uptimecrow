@@ -42,6 +42,7 @@ function UpgradeOptions() {
 
   const handleCheckout = async (plan: string) => {
     setLoading(plan);
+    analytics.checkoutStarted(plan);
     try {
       const data = await api.post<{ checkoutUrl: string }>("/api/billing/checkout", {
         plan,

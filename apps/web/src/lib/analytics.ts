@@ -1,10 +1,15 @@
-// Thin wrapper around Umami's window.umami tracker.
-// Falls back to no-op when the script hasn't loaded (dev, no env var).
+// Thin wrapper around our analytics trackers (Umami + PostHog).
+// Falls back to no-op when a script hasn't loaded (dev, no env var).
 
 declare global {
   interface Window {
     umami?: {
       track: (event: string, data?: Record<string, string | number | boolean>) => void;
+    };
+    posthog?: {
+      capture: (event: string, data?: Record<string, unknown>) => void;
+      identify: (id: string, props?: Record<string, unknown>) => void;
+      reset: () => void;
     };
   }
 }
@@ -12,6 +17,28 @@ declare global {
 function track(event: string, data?: Record<string, string | number | boolean>) {
   try {
     window.umami?.track(event, data);
+  } catch {
+    // never throw from analytics
+  }
+  try {
+    window.posthog?.capture(event, data);
+  } catch {
+    // never throw from analytics
+  }
+}
+
+// Tie subsequent events to a user (PostHog). Pageviews are autocaptured.
+function identify(userId: string, props?: Record<string, unknown>) {
+  try {
+    window.posthog?.identify(userId, props);
+  } catch {
+    // never throw from analytics
+  }
+}
+
+function reset() {
+  try {
+    window.posthog?.reset();
   } catch {
     // never throw from analytics
   }
@@ -49,6 +76,11 @@ export const analytics = {
   pricingViewed: () => track("pricing_viewed"),
   docsViewed: () => track("docs_viewed"),
   upgradeClicked: (plan: string) => track("upgrade_clicked", { plan }),
+  checkoutStarted: (plan: string) => track("checkout_started", { plan }),
+
+  // Identity (PostHog) — call on login/register, reset on logout.
+  identify,
+  reset,
 
   // Raw passthrough
   track,

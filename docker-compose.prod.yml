@@ -63,8 +63,15 @@ services:
       AWS_REGION: ${AWS_REGION:-us-east-1}
       SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
       # Optional — paid plan upgrades via Polar. Leave blank to disable billing.
+      # Checkout needs ACCESS_TOKEN + the price IDs below; webhook needs the secret.
       POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN:-}
       POLAR_WEBHOOK_SECRET: ${POLAR_WEBHOOK_SECRET:-}
+      POLAR_INDIE_MONTHLY_PRICE_ID: ${POLAR_INDIE_MONTHLY_PRICE_ID:-}
+      POLAR_INDIE_YEARLY_PRICE_ID: ${POLAR_INDIE_YEARLY_PRICE_ID:-}
+      POLAR_PRO_MONTHLY_PRICE_ID: ${POLAR_PRO_MONTHLY_PRICE_ID:-}
+      POLAR_PRO_YEARLY_PRICE_ID: ${POLAR_PRO_YEARLY_PRICE_ID:-}
+      POLAR_TEAM_MONTHLY_PRICE_ID: ${POLAR_TEAM_MONTHLY_PRICE_ID:-}
+      POLAR_TEAM_YEARLY_PRICE_ID: ${POLAR_TEAM_YEARLY_PRICE_ID:-}
     ports:
       - "3000:3000"
 

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ApiError } from "@/lib/api";
 
 function nextRotationDate(rotationDays: number, currentIndex: number, totalContacts: number): Date {
@@ -121,15 +122,17 @@ export function OnCallPage() {
         <div className="mb-6 flex items-center gap-4 rounded-lg border border-border bg-muted/20 p-3">
           <RotateCcw className="h-4 w-4 text-muted-foreground shrink-0" />
           <span className="text-sm text-muted-foreground">Rotation every</span>
-          <select
-            value={schedule.rotationDays}
-            onChange={(e) => handleUpdateRotation(Number(e.target.value))}
-            className="rounded border border-border bg-background px-2 py-1 text-sm"
+          <Select
+            value={String(schedule.rotationDays)}
+            onValueChange={(v) => handleUpdateRotation(Number(v))}
           >
-            {[1, 2, 3, 5, 7, 14, 30].map((d) => (
-              <option key={d} value={d}>{d} day{d !== 1 ? "s" : ""}</option>
-            ))}
-          </select>
+            <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {[1, 2, 3, 5, 7, 14, 30].map((d) => (
+                <SelectItem key={d} value={String(d)}>{d} day{d !== 1 ? "s" : ""}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <span className="text-sm text-muted-foreground">{contacts.length} contact{contacts.length !== 1 ? "s" : ""} in rotation</span>
         </div>
       )}
