@@ -47,6 +47,18 @@ COPY apps/api/package.json ./apps/api/
 COPY apps/api/drizzle.config.ts ./apps/api/
 COPY apps/api/drizzle/ ./apps/api/drizzle/
 COPY package.json pnpm-workspace.yaml ./
+
+# Run as an unprivileged user (SOC 2 / enterprise baseline). node:alpine ships
+# a `node` user; give it ownership of the app tree.
+RUN chown -R node:node /app
+USER node
+
 WORKDIR /app/apps/api
 EXPOSE 3000
+
+# Container-native health check so orchestrators (Compose, Kubernetes, Portainer)
+# can detect an unhealthy process. Hits the deep /health endpoint.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:3000/health >/dev/null 2>&1 || exit 1
+
 CMD ["/bin/sh", "-c", "pnpm --filter @uptimecrow/api db:migrate && node /app/apps/api/dist/index.js"]
