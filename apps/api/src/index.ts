@@ -1,6 +1,7 @@
 import { startServer } from "./server.js";
 import { startWorker } from "./worker.js";
 import { logger } from "./utils/logger.js";
+import { initSentry, captureException } from "./utils/sentry.js";
 
 const mode = process.env.MODE || "all";
 
@@ -21,6 +22,7 @@ function assertProductionSecrets() {
 }
 
 async function main() {
+  initSentry();
   assertProductionSecrets();
   logger.info(`[UptimeCrow] Starting in ${mode} mode...`);
 
@@ -36,6 +38,7 @@ async function main() {
 }
 
 main().catch((err) => {
+  captureException(err, { phase: "startup", mode });
   logger.error({ err }, "[UptimeCrow] Fatal error");
   process.exit(1);
 });

@@ -72,6 +72,9 @@ services:
       POLAR_PRO_YEARLY_PRICE_ID: ${POLAR_PRO_YEARLY_PRICE_ID:-}
       POLAR_TEAM_MONTHLY_PRICE_ID: ${POLAR_TEAM_MONTHLY_PRICE_ID:-}
       POLAR_TEAM_YEARLY_PRICE_ID: ${POLAR_TEAM_YEARLY_PRICE_ID:-}
+      # Optional — error tracking via Sentry. Leave blank to disable.
+      SENTRY_DSN: ${SENTRY_DSN:-}
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-}
     ports:
       - "3000:3000"
 
