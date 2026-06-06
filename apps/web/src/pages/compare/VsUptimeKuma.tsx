@@ -6,7 +6,7 @@ export function VsUptimeKuma() {
       competitor="Uptime Kuma"
       competitorShort="Uptime Kuma"
       headline={<>We love Uptime Kuma.<br /><span className="highlight">Here's what it's missing.</span></>}
-      subhead="Uptime Kuma is a fantastic open-source monitor with 86k GitHub stars. It does one thing brilliantly. UptimeCrow picks up where it stops: REST API, multi-user teams, managed hosting, multi-region checks, and an MCP server for AI tooling."
+      subhead="Uptime Kuma is a fantastic open-source monitor with 86k GitHub stars. It does one thing brilliantly. UptimeCrow picks up where it stops: REST API, multi-user teams, managed hosting, and an MCP server for AI tooling."
       pitch={
         <>
           <p>
@@ -18,13 +18,13 @@ export function VsUptimeKuma() {
             The friction shows up at the edges. Kuma has <strong>no REST API</strong> — you can't create or update
             monitors programmatically, integrate with Terraform, or query status from a script or AI assistant.
             It has <strong>no multi-user support</strong>, so you can't add a teammate without sharing your
-            admin credentials. And it's <strong>single-node</strong> — no multi-region checks, no managed
-            backups, and no SaaS option if you'd rather not run your own server.
+            admin credentials. And there's <strong>no managed option</strong> — no hosted backups and no
+            SaaS to fall back on if you'd rather not run your own server.
           </p>
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow is open-source and self-hostable too — AGPL-3.0 rather than Kuma's MIT — so you
             keep everything you love about Kuma, plus a full REST API, multi-user orgs, managed cloud
-            hosting, multi-region checks, and an MCP server so you can query your monitors from Claude,
+            hosting, and an MCP server so you can query your monitors from Claude,
             Cursor, or Windsurf.
           </p>
         </>
@@ -53,7 +53,6 @@ export function VsUptimeKuma() {
         { feature: "REST API", us: "✓ Full CRUD API", them: "✗ Not available", note: "Kuma's most-requested feature" },
         { feature: "Multi-user / teams", us: "✓ Org-based multi-user", them: "✗ Single user" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Multi-region checks", us: "Team plan", them: "✗ Single-node" },
         { feature: "Notification integrations", us: "Email, Slack, Discord, PagerDuty, Teams, Telegram", them: "90+ integrations" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans", them: "✓ Available" },
         { feature: "Maintenance windows", us: "✓ Dashboard + status page", them: "✓ Available" },

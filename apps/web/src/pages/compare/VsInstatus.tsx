@@ -61,7 +61,6 @@ export function VsInstatus() {
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "Partial (higher tiers)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "Limited" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "Status page languages", us: "English", them: "30+ languages" },
       ]}
