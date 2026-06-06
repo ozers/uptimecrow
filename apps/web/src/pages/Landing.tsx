@@ -285,7 +285,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How often does UptimeCrow check my websites and APIs?",
-    a: "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro. Multi-region checks on Pro — a single regional failure won't trigger an incident.",
+    a: "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro. A configurable consecutive-failure confirmation means a single blip won't trigger a false incident.",
   },
   {
     q: "How do status pages stay online when my origin is down?",
@@ -444,7 +444,7 @@ export function LandingPage() {
             <div className="step">
               <div className="step-num">01</div>
               <h3>Add your endpoints</h3>
-              <p>HTTP, TCP, or keyword checks. We ping every minute from multiple regions. If it's down, we know fast — and heartbeat monitoring keeps an eye on your cron jobs too.</p>
+              <p>HTTP, TCP, or keyword checks at the interval you choose — as often as every 30 seconds. If it's down, we know fast — and heartbeat monitoring keeps an eye on your cron jobs too.</p>
             </div>
             <div className="step">
               <div className="step-num">02</div>
@@ -547,7 +547,7 @@ export function LandingPage() {
           <div className="features-grid">
             {[
               { Icon: ShieldCheck, title: "Automatic Incident Detection", desc: "Consecutive failure confirmation prevents false alarms. When it's really down, an incident is created and your status page is updated automatically." },
-              { Icon: Radio, title: "Uptime Monitoring", desc: "HTTP, TCP, and keyword checks every minute from multiple regions. Sub-minute detection with configurable confirmation counts." },
+              { Icon: Radio, title: "Uptime Monitoring", desc: "HTTP, TCP, and keyword checks as often as every 30 seconds. Sub-minute detection with configurable confirmation counts." },
               { Icon: Heart, title: "Heartbeat Monitoring", desc: "Monitor cron jobs and scheduled tasks. Your service pings a unique URL — if we don't hear from it, we alert you. Available on every plan." },
               { Icon: Palette, title: "Beautiful Status Pages", desc: "Hosted on your custom domain. Clean, fast, branded. Pre-rendered so they stay online even when your origin is down." },
               { Icon: Mail, title: "Subscriber Notifications", desc: "Email, Slack, Discord, PagerDuty, Teams, and Telegram alerts when incidents start and resolve. Your users subscribe themselves." },
@@ -671,7 +671,6 @@ export function LandingPage() {
                 <li>Everything in Pro</li>
                 <li>200 monitors</li>
                 <li>100 heartbeat monitors</li>
-                <li>Multi-region checks</li>
                 <li>10 team seats</li>
                 <li>365-day history</li>
               </ul>

@@ -55,7 +55,7 @@ export const PLAN_LIMITS = {
     teamSeats: 5,
     retentionDays: 365,
     apiAccess: true,
-    multiRegion: true,
+    multiRegion: false, // single-region today; multi-region infra not yet shipped
     heartbeats: 25,
   },
   team: {
@@ -67,7 +67,7 @@ export const PLAN_LIMITS = {
     teamSeats: 10,
     retentionDays: 365,
     apiAccess: true,
-    multiRegion: true,
+    multiRegion: false, // single-region today; multi-region infra not yet shipped
     heartbeats: 100,
   },
 } as const;
@@ -139,7 +139,6 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
       "10 status pages + custom domain",
       "30-second check intervals",
       "25 heartbeat monitors",
-      "Multi-region checks",
       "5 team seats",
       "1-year history",
       "Priority support",

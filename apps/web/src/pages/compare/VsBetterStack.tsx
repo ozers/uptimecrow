@@ -50,7 +50,6 @@ export function VsBetterStack() {
         { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$29/mo · 10 monitors" },
         { feature: "Minimum check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "30 seconds (paid plans)" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "Paid plans only" },
-        { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "Paid plans" },
         { feature: "Auto-created incidents", us: true, them: true },
         { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Paid plans" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered", note: "Matters when your own outage takes down your status page." },
