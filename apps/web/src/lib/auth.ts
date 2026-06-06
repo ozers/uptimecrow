@@ -22,6 +22,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   fetchUser: async () => {
     try {
       const data = await api.get<{ user: User }>("/api/auth/me");
+      analytics.identify(data.user.id, { email: data.user.email });
       set({ user: data.user, isAuthenticated: true, isLoading: false });
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
@@ -35,12 +36,14 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email: string, password: string) => {
     const data = await api.post<{ user: User }>("/api/auth/login", { email, password });
     analytics.login("email");
+    analytics.identify(data.user.id, { email: data.user.email });
     set({ user: data.user, isAuthenticated: true, isLoading: false });
   },
 
   register: async (email: string, password: string, name: string, inviteToken?: string) => {
     const data = await api.post<{ user: User }>("/api/auth/register", { email, password, name, ...(inviteToken ? { inviteToken } : {}) });
     analytics.register();
+    analytics.identify(data.user.id, { email: data.user.email });
     set({ user: data.user, isAuthenticated: true, isLoading: false });
   },
 
@@ -48,6 +51,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: async () => {
     await api.post("/api/auth/logout");
+    analytics.reset();
     set({ user: null, isAuthenticated: false, isLoading: false });
   },
 }));
