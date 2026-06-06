@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Plus, Activity, Pencil, Trash2, ShieldAlert, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { uptimeBarClass, uptimeTextClass } from "@/lib/uptime";
 import { toast } from "sonner";
 import { useMonitors, useDeleteMonitor } from "@/lib/queries/monitors";
 import { useUptime } from "@/lib/queries/analytics";
@@ -30,10 +31,8 @@ function UptimeBar({ percent }: { percent: number | null }) {
     return <span className="text-xs text-muted-foreground/50">—</span>;
   }
   const pct = Number(percent);
-  const barColor =
-    pct >= 99.9 ? "bg-success" : pct >= 99 ? "bg-warning" : "bg-danger";
-  const textColor =
-    pct >= 99.9 ? "text-success-foreground" : pct >= 99 ? "text-warning-foreground" : "text-danger-foreground";
+  const barColor = uptimeBarClass(pct);
+  const textColor = uptimeTextClass(pct);
 
   return (
     <div className="flex items-center gap-2">

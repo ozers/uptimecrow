@@ -349,8 +349,8 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     const st = statusText(m.status);
     const uptimePct = m.uptimePercent ? parseFloat(m.uptimePercent) : null;
     const uptimeColor = uptimePct === null ? "var(--text3)"
-      : uptimePct >= 99.9 ? "#22c55e"
-      : uptimePct >= 99 ? "#f59e0b"
+      : uptimePct >= 99 ? "#22c55e"
+      : uptimePct >= 95 ? "#f59e0b"
       : "#ef4444";
     const bar = renderUptimeBar(m.dailyUptime ?? []);
     return `<div class="service-row">
