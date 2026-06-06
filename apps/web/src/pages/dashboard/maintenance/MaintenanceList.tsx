@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
+import { LoadError } from "@/components/load-error";
 import { RelativeTime } from "@/components/relative-time";
 import {
   Dialog,
@@ -100,7 +101,7 @@ function MaintenanceSkeleton() {
 }
 
 export function MaintenanceList() {
-  const { data: windows, isLoading } = useMaintenanceWindows();
+  const { data: windows, isLoading, isError, refetch } = useMaintenanceWindows();
   const { data: statusPages } = useStatusPages();
   const { data: monitors } = useMonitors();
   const create = useCreateMaintenanceWindow();
@@ -128,6 +129,17 @@ export function MaintenanceList() {
   }, [windows, now]);
 
   if (isLoading) return <MaintenanceSkeleton />;
+
+  if (isError)
+    return (
+      <div>
+        <PageHeader
+          title="Maintenance"
+          description="Schedule planned maintenance windows and stop incidents from paging subscribers during expected downtime"
+        />
+        <LoadError onRetry={() => refetch()} />
+      </div>
+    );
 
   const openCreate = () => {
     if (!firstStatusPageId) {
