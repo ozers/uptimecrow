@@ -175,10 +175,10 @@ export function Settings() {
       setCustomWebhookUrl(data.organization.customWebhookUrl || "");
       setPagerdutyKey(data.organization.pagerdutyIntegrationKey || "");
       setTeamsUrl(data.organization.teamsWebhookUrl || "");
-      setTelegramToken(data.organization.telegramBotToken ? "••••" : "");
+      setTelegramToken(data.organization.telegramBotToken || "");
       setTelegramChatId(data.organization.telegramChatId || "");
       setTwilioSid(data.organization.twilioAccountSid || "");
-      setTwilioToken(data.organization.twilioAuthToken ? "••••" : "");
+      setTwilioToken(data.organization.twilioAuthToken || "");
       setTwilioFrom(data.organization.twilioFromNumber || "");
       setTwilioTo(data.organization.twilioToNumber || "");
     });
@@ -212,19 +212,26 @@ export function Settings() {
   const saveWebhooks = async () => {
     setSaving(true);
     try {
-      const data = await api.patch<{ organization: OrgSettings }>("/api/settings", {
-        slackWebhookUrl: slackUrl || null,
-        discordWebhookUrl: discordUrl || null,
-        customWebhookUrl: customWebhookUrl || null,
-        pagerdutyIntegrationKey: pagerdutyKey || null,
-        teamsWebhookUrl: teamsUrl || null,
-        ...(telegramToken && !telegramToken.startsWith("••") ? { telegramBotToken: telegramToken } : {}),
-        telegramChatId: telegramChatId || null,
-        twilioAccountSid: twilioSid || null,
-        ...(twilioToken && !twilioToken.startsWith("••") ? { twilioAuthToken: twilioToken } : {}),
-        twilioFromNumber: twilioFrom || null,
-        twilioToNumber: twilioTo || null,
-      });
+      // Secrets come back from the API masked ("••••…"). Only send a field when
+      // it isn't the mask — otherwise we'd overwrite the stored secret with the
+      // masked placeholder. An empty string still sends null (= clear it).
+      const payload: Record<string, string | null> = {};
+      const setSecret = (key: string, v: string) => {
+        if (!v.startsWith("••")) payload[key] = v || null;
+      };
+      setSecret("slackWebhookUrl", slackUrl);
+      setSecret("discordWebhookUrl", discordUrl);
+      setSecret("customWebhookUrl", customWebhookUrl);
+      setSecret("pagerdutyIntegrationKey", pagerdutyKey);
+      setSecret("teamsWebhookUrl", teamsUrl);
+      setSecret("telegramBotToken", telegramToken);
+      setSecret("twilioAccountSid", twilioSid);
+      setSecret("twilioAuthToken", twilioToken);
+      // Non-secret fields always round-trip in the clear.
+      payload.telegramChatId = telegramChatId || null;
+      payload.twilioFromNumber = twilioFrom || null;
+      payload.twilioToNumber = twilioTo || null;
+      const data = await api.patch<{ organization: OrgSettings }>("/api/settings", payload);
       setOrg(data.organization);
       analytics.integrationSaved("webhook");
       toast.success("Webhooks saved");
