@@ -16,7 +16,7 @@ export function VsBetterStack() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             If all you actually need is <strong>checks, heartbeats, incidents, and a branded status page</strong>, UptimeCrow
-            does that for $12/mo instead of $29–$200/mo. The status page is pre-rendered so it stays online
+            does that for $9/mo instead of $29–$200/mo. The status page is pre-rendered so it stays online
             when your origin is down. And heartbeat monitors keep an eye on your cron jobs — included on every plan, even the free tier.
           </p>
           <p style={{ marginTop: "1rem" }}>
@@ -38,7 +38,7 @@ export function VsBetterStack() {
         },
         {
           title: "Transparent, flat pricing",
-          body: "$0 free, $12/mo Indie, $29/mo Pro, $79/mo Team. No seat-based pricing, no usage surprises.",
+          body: "$0 free, $9/mo Indie, $29/mo Pro, $79/mo Team. No seat-based pricing, no usage surprises.",
         },
         {
           title: "Open source core, AGPL-3.0",
@@ -47,11 +47,11 @@ export function VsBetterStack() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "Free trial, then from $29/mo" },
-        { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$29/mo · 10 monitors" },
+        { feature: "Pro plan", us: "$29/mo · 100 monitors", them: "$29/mo · 10 monitors" },
         { feature: "Minimum check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "30 seconds (paid plans)" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "Paid plans only" },
         { feature: "Auto-created incidents", us: true, them: true },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Paid plans" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Paid plans" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered", note: "Matters when your own outage takes down your status page." },
         { feature: "Scheduled maintenance windows", us: true, them: true },
         { feature: "Subscriber email notifications", us: true, them: true },

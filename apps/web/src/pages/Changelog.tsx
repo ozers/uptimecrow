@@ -18,9 +18,9 @@ interface ChangelogEntry {
 const ENTRIES: ChangelogEntry[] = [
   {
     date: "2026-05-18",
-    title: "Free plan upgraded · slow-response alerts · 3 new free tools",
+    title: "Slow-response alerts · 3 new free tools",
     type: "feature",
-    body: "Free plan now includes 25 monitors, 5 heartbeats, and 60-day history (was 10/3/30). New slow-response alerts notify you when a monitor stays up but degrades past a configurable threshold. Launched three free public tools — SSL Checker, DNS Lookup, and Uptime Tester — at /tools.",
+    body: "New slow-response alerts notify you when a monitor stays up but degrades past a configurable threshold. Launched three free public tools — SSL Checker, DNS Lookup, and Uptime Tester — at /tools.",
   },
   {
     date: "2026-05-12",

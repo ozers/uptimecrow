@@ -58,10 +58,10 @@ export function VsUptimeKuma() {
         { feature: "Maintenance windows", us: "✓ Dashboard + status page", them: "✓ Available" },
         { feature: "Automatic incident management", us: "✓ Auto-created + auto-resolved", them: "✗ No incident tracking" },
         { feature: "Subscriber email notifications", us: "✓ Double opt-in", them: "✗ Not available" },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "✗ Not available" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "✗ Not available" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered" },
         { feature: "Database", us: "PostgreSQL", them: "SQLite / MariaDB" },
-        { feature: "Free tier", us: "25 monitors, SaaS", them: "Unlimited, self-host" },
+        { feature: "Free tier", us: "10 monitors hosted + unlimited self-host", them: "Unlimited, self-host" },
       ]}
       whenThem={
         <>
