@@ -3,12 +3,18 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { LogoStacked } from "@/components/logo";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
+import { usePageMeta } from "@/lib/meta";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ResetPassword() {
+  usePageMeta({
+    title: "Set a new password — UptimeCrow",
+    description: "Choose a new password for your UptimeCrow account.",
+    robots: "noindex,nofollow",
+  });
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");

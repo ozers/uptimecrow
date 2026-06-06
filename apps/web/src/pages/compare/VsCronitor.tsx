@@ -63,7 +63,7 @@ export function VsCronitor() {
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "Not available" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Pro plan ($29/mo)", them: "Pro plan" },
         { feature: "Telemetry SDK", us: "✗ REST API only", them: "✓ Native SDKs" },
       ]}

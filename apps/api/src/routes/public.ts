@@ -464,7 +464,7 @@ publicRoutes.get("/verify/:token", async (c) => {
   c.header("Content-Type", "text/html; charset=UTF-8");
   return c.body(confirmationPage(
     "You're subscribed!",
-    `You'll receive email updates when incidents are created or resolved for <strong>${page?.name ?? "this status page"}</strong>.`,
+    `You'll receive email updates when incidents are created or resolved for <strong>${escapeHtml(page?.name ?? "this status page")}</strong>.`,
     true,
     page?.slug ?? null,
   ));
@@ -493,7 +493,7 @@ publicRoutes.get("/unsubscribe/:token", async (c) => {
   c.header("Content-Type", "text/html; charset=UTF-8");
   return c.body(confirmationPage(
     "Unsubscribed",
-    `You've been removed from <strong>${page?.name ?? "this status page"}</strong> notifications.`,
+    `You've been removed from <strong>${escapeHtml(page?.name ?? "this status page")}</strong> notifications.`,
     false,
     page?.slug ?? null,
   ));
@@ -540,13 +540,27 @@ publicRoutes.get("/badge/:slug", async (c) => {
   const slug = rawSlug.endsWith(".svg") ? rawSlug.slice(0, -4) : rawSlug;
 
   const [page] = await db
-    .select({ id: statusPages.id, orgId: statusPages.orgId })
+    .select({
+      id: statusPages.id,
+      orgId: statusPages.orgId,
+      isPublic: statusPages.isPublic,
+      accessToken: statusPages.accessToken,
+    })
     .from(statusPages)
     .where(eq(statusPages.slug, slug))
     .limit(1);
 
   if (!page) {
     return c.text("Not found", 404);
+  }
+
+  // Private pages must not leak uptime to anyone who guesses the slug — require
+  // the access token, matching the other private status-page routes.
+  if (!page.isPublic) {
+    const token = c.req.query("token");
+    if (!token || token !== page.accessToken) {
+      return svgBadge(c, "uptime", "N/A", "#999");
+    }
   }
 
   // Calculate uptime from last 30 days of check results

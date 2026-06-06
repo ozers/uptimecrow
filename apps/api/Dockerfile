@@ -1,12 +1,20 @@
 # ── Base ──
-FROM node:24-alpine AS base
+# Node 22 matches the web Dockerfile, the GitHub Actions runner, and the
+# tested local environment. Node 24 introduced ESM/CJS interop changes
+# that break drizzle-orm subpath resolution under tsc --moduleResolution
+# bundler — do not bump without re-verifying the build.
+FROM node:22-alpine AS base
 RUN corepack enable && corepack prepare pnpm@10.30.2 --activate
 WORKDIR /app
 
 # ── Dependencies ──
+# All workspace package.jsons must be present for pnpm to resolve peer
+# dependencies correctly across the monorepo. Omitting apps/web here
+# silently breaks drizzle-orm's peer resolution in apps/api.
 FROM base AS deps
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
 COPY packages/shared/package.json packages/shared/
 RUN pnpm install --frozen-lockfile
 

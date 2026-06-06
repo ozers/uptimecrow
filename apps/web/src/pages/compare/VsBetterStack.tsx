@@ -23,7 +23,7 @@ export function VsBetterStack() {
             UptimeCrow is also the <strong>only uptime monitor with a native MCP server</strong> — query your monitor
             status, acknowledge incidents, and manage on-call directly from Claude, Cursor, or any AI assistant.
             And if you'd rather not depend on another hosted service, the entire stack is{" "}
-            <strong>MIT-licensed and self-hostable</strong> with a single Docker Compose command.
+            <strong>AGPL-3.0 licensed and self-hostable</strong> with a single Docker Compose command.
           </p>
         </>
       }
@@ -41,7 +41,7 @@ export function VsBetterStack() {
           body: "$0 free, $12/mo Indie, $29/mo Pro, $79/mo Team. No seat-based pricing, no usage surprises.",
         },
         {
-          title: "Open source core, MIT-licensed",
+          title: "Open source core, AGPL-3.0",
           body: "Self-host the entire stack with Docker Compose. No vendor lock-in, no data residency headaches.",
         },
       ]}
@@ -59,7 +59,7 @@ export function VsBetterStack() {
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "SMS alerts (Twilio)", us: "✓ All paid plans", them: "✓ Built-in" },
         { feature: "MCP server (AI assistants)", us: "✓ Native — only uptime tool with this", them: "✗ Not available" },
-        { feature: "Self-host option", us: "✓ MIT", them: false },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: false },
         { feature: "API access", us: "Pro plan", them: "Paid plans" },
         { feature: "On-call rotations", us: "Not yet", them: true },
         { feature: "Log aggregation", us: false, them: true },

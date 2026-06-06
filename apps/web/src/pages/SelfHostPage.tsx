@@ -15,11 +15,10 @@ const codeBlockStyle: React.CSSProperties = {
   fontSize: "0.82rem",
 };
 
-const COMPOSE_SNIPPET = `version: "3.9"
-
-services:
+const COMPOSE_SNIPPET = `services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_DB: uptimecrow
       POSTGRES_USER: uptimecrow
@@ -29,14 +28,17 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     volumes:
       - redisdata:/data
 
   api:
-    image: ghcr.io/uptimecrow/api:latest
+    image: ghcr.io/ozers/uptimecrow/api:latest
+    restart: unless-stopped
     depends_on: [postgres, redis]
     environment:
       MODE: all
+      NODE_ENV: production
       DATABASE_URL: postgres://uptimecrow:\${POSTGRES_PASSWORD}@postgres:5432/uptimecrow
       REDIS_URL: redis://redis:6379
       JWT_SECRET: \${JWT_SECRET}
@@ -50,8 +52,11 @@ services:
       - "3000:3000"
 
   web:
-    image: ghcr.io/uptimecrow/web:latest
+    image: ghcr.io/ozers/uptimecrow/web:latest
+    restart: unless-stopped
     depends_on: [api]
+    environment:
+      API_URL: http://api:3000
     ports:
       - "80:80"
 
@@ -59,22 +64,24 @@ volumes:
   pgdata:
   redisdata:`;
 
-const ENV_SNIPPET = `# .env
-POSTGRES_PASSWORD=change_me_in_production
-JWT_SECRET=at_least_32_random_characters_here
+const ENV_SNIPPET = `# .env — generate strong secrets with openssl
+POSTGRES_PASSWORD=$(openssl rand -hex 24)
+JWT_SECRET=$(openssl rand -hex 32)
 APP_URL=https://uptime.yourdomain.com
 
-# Optional: Amazon SES for email alerts
-AWS_ACCESS_KEY_ID=AKIA...
-AWS_SECRET_ACCESS_KEY=...`;
+# Optional: Amazon SES for email alerts. Slack/Discord/PagerDuty/Teams/
+# Telegram work without these — leave blank to disable email.
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=`;
 
-const START_SNIPPET = `# Pull images and start all 4 containers
+const START_SNIPPET = `# Pull images and start all 4 containers.
+# Migrations run automatically on API startup — no extra step needed.
 docker compose up -d
 
-# Run database migrations
-docker compose exec api pnpm db:migrate
+# Watch logs while it warms up
+docker compose logs -f api
 
-# Check everything is healthy
+# Verify everything is healthy
 docker compose ps`;
 
 export default function SelfHostPage() {
@@ -83,8 +90,51 @@ export default function SelfHostPage() {
   usePageMeta({
     title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
     description:
-      "Run UptimeCrow on your own infrastructure with a single Docker Compose command. MIT-licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
+      "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     canonical: "https://uptimecrow.com/self-host",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      name: "Self-host UptimeCrow with Docker Compose",
+      description:
+        "Run the full UptimeCrow stack (Postgres, Redis, API+worker, nginx web) on your own VPS with one command.",
+      totalTime: "PT5M",
+      supply: [
+        { "@type": "HowToSupply", name: "A VPS or machine running Docker 24+" },
+        { "@type": "HowToSupply", name: "512 MB RAM minimum" },
+      ],
+      tool: [
+        { "@type": "HowToTool", name: "Docker Engine 24+" },
+        { "@type": "HowToTool", name: "Docker Compose v2" },
+      ],
+      step: [
+        {
+          "@type": "HowToStep",
+          position: 1,
+          name: "Download the compose file and env template",
+          text: "Fetch docker-compose.prod.yml and .env.prod.example from the GitHub repository.",
+          url: "https://github.com/ozers/uptimecrow#production-self-host",
+        },
+        {
+          "@type": "HowToStep",
+          position: 2,
+          name: "Generate strong secrets",
+          text: "Run `openssl rand -hex 32` for JWT_SECRET and `openssl rand -hex 24` for POSTGRES_PASSWORD. Set APP_URL to your public URL.",
+        },
+        {
+          "@type": "HowToStep",
+          position: 3,
+          name: "Start the stack",
+          text: "Run `docker compose -f docker-compose.prod.yml up -d`. Database migrations run automatically on API startup.",
+        },
+        {
+          "@type": "HowToStep",
+          position: 4,
+          name: "Verify",
+          text: "Check `docker compose ps` — four healthy containers. Open APP_URL in a browser, register a user, create a monitor.",
+        },
+      ],
+    },
   });
 
   return (
@@ -127,7 +177,7 @@ export default function SelfHostPage() {
       {/* Hero */}
       <section className="hero">
         <div className="container">
-          <div className="hero-badge">● MIT Licensed — own your monitoring stack</div>
+          <div className="hero-badge">● AGPL-3.0 Licensed — own your monitoring stack</div>
           <h1>Run your own uptime<br />monitor in 5 minutes.</h1>
           <p className="hero-sub">
             4 Docker containers. 512 MB RAM. Any VPS. Full source code included —
@@ -136,7 +186,7 @@ export default function SelfHostPage() {
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Use the cloud version free</Link>
             <a
-              href="https://github.com/uptimecrow/uptimecrow"
+              href="https://github.com/ozers/uptimecrow"
               className="hero-btn secondary"
               target="_blank"
               rel="noopener noreferrer"
@@ -251,7 +301,7 @@ export default function SelfHostPage() {
                 </tr>
                 <tr>
                   <td>License</td>
-                  <td className="you-col"><span className="check">✓</span> MIT — no restrictions</td>
+                  <td className="you-col"><span className="check">✓</span> AGPL-3.0 — full source access</td>
                   <td>SaaS ToS</td>
                 </tr>
               </tbody>

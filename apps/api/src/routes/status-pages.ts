@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { eq, and, sql, count } from "drizzle-orm";
+import { eq, and, sql, count, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { statusPages, statusPageMonitors, monitors, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
@@ -225,6 +225,25 @@ statusPageRoutes.put("/:id/monitors", async (c) => {
   }
 
   const monitorEntries = body.monitors ?? [];
+
+  // Verify every monitor belongs to this org before linking. Without this a
+  // user could attach another org's monitor to their own public status page,
+  // leaking that monitor's name/status/uptime cross-tenant (IDOR).
+  if (monitorEntries.length > 0) {
+    const requestedIds = [...new Set(monitorEntries.map((m) => m.monitorId))];
+    const owned = await db
+      .select({ id: monitors.id })
+      .from(monitors)
+      .where(and(eq(monitors.orgId, orgId), inArray(monitors.id, requestedIds)));
+    const ownedIds = new Set(owned.map((m) => m.id));
+    const foreign = requestedIds.filter((mid) => !ownedIds.has(mid));
+    if (foreign.length > 0) {
+      return c.json(
+        { error: "One or more monitors do not belong to your organization." },
+        403,
+      );
+    }
+  }
 
   // Replace all monitor links
   await db.delete(statusPageMonitors).where(eq(statusPageMonitors.statusPageId, id));

@@ -203,7 +203,7 @@ export default function McpPage() {
             </div>
             <div className="feature">
               <h3>Open source server</h3>
-              <p>The MCP server is MIT licensed. Fork it, extend it with custom tools, or contribute upstream.</p>
+              <p>The MCP server is AGPL-3.0 licensed. Fork it, extend it with custom tools, or contribute upstream.</p>
             </div>
           </div>
         </div>
