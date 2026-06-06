@@ -264,6 +264,10 @@ const FAQ_ITEMS = [
     a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an AGPL-3.0 open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $24/mo for serious use.",
   },
   {
+    q: "How is UptimeCrow different from Uptime Kuma?",
+    a: "Uptime Kuma is a great single-user self-hosted monitor. UptimeCrow is what you reach for when you outgrow it: multi-tenant orgs with teammates, status pages as a real product (custom domain, subscribers, pre-rendered to survive origin downtime), a full REST API, and a native MCP server — plus a managed cloud if you'd rather not run your own server. UptimeCrow is open source too (AGPL-3.0), so you can still self-host unlimited monitors for free.",
+  },
+  {
     q: "Is UptimeCrow really free? What's in the free plan?",
     a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord.",
   },
