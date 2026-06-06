@@ -8,6 +8,7 @@ import { processRetentionJob } from "./jobs/retention.job.js";
 import { processHeartbeatCheckJob } from "./jobs/heartbeat-check.job.js";
 import { logger } from "./utils/logger.js";
 import { isTerminalFailure } from "./utils/queues.js";
+import { captureException } from "./utils/sentry.js";
 
 function logJobFailure(queueName: string, job: { id?: string; attemptsMade?: number; opts?: { attempts?: number } } | undefined, err: Error) {
   const terminal = isTerminalFailure(job);
@@ -24,6 +25,10 @@ function logJobFailure(queueName: string, job: { id?: string; attemptsMade?: num
       ? `[Worker] Dead letter: ${queueName} job permanently failed after all retries`
       : `[Worker] ${queueName} job attempt failed, will retry`,
   );
+  // Only report permanent failures to Sentry — retries would be noise.
+  if (terminal) {
+    captureException(err, { queue: queueName, jobId: job?.id });
+  }
 }
 
 async function cleanOrphanedRepeatableJobs() {
