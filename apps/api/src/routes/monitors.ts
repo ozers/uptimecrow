@@ -223,8 +223,8 @@ monitorRoutes.post("/test", async (c) => {
 monitorRoutes.get("/:id/checks", async (c) => {
   const { orgId } = c.get("user");
   const id = c.req.param("id");
-  const limit = parseInt(c.req.query("limit") || "50", 10);
-  const offset = parseInt(c.req.query("offset") || "0", 10);
+  const limit = Math.min(200, Math.max(1, parseInt(c.req.query("limit") || "50", 10) || 50));
+  const offset = Math.max(0, parseInt(c.req.query("offset") || "0", 10) || 0);
 
   // Verify monitor belongs to org
   const [monitor] = await db
