@@ -6,7 +6,7 @@ export function VsStatusCake() {
       competitor="StatusCake"
       competitorShort="StatusCake"
       headline={<>StatusCake without the<br /><span className="highlight">enterprise pricing.</span></>}
-      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, AGPL-3.0 open-source, MCP-native, free for 25 monitors."
+      subhead="StatusCake works, but the pricing tiers jump quickly and the dashboard feels heavy. UptimeCrow is a modern, developer-first alternative — flat pricing, AGPL-3.0 open-source, MCP-native, free for 10 monitors."
       pitch={
         <>
           <p>
@@ -46,23 +46,23 @@ export function VsStatusCake() {
         },
       ]}
       rows={[
-        { feature: "Free tier", us: "✓ 25 monitors, 1-min checks", them: "✓ 10 tests, 5-min checks" },
-        { feature: "Indie/Solo plan", us: "$12/mo · 25 monitors + API + custom domain", them: "$24.49/mo · Superior plan" },
-        { feature: "Pro plan", us: "$29/mo · 50 monitors · 30s checks", them: "$66.66/mo · Business plan" },
+        { feature: "Free tier", us: "✓ 10 monitors · unlimited self-host", them: "✓ 10 tests, 5-min checks" },
+        { feature: "Indie/Solo plan", us: "$9/mo · 25 monitors + API + custom domain", them: "$24.49/mo · Superior plan" },
+        { feature: "Pro plan", us: "$29/mo · 100 monitors · 30s checks", them: "$66.66/mo · Business plan" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans incl. free", them: "✓ Paid plans" },
         { feature: "SSL & domain expiry alerts", us: "✓ All plans incl. free", them: "✓ All plans" },
         { feature: "Public status page", us: "✓ Pre-rendered, all plans", them: "Paid plans" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "✗ Live-rendered" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✓ Available" },
         { feature: "Maintenance windows", us: "✓ All plans", them: "✓ All plans" },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Business plan" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Business plan" },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in, all plans", them: "Paid plans" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Pay-per-SMS extra" },
         { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
-        { feature: "API access", us: "Indie plan ($12/mo)", them: "Paid plans" },
+        { feature: "API access", us: "Indie plan ($9/mo)", them: "Paid plans" },
       ]}
       whenThem={
         <>

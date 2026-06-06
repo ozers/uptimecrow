@@ -299,7 +299,7 @@ export function Pricing() {
       <section className="final-cta">
         <div className="container">
           <h2>Ready to know when you're down?</h2>
-          <p>25 monitors, 1-min checks, forever free. No credit card needed.</p>
+          <p>10 monitors, 5-min checks, forever free — or self-host unlimited. No credit card needed.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/login" className="hero-btn secondary">Log in</Link>

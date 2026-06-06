@@ -338,7 +338,7 @@ export function LandingPage() {
   usePageMeta({
     title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
     description:
-      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 25 monitors free forever.",
+      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 10 monitors free, or self-host unlimited.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });
@@ -625,26 +625,26 @@ export function LandingPage() {
               <p className="price-desc">For side projects and personal apps.</p>
               <ul className="price-features">
                 <li>1 status page</li>
-                <li>25 monitors</li>
-                <li>1-minute check intervals</li>
-                <li>5 heartbeat monitors</li>
-                <li>Slack & Discord alerts</li>
+                <li>10 monitors</li>
+                <li>5-minute check intervals</li>
+                <li>3 heartbeat monitors</li>
+                <li>Email alerts</li>
                 <li>Uptime badge</li>
-                <li>60-day history</li>
+                <li>7-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>
             <div className="price-card">
               <p className="price-name">Indie</p>
-              <p className="price-amount">$12<span>/mo</span></p>
+              <p className="price-amount">$9<span>/mo</span></p>
               <p className="price-desc">For indie hackers and solo founders.</p>
               <ul className="price-features">
-                <li>3 status pages</li>
+                <li>5 status pages + custom domain</li>
                 <li>25 monitors</li>
                 <li>1-minute check intervals</li>
                 <li>10 heartbeat monitors</li>
-                <li>Custom domain</li>
-                <li>90-day history</li>
+                <li>Slack, Discord, API access</li>
+                <li>1-year history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>
@@ -654,12 +654,12 @@ export function LandingPage() {
               <p className="price-desc">For growing SaaS teams.</p>
               <ul className="price-features">
                 <li>10 status pages</li>
-                <li>50 monitors</li>
+                <li>100 monitors</li>
                 <li>30-second check intervals</li>
                 <li>25 heartbeat monitors</li>
                 <li>Custom domain + API access</li>
-                <li>3 team seats</li>
-                <li>90-day history</li>
+                <li>5 team seats</li>
+                <li>1-year history</li>
               </ul>
               <Link to="/register" className="price-btn featured-btn">Get Started</Link>
             </div>

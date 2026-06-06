@@ -27,8 +27,8 @@ export function VsFreshping() {
       }
       whyUs={[
         {
-          title: "Generous free tier — 25 monitors forever",
-          body: "25 uptime monitors, 5 heartbeat monitors, 1 status page, and 1-minute checks. No trial period. No credit card.",
+          title: "Free hosted, or self-host unlimited",
+          body: "10 uptime monitors, 3 heartbeat monitors, 1 status page, and 5-minute checks on the hosted free tier — no trial, no credit card. Need more? Self-host unlimited under AGPL-3.0.",
         },
         {
           title: "Automatic incident management",
@@ -45,8 +45,8 @@ export function VsFreshping() {
       ]}
       rows={[
         { feature: "Service status", us: "✓ Active", them: "✗ Shut down March 2026" },
-        { feature: "Free tier monitors", us: "25 monitors forever", them: "Was 50 monitors" },
-        { feature: "Free check interval", us: "1 minute", them: "Was 1 minute" },
+        { feature: "Free tier monitors", us: "10 monitors · unlimited self-host", them: "Was 50 monitors" },
+        { feature: "Free check interval", us: "5 minutes", them: "Was 1 minute" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },
         { feature: "Status page auto-update", us: "✓ Automatic", them: "✗ Manual" },
@@ -55,7 +55,7 @@ export function VsFreshping() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✗ Not available" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
-        { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Was paid" },
+        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Was paid" },
         { feature: "Data you can export", us: "✓ REST API", them: "✗ Gone with the service" },
       ]}
       whenThem={
