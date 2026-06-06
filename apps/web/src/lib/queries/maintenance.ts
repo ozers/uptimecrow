@@ -30,10 +30,10 @@ export function useCreateMaintenanceWindow() {
   });
 }
 
-export function useUpdateMaintenanceWindow(id: string) {
+export function useUpdateMaintenanceWindow() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
       api.patch<{ ok: true }>(`/api/maintenance-windows/${id}`, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["maintenance-windows"] }),
   });

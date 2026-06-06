@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
-import { Plus, Wrench, Trash2, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { Plus, Wrench, Trash2, Pencil, Clock, CheckCircle2, XCircle } from "lucide-react";
+import type { MaintenanceWindow } from "@uptimecrow/shared";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { toast } from "sonner";
 import {
   useMaintenanceWindows,
   useCreateMaintenanceWindow,
+  useUpdateMaintenanceWindow,
   useDeleteMaintenanceWindow,
 } from "@/lib/queries/maintenance";
 import { useStatusPages } from "@/lib/queries/status-pages";
@@ -105,10 +107,12 @@ export function MaintenanceList() {
   const { data: statusPages } = useStatusPages();
   const { data: monitors } = useMonitors();
   const create = useCreateMaintenanceWindow();
+  const update = useUpdateMaintenanceWindow();
   const del = useDeleteMaintenanceWindow();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<FormState | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const firstStatusPageId = statusPages?.[0]?.id ?? "";
 
@@ -141,12 +145,32 @@ export function MaintenanceList() {
       </div>
     );
 
+  const closeDialog = () => {
+    setDialogOpen(false);
+    setForm(null);
+    setEditingId(null);
+  };
+
   const openCreate = () => {
     if (!firstStatusPageId) {
       toast.error("Create a status page first");
       return;
     }
+    setEditingId(null);
     setForm(emptyForm(firstStatusPageId));
+    setDialogOpen(true);
+  };
+
+  const openEdit = (w: MaintenanceWindow) => {
+    setEditingId(w.id);
+    setForm({
+      statusPageId: w.statusPageId,
+      title: w.title,
+      body: w.body ?? "",
+      scheduledStart: toLocalInputValue(w.scheduledStart),
+      scheduledEnd: toLocalInputValue(w.scheduledEnd),
+      monitorIds: w.monitorIds ?? [],
+    });
     setDialogOpen(true);
   };
 
@@ -156,20 +180,25 @@ export function MaintenanceList() {
       toast.error("Title is required");
       return;
     }
+    const payload = {
+      statusPageId: form.statusPageId,
+      title: form.title.trim(),
+      body: form.body.trim() || undefined,
+      scheduledStart: fromLocalInputValue(form.scheduledStart),
+      scheduledEnd: fromLocalInputValue(form.scheduledEnd),
+      monitorIds: form.monitorIds,
+    };
     try {
-      await create.mutateAsync({
-        statusPageId: form.statusPageId,
-        title: form.title.trim(),
-        body: form.body.trim() || undefined,
-        scheduledStart: fromLocalInputValue(form.scheduledStart),
-        scheduledEnd: fromLocalInputValue(form.scheduledEnd),
-        monitorIds: form.monitorIds,
-      });
-      toast.success("Maintenance window scheduled");
-      setDialogOpen(false);
-      setForm(null);
+      if (editingId) {
+        await update.mutateAsync({ id: editingId, data: payload });
+        toast.success("Maintenance window updated");
+      } else {
+        await create.mutateAsync(payload);
+        toast.success("Maintenance window scheduled");
+      }
+      closeDialog();
     } catch (e) {
-      toast.error(e instanceof ApiError ? e.message : "Failed to schedule window");
+      toast.error(e instanceof ApiError ? e.message : "Failed to save window");
     }
   };
 
@@ -216,6 +245,7 @@ export function MaintenanceList() {
               label="In progress"
               windows={grouped.active}
               onDelete={handleDelete}
+              onEdit={openEdit}
               accent="text-blue-400"
             />
           )}
@@ -224,6 +254,7 @@ export function MaintenanceList() {
               label="Upcoming"
               windows={grouped.upcoming}
               onDelete={handleDelete}
+              onEdit={openEdit}
               accent="text-violet-400"
             />
           )}
@@ -232,16 +263,17 @@ export function MaintenanceList() {
               label="Past"
               windows={grouped.past}
               onDelete={handleDelete}
+              onEdit={openEdit}
               accent="text-muted-foreground"
             />
           )}
         </div>
       )}
 
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog open={dialogOpen} onOpenChange={(o) => (o ? setDialogOpen(true) : closeDialog())}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Schedule maintenance window</DialogTitle>
+            <DialogTitle>{editingId ? "Edit maintenance window" : "Schedule maintenance window"}</DialogTitle>
           </DialogHeader>
           {form && (
             <div className="space-y-4 py-2">
@@ -328,9 +360,11 @@ export function MaintenanceList() {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSubmit} disabled={create.isPending}>
-              {create.isPending ? "Scheduling…" : "Schedule"}
+            <Button variant="outline" onClick={closeDialog}>Cancel</Button>
+            <Button onClick={handleSubmit} disabled={create.isPending || update.isPending}>
+              {editingId
+                ? (update.isPending ? "Saving…" : "Save changes")
+                : (create.isPending ? "Scheduling…" : "Schedule")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -343,10 +377,11 @@ interface GroupProps {
   label: string;
   windows: NonNullable<ReturnType<typeof useMaintenanceWindows>["data"]>;
   onDelete: (id: string) => void;
+  onEdit: (w: MaintenanceWindow) => void;
   accent: string;
 }
 
-function WindowGroup({ label, windows, onDelete, accent }: GroupProps) {
+function WindowGroup({ label, windows, onDelete, onEdit, accent }: GroupProps) {
   return (
     <div>
       <div className={`mb-2 text-xs font-semibold uppercase tracking-widest ${accent}`}>{label}</div>
@@ -371,6 +406,15 @@ function WindowGroup({ label, windows, onDelete, accent }: GroupProps) {
                   {w.monitorIds.length > 0 && ` · ${w.monitorIds.length} monitor${w.monitorIds.length === 1 ? "" : "s"}`}
                 </div>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Edit window"
+                onClick={() => onEdit(w)}
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
               <ConfirmDialog
                 trigger={
                   <Button

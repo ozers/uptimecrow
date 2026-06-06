@@ -21,7 +21,7 @@ apiKeyRoutes.use("*", async (c, next) => {
   return next();
 });
 
-async function ensureTeamPlan(orgId: string): Promise<{ ok: true } | { ok: false; reason: string }> {
+async function ensureApiAccess(orgId: string): Promise<{ ok: true } | { ok: false; reason: string }> {
   const [org] = await db
     .select({ plan: organizations.plan })
     .from(organizations)
@@ -29,7 +29,7 @@ async function ensureTeamPlan(orgId: string): Promise<{ ok: true } | { ok: false
     .limit(1);
   if (!org) return { ok: false, reason: "Organization not found" };
   if (!PLAN_LIMITS[org.plan].apiAccess) {
-    return { ok: false, reason: "API access requires the Team plan" };
+    return { ok: false, reason: "API access requires the Indie plan or higher" };
   }
   return { ok: true };
 }
@@ -63,7 +63,7 @@ apiKeyRoutes.post("/", async (c) => {
     return c.json({ error: "Invalid input", issues: parsed.error.issues }, 400);
   }
 
-  const plan = await ensureTeamPlan(orgId);
+  const plan = await ensureApiAccess(orgId);
   if (!plan.ok) return c.json({ error: plan.reason }, 403);
 
   const { key, hash, prefix } = generateApiKey();
