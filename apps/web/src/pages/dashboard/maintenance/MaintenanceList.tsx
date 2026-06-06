@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Plus, Wrench, Trash2, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { toast } from "sonner";
 import {
   useMaintenanceWindows,
@@ -161,7 +162,6 @@ export function MaintenanceList() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this maintenance window?")) return;
     try {
       await del.mutateAsync(id);
       toast.success("Window deleted");
@@ -359,14 +359,22 @@ function WindowGroup({ label, windows, onDelete, accent }: GroupProps) {
                   {w.monitorIds.length > 0 && ` · ${w.monitorIds.length} monitor${w.monitorIds.length === 1 ? "" : "s"}`}
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDelete(w.id)}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+              <ConfirmDialog
+                trigger={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Delete window"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                }
+                title="Delete maintenance window?"
+                description="This removes the scheduled window. Monitors will alert normally during that time."
+                onConfirm={() => onDelete(w.id)}
+                destructive
+              />
             </div>
           );
         })}
