@@ -50,14 +50,14 @@ export function VsInstatus() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$0 free tier" },
-        { feature: "Free monitors", us: "25 monitors, 1-min checks", them: "15 monitors, 2-min checks" },
+        { feature: "Free monitors", us: "10 monitors hosted · unlimited self-host", them: "15 monitors, 2-min checks" },
         { feature: "Free status page", us: "1 status page", them: "1 status page" },
         { feature: "Free subscribers", us: "Unlimited", them: "200 subscribers" },
         { feature: "Auto-created incidents", us: "✓ From monitor checks", them: "✗ Manual only" },
         { feature: "Auto status page update", us: "✓ Automatic on state change", them: "✗ Manual" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "✓ Jamstack-rendered" },
-        { feature: "Custom domain", us: "Indie plan ($12/mo)", them: "Paid plans" },
+        { feature: "Custom domain", us: "Indie plan ($9/mo)", them: "Paid plans" },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "Partial (higher tiers)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

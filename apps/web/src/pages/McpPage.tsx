@@ -213,7 +213,7 @@ export default function McpPage() {
       <section className="final-cta">
         <div className="container">
           <h2>The only uptime monitor your AI can talk to.</h2>
-          <p>Free plan includes 25 monitors and full MCP access. No credit card required.</p>
+          <p>Free plan includes 10 monitors and full MCP access. No credit card required.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/docs" className="hero-btn secondary">Read the docs</Link>

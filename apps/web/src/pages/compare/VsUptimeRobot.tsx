@@ -6,7 +6,7 @@ export function VsUptimeRobot() {
       competitor="UptimeRobot"
       competitorShort="UptimeRobot"
       headline={<>Modern UX.<br /><span className="highlight">Same price band.</span></>}
-      subhead="UptimeRobot pioneered cheap uptime monitoring. UptimeCrow gives you the same price band with 1-minute checks, heartbeat monitoring, automatic incident management, and a status page that actually looks like 2026."
+      subhead="UptimeRobot pioneered cheap uptime monitoring. UptimeCrow gives you the same price band plus heartbeat monitoring, automatic incident management, an open-source self-hostable core, and a status page that actually looks like 2026."
       pitch={
         <>
           <p>
@@ -40,14 +40,14 @@ export function VsUptimeRobot() {
           body: "UptimeCrow is the only uptime monitor with a native MCP server. Ask Claude or Cursor 'which of my monitors is down?' without opening a dashboard.",
         },
         {
-          title: "1-minute checks, free. 30-second on Pro+",
-          body: "UptimeRobot's free tier is 5-minute intervals. UptimeCrow gives you 1-minute checks free and 30-second checks on Pro and Team plans.",
+          title: "Open source — self-host unlimited",
+          body: "UptimeRobot is closed SaaS. UptimeCrow is AGPL-3.0: run the hosted free tier or self-host unlimited monitors for free — no lock-in, full data ownership. Checks go down to 30 seconds on Pro.",
         },
       ]}
       rows={[
-        { feature: "Free tier", us: "25 monitors, 1-min checks", them: "50 monitors, 5-min checks" },
+        { feature: "Free tier", us: "10 monitors hosted · unlimited self-host", them: "50 monitors, 5-min checks" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
-        { feature: "Pro plan", us: "$29/mo · 50 monitors", them: "$7/mo · 10 monitors" },
+        { feature: "Pro plan", us: "$29/mo · 100 monitors", them: "$7/mo · 10 monitors" },
         { feature: "Team plan", us: "$79/mo · 200 monitors", them: "$15/mo · 50 monitors" },
         { feature: "Min check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "5 min free / 1 min paid" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },
