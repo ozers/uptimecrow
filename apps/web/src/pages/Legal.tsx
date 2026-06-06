@@ -76,7 +76,7 @@ export function Privacy() {
 
       <h2 className="mt-8 text-xl font-semibold">Data Retention</h2>
       <p>
-        Check result history is retained according to your plan (7 days Free, 90 days Pro, 365 days Team). Account and
+        Check result history is retained according to your plan (7 days on Free, 1 year on Indie/Pro/Team). Account and
         organization data is retained until you delete your account. Subscriber data is retained until the subscriber
         unsubscribes or your status page is deleted.
       </p>

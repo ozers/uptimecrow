@@ -70,7 +70,7 @@ export function Login() {
                 <Activity className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm font-medium">1-minute check intervals — every plan</p>
+                <p className="text-sm font-medium">1-minute checks on Indie and up · 30-second on Pro</p>
                 <p className="text-xs text-muted-foreground">Know about outages before your users do</p>
               </div>
             </div>

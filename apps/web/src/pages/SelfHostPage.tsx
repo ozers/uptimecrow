@@ -335,7 +335,7 @@ export default function SelfHostPage() {
       <section className="final-cta">
         <div className="container">
           <h2>Start on the cloud. Move to self-host whenever.</h2>
-          <p>The cloud version is free for up to 25 monitors. Export your data and self-host when you're ready.</p>
+          <p>The cloud version is free for up to 10 monitors — or self-host unlimited. Export your data and self-host whenever you're ready.</p>
           <div className="hero-actions">
             <Link to="/register" className="hero-btn primary">Get Started Free</Link>
             <Link to="/docs" className="hero-btn secondary">Self-host docs</Link>

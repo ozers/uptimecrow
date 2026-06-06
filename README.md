@@ -10,29 +10,32 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 
 ## Features
 
-- **HTTP / Keyword Monitoring** — Configurable interval checks with timeout, expected status codes, keyword-in-body matching, and multi-region support (Team plan)
+- **HTTP / TCP / Keyword Monitoring** — Configurable interval checks with timeout, expected status codes, and keyword-in-body matching
 - **Pre-Rendered Status Pages** — Static HTML/JSON pages survive origin downtime; your users see status even when you're down
 - **Redis State Machine** — Consecutive-failure confirmation (configurable, default 2) prevents single-blip false alarms
 - **Email + Chat Notifications** — Amazon SES for transactional email to subscribers; native Slack and Discord webhooks
 - **Branded Status Pages** — Custom logo, brand color, custom domain, private-access tokens, embeddable SVG badges
 - **Subscriber Management** — Double opt-in verification, one-click unsubscribe (HTML confirmation pages)
 - **Multi-Tenancy** — Organization-scoped resources
-- **Tiered Plans** — Free, Pro, and Team with enforced limits on monitors, pages, intervals, retention, and regions
+- **Tiered Plans** — Free, Indie, Pro, and Team with enforced limits on monitors, pages, intervals, and retention
 - **Billing** — Polar integration with Standard Webhooks signature verification
 
 ## Plan Limits
 
-| Feature | Free | Pro | Team |
-|---|---|---|---|
-| Monitors | 3 | 20 | 50 |
-| Status Pages | 1 | 3 | Unlimited |
-| Min Interval | 5 min | 30 sec | 30 sec |
-| Data Retention | 7 days | 90 days | 365 days |
-| Seats | 1 | 2 | 5 |
-| Custom Domain | No | Yes | Yes |
-| Slack / Discord | No | Yes | Yes |
-| Multi-Region Checks | No | No | Yes |
-| API Access | No | No | Yes |
+| Feature | Free | Indie | Pro | Team |
+|---|---|---|---|---|
+| Price | $0 | $9/mo | $29/mo | $79/mo |
+| Monitors | 10 | 25 | 100 | 200 |
+| Status Pages | 1 | 5 | 10 | Unlimited |
+| Min Interval | 5 min | 1 min | 30 sec | 30 sec |
+| Heartbeats | 3 | 10 | 25 | 100 |
+| Data Retention | 7 days | 1 year | 1 year | 1 year |
+| Seats | 1 | 2 | 5 | 10 |
+| Custom Domain | No | Yes | Yes | Yes |
+| Slack / Discord / PagerDuty / etc. | No | Yes | Yes | Yes |
+| API + MCP Access | No | Yes | Yes | Yes |
+
+> **Self-hosting?** The AGPL-3.0 core is unlimited and free forever — these limits apply only to the managed cloud at [uptimecrow.com](https://uptimecrow.com).
 
 ## Tech Stack
 

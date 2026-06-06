@@ -12,15 +12,15 @@ export function FreshpingAlternative() {
   usePageMeta({
     title: "Best Freshping Alternative 2026 — UptimeCrow | Free Uptime Monitoring",
     description:
-      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free plan with 25 monitors, heartbeat monitoring, pre-rendered status pages, and open-source core.",
+      "Freshping shut down and redirected to Freshworks ITSM. UptimeCrow is the best Freshping alternative — free hosted plan (10 monitors) or unlimited self-host, heartbeat monitoring, pre-rendered status pages, and open-source core.",
     canonical: "https://uptimecrow.com/freshping-alternative",
   });
 
   const features = [
     {
       Icon: CheckCircle2,
-      title: "25 monitors, free forever",
-      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow gives you 25 monitors on a permanent free tier with no time limit and no credit card.",
+      title: "Free hosted, or self-host unlimited",
+      body: "Freshping's free plan was 50 monitors — generous, but gone. UptimeCrow's hosted free tier gives you 10 monitors with no time limit and no credit card — and because it's open source (AGPL-3.0), you can self-host unlimited monitors for free.",
     },
     {
       Icon: Globe,
@@ -30,7 +30,7 @@ export function FreshpingAlternative() {
     {
       Icon: Heart,
       title: "Heartbeat & cron job monitoring",
-      body: "Monitor your cron jobs, backups, and background workers. A missed ping triggers an immediate alert. Included on every plan, even free (5 heartbeats).",
+      body: "Monitor your cron jobs, backups, and background workers. A missed ping triggers an immediate alert. Included on every plan, even free (3 heartbeats).",
     },
     {
       Icon: Zap,
@@ -122,25 +122,25 @@ export function FreshpingAlternative() {
               <p className="price-amount">$0<span>/mo</span></p>
               <p className="price-desc">Replacing Freshping's free plan.</p>
               <ul className="price-features">
-                <li>25 monitors</li>
+                <li>10 monitors</li>
                 <li>1 status page</li>
-                <li>1-minute checks</li>
-                <li>5 heartbeat monitors</li>
-                <li>Slack & Discord alerts</li>
-                <li>60-day history</li>
+                <li>5-minute checks</li>
+                <li>3 heartbeat monitors</li>
+                <li>Email alerts</li>
+                <li>7-day history</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started Free</Link>
             </div>
             <div className="price-card featured">
               <p className="price-name">Indie</p>
-              <p className="price-amount">$12<span>/mo</span></p>
+              <p className="price-amount">$9<span>/mo</span></p>
               <p className="price-desc">For indie hackers and solo founders.</p>
               <ul className="price-features">
                 <li>25 monitors</li>
-                <li>3 status pages</li>
-                <li>Custom domain</li>
+                <li>5 status pages</li>
+                <li>Custom domain + API</li>
                 <li>10 heartbeat monitors</li>
-                <li>90-day history</li>
+                <li>1-year history</li>
               </ul>
               <Link to="/register" className="price-btn featured-btn">Get Started</Link>
             </div>
@@ -149,11 +149,11 @@ export function FreshpingAlternative() {
               <p className="price-amount">$29<span>/mo</span></p>
               <p className="price-desc">For growing SaaS teams.</p>
               <ul className="price-features">
-                <li>50 monitors</li>
+                <li>100 monitors</li>
                 <li>10 status pages</li>
                 <li>30-second checks</li>
                 <li>API access</li>
-                <li>3 team seats</li>
+                <li>5 team seats</li>
               </ul>
               <Link to="/register" className="price-btn">Get Started</Link>
             </div>
