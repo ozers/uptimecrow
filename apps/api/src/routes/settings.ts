@@ -36,11 +36,22 @@ settingsRoutes.get("/", async (c) => {
 
   if (!org) return c.json({ error: "Organization not found" }, 404);
 
-  // Mask sensitive tokens for display
+  // Mask every secret for display. Webhook URLs embed bearer tokens in the
+  // path, so they're secrets too — never return them in full (an XSS or a
+  // leaked session token shouldn't hand over the org's integration creds).
+  // The client sends a value back only when it doesn't start with "••", so a
+  // masked field round-trips without overwriting the stored secret.
+  const mask = (v: string | null) => (v ? "••••••••" + v.slice(-4) : null);
   const masked = {
     ...org,
-    telegramBotToken: org.telegramBotToken ? "••••••••" + org.telegramBotToken.slice(-4) : null,
-    twilioAuthToken: org.twilioAuthToken ? "••••••••" + org.twilioAuthToken.slice(-4) : null,
+    slackWebhookUrl: mask(org.slackWebhookUrl),
+    discordWebhookUrl: mask(org.discordWebhookUrl),
+    customWebhookUrl: mask(org.customWebhookUrl),
+    pagerdutyIntegrationKey: mask(org.pagerdutyIntegrationKey),
+    teamsWebhookUrl: mask(org.teamsWebhookUrl),
+    telegramBotToken: mask(org.telegramBotToken),
+    twilioAccountSid: mask(org.twilioAccountSid),
+    twilioAuthToken: mask(org.twilioAuthToken),
   };
 
   return c.json({ organization: masked });
