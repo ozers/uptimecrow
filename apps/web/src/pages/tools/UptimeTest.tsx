@@ -175,6 +175,15 @@ export default function UptimeTest() {
                   </ul>
                 </div>
               )}
+
+              <div style={{ marginTop: "1.25rem", paddingTop: "1.25rem", borderTop: "1px solid var(--border)" }}>
+                <p style={{ margin: 0, marginBottom: "0.6rem", fontSize: "0.9rem", color: "var(--text2)" }}>
+                  This was a one-off check. Want UptimeCrow to watch <strong>{result.url}</strong> around the clock and alert you the moment it goes down?
+                </p>
+                <a href={`/register?url=${encodeURIComponent(result.url)}`} className="hero-btn primary" style={{ display: "inline-flex" }}>
+                  Monitor this URL 24/7 — free
+                </a>
+              </div>
             </div>
           )}
         </div>
