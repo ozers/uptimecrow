@@ -56,7 +56,6 @@ export function VsUptimeRobot() {
         { feature: "Scheduled maintenance windows", us: true, them: true },
         { feature: "Email subscribers", us: true, them: true },
         { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
-        { feature: "Multi-region checks", us: "Team plan", them: "Higher tiers" },
         { feature: "Keyword monitoring", us: true, them: true },
         { feature: "SMS alerts (Twilio)", us: "✓ Paid plans", them: "✓ Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

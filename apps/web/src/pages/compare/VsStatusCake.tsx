@@ -63,7 +63,6 @@ export function VsStatusCake() {
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Indie plan ($12/mo)", them: "Paid plans" },
-        { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "✓ All plans" },
       ]}
       whenThem={
         <>
