@@ -140,6 +140,14 @@ function UpgradeOptions() {
   );
 }
 
+function formatInterval(seconds: number): string {
+  if (seconds % 60 === 0) {
+    const m = seconds / 60;
+    return `${m} minute${m === 1 ? "" : "s"}`;
+  }
+  return `${seconds} seconds`;
+}
+
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
   return (
     <div className="flex items-center gap-2 pb-3">
@@ -326,8 +334,8 @@ export function Settings() {
                 { label: "Monitors", value: limits.monitors },
                 { label: "Status Pages", value: limits.statusPages === Infinity ? "Unlimited" : limits.statusPages },
                 { label: "Heartbeats", value: limits.heartbeats },
-                { label: "Min Check Interval", value: `${limits.minInterval}s` },
-                { label: "Data Retention", value: `${limits.retentionDays} days` },
+                { label: "Min Check Interval", value: formatInterval(limits.minInterval) },
+                { label: "Data Retention", value: limits.retentionDays >= 365 ? "1 year" : `${limits.retentionDays} days` },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between py-3">
                   <span className="text-xs text-muted-foreground">{label}</span>
