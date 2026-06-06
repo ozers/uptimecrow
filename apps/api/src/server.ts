@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { cors } from "hono/cors";
 import { logger as honoLogger } from "hono/logger";
 import { authRoutes } from "./routes/auth.js";
@@ -19,9 +19,9 @@ import { teamRoutes } from "./routes/team.js";
 import { oncallRoutes } from "./routes/oncall.js";
 import { toolsRoutes } from "./routes/tools.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
-import { db } from "./db/index.js";
+import { db, redis } from "./db/index.js";
 import { heartbeats } from "./db/schema.js";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { authRateLimit, apiRateLimit, publicRateLimit, toolsRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
@@ -49,8 +49,31 @@ app.use("*", cors({
   credentials: true,
 }));
 
-app.get("/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
-app.get("/api/health", (c) => c.json({ status: "ok", timestamp: new Date().toISOString() }));
+// Deep health check — actually verifies the dependencies the app needs, so a
+// load balancer doesn't route traffic to a pod whose DB or Redis is down.
+// Returns 503 (not 200) when a dependency is unreachable.
+async function healthCheck(c: Context) {
+  const checks = { db: false, redis: false };
+  try {
+    await db.execute(sql`select 1`);
+    checks.db = true;
+  } catch {
+    // db down → reported below
+  }
+  try {
+    await redis.ping();
+    checks.redis = true;
+  } catch {
+    // redis down → reported below
+  }
+  const ok = checks.db && checks.redis;
+  return c.json(
+    { status: ok ? "ok" : "degraded", checks, timestamp: new Date().toISOString() },
+    ok ? 200 : 503,
+  );
+}
+app.get("/health", healthCheck);
+app.get("/api/health", healthCheck);
 
 // API docs — unauthenticated, no rate limit; pure static content.
 app.route("/api", docsRoutes);

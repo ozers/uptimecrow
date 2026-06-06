@@ -1,14 +1,18 @@
 name: Deploy
 
+# Deploy only runs after CI succeeds on main (so a red build can't ship), or on
+# a manual dispatch. Images are tagged :latest and :sha-<commit> for rollback.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
@@ -31,7 +35,9 @@ jobs:
           file: apps/api/Dockerfile
           target: production
           push: true
-          tags: ghcr.io/${{ github.repository }}/api:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/api:latest
+            ghcr.io/${{ github.repository }}/api:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -42,8 +48,26 @@ jobs:
           file: apps/web/Dockerfile
           target: production
           push: true
-          tags: ghcr.io/${{ github.repository }}/web:latest
+          tags: |
+            ghcr.io/${{ github.repository }}/web:latest
+            ghcr.io/${{ github.repository }}/web:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # TODO: Add deployment step (Railway / Fly.io / VPS)
+      # ── Roll out ────────────────────────────────────────────────────────────
+      # Images are now in GHCR as :latest and :sha-<commit>. Wire ONE rollout
+      # mechanism below. Rollback = redeploy a previous :sha-<commit> tag.
+      #
+      # Option A — pull-based (Coolify / Dokploy / Portainer / Watchtower):
+      #   set a DEPLOY_WEBHOOK_URL secret that triggers a pull+restart.
+      - name: Trigger deploy webhook
+        if: ${{ github.event_name != 'pull_request' && env.DEPLOY_WEBHOOK_URL != '' }}
+        env:
+          DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: curl -fsSL -X POST "$DEPLOY_WEBHOOK_URL"
+      #
+      # Option B — Fly.io (replace the webhook step above):
+      #   - uses: superfly/flyctl-actions/setup-flyctl@master
+      #   - run: flyctl deploy --image ghcr.io/${{ github.repository }}/api:sha-${{ github.sha }}
+      #     env:
+      #       FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
