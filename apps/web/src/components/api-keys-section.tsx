@@ -81,7 +81,7 @@ export function ApiKeysSection({ enabled }: Props) {
         {!enabled ? (
           <div className="py-6">
             <p className="text-sm text-muted-foreground">
-              API access is available on the <span className="font-medium text-foreground">Team</span> plan.
+              API access is available on the <span className="font-medium text-foreground">Indie</span> plan and above.
               Upgrade to programmatically manage monitors, incidents, and status pages.
             </p>
           </div>
