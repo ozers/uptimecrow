@@ -5,6 +5,7 @@ import { eq, and, asc, desc } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { logger } from "../utils/logger.js";
 import { assertPublicUrl } from "../utils/ssrf.js";
+import { PLAN_LIMITS } from "@uptimecrow/shared";
 import {
   subscribers,
   statusPages,
@@ -197,6 +198,7 @@ export async function processNotifyJob(
   // Send webhooks & integrations
   const [org] = await db
     .select({
+      plan: organizations.plan,
       slackWebhookUrl: organizations.slackWebhookUrl,
       discordWebhookUrl: organizations.discordWebhookUrl,
       customWebhookUrl: organizations.customWebhookUrl,
@@ -221,43 +223,48 @@ export async function processNotifyJob(
     updateBody,
   };
 
-  if (org?.slackWebhookUrl) {
-    await sendSlackWebhook({ ...webhookParams, webhookUrl: org.slackWebhookUrl });
-  }
-  if (org?.discordWebhookUrl) {
-    await sendDiscordWebhook({ ...webhookParams, webhookUrl: org.discordWebhookUrl });
-  }
-  if (org?.customWebhookUrl) {
-    await sendCustomWebhook({ ...webhookParams, webhookUrl: org.customWebhookUrl });
-  }
-  if (org?.pagerdutyIntegrationKey) {
-    await sendPagerDutyAlert({
-      ...webhookParams,
-      integrationKey: org.pagerdutyIntegrationKey,
-      dedupKey: incident.id,
-    });
-  }
-  if (org?.teamsWebhookUrl) {
-    await sendTeamsWebhook({ ...webhookParams, webhookUrl: org.teamsWebhookUrl });
-  }
-  if (org?.telegramBotToken && org?.telegramChatId) {
-    await sendTelegramMessage({
-      ...webhookParams,
-      botToken: org.telegramBotToken,
-      chatId: org.telegramChatId,
-    });
-  }
-  if (org?.twilioAccountSid && org?.twilioAuthToken && org?.twilioFromNumber && org?.twilioToNumber) {
-    await sendSmsAlert({
-      accountSid: org.twilioAccountSid,
-      authToken: org.twilioAuthToken,
-      fromNumber: org.twilioFromNumber,
-      toNumber: org.twilioToNumber,
-      type: type as "incident_created" | "incident_resolved",
-      statusPageName: page.name,
-      incidentTitle: incident.title,
-      severity: incident.severity,
-    });
+  // Slack/Discord/custom/PagerDuty/Teams/Telegram/SMS are paid-plan
+  // integrations. The free tier is email-only, so gate every non-email
+  // channel on the plan (matches PLAN_LIMITS.slackWebhook).
+  if (PLAN_LIMITS[org?.plan ?? "free"].slackWebhook) {
+    if (org?.slackWebhookUrl) {
+      await sendSlackWebhook({ ...webhookParams, webhookUrl: org.slackWebhookUrl });
+    }
+    if (org?.discordWebhookUrl) {
+      await sendDiscordWebhook({ ...webhookParams, webhookUrl: org.discordWebhookUrl });
+    }
+    if (org?.customWebhookUrl) {
+      await sendCustomWebhook({ ...webhookParams, webhookUrl: org.customWebhookUrl });
+    }
+    if (org?.pagerdutyIntegrationKey) {
+      await sendPagerDutyAlert({
+        ...webhookParams,
+        integrationKey: org.pagerdutyIntegrationKey,
+        dedupKey: incident.id,
+      });
+    }
+    if (org?.teamsWebhookUrl) {
+      await sendTeamsWebhook({ ...webhookParams, webhookUrl: org.teamsWebhookUrl });
+    }
+    if (org?.telegramBotToken && org?.telegramChatId) {
+      await sendTelegramMessage({
+        ...webhookParams,
+        botToken: org.telegramBotToken,
+        chatId: org.telegramChatId,
+      });
+    }
+    if (org?.twilioAccountSid && org?.twilioAuthToken && org?.twilioFromNumber && org?.twilioToNumber) {
+      await sendSmsAlert({
+        accountSid: org.twilioAccountSid,
+        authToken: org.twilioAuthToken,
+        fromNumber: org.twilioFromNumber,
+        toNumber: org.twilioToNumber,
+        type: type as "incident_created" | "incident_resolved",
+        statusPageName: page.name,
+        incidentTitle: incident.title,
+        severity: incident.severity,
+      });
+    }
   }
 
   // Notify on-call person
