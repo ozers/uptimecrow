@@ -58,7 +58,6 @@ export function VsPingdom() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "PagerDuty only" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "✓ Built-in (extra cost)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "✓ Multiple regions" },
         { feature: "Real user monitoring (RUM)", us: "✗ Roadmap", them: "✓ Available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Pro plan ($29/mo)", them: "Paid plans" },

@@ -295,11 +295,6 @@ export default function SelfHostPage() {
                   <td>Fixed feature set</td>
                 </tr>
                 <tr>
-                  <td>Multi-region checks</td>
-                  <td className="you-col">Single region</td>
-                  <td><span className="check">✓</span> 5 regions (Pro+)</td>
-                </tr>
-                <tr>
                   <td>License</td>
                   <td className="you-col"><span className="check">✓</span> AGPL-3.0 — full source access</td>
                   <td>SaaS ToS</td>

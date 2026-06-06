@@ -31,10 +31,6 @@ const FAQ = [
     a: "Each HTTP, TCP, or keyword check is one monitor. Heartbeat monitors are counted separately — they track your cron jobs and scheduled tasks.",
   },
   {
-    q: "What is multi-region monitoring?",
-    a: "Pro plan runs checks from multiple geographic locations simultaneously. If only one region reports down, it's flagged as a regional issue. Only when a majority of regions agree does an incident open — drastically reducing false alarms.",
-  },
-  {
     q: "Do you offer annual discounts or a custom plan?",
     a: "Annual billing gives you 2 months free (see toggle above). For SSO, a DPA, a custom invoice, or more monitors than Pro allows, email support@uptimecrow.com and we'll sort it out.",
   },
@@ -51,7 +47,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and multi-region monitoring.",
+      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and 100 monitors.",
     canonical: "https://uptimecrow.com/pricing",
     jsonLd: {
       "@context": "https://schema.org",
