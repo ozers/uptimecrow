@@ -18,8 +18,8 @@ type RegisterForm = z.infer<typeof registerSchema>;
 
 const PERKS = [
   "Free forever — no credit card required",
-  "Monitor up to 3 services instantly",
-  "Slack & Discord alert integrations",
+  "Monitor 10 services free — or self-host unlimited",
+  "Email alerts the moment you go down",
   "Public status pages for your users",
   "Pre-rendered status pages that survive origin downtime",
   "Up and running in under 3 minutes",

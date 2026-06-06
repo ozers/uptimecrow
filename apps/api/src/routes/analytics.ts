@@ -11,7 +11,8 @@ analyticsRoutes.use("*", authMiddleware);
 // Uptime percentage by monitor
 analyticsRoutes.get("/uptime", async (c) => {
   const { orgId } = c.get("user");
-  const days = parseInt(c.req.query("days") || "30", 10);
+  // Cap the window so a single request can't force an unbounded table scan.
+  const days = Math.min(365, Math.max(1, parseInt(c.req.query("days") || "30", 10) || 30));
   const monitorId = c.req.query("monitorId");
 
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);

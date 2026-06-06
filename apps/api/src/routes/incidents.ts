@@ -16,8 +16,8 @@ incidentRoutes.use("*", authMiddleware);
 // List incidents
 incidentRoutes.get("/", async (c) => {
   const { orgId } = c.get("user");
-  const limit = parseInt(c.req.query("limit") || "20", 10);
-  const offset = parseInt(c.req.query("offset") || "0", 10);
+  const limit = Math.min(100, Math.max(1, parseInt(c.req.query("limit") || "20", 10) || 20));
+  const offset = Math.max(0, parseInt(c.req.query("offset") || "0", 10) || 0);
 
   const result = await db
     .select()
