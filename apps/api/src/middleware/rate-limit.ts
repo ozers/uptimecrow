@@ -7,12 +7,27 @@ interface RateLimitConfig {
   prefix: string;
 }
 
-function getClientIp(c: Context): string {
-  return (
-    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
-    c.req.header("x-real-ip") ||
-    "unknown"
-  );
+// Resolve the real client IP for rate-limit bucketing.
+//
+// `X-Forwarded-For` is a comma-separated chain where each proxy *appends* the
+// address it saw. A client can pre-seed bogus left-most entries, so the
+// left-most value is attacker-controlled and must never be trusted — using it
+// (the previous behaviour) let anyone rotate their bucket and bypass the auth
+// brute-force limiter. Only the right-most entries, appended by infrastructure
+// we control, are trustworthy. `TRUSTED_PROXY_COUNT` (default 1) is how many
+// such hops sit in front of the app; the client IP is the entry just before
+// them.
+export function getClientIp(c: Context): string {
+  const xff = c.req.header("x-forwarded-for");
+  if (xff) {
+    const ips = xff.split(",").map((s) => s.trim()).filter(Boolean);
+    if (ips.length > 0) {
+      const trustedHops = Math.max(1, Number(process.env.TRUSTED_PROXY_COUNT ?? "1"));
+      const idx = ips.length - trustedHops;
+      return ips[idx >= 0 ? idx : 0];
+    }
+  }
+  return c.req.header("x-real-ip")?.trim() || "unknown";
 }
 
 function createRateLimiter(config: RateLimitConfig) {

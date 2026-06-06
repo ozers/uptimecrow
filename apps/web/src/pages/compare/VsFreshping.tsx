@@ -21,7 +21,7 @@ export function VsFreshping() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             And if you'd rather not depend on another hosted service again, the entire stack is{" "}
-            <strong>MIT-licensed and self-hostable</strong> with a single Docker Compose command.
+            <strong>AGPL-3.0 licensed and self-hostable</strong> with a single Docker Compose command.
           </p>
         </>
       }
@@ -40,7 +40,7 @@ export function VsFreshping() {
         },
         {
           title: "Open-source core — no more surprise shutdowns",
-          body: "The entire stack is MIT-licensed on GitHub. Self-host it yourself with Docker Compose, or use our managed cloud. Either way, you own your data and your setup.",
+          body: "The entire stack is AGPL-3.0 licensed on GitHub. Self-host it yourself with Docker Compose, or use our managed cloud. Either way, you own your data and your setup.",
         },
       ]}
       rows={[
@@ -55,7 +55,7 @@ export function VsFreshping() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✗ Not available" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Multi-region checks", us: "Team plan", them: "Was available" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "Custom domain status page", us: "Indie plan ($12/mo)", them: "Was paid" },
         { feature: "Data you can export", us: "✓ REST API", them: "✗ Gone with the service" },
       ]}

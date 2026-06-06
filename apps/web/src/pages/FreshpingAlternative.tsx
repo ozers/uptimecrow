@@ -40,7 +40,7 @@ export function FreshpingAlternative() {
     {
       Icon: ShieldCheck,
       title: "Open source, self-hostable",
-      body: "The full stack is MIT-licensed. Run it on your own infrastructure with docker compose up. No vendor lock-in, no dependency on a hosted service that can shut down.",
+      body: "The full stack is AGPL-3.0 licensed. Run it on your own infrastructure with docker compose up. No vendor lock-in, no dependency on a hosted service that can shut down.",
     },
   ];
 

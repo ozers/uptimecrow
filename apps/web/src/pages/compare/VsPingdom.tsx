@@ -23,7 +23,7 @@ export function VsPingdom() {
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow is also the <strong>only uptime monitor with a native MCP server</strong>, letting you
             query monitor status and manage incidents from Claude, Cursor, or any AI assistant. And if you
-            want full control, the entire stack is <strong>MIT-licensed and self-hostable</strong>.
+            want full control, the entire stack is <strong>AGPL-3.0 licensed and self-hostable</strong>.
           </p>
         </>
       }
@@ -42,7 +42,7 @@ export function VsPingdom() {
         },
         {
           title: "Open-source, self-hostable, no vendor lock-in",
-          body: "MIT-licensed on GitHub. Run the full stack yourself with Docker Compose, or use our managed cloud. Either way you own your data.",
+          body: "AGPL-3.0 licensed on GitHub. Run the full stack yourself with Docker Compose, or use our managed cloud. Either way you own your data.",
         },
       ]}
       rows={[
@@ -60,7 +60,7 @@ export function VsPingdom() {
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Multi-region checks", us: "Team plan ($79/mo)", them: "✓ Multiple regions" },
         { feature: "Real user monitoring (RUM)", us: "✗ Roadmap", them: "✓ Available" },
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✗ Closed source" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Pro plan ($29/mo)", them: "Paid plans" },
       ]}
       whenThem={

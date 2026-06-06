@@ -73,7 +73,7 @@ If you've never used UptimeCrow: [sign up free](https://uptimecrow.com/register)
 
 If you have an UptimeRobot/Healthchecks/StatusCake setup you're tired of: the next post is your migration guide. Or just hit me on Twitter/X — I read every reply.
 
-If you want to self-host: [the entire stack is MIT-licensed on GitHub](https://github.com/ozers/uptimecrow). `docker compose up` and you're done.
+If you want to self-host: [the entire stack is AGPL-3.0 licensed on GitHub](https://github.com/ozers/uptimecrow). `docker compose up` and you're done.
 
 If you want to follow along: [the changelog](https://uptimecrow.com/changelog) is the canonical source.
 
@@ -145,7 +145,7 @@ Use the canonical link to your own blog: `<link rel="canonical" href="https://up
 
 Don't paste the full post. Write a 2-3 sentence personal note + link. Example for r/selfhosted:
 
-> Hey r/selfhosted — I run an open-source uptime monitor (MIT, runs on docker compose). Just bumped the cloud version's free tier 2.5× because the old cap was making people bounce. Writing about why and what else I'm not building. Self-hosters can ignore the cloud tier change — the OSS is unchanged, but the slow-response alerts and free SSL/DNS tools are new.
+> Hey r/selfhosted — I run an open-source uptime monitor (AGPL-3.0, runs on docker compose). Just bumped the cloud version's free tier 2.5× because the old cap was making people bounce. Writing about why and what else I'm not building. Self-hosters can ignore the cloud tier change — the OSS is unchanged, but the slow-response alerts and free SSL/DNS tools are new.
 > [link to blog post]
 
 Avoid r/devops if your karma is fresh — they downvote anything that smells promotional within 5 minutes.

@@ -22,9 +22,10 @@ export function VsUptimeKuma() {
             backups, and no SaaS option if you'd rather not run your own server.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            UptimeCrow is MIT-licensed and self-hostable too — so you keep everything you love about Kuma —
-            but adds a full REST API, multi-user orgs, managed cloud hosting, multi-region checks, and an
-            MCP server so you can query your monitors from Claude, Cursor, or Windsurf.
+            UptimeCrow is open-source and self-hostable too — AGPL-3.0 rather than Kuma's MIT — so you
+            keep everything you love about Kuma, plus a full REST API, multi-user orgs, managed cloud
+            hosting, multi-region checks, and an MCP server so you can query your monitors from Claude,
+            Cursor, or Windsurf.
           </p>
         </>
       }
@@ -43,11 +44,11 @@ export function VsUptimeKuma() {
         },
         {
           title: "Managed cloud or self-host — your choice",
-          body: "Use our managed SaaS and skip the server maintenance, or self-host with Docker Compose exactly like Kuma. UptimeCrow is also MIT-licensed, so you're never locked in.",
+          body: "Use our managed SaaS and skip the server maintenance, or self-host with Docker Compose exactly like Kuma. UptimeCrow is AGPL-3.0 licensed, so you're never locked in.",
         },
       ]}
       rows={[
-        { feature: "Self-host option", us: "✓ MIT-licensed", them: "✓ MIT-licensed" },
+        { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✓ MIT-licensed" },
         { feature: "Managed SaaS", us: "✓ Free + paid plans", them: "✗ Self-host only" },
         { feature: "REST API", us: "✓ Full CRUD API", them: "✗ Not available", note: "Kuma's most-requested feature" },
         { feature: "Multi-user / teams", us: "✓ Org-based multi-user", them: "✗ Single user" },
@@ -74,8 +75,8 @@ export function VsUptimeKuma() {
           <p style={{ marginTop: "0.75rem" }}>
             The moment you need a teammate to have dashboard access, want to create monitors from a script or
             CI pipeline, or prefer not to maintain another server, UptimeCrow is the natural next step.
-            It's MIT-licensed just like Kuma — you can even migrate your monitors and self-host UptimeCrow
-            on the same machine.
+            UptimeCrow is open-source (AGPL-3.0) just like Kuma is (MIT) — you can even migrate your
+            monitors and self-host UptimeCrow on the same machine.
           </p>
         </>
       }

@@ -4,7 +4,9 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)
 ![Node](https://img.shields.io/badge/Node-%3E%3D20-green)
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-blue)
+
+> **Open core.** This repository is the full self-hostable platform under AGPL-3.0. The managed service at [uptimecrow.com](https://uptimecrow.com) runs the same code plus a small set of enterprise add-ons (SSO, audit log, multi-region). See [OPEN_CORE.md](./OPEN_CORE.md) for the exact split.
 
 ## Features
 
@@ -125,10 +127,10 @@ This allows you to scale API servers and workers independently in production.
 - [Node.js](https://nodejs.org/) >= 20 (for local IDE support)
 - [pnpm](https://pnpm.io/) >= 9
 
-### Quick Start (Docker)
+### Quick Start (Docker, development)
 
 ```bash
-git clone https://github.com/<your-org>/uptimecrow.git
+git clone https://github.com/ozers/uptimecrow.git
 cd uptimecrow
 cp .env.example .env
 docker compose up
@@ -141,6 +143,21 @@ This starts:
 - **Web** on port `5173` (with hot-reload)
 
 Open [http://localhost:5173](http://localhost:5173) to see the app.
+
+### Production self-host
+
+For an actual production deploy on a VPS, use `docker-compose.prod.yml` — it pulls pre-built images from GHCR, runs the API in production mode, and runs migrations automatically on startup.
+
+```bash
+cp .env.prod.example .env
+# Edit .env — set POSTGRES_PASSWORD, JWT_SECRET, APP_URL (required).
+# Generate strong secrets with: openssl rand -hex 32
+
+docker compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml logs -f api
+```
+
+Web UI on port `80`, API on `3000`. Put nginx/Caddy in front for TLS. Email (SES), billing (Polar), and SMS (Twilio) integrations are all optional — UptimeCrow runs fine with just the four core containers.
 
 ### Local Development (without Docker)
 
@@ -322,4 +339,19 @@ GitHub Actions workflows:
 
 ## License
 
-MIT
+UptimeCrow is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](./LICENSE) for the full text and [OPEN_CORE.md](./OPEN_CORE.md) for what's in the open core vs. managed-only.
+
+**Plain-English summary** (not legal advice):
+
+- You can self-host UptimeCrow for free, forever, including for your company's internal use.
+- You can modify it however you like.
+- If you offer a modified version of UptimeCrow as a network service to third parties, AGPL requires you to publish your modifications under the same license.
+- If your organization cannot use AGPL software, [contact us](mailto:hello@uptimecrow.com) about a commercial license.
+
+## Supporting the project
+
+If UptimeCrow is useful to you, the simplest way to support it is to [use the managed cloud](https://uptimecrow.com/pricing) — those plans fund the time spent here. A sponsor program for self-hosters is on the roadmap.
+
+## Contributing
+
+PRs and issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md), and report security issues per [SECURITY.md](./SECURITY.md).

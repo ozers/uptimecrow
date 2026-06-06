@@ -1,9 +1,25 @@
-node_modules
-dist
+# Patterns without a `**/` prefix only match at the build-context root —
+# nested copies (e.g. apps/api/node_modules) are NOT excluded by a bare
+# "node_modules" entry. We learned this the hard way: a host node_modules
+# leaking into the API build broke drizzle-orm subpath resolution because
+# the macOS pnpm symlinks pointed at /Volumes/... which doesn't exist
+# inside the container. Always glob nested paths.
+
+**/node_modules
+**/dist
+**/.turbo
+**/.vite
+**/coverage
+**/*.tsbuildinfo
+
 .git
-.DS_Store
-.env
-.env.local
-*.log
+**/.DS_Store
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.prod.example
+**/*.log
+
 docs
 .claude
+.wolf

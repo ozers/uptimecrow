@@ -4,6 +4,7 @@ import type { Job } from "bullmq";
 import { eq, and, asc, desc } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { logger } from "../utils/logger.js";
+import { assertPublicUrl } from "../utils/ssrf.js";
 import {
   subscribers,
   statusPages,
@@ -174,13 +175,22 @@ export async function processNotifyJob(
       }],
     };
     await Promise.allSettled(
-      subscriberWebhooks.map((url) =>
-        fetch(url, {
+      subscriberWebhooks.map(async (url) => {
+        // Subscriber webhook URLs come from anonymous, unauthenticated users on
+        // public status pages. Guard against SSRF (e.g. cloud-metadata targets)
+        // before dialing — the same protection every other outbound URL gets.
+        try {
+          await assertPublicUrl(url);
+        } catch (err) {
+          logger.warn({ err, url }, "[Notify] Subscriber webhook blocked by SSRF guard");
+          return;
+        }
+        return fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(slackPayload),
-        }).catch((err) => logger.error({ err, url }, "[Notify] Subscriber webhook failed")),
-      ),
+        }).catch((err) => logger.error({ err, url }, "[Notify] Subscriber webhook failed"));
+      }),
     );
   }
 

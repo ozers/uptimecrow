@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Logo } from "@/components/logo";
+import { usePageMeta } from "@/lib/meta";
 
 function LegalShell({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -29,6 +30,12 @@ function LegalShell({ title, children }: { title: string; children: React.ReactN
 }
 
 export function Privacy() {
+  usePageMeta({
+    title: "Privacy Policy — UptimeCrow",
+    description:
+      "How UptimeCrow handles your account data, monitor configurations, and subscriber lists. GDPR and CCPA rights, sub-processors (AWS, Polar), retention windows, and contact for data requests.",
+    canonical: "https://uptimecrow.com/privacy",
+  });
   return (
     <LegalShell title="Privacy Policy">
       <p>
@@ -83,6 +90,12 @@ export function Privacy() {
 }
 
 export function Terms() {
+  usePageMeta({
+    title: "Terms of Service — UptimeCrow",
+    description:
+      "The terms governing your use of UptimeCrow: acceptable use, billing and refund policy, no-warranty disclaimer, termination, and how we communicate material changes.",
+    canonical: "https://uptimecrow.com/terms",
+  });
   return (
     <LegalShell title="Terms of Service">
       <p>
