@@ -177,8 +177,19 @@ statusPageRoutes.put("/:id/domain", async (c) => {
 
   if (!page) return c.json({ error: "Status page not found" }, 404);
 
-  // If setting a domain, verify CNAME
+  // If setting a domain, verify it's allowed on this plan, then verify CNAME.
   if (domain) {
+    const [org] = await db
+      .select({ plan: organizations.plan })
+      .from(organizations)
+      .where(eq(organizations.id, orgId))
+      .limit(1);
+    if (!PLAN_LIMITS[org?.plan ?? "free"].customDomain) {
+      return c.json(
+        { error: "Custom domains are available on the Indie plan and above." },
+        403,
+      );
+    }
     try {
       const dns = await import("dns");
       const { promisify } = await import("util");
