@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — full landing (mascot)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1:#f7f3ec; --bg2:#f1ebe0; --surface:#fffdf9; --surface2:#fbf6ee; --line:#e9e1d4;
+    --ink:#211d27; --dim:#6c6675; --faint:#9a93a0;
+    --green:#16a34a; --green-glow:#3fd56e; --green-soft:#e7f6ec;
+    --amber:#e8943f; --amber-soft:#fbe9d5; --slate:#3a3744;
+    --rr:999px; --r:18px; --font:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden;background:var(--bg1)}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+  h2{font-size:clamp(28px,3.6vw,40px);line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:14px 0 0}
+  .lead{color:var(--dim);font-size:17px;line-height:1.6;max-width:520px;margin:14px 0 0}
+  .btn{display:inline-block;padding:14px 26px;border-radius:var(--rr);font-weight:650;font-size:15.5px;letter-spacing:-.01em;transition:transform .12s,box-shadow .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 12px 30px -12px #16a34a88}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px #16a34a99}
+  .btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:#f7f3eccc;border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14.5px;font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-gh{display:flex;gap:7px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 14px;font-size:13px}
+  .nav-gh .s{color:var(--amber)}
+  .nav-cta{background:var(--ink);color:#fff;padding:10px 19px;border-radius:var(--rr);font-weight:600;font-size:14px}
+
+  /* hero */
+  .hero{background:radial-gradient(70% 60% at 88% 0%, #fbe6cb88 0%, transparent 55%),radial-gradient(60% 60% at 2% 110%, #dcefe066 0%, transparent 55%),linear-gradient(180deg,var(--bg1),var(--bg2))}
+  .hero-grid{display:grid;grid-template-columns:1.06fr .94fr;gap:32px;align-items:center;padding:46px 0 72px}
+  @media(max-width:880px){.hero-grid{grid-template-columns:1fr;gap:18px;text-align:center}}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 15px;font-size:13px;font-weight:600;color:var(--dim)}
+  .badge .e{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green-glow)}
+  h1{font-size:clamp(40px,5.6vw,64px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:22px 0 0}
+  h1 .hl{color:var(--green)}
+  .hero .sub{color:var(--dim);font-size:18.5px;line-height:1.6;max-width:480px;margin:22px 0 0}
+  @media(max-width:880px){.hero .sub{margin-inline:auto}}
+  .hero .sub b{color:var(--ink);font-weight:600}
+  .actions{display:flex;gap:13px;margin-top:32px}
+  @media(max-width:880px){.actions{justify-content:center;flex-wrap:wrap}}
+  .specs{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--faint);font-weight:500}
+  @media(max-width:880px){.specs{justify-content:center}}
+  .specs b{color:var(--dim);font-weight:600}
+  .stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:400px}
+  .aura{position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,#3fd56e2e 0%,#e8943f14 45%,transparent 70%);filter:blur(8px);animation:breathe 6s ease-in-out infinite;z-index:0}
+  @keyframes breathe{50%{transform:scale(1.08);opacity:.85}}
+  .mascot-wrap{position:relative;z-index:2;animation:float 6s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-14px)}}
+  .mascot{width:320px;max-width:78vw;height:auto;display:block;filter:drop-shadow(0 26px 30px #2a223018)}
+  .glint{position:absolute;top:30%;left:50%;transform:translateX(-50%);width:160px;height:46px;background:radial-gradient(ellipse,#4dff8033 0%,transparent 70%);filter:blur(4px);z-index:3;animation:glint 4.5s ease-in-out infinite;pointer-events:none}
+  @keyframes glint{0%,100%{opacity:.4}50%{opacity:.9}}
+  .pill{position:absolute;z-index:4;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:9px 14px;font-size:12.5px;font-weight:600;box-shadow:0 14px 30px -16px #00000030;animation:floaty 5s ease-in-out infinite}
+  .pill .d{width:8px;height:8px;border-radius:50%;background:var(--green)}
+  .pill.p1{top:12%;right:0%}.pill.p2{bottom:16%;left:-2%;animation-delay:1.2s}
+  @keyframes floaty{50%{transform:translateY(-9px)}}
+  .missing{display:none;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;width:300px;height:300px;border:2px dashed var(--line);border-radius:24px;color:var(--faint);font-size:13px;text-align:center;padding:24px;background:var(--surface)}
+
+  /* trust strip */
+  .strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface2)}
+  .strip-inner{display:flex;gap:30px;flex-wrap:wrap;justify-content:center;padding:18px 0;font-size:13.5px;color:var(--dim);font-weight:500}
+  .strip b{color:var(--ink)} .strip .s{color:var(--amber)}
+
+  /* sections */
+  section.sec{padding:80px 0}
+  .sec-head{text-align:center;max-width:640px;margin:0 auto 44px}
+  .sec-head .lead{margin-inline:auto}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+  .step .n{width:30px;height:30px;border-radius:9px;background:var(--green-soft);color:var(--green);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .step h3{font-size:17px;margin:14px 0 6px;font-weight:700}
+  .step p{color:var(--dim);font-size:14.5px;line-height:1.55}
+
+  .feat{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.feat{grid-template-columns:1fr}}
+  .fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;transition:transform .15s,border-color .15s}
+  .fcard:hover{transform:translateY(-3px);border-color:var(--amber)}
+  .fcard .ic{font-size:22px}
+  .fcard h3{font-size:16px;margin:12px 0 6px;font-weight:700}
+  .fcard p{color:var(--dim);font-size:14px;line-height:1.55}
+
+  /* status showcase */
+  .showcase{background:var(--surface2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .show-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:center}
+  @media(max-width:820px){.show-grid{grid-template-columns:1fr;gap:24px}}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 30px 60px -34px #0002;overflow:hidden}
+  .panel-bar{display:flex;align-items:center;gap:7px;padding:11px 15px;border-bottom:1px solid var(--line);background:var(--surface2)}
+  .panel-bar i{width:9px;height:9px;border-radius:50%}.panel-bar .r{background:#ff5f57}.panel-bar .y{background:#febc2e}.panel-bar .g{background:#28c840}
+  .panel-bar span{margin-left:8px;font-size:12px;color:var(--faint);font-family:ui-monospace,monospace}
+  .panel-body{padding:18px}
+  .op{display:flex;align-items:center;gap:10px;background:var(--green-soft);border-radius:13px;padding:13px 15px;margin-bottom:12px}
+  .op .d{width:9px;height:9px;border-radius:50%;background:var(--green)}
+  .op .t{font-weight:700;color:var(--green);font-size:14px}
+  .op .m{margin-left:auto;font-size:12px;color:var(--green);opacity:.75;font-weight:600}
+  .srow{display:flex;align-items:center;gap:10px;padding:11px 2px;font-size:13.5px}
+  .srow+.srow{border-top:1px solid var(--line)}
+  .srow .ck{width:20px;height:20px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+  .srow .up{margin-left:auto;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums;font-size:12.5px}
+  .srow .ms{color:var(--dim);width:48px;text-align:right;font-variant-numeric:tabular-nums;font-size:12px}
+
+  /* pricing */
+  .price{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:880px){.price{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.price{grid-template-columns:1fr}}
+  .pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;position:relative}
+  .pcard.pop{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset}
+  .pcard .pop-tag{position:absolute;top:-10px;left:22px;background:var(--green);color:#fff;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:var(--rr);letter-spacing:.04em}
+  .pcard .pn{font-weight:700;font-size:15px}
+  .pcard .pp{font-size:28px;font-weight:800;margin:8px 0}
+  .pcard .pp span{font-size:13px;color:var(--dim);font-weight:500}
+  .pcard ul{list-style:none;margin:12px 0 0;display:flex;flex-direction:column;gap:6px}
+  .pcard li{font-size:12.5px;color:var(--dim);display:flex;gap:7px}
+  .pcard li::before{content:"✓";color:var(--green);font-weight:800}
+
+  /* final cta */
+  .final{text-align:center;padding:84px 0}
+  .final .mini{width:90px;margin:0 auto 8px;animation:float 6s ease-in-out infinite}
+  .final h2{font-size:clamp(30px,4.4vw,46px)}
+
+  footer{border-top:1px solid var(--line);background:var(--surface2);padding:30px 0;color:var(--faint);font-size:13px}
+  .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap nav-inner">
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 270 270"><rect width="270" height="270" rx="61" fill="#767E8F"/><path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/><path d="M188.5 103L167 116c3 8 12.5 11.6 17 10.5 5-1.25 10-5 10-12.5 0-6-3.3-9.8-5.5-11Z" fill="#59F94F"/><path d="M81.5 103L103 116c-3 8-12.5 11.6-17 10.5-5-1.25-10-5-10-12.5 0-6 3.3-9.8 5.5-11Z" fill="#59F94F"/><path d="M135 190V105l-35 40 20 15 15 30Z" fill="#E29B4C"/><path d="M135 190V105l35 40-20 15-15 30Z" fill="#F3BC6F"/></svg>
+    UptimeCrow
+  </div>
+  <div class="nav-links"><a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a class="nav-gh"><span class="s">★</span> 1.3k</a><a class="nav-cta">Get started</a></div>
+</div></nav>
+
+<!-- HERO -->
+<div class="hero"><div class="wrap hero-grid">
+  <div>
+    <span class="badge"><span class="e"></span> Watching 4 services · 99.98% this month</span>
+    <h1>Your site went down.<br><span class="hl">We caught it first.</span></h1>
+    <p class="sub">Open-source uptime monitoring &amp; status pages that earn trust. The crow watches every endpoint, opens the incident, updates your page — <b>before your users notice.</b></p>
+    <div class="actions"><a class="btn primary">Start free — 10 monitors</a><a class="btn ghost">★ Star on GitHub</a></div>
+    <div class="specs"><span><b>HTTP · TCP · keyword · cron</b></span><span>self-host <b>unlimited</b></span><span><b>MCP</b> server for AI</span></div>
+  </div>
+  <div class="stage">
+    <div class="aura"></div>
+    <div class="pill p1"><span class="d"></span> api.yourapp.com · 88ms</div>
+    <div class="pill p2"><span class="d"></span> All systems operational</div>
+    <div class="mascot-wrap">
+      <img class="mascot" src="crow-mascot.png" alt="UptimeCrow crow" onerror="this.style.display='none';document.getElementById('miss').style.display='flex'"/>
+      <div class="glint"></div>
+      <div class="missing" id="miss">🐦‍⬛<br>Save your mascot as<br><b>crow-mascot.png</b><br>in this folder.</div>
+    </div>
+  </div>
+</div></div>
+
+<!-- TRUST -->
+<div class="strip"><div class="wrap strip-inner">
+  <span><span class="s">★</span> 1,284 stars on GitHub</span>
+  <span><b>AGPL-3.0</b> — self-host free</span>
+  <span>one <b>docker compose up</b></span>
+  <span>up in <b>3 minutes</b></span>
+</div></div>
+
+<!-- HOW -->
+<section class="sec" id="how"><div class="wrap">
+  <div class="sec-head"><div class="eyebrow">How it works</div><h2>Set it once. The crow does the rest.</h2><p class="lead">No dashboards to babysit. Add your endpoints and go back to building.</p></div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Add your endpoints</h3><p>HTTP, TCP, keyword or cron checks — at the interval you choose, as often as every 30 seconds.</p></div>
+    <div class="step"><div class="n">2</div><h3>The crow watches</h3><p>A blip is confirmed, not panicked over. On a real outage it opens an incident and updates your status page instantly.</p></div>
+    <div class="step"><div class="n">3</div><h3>You get pinged</h3><p>Email, Slack, Discord, PagerDuty, Telegram — or ask Claude “is anything down?” via the MCP server.</p></div>
+  </div>
+</div></section>
+
+<!-- FEATURES -->
+<section class="sec" id="features" style="padding-top:0"><div class="wrap">
+  <div class="sec-head"><div class="eyebrow">Everything you need</div><h2>Monitoring, status pages, on-call — one tool.</h2></div>
+  <div class="feat">
+    <div class="fcard"><div class="ic">🛰️</div><h3>Uptime monitoring</h3><p>HTTP/TCP/keyword checks with a consecutive-failure state machine, so one network blip never pages you.</p></div>
+    <div class="fcard"><div class="ic">📊</div><h3>Status pages</h3><p>Pre-rendered & served decoupled — they stay online even when your origin, API and DB are all down.</p></div>
+    <div class="fcard"><div class="ic">💓</div><h3>Heartbeats</h3><p>Cron jobs ping a URL; miss one and the crow squawks. Dead-man's-switch for your scheduled tasks.</p></div>
+    <div class="fcard"><div class="ic">🔔</div><h3>Smart alerts</h3><p>Email, Slack, Discord, PagerDuty, Teams, Telegram. Subscribers opt in to your status page themselves.</p></div>
+    <div class="fcard"><div class="ic">🤖</div><h3>MCP for AI</h3><p>The only uptime tool with a native MCP server — query monitors & incidents from Claude or Cursor.</p></div>
+    <div class="fcard"><div class="ic">📦</div><h3>Open source</h3><p>AGPL-3.0, self-host unlimited with one <code>docker compose up</code>. No lock-in, your data stays yours.</p></div>
+  </div>
+</div></section>
+
+<!-- SHOWCASE -->
+<section class="showcase sec"><div class="wrap show-grid">
+  <div>
+    <div class="eyebrow">Your public face</div>
+    <h2>A status page your users actually trust.</h2>
+    <p class="lead">Custom domain, branded, with subscribers — and it survives the one moment that matters: when you're down.</p>
+    <div style="margin-top:24px"><a class="btn primary">See a live status page</a></div>
+  </div>
+  <div class="panel">
+    <div class="panel-bar"><i class="r"></i><i class="y"></i><i class="g"></i><span>status.yourapp.com</span></div>
+    <div class="panel-body">
+      <div class="op"><span class="d"></span><span class="t">All systems operational</span><span class="m">99.98%</span></div>
+      <div class="srow"><span class="ck">✓</span> app.yourapp.com <span class="up">99.99%</span><span class="ms">142ms</span></div>
+      <div class="srow"><span class="ck">✓</span> api.yourapp.com <span class="up">100%</span><span class="ms">88ms</span></div>
+      <div class="srow"><span class="ck">✓</span> auth.yourapp.com <span class="up">99.94%</span><span class="ms">203ms</span></div>
+      <div class="srow"><span class="ck">✓</span> payments <span class="up">99.99%</span><span class="ms">176ms</span></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- PRICING -->
+<section class="sec" id="pricing"><div class="wrap">
+  <div class="sec-head"><div class="eyebrow">Pricing</div><h2>Start free. Self-host for free, forever.</h2><p class="lead">The hosted tier gets you going in minutes; the open-source core is yours, unlimited.</p></div>
+  <div class="price">
+    <div class="pcard"><div class="pn">Free</div><div class="pp">$0<span>/mo</span></div><ul><li>10 monitors</li><li>1 status page</li><li>5-min checks</li><li>Email alerts</li></ul></div>
+    <div class="pcard"><div class="pn">Indie</div><div class="pp">$9<span>/mo</span></div><ul><li>25 monitors</li><li>1-min checks</li><li>Custom domain + API</li><li>Slack/Discord</li></ul></div>
+    <div class="pcard pop"><span class="pop-tag">POPULAR</span><div class="pn">Pro</div><div class="pp">$29<span>/mo</span></div><ul><li>100 monitors</li><li>30-sec checks</li><li>5 team seats</li><li>1-year history</li></ul></div>
+    <div class="pcard"><div class="pn">Team</div><div class="pp">$79<span>/mo</span></div><ul><li>200 monitors</li><li>100 heartbeats</li><li>10 seats</li><li>Priority support</li></ul></div>
+  </div>
+</div></section>
+
+<!-- FINAL CTA -->
+<section class="final"><div class="wrap">
+  <img class="mini" src="crow-mascot.png" alt="" onerror="this.style.display='none'"/>
+  <h2>Let the crow take the night shift.</h2>
+  <p class="lead" style="margin:14px auto 0">Free for 10 monitors. Self-host unlimited. Up and running in 3 minutes.</p>
+  <div style="margin-top:28px"><a class="btn primary">Start free</a></div>
+</div></section>
+
+<footer><div class="wrap foot-inner">
+  <span>© 2026 UptimeCrow · Built with care in Istanbul</span>
+  <span>Open source (AGPL-3.0) · status · docs · github</span>
+</div></footer>
+
+</body>
+</html>
