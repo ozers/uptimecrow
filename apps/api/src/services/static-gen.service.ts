@@ -335,11 +335,15 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       return `<div class="ubar" style="background:${fill}" title="${escapeHtml(title)}"></div>`;
     }).join("");
     const dayCount = daily.length;
+    const hasData = daily.some((d) => d.total > 0);
+    const labels = hasData
+      ? `<span>${dayCount} days ago</span>
+    <span>Today</span>`
+      : `<span>Collecting data — the bar fills in as checks run</span>`;
     return `<div class="ubar-wrap">
   <div class="ubar-track">${bars}</div>
   <div class="ubar-labels">
-    <span>${dayCount} days ago</span>
-    <span>Today</span>
+    ${labels}
   </div>
 </div>`;
   }

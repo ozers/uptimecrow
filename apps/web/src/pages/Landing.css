@@ -675,6 +675,10 @@
   gap: 0;
   flex-wrap: nowrap;
   overflow: hidden;
+  /* Fade the edges so items clipped by the no-wrap row dissolve gracefully
+     instead of getting hard-cut mid-word. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 .proof-item {
   display: flex;
