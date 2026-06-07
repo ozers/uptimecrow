@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Friendly Crow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fbf7f0; --surface:#ffffff; --ink:#231f2e; --dim:#6f6a7a; --line:#ece6dc;
+    --green:#16a34a; --green-soft:#e7f7ec; --green-ink:#0f7a37;
+    --peach:#ff9f43; --peach-soft:#fff0df; --sky:#eaf3ff;
+    --r:20px; --rr:999px;
+    --head:'Fredoka',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+  /* soft warm blobs */
+  body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(70px);z-index:0;opacity:.7}
+  body::before{width:520px;height:520px;background:var(--green-soft);top:-160px;right:-120px}
+  body::after{width:460px;height:460px;background:var(--peach-soft);bottom:-180px;left:-140px}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 26px;position:relative;z-index:1}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--head);font-weight:700;font-size:21px}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14.5px;font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--rr);font-weight:600;font-size:14px}
+
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:46px 0 70px}
+  @media(max-width:880px){.hero{grid-template-columns:1fr;gap:24px;text-align:center}}
+  .tag{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 15px;font-size:13px;font-weight:600;color:var(--green-ink);box-shadow:0 2px 0 #00000005}
+  h1{font-family:var(--head);font-weight:700;font-size:clamp(40px,6vw,64px);line-height:1.04;letter-spacing:-.02em;margin:20px 0 0}
+  h1 .hl{color:var(--green);position:relative;white-space:nowrap}
+  h1 .hl svg{position:absolute;left:0;right:0;bottom:-10px;width:100%}
+  .sub{color:var(--dim);font-size:19px;line-height:1.6;max-width:460px;margin:22px 0 0}
+  @media(max-width:880px){.sub{margin-inline:auto}}
+  .actions{display:flex;gap:13px;margin-top:32px}
+  @media(max-width:880px){.actions{justify-content:center}}
+  .btn{padding:14px 26px;border-radius:var(--rr);font-weight:650;font-size:15.5px;transition:transform .12s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 8px 0 -2px #0f7a3733,0 12px 26px -10px var(--green)}
+  .btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+  .reassure{margin-top:16px;font-size:13.5px;color:var(--dim)}
+  .reassure b{color:var(--ink)}
+
+  /* the scene: friendly crow peeking over a status card */
+  .scene{position:relative;display:flex;justify-content:center}
+  .crow{width:210px;height:auto;position:relative;z-index:3;margin-bottom:-28px;animation:bob 4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+  .crow .eyelid{transform-origin:center;animation:blink 5s infinite}
+  @keyframes blink{0%,94%,100%{transform:scaleY(0)}96%,98%{transform:scaleY(1)}}
+  .speech{position:absolute;top:-6px;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 13px;font-size:13px;font-weight:600;box-shadow:0 8px 22px -12px #0003;z-index:4}
+  .speech b{color:var(--green-ink)}
+  .speech::after{content:"";position:absolute;left:24px;bottom:-7px;width:12px;height:12px;background:#fff;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+  .card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 30px 60px -30px #0002, 0 2px 0 #00000004;padding:18px;position:relative;z-index:2}
+  .op{display:flex;align-items:center;gap:10px;background:var(--green-soft);border-radius:14px;padding:13px 15px;margin-bottom:12px}
+  .op .d{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #16a34a22}
+  .op .t{font-weight:700;color:var(--green-ink);font-size:14.5px}
+  .op .m{margin-left:auto;font-size:12px;color:var(--green-ink);opacity:.7;font-weight:600}
+  .row{display:flex;align-items:center;gap:10px;padding:10px 4px}
+  .row+.row{border-top:1px solid var(--line)}
+  .row .ck{width:20px;height:20px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+  .row .nm{font-size:14px;font-weight:550}
+  .row .up{margin-left:auto;font-size:13px;font-weight:650;color:var(--green-ink)}
+  .row .ms{font-size:12px;color:var(--dim);width:48px;text-align:right}
+
+  .trust{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;padding:8px 0 46px;font-size:13.5px;color:var(--dim);font-weight:500}
+  .trust b{color:var(--ink)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">
+        <svg width="30" height="30" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#231f2e"/><circle cx="20" cy="18" r="7" fill="#fff"/><circle cx="22" cy="18" r="3.4" fill="#231f2e"/><circle cx="23.2" cy="16.8" r="1.1" fill="#fff"/><path d="M27 18l6-2-5 4z" fill="#ff9f43"/></svg>
+        UptimeCrow
+      </div>
+      <div class="nav-links">
+        <a>Features</a><a>Pricing</a><a>Docs</a><a>★ 1.3k</a>
+        <a class="nav-cta">Get Started</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <span class="tag">🐦‍⬛ Always watching, never blinking*</span>
+        <h1>Your site's got a
+          <span class="hl">crow on watch.<svg viewBox="0 0 200 12" fill="none" preserveAspectRatio="none"><path d="M2 8c40-7 120-7 196-2" stroke="#16a34a" stroke-width="3" stroke-linecap="round" opacity=".5"/></svg></span>
+        </h1>
+        <p class="sub">It spots the downtime, opens the incident, updates your status page, and pings you — all while you're getting coffee. ☕</p>
+        <div class="actions">
+          <a class="btn primary">Start free — 10 monitors</a>
+          <a class="btn ghost">Watch it work →</a>
+        </div>
+        <p class="reassure">No credit card. <b>Self-host unlimited</b> if you'd rather. Up in <b>3 minutes</b>.</p>
+      </div>
+
+      <div class="scene">
+        <div style="position:relative;width:100%;max-width:380px">
+          <div class="speech">All good! <b>99.98%</b> 👀</div>
+          <!-- friendly crow -->
+          <svg class="crow" viewBox="0 0 200 180">
+            <ellipse cx="100" cy="150" rx="60" ry="12" fill="#00000010"/>
+            <path d="M100 36c34 0 58 26 58 64 0 30-22 52-58 52s-58-22-58-52c0-38 24-64 58-64z" fill="#2c2838"/>
+            <path d="M58 96c-14 6-30 4-36-6 12 2 20-2 26-10z" fill="#231f2e"/>
+            <path d="M142 96c14 6 30 4 36-6-12 2-20-2-26-10z" fill="#231f2e"/>
+            <circle cx="100" cy="78" r="40" fill="#332e42"/>
+            <circle cx="86" cy="74" r="16" fill="#fff"/><circle cx="91" cy="76" r="8" fill="#231f2e"/><circle cx="94" cy="73" r="2.6" fill="#fff"/>
+            <circle cx="118" cy="74" r="16" fill="#fff"/><circle cx="123" cy="76" r="8" fill="#231f2e"/><circle cx="126" cy="73" r="2.6" fill="#fff"/>
+            <rect class="eyelid" x="70" y="60" width="32" height="16" rx="8" fill="#332e42"/>
+            <rect class="eyelid" x="102" y="60" width="32" height="16" rx="8" fill="#332e42"/>
+            <path d="M100 88l16 8-16 8-16-8z" fill="#ff9f43"/>
+            <path d="M84 132c0 8 6 14 16 14s16-6 16-14" fill="#16a34a" opacity=".9"/>
+          </svg>
+          <div class="card">
+            <div class="op"><span class="d"></span><span class="t">All systems operational</span><span class="m">updated 9s ago</span></div>
+            <div class="row"><span class="ck">✓</span><span class="nm">app.yourapp.com</span><span class="up">99.99%</span><span class="ms">142ms</span></div>
+            <div class="row"><span class="ck">✓</span><span class="nm">api.yourapp.com</span><span class="up">100%</span><span class="ms">88ms</span></div>
+            <div class="row"><span class="ck">✓</span><span class="nm">payments</span><span class="up">99.98%</span><span class="ms">176ms</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust">
+      <span>❤️ Loved by <b>indie hackers</b></span>
+      <span><b>Open source</b> (AGPL-3.0)</span>
+      <span>one <b>docker compose up</b></span>
+      <span>free for <b>10 monitors</b></span>
+    </div>
+  </div>
+</body>
+</html>
