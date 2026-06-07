@@ -48,27 +48,48 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
   const token = POLAR_TOKEN();
   if (!token) return c.json({ error: "Billing not configured" }, 500);
 
-  const res = await fetch(`${POLAR_API}/checkouts`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      product_price_id: priceId,
-      success_url: `${process.env.APP_URL || "http://localhost:5173"}/dashboard/settings?billing=success`,
-      customer_email: email,
-      metadata: { user_id: sub },
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${POLAR_API}/checkouts`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        product_price_id: priceId,
+        success_url: `${process.env.APP_URL || "http://localhost:5173"}/dashboard/settings?billing=success`,
+        customer_email: email,
+        metadata: { user_id: sub },
+      }),
+    });
+  } catch (e) {
+    logger.error({ err: String(e), plan, interval }, "[Polar] Checkout request failed");
+    return c.json({ error: "Could not reach the billing provider" }, 502);
+  }
 
   if (!res.ok) {
     const err = await res.text();
-    logger.error({ err }, "[Polar] Checkout error");
-    return c.json({ error: "Failed to create checkout" }, 500);
+    logger.error({ status: res.status, err, plan, interval, priceId }, "[Polar] Checkout error");
+    // Surface the upstream reason. Polar returns validation/auth messages (not
+    // secrets) and the caller is an authenticated user acting on their own org,
+    // so exposing the detail turns an opaque 500 into something diagnosable.
+    let detail: string;
+    try {
+      const j = JSON.parse(err);
+      const d = j?.detail ?? j?.error ?? j?.message ?? err;
+      detail = typeof d === "string" ? d : JSON.stringify(d);
+    } catch {
+      detail = err;
+    }
+    return c.json({ error: "Failed to create checkout", status: res.status, detail: detail.slice(0, 400) }, 500);
   }
 
-  const data = await res.json();
+  const data = await res.json().catch(() => null);
+  if (!data?.url) {
+    logger.error({ data }, "[Polar] Checkout: missing url in response");
+    return c.json({ error: "Checkout created but no URL was returned" }, 500);
+  }
   return c.json({ checkoutUrl: data.url });
 });
 
