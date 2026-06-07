@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Concept 1: The Pulse</title>
+<style>
+  :root{
+    --bg:#0a0a0f; --surface:#111118; --border:#1e1e2a;
+    --text:#f0f0f5; --dim:#9aa0b4;
+    --green:#00e676; --red:#ff5b5b; --amber:#ffab40;
+    --brand:#7c5cff; /* decoupled brand accent — green stays for STATUS */
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .logo svg{filter:drop-shadow(0 0 10px #7c5cff55)}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14px}
+  .nav-cta{background:var(--brand);color:#fff;padding:9px 18px;border-radius:9px;font-weight:600;font-size:14px;box-shadow:0 6px 24px -8px var(--brand)}
+  .hero{text-align:center;padding:70px 0 26px;position:relative;z-index:2}
+  .pill{display:inline-flex;align-items:center;gap:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;padding:7px 15px;border-radius:999px;border:1px solid var(--border);background:#0e0e16;transition:.4s;letter-spacing:.01em}
+  .pill .d{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #00e67622;transition:.4s}
+  .pill.down{border-color:#ff5b5b44;background:#1a0e10}
+  .pill.down .d{background:var(--red);box-shadow:0 0 0 4px #ff5b5b33;animation:blink .8s infinite}
+  .pill.resolved .d{background:var(--green)}
+  @keyframes blink{50%{opacity:.35}}
+  h1{font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.03em;font-weight:800;margin:26px 0 0}
+  h1 .em{color:var(--green)}
+  .sub{color:var(--dim);font-size:clamp(16px,2vw,19px);max-width:560px;margin:20px auto 0;line-height:1.55}
+  .cta-row{display:flex;gap:13px;justify-content:center;margin-top:34px}
+  .btn{padding:13px 24px;border-radius:11px;font-weight:600;font-size:15px}
+  .btn.primary{background:var(--brand);color:#fff;box-shadow:0 10px 34px -10px var(--brand)}
+  .btn.ghost{border:1px solid var(--border);color:var(--text);background:#0e0e16}
+  .note{margin-top:16px;color:var(--dim);font-size:12.5px;font-family:ui-monospace,monospace}
+  /* the signature: live pulse */
+  .pulse-stage{position:relative;margin-top:30px;height:260px}
+  canvas{display:block;width:100%;height:260px}
+  .pulse-fade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 80% at 50% 120%, transparent 40%, var(--bg) 78%)}
+  .glow{position:absolute;left:50%;top:-120px;width:760px;height:380px;transform:translateX(-50%);background:radial-gradient(closest-side, #7c5cff22, transparent 70%);filter:blur(20px);z-index:0;pointer-events:none}
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap" style="position:relative;z-index:2">
+    <nav>
+      <div class="logo">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M3 11c4-1 7 1 9 4 1-5 4-8 9-9-1 4-2 6-5 8 2 0 4-1 5-2-1 4-5 7-10 7-4 0-7-3-8-6z" fill="#7c5cff"/><circle cx="17" cy="6.5" r="1.1" fill="#0a0a0f"/></svg>
+        UptimeCrow
+      </div>
+      <div class="nav-links"><span>Features</span><span>Pricing</span><span>Docs</span><a class="nav-cta">Get Started</a></div>
+    </nav>
+
+    <div class="hero">
+      <span class="pill" id="pill"><span class="d"></span><span id="pillText">All systems operational · 4 monitors</span></span>
+      <h1>Your site went down.<br><span class="em">We caught it first.</span></h1>
+      <p class="sub">Open-source uptime monitoring with status pages your users actually trust. Self-host unlimited, or let us host it.</p>
+      <div class="cta-row"><a class="btn primary">Start monitoring free</a><a class="btn ghost">See how it works →</a></div>
+      <div class="note">● live demo — watch the pulse catch an incident</div>
+    </div>
+  </div>
+
+  <div class="pulse-stage">
+    <canvas id="pulse"></canvas>
+    <div class="pulse-fade"></div>
+  </div>
+
+<script>
+const cv = document.getElementById('pulse'), ctx = cv.getContext('2d');
+const pill = document.getElementById('pill'), pillText = document.getElementById('pillText');
+let W, H, DPR = Math.min(devicePixelRatio||1, 2);
+function resize(){ W = cv.clientWidth; H = 260; cv.width = W*DPR; cv.height = H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); }
+addEventListener('resize', resize); resize();
+
+const N = Math.max(160, Math.floor(W/4));
+const pts = new Array(N).fill(0).map(()=>({v:0,down:false}));
+let t = 0, mode='up', modeLeft = 320, recoverShown=false;
+
+function setStatus(state){
+  pill.className = 'pill' + (state==='down'?' down':state==='resolved'?' resolved':'');
+  pillText.textContent = state==='down' ? 'Incident detected · api.yourapp.com — HTTP 503'
+    : state==='resolved' ? '✓ Resolved · recovered in 41s'
+    : 'All systems operational · 4 monitors';
+}
+
+function step(){
+  t++;
+  // state machine: long "up", brief "down", then "resolved" flash, back to up
+  modeLeft--;
+  if(modeLeft<=0){
+    if(mode==='up'){ mode='down'; modeLeft=46; setStatus('down'); recoverShown=false; }
+    else if(mode==='down'){ mode='resolve'; modeLeft=70; setStatus('resolved'); }
+    else { mode='up'; modeLeft= 300 + Math.floor(Math.random()*220); setStatus('up'); }
+  }
+  // next sample
+  let v, down=false;
+  if(mode==='down'){
+    down=true;
+    // sharp plunge with ringing
+    v = -0.7 - Math.sin(t*0.9)*0.12 + (Math.random()-0.5)*0.06;
+  } else {
+    // healthy: small latency jitter + occasional benign blips
+    v = (Math.random()-0.5)*0.13 + Math.sin(t*0.18)*0.05;
+    if(Math.random()<0.05) v += (Math.random()-0.5)*0.18;
+  }
+  pts.shift(); pts.push({v, down});
+
+  // draw
+  ctx.clearRect(0,0,W,H);
+  const mid = H*0.5, amp = H*0.32, dx = W/(N-1);
+  // baseline
+  ctx.strokeStyle = '#ffffff10'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(0,mid); ctx.lineTo(W,mid); ctx.stroke();
+
+  ctx.lineWidth = 2.4; ctx.lineJoin='round'; ctx.lineCap='round';
+  for(let i=1;i<N;i++){
+    const a=pts[i-1], b=pts[i];
+    const x1=(i-1)*dx, y1=mid - a.v*amp, x2=i*dx, y2=mid - b.v*amp;
+    const isDown = a.down||b.down;
+    ctx.strokeStyle = isDown ? '#ff5b5b' : '#00e676';
+    ctx.shadowColor = isDown ? '#ff5b5b' : '#00e676';
+    ctx.shadowBlur = isDown ? 16 : 9;
+    ctx.globalAlpha = 0.25 + 0.75*(i/N); // fade tail
+    ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  }
+  ctx.globalAlpha=1; ctx.shadowBlur=0;
+  // leading dot
+  const last = pts[N-1], lx=(N-1)*dx, ly=mid-last.v*amp;
+  ctx.fillStyle = last.down?'#ff5b5b':'#00e676';
+  ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur=18;
+  ctx.beginPath(); ctx.arc(lx,ly,4.5,0,7); ctx.fill(); ctx.shadowBlur=0;
+
+  requestAnimationFrame(step);
+}
+setStatus('up'); step();
+</script>
+</body>
+</html>

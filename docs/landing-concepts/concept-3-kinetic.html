@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Concept 3: Kinetic</title>
+<style>
+  :root{
+    --bg:#0a0a0f; --text:#f4f4f8; --dim:#8a90a4; --border:#1d1d29;
+    --green:#00e676; --red:#ff5b5b; --brand:#7c5cff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;width:100%}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14px}
+  .nav-cta{border:1px solid var(--brand);color:#cbbcff;padding:9px 18px;border-radius:9px;font-weight:600;font-size:14px}
+  main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:40px 0 70px}
+  .eyebrow{font-family:ui-monospace,monospace;font-size:13px;color:var(--brand);letter-spacing:.1em;text-transform:uppercase;margin-bottom:26px}
+  h1{font-size:clamp(44px,9vw,108px);line-height:.98;letter-spacing:-.04em;font-weight:850;max-width:14ch}
+  /* the kinetic words */
+  .w-down{position:relative;color:var(--red);display:inline-block}
+  .w-down::before,.w-down::after{content:"down";position:absolute;left:0;top:0;opacity:0}
+  .w-down{animation:none}
+  .glitch .w-down{animation:glitchOn .9s steps(2) 1}
+  .glitch .w-down::before{color:#00e1ff;animation:gl1 .9s steps(2) 1}
+  .glitch .w-down::after{color:#ff00d4;animation:gl2 .9s steps(2) 1}
+  @keyframes glitchOn{0%,100%{transform:none}30%{transform:translateX(2px) skewX(-3deg)}60%{transform:translateX(-2px)}}
+  @keyframes gl1{0%,100%{opacity:0;transform:none}20%{opacity:.7;transform:translate(-3px,1px)}40%{opacity:0}}
+  @keyframes gl2{0%,100%{opacity:0;transform:none}25%{opacity:.7;transform:translate(3px,-1px)}45%{opacity:0}}
+  .w-caught{color:var(--green);position:relative;display:inline-block}
+  .w-caught::after{content:"";position:absolute;left:0;right:0;bottom:.08em;height:.07em;background:var(--green);transform:scaleX(0);transform-origin:left;box-shadow:0 0 14px var(--green)}
+  .caught .w-caught{animation:pop .5s ease-out 1}
+  .caught .w-caught::after{animation:underline .6s ease-out forwards}
+  @keyframes pop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+  @keyframes underline{to{transform:scaleX(1)}}
+  .sub{color:var(--dim);font-size:clamp(16px,2vw,20px);max-width:520px;margin:34px 0 0;line-height:1.55}
+  .cta-row{display:flex;gap:14px;margin-top:38px;align-items:center}
+  .btn{padding:14px 26px;border-radius:12px;font-weight:600;font-size:15px}
+  .btn.primary{background:var(--brand);color:#fff;box-shadow:0 12px 38px -12px var(--brand)}
+  .btn.text{color:var(--dim)}
+  /* live uptime ticker bottom */
+  .ticker{border-top:1px solid var(--border);margin-top:60px;padding-top:22px;display:flex;gap:38px;flex-wrap:wrap;font-family:ui-monospace,monospace;font-size:13px;color:var(--dim)}
+  .ticker b{color:var(--green);font-weight:600}
+  .ticker .pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 #00e67666;animation:ping 1.8s infinite;margin-right:7px}
+  @keyframes ping{0%{box-shadow:0 0 0 0 #00e67666}70%{box-shadow:0 0 0 9px #00e67600}100%{box-shadow:0 0 0 0 #00e67600}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 11c4-1 7 1 9 4 1-5 4-8 9-9-1 4-2 6-5 8 2 0 4-1 5-2-1 4-5 7-10 7-4 0-7-3-8-6z" fill="#7c5cff"/></svg> UptimeCrow</div>
+      <div class="nav-links"><span>Features</span><span>Pricing</span><span>Docs</span><a class="nav-cta">Get Started</a></div>
+    </nav>
+  </div>
+
+  <main>
+    <div class="wrap">
+      <div class="eyebrow">// uptime monitoring, for people who ship</div>
+      <h1 id="head">Your site goes <span class="w-down">down</span>.<br>We've already <span class="w-caught">caught</span> it.</h1>
+      <p class="sub">HTTP, TCP &amp; cron checks · auto incidents · status pages that stay up when you don't · a native MCP server. Open-source, self-host unlimited.</p>
+      <div class="cta-row"><a class="btn primary">Start free — 10 monitors</a><a class="btn text">or self-host unlimited →</a></div>
+
+      <div class="ticker">
+        <span><span class="pulse"></span>4 monitors watched</span>
+        <span>avg uptime <b>99.98%</b></span>
+        <span>last incident caught in <b>41s</b></span>
+        <span>0 active incidents</span>
+      </div>
+    </div>
+  </main>
+
+<script>
+// Replay the signature motion on a gentle loop (not seizure-y).
+const head = document.getElementById('head');
+function play(){
+  head.classList.remove('glitch','caught'); void head.offsetWidth;
+  head.classList.add('glitch');
+  setTimeout(()=>head.classList.add('caught'), 700);
+}
+play(); setInterval(play, 5200);
+</script>
+</body>
+</html>

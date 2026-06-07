@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Concept 2: Command Center</title>
+<style>
+  :root{
+    --bg:#08080d; --surface:#10101a; --border:#1e1e2c;
+    --text:#f0f0f5; --dim:#9aa0b4;
+    --green:#00e676; --red:#ff5b5b; --amber:#ffab40; --brand:#7c5cff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(#ffffff08 1px,transparent 1px);background-size:26px 26px;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14px}
+  .nav-cta{background:var(--brand);color:#fff;padding:9px 18px;border-radius:9px;font-weight:600;font-size:14px;box-shadow:0 6px 24px -8px var(--brand)}
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding:56px 0 80px}
+  @media(max-width:880px){.hero{grid-template-columns:1fr;gap:36px}}
+  .eyebrow{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--brand);letter-spacing:.08em;text-transform:uppercase}
+  h1{font-size:clamp(36px,5vw,60px);line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:16px 0 0}
+  .sub{color:var(--dim);font-size:18px;max-width:480px;margin:20px 0 0;line-height:1.55}
+  .cta-row{display:flex;gap:13px;margin-top:32px}
+  .btn{padding:13px 24px;border-radius:11px;font-weight:600;font-size:15px}
+  .btn.primary{background:var(--brand);color:#fff;box-shadow:0 10px 34px -10px var(--brand)}
+  .btn.ghost{border:1px solid var(--border);color:var(--text);background:#0e0e16}
+  /* command panel */
+  .panel{background:linear-gradient(180deg,#12121c,#0d0d15);border:1px solid var(--border);border-radius:18px;padding:20px;position:relative;overflow:hidden;box-shadow:0 40px 100px -40px #000}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .panel-title{font-size:13px;color:var(--dim);font-family:ui-monospace,monospace}
+  .radar{position:relative;height:150px;margin:0 auto 14px;width:150px}
+  .radar .ring{position:absolute;inset:0;border:1px solid #ffffff12;border-radius:50%}
+  .radar .ring.r2{inset:26px}.radar .ring.r3{inset:52px}
+  .radar .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg, #00e67655, #00e67600 60deg, transparent);animation:spin 3.2s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .radar .blip{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .chips{display:flex;flex-direction:column;gap:8px}
+  .chip{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--border);border-radius:11px;background:#0e0e17;transition:.35s}
+  .chip .dot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #00e67620;transition:.35s}
+  .chip .nm{font-size:13.5px;font-weight:600}
+  .chip .meta{margin-left:auto;font-family:ui-monospace,monospace;font-size:12px;color:var(--dim)}
+  .chip .st{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green)}
+  .chip.down{border-color:#ff5b5b55;background:#170d10;animation:shake .4s}
+  .chip.down .dot{background:var(--red);box-shadow:0 0 0 4px #ff5b5b30;animation:blink .8s infinite}
+  .chip.down .st{color:var(--red)}
+  @keyframes blink{50%{opacity:.4}} @keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+  /* toast */
+  .toasts{position:absolute;left:20px;right:20px;bottom:16px;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+  .toast{transform:translateY(14px);opacity:0;transition:.4s;display:flex;align-items:center;gap:9px;font-size:12.5px;padding:10px 13px;border-radius:10px;border:1px solid var(--border);background:#15151f;font-family:ui-monospace,monospace}
+  .toast.show{transform:none;opacity:1}
+  .toast.red{border-color:#ff5b5b55} .toast.green{border-color:#00e67655}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M3 11c4-1 7 1 9 4 1-5 4-8 9-9-1 4-2 6-5 8 2 0 4-1 5-2-1 4-5 7-10 7-4 0-7-3-8-6z" fill="#7c5cff"/></svg> UptimeCrow</div>
+      <div class="nav-links"><span>Features</span><span>Pricing</span><span>Docs</span><a class="nav-cta">Get Started</a></div>
+    </nav>
+
+    <div class="hero">
+      <div>
+        <div class="eyebrow">// always watching</div>
+        <h1>The watchtower<br>for your stack.</h1>
+        <p class="sub">UptimeCrow watches every endpoint, catches the dip before your users do, opens the incident, and updates your status page — automatically.</p>
+        <div class="cta-row"><a class="btn primary">Start monitoring free</a><a class="btn ghost">Live demo →</a></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">command center</span><span class="panel-title" id="clock">● live</span></div>
+        <div class="radar">
+          <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+          <div class="sweep"></div>
+          <div class="blip" style="left:20%;top:30%"></div>
+          <div class="blip" style="left:70%;top:55%"></div>
+          <div class="blip" style="left:48%;top:18%"></div>
+          <div class="blip" style="left:60%;top:78%"></div>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="toasts" id="toasts"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const monitors = [
+  {nm:'app.yourapp.com', ms:142},
+  {nm:'api.yourapp.com', ms:88},
+  {nm:'auth.yourapp.com', ms:203},
+  {nm:'payments.yourapp.com', ms:176},
+];
+const chips = document.getElementById('chips');
+monitors.forEach((m,i)=>{
+  const el=document.createElement('div'); el.className='chip'; el.dataset.i=i;
+  el.innerHTML=`<span class="dot"></span><span class="nm">${m.nm}</span><span class="meta">${m.ms}ms</span><span class="st">UP</span>`;
+  chips.appendChild(el);
+});
+const toasts=document.getElementById('toasts');
+function toast(text,kind){
+  const t=document.createElement('div'); t.className='toast '+kind; t.textContent=text; toasts.appendChild(t);
+  requestAnimationFrame(()=>t.classList.add('show'));
+  setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),400);}, 3200);
+}
+let inc=1040;
+function cycle(){
+  const i=Math.floor(Math.random()*monitors.length);
+  const chip=chips.children[i]; const m=monitors[i];
+  chip.classList.add('down'); chip.querySelector('.st').textContent='DOWN'; chip.querySelector('.meta').textContent='timeout';
+  inc++; toast(`🔴 ${m.nm} is down — incident #${inc} opened`,'red');
+  setTimeout(()=>{ toast(`✓ ${m.nm} recovered — status page updated`,'green'); },1600);
+  setTimeout(()=>{ chip.classList.remove('down'); chip.querySelector('.st').textContent='UP'; chip.querySelector('.meta').textContent=m.ms+'ms'; },3000);
+  setTimeout(cycle, 5200 + Math.random()*2500);
+}
+setTimeout(cycle, 2200);
+</script>
+</body>
+</html>
