@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>UptimeCrow — Watchful Crow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ─────────────────────────────────────
+     TOKENS — kesin ölçüler, logonun DNA'sı
+  ───────────────────────────────────── */
+  :root{
+    /* Logo'dan çekilen renkler */
+    --crow-slate:  #767E8F;  /* logo bg */
+    --crow-body:   #353A46;  /* kanatlar */
+    --crow-head:   #565C66;  /* kafa */
+    --crow-green:  #59F94F;  /* gözler — primary accent */
+    --crow-amber:  #E29B4C;  /* gaga */
+
+    /* Tema */
+    --bg:        #0c0d0f;   /* neredeyse siyah, sıcak siyah değil slate-siyah */
+    --bg2:       #13151a;
+    --surface:   #191b22;
+    --surface2:  #1f2129;
+    --border:    #2a2d38;
+    --border2:   #333748;
+
+    --text:      #e8eaf0;
+    --text2:     #9ea3b4;
+    --text3:     #5c6075;
+
+    /* green = sadece STATUS / operational */
+    --op-green:  #00e676;
+    --op-dim:    #00e67620;
+
+    /* primary/brand = logo'nun göz yeşili, ama CTA için daha okunaklı */
+    --brand:     #4af041;   /* crow-green %5 daha koyu */
+    --brand-dim: #4af04115;
+
+    /* amber = accent (gaga) — hover/highlight için */
+    --amber:     #E29B4C;
+    --amber-dim: #E29B4C18;
+
+    --r:   14px;
+    --rr:  999px;
+    --font:'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:16px}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    /* logonun slate tonu: çok ince grain texture hissi */
+    background-image:
+      radial-gradient(ellipse 80% 60% at 70% -10%, #4af04108 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at -10% 80%, #E29B4c06 0%, transparent 60%);
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* ── Nav ── */
+  .wrap{max-width:1140px;margin:0 auto;padding:0 28px}
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .logo{display:flex;align-items:center;gap:11px;font-weight:700;font-size:18px;letter-spacing:-.015em}
+  .logo svg{flex-shrink:0}
+  .nav-links{display:flex;gap:24px;align-items:center;font-size:14px;color:var(--text2);font-weight:500}
+  .nav-links a:hover{color:var(--text)}
+  .nav-gh{
+    display:flex;align-items:center;gap:7px;
+    border:1px solid var(--border2);border-radius:var(--rr);
+    padding:7px 14px;font-size:13px;color:var(--text2);
+    transition:border-color .15s;
+  }
+  .nav-gh:hover{border-color:var(--brand);color:var(--brand)}
+  .nav-gh .star{color:var(--amber)}
+  .nav-cta{
+    background:var(--brand);color:#071007;
+    padding:9px 18px;border-radius:var(--rr);
+    font-weight:700;font-size:14px;letter-spacing:-.01em;
+    box-shadow:0 0 0 0 var(--brand);
+    transition:box-shadow .2s, transform .12s;
+  }
+  .nav-cta:hover{box-shadow:0 0 24px -6px var(--brand);transform:translateY(-1px)}
+
+  /* ── Hero ── */
+  .hero{
+    display:grid;grid-template-columns:1.1fr .9fr;
+    gap:52px;align-items:center;
+    padding:72px 0 80px;
+  }
+  @media(max-width:860px){.hero{grid-template-columns:1fr;gap:44px;padding:52px 0}}
+
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface);border:1px solid var(--border2);
+    border-radius:var(--rr);padding:7px 14px;
+    font-size:13px;font-weight:600;color:var(--text2);
+    letter-spacing:.01em;
+  }
+  .tag .eye{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--crow-green);
+    box-shadow:0 0 8px var(--crow-green);
+    animation:eyepulse 2.4s ease-in-out infinite;
+  }
+  @keyframes eyepulse{50%{box-shadow:0 0 14px 3px #59f94f55}}
+
+  h1{
+    font-size:clamp(38px,5.6vw,66px);
+    line-height:1.03;letter-spacing:-.04em;font-weight:800;
+    margin:22px 0 0;
+  }
+  .h1-line2{
+    display:block;
+    background:linear-gradient(90deg, var(--brand) 0%, #9dfb98 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .sub{
+    color:var(--text2);font-size:18px;line-height:1.62;
+    max-width:460px;margin:24px 0 0;font-weight:400;
+  }
+  .sub strong{color:var(--text);font-weight:600}
+
+  .actions{display:flex;gap:13px;margin-top:36px;flex-wrap:wrap}
+  .btn{
+    padding:14px 26px;border-radius:var(--rr);
+    font-weight:700;font-size:15px;letter-spacing:-.01em;
+    transition:transform .12s, box-shadow .2s;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{
+    background:var(--brand);color:#071007;
+    box-shadow:0 10px 34px -12px #4af04188;
+  }
+  .btn.primary:hover{box-shadow:0 14px 40px -10px #4af04199}
+  .btn.ghost{
+    background:var(--surface);border:1px solid var(--border2);
+    color:var(--text);
+  }
+  .btn.ghost:hover{border-color:var(--brand);color:var(--brand)}
+
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px 22px;
+    margin-top:28px;font-size:13px;color:var(--text3);
+    font-weight:500;
+  }
+  .meta span b{color:var(--text2);font-weight:600}
+
+  /* ── Product panel ── */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border2);border-radius:var(--r);
+    overflow:hidden;
+    box-shadow:
+      0 0 0 1px #ffffff04 inset,
+      0 40px 80px -40px #000a,
+      0 0 60px -20px #4af04108;
+  }
+  .panel-topbar{
+    display:flex;align-items:center;gap:8px;
+    padding:11px 16px;border-bottom:1px solid var(--border);
+    background:var(--bg2);
+  }
+  .tl{display:flex;gap:6px}
+  .tl i{width:10px;height:10px;border-radius:50%;display:block}
+  .tl .r{background:#ff5f57}.tl .y{background:#febc2e}.tl .g{background:#28c840}
+  .panel-url{
+    margin-left:10px;font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:12px;color:var(--text3);
+  }
+  .panel-live{
+    margin-left:auto;font-size:11.5px;color:var(--text3);
+    font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    display:flex;align-items:center;gap:5px;
+  }
+  .panel-live::before{
+    content:"";width:6px;height:6px;border-radius:50%;
+    background:var(--op-green);
+    box-shadow:0 0 6px var(--op-green);
+  }
+
+  .panel-body{padding:18px}
+  .status-banner{
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;
+    background:var(--op-dim);border:1px solid #00e67630;
+    border-radius:11px;margin-bottom:16px;
+  }
+  .status-dot{position:relative;width:10px;height:10px;flex-shrink:0}
+  .status-dot::after,.status-dot b{
+    position:absolute;inset:0;border-radius:50%;background:var(--op-green);
+  }
+  .status-dot b{display:block}
+  .status-dot::after{
+    content:"";
+    animation:opring 2s cubic-bezier(0,.2,.8,1) infinite;
+  }
+  @keyframes opring{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(3.2);opacity:0}}
+  .status-text{font-weight:700;font-size:14.5px;color:var(--op-green)}
+  .status-upd{margin-left:auto;font-size:12px;color:var(--text3);font-family:ui-monospace,monospace}
+
+  .svc-list{}
+  .svc{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 4px;
+  }
+  .svc+.svc{border-top:1px solid var(--border)}
+  .svc-dot{
+    width:8px;height:8px;flex-shrink:0;border-radius:50%;
+    background:var(--op-green);
+  }
+  .svc-name{font-size:13.5px;font-weight:600;min-width:130px}
+  .svc-bars{
+    flex:1;display:flex;gap:2px;align-items:flex-end;height:22px;
+  }
+  .svc-bars i{
+    flex:1;min-height:6px;border-radius:2px;
+    background:var(--op-green);opacity:.8;
+    transition:height .3s;
+  }
+  .svc-bars i.dim{background:var(--border2);opacity:1}
+  .svc-bars i.down{background:#ff5b5b}
+  .svc-uptime{
+    font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:12.5px;font-weight:600;
+    color:var(--op-green);width:52px;text-align:right;
+  }
+  .svc-ms{
+    font-family:ui-monospace,'SF Mono',Menlo,monospace;
+    font-size:12px;color:var(--text3);width:48px;text-align:right;
+  }
+
+  /* ── Social proof strip ── */
+  .proof{
+    border-top:1px solid var(--border);
+    padding:26px 0 44px;
+    display:flex;gap:32px;flex-wrap:wrap;
+    font-size:13.5px;color:var(--text3);font-weight:500;
+  }
+  .proof b{color:var(--text2);font-weight:650}
+  .proof .gt{color:var(--amber);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">
+      <!-- Gerçek logo SVG'si — tam boyut -->
+      <svg width="34" height="34" viewBox="0 0 270 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="270" height="270" rx="61" fill="#767E8F"/>
+        <path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/>
+        <path d="M188.5 103L167 116C170 124 179.5 127.625 184 126.5C189 125.25 194 121.5 194 114C194 108 190.667 104.167 188.5 103Z" fill="#59F94F"/>
+        <path d="M81.5 103L103 116C100 124 90.5 127.625 86 126.5C81 125.25 76 121.5 76 114C76 108 79.3333 104.167 81.5 103Z" fill="#59F94F"/>
+        <path d="M135 190V105L100 145L120 160L135 190Z" fill="#E29B4C"/>
+        <path d="M135 190V105L170 145L150 160L135 190Z" fill="#F3BC6F"/>
+        <path d="M115 105L33 55L135 65L237 55L155 105L135 85L115 105Z" fill="#565C66"/>
+      </svg>
+      UptimeCrow
+    </div>
+    <div class="nav-links">
+      <a>Features</a>
+      <a>Pricing</a>
+      <a>Docs</a>
+      <a class="nav-gh"><span class="star">★</span> 1.3k</a>
+      <a class="nav-cta">Get started free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <span class="tag"><span class="eye"></span> Always watching. Never sleeping.</span>
+      <h1>Your site went down.<br><span class="h1-line2">We caught it first.</span></h1>
+      <p class="sub">
+        HTTP · TCP · keyword · cron monitoring — uptime detected, incident opened,
+        status page updated, subscribers notified.
+        <strong>All automatic, before you wake up.</strong>
+      </p>
+      <div class="actions">
+        <a class="btn primary">Start free — 10 monitors</a>
+        <a class="btn ghost">Self-host unlimited →</a>
+      </div>
+      <div class="meta">
+        <span><b>Open source</b> — AGPL-3.0</span>
+        <span>one <b>docker compose up</b></span>
+        <span>up in <b>3 minutes</b></span>
+        <span>no credit card</span>
+      </div>
+    </div>
+
+    <!-- Real product panel -->
+    <div class="panel">
+      <div class="panel-topbar">
+        <div class="tl"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <span class="panel-url">status.yourapp.com</span>
+        <span class="panel-live">live · updated 8s ago</span>
+      </div>
+      <div class="panel-body">
+        <div class="status-banner">
+          <span class="status-dot"><b></b></span>
+          <span class="status-text">All systems operational</span>
+          <span class="status-upd">4 monitors · 99.98%</span>
+        </div>
+        <div class="svc-list" id="svcs"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <div class="proof">
+    <span><span class="gt">★</span> 1,284 stars on GitHub</span>
+    <span>AGPL-3.0 — <b>self-host unlimited, free</b></span>
+    <span>docker compose up <b>and you're done</b></span>
+    <span>MCP server for <b>AI assistants</b></span>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// Build service rows with calm sparklines
+const services = [
+  { name:'app.yourapp.com',  uptime:'99.99%', ms:'142ms', blips:[] },
+  { name:'api.yourapp.com',  uptime:'100%',   ms:'88ms',  blips:[] },
+  { name:'auth.yourapp.com', uptime:'99.94%', ms:'203ms', blips:[26] },
+  { name:'payments',         uptime:'99.99%', ms:'176ms', blips:[] },
+];
+
+const cont = document.getElementById('svcs');
+services.forEach(s=>{
+  const row = document.createElement('div'); row.className='svc';
+  // bars
+  let barsHtml = '';
+  const heights = [4,3,5,4,6,5,4,6,5,4,5,6,4,5,4,6,5,4,5,6,5,4,6,5,4,5,6,5,5,4];
+  for(let i=0;i<30;i++){
+    const h = heights[i]; const isBlip=s.blips.includes(i);
+    const cls = isBlip ? 'down' : (i<4 ? 'dim':'');
+    barsHtml += `<i class="${cls}" style="height:${isBlip?3:h+8}px"></i>`;
+  }
+  row.innerHTML = `
+    <span class="svc-dot"></span>
+    <span class="svc-name">${s.name}</span>
+    <span class="svc-bars">${barsHtml}</span>
+    <span class="svc-uptime">${s.uptime}</span>
+    <span class="svc-ms">${s.ms}</span>
+  `;
+  cont.appendChild(row);
+});
+</script>
+</body>
+</html>
