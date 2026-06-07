@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Friendly Crow v2 (warm + real logo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* WARM base — cozy cream, not corporate, not cold */
+    --bg:#fcf8f1; --bg-2:#fbf3e7; --surface:#ffffff; --ink:#26222e; --dim:#736d7c; --line:#efe7da;
+    /* logo DNA */
+    --green:#16a34a;            /* readable green for text/CTA on cream */
+    --green-eye:#23c552;        /* logo's bright eye, used for glows/dots */
+    --green-soft:#e6f7ec;
+    --amber:#e29b4c;            /* logo beak — warm accent */
+    --amber-soft:#fdeedb;
+    --slate:#565c66;            /* logo body */
+    --r:22px; --rr:999px;
+    --head:'Fredoka',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden;position:relative}
+  /* warm, cozy glow blobs */
+  body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(80px);z-index:0;opacity:.8;pointer-events:none}
+  body::before{width:560px;height:560px;background:radial-gradient(circle,#cdeed5,transparent 70%);top:-180px;right:-100px}
+  body::after{width:520px;height:520px;background:radial-gradient(circle,#fde6c8,transparent 70%);bottom:-200px;left:-120px}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 26px;position:relative;z-index:1}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0}
+  .logo{display:flex;align-items:center;gap:11px;font-family:var(--head);font-weight:700;font-size:21px;letter-spacing:-.01em}
+  .nav-links{display:flex;gap:24px;align-items:center;color:var(--dim);font-size:14.5px;font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-gh{display:flex;gap:6px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 13px;font-size:13px}
+  .nav-gh .s{color:var(--amber)}
+  .nav-cta{background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--rr);font-weight:600;font-size:14px}
+
+  .hero{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:center;padding:38px 0 64px}
+  @media(max-width:880px){.hero{grid-template-columns:1fr;gap:30px;text-align:center}}
+  .tag{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 15px;font-size:13px;font-weight:600;color:var(--green);box-shadow:0 3px 0 #00000004}
+  .tag .e{width:8px;height:8px;border-radius:50%;background:var(--green-eye);box-shadow:0 0 8px var(--green-eye)}
+  h1{font-family:var(--head);font-weight:700;font-size:clamp(40px,6.2vw,66px);line-height:1.02;letter-spacing:-.02em;margin:20px 0 0}
+  h1 .hl{color:var(--green);position:relative;white-space:nowrap}
+  h1 .hl svg{position:absolute;left:-2%;width:104%;bottom:-9px}
+  .sub{color:var(--dim);font-size:19px;line-height:1.6;max-width:470px;margin:22px 0 0}
+  @media(max-width:880px){.sub{margin-inline:auto}}
+  .sub b{color:var(--ink);font-weight:600}
+  .actions{display:flex;gap:13px;margin-top:32px}
+  @media(max-width:880px){.actions{justify-content:center;flex-wrap:wrap}}
+  .btn{padding:14px 27px;border-radius:var(--rr);font-weight:650;font-size:15.5px;transition:transform .12s,box-shadow .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 9px 0 -2px #0d7a3733,0 16px 30px -12px #16a34a88}
+  .btn.primary:hover{transform:translateY(-1px)}
+  .btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+  .reassure{margin-top:16px;font-size:13.5px;color:var(--dim)}
+  .reassure b{color:var(--ink)}
+
+  /* hero scene: the REAL logo as the watcher, over a warm card */
+  .scene{position:relative;display:flex;flex-direction:column;align-items:center}
+  .stage{position:relative;width:100%;max-width:400px}
+  .mascot{position:relative;width:128px;margin:0 auto -34px;z-index:3;animation:bob 4.5s ease-in-out infinite;filter:drop-shadow(0 18px 24px #00000018)}
+  @keyframes bob{50%{transform:translateY(-10px) rotate(-1.5deg)}}
+  .mascot .eyes{animation:blink 5.5s infinite}
+  @keyframes blink{0%,93%,100%{opacity:1}95%,97%{opacity:.12}}
+  .speech{position:absolute;top:8px;left:calc(50% + 44px);background:#fff;border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:9px 14px;font-size:13.5px;font-weight:600;box-shadow:0 10px 26px -14px #0003;z-index:4;white-space:nowrap}
+  .speech b{color:var(--green)}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 30px 60px -28px #0002, 0 3px 0 #00000004;padding:18px 18px 8px;position:relative;z-index:2}
+  .op{display:flex;align-items:center;gap:11px;background:var(--green-soft);border-radius:15px;padding:13px 15px;margin-bottom:8px}
+  .op .d{position:relative;width:10px;height:10px}
+  .op .d b{position:absolute;inset:0;border-radius:50%;background:var(--green)}
+  .op .d::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--green);animation:ping 2.4s cubic-bezier(0,.2,.8,1) infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.6}70%,100%{transform:scale(3);opacity:0}}
+  .op .t{font-weight:700;color:var(--green);font-size:14.5px}
+  .op .m{margin-left:auto;font-size:12px;color:var(--green);opacity:.75;font-weight:600}
+  .row{display:flex;align-items:center;gap:11px;padding:12px 4px}
+  .row+.row{border-top:1px solid var(--line)}
+  .row .ck{width:22px;height:22px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+  .row .nm{font-size:14px;font-weight:550}
+  .row .up{margin-left:auto;font-size:13px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums}
+  .row .ms{font-size:12px;color:var(--dim);width:50px;text-align:right;font-variant-numeric:tabular-nums}
+
+  .trust{display:flex;gap:26px;flex-wrap:wrap;justify-content:center;padding:6px 0 48px;font-size:13.5px;color:var(--dim);font-weight:500}
+  .trust b{color:var(--ink)} .trust .s{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 270 270" fill="none"><rect width="270" height="270" rx="61" fill="#767E8F"/><path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/><path d="M188.5 103L167 116C170 124 179.5 127.625 184 126.5C189 125.25 194 121.5 194 114C194 108 190.667 104.167 188.5 103Z" fill="#59F94F"/><path d="M81.5 103L103 116C100 124 90.5 127.625 86 126.5C81 125.25 76 121.5 76 114C76 108 79.3333 104.167 81.5 103Z" fill="#59F94F"/><path d="M135 190V105L100 145L120 160L135 190Z" fill="#E29B4C"/><path d="M135 190V105L170 145L150 160L135 190Z" fill="#F3BC6F"/><path d="M115 105L33 55L135 65L237 55L155 105L135 85L115 105Z" fill="#565C66"/></svg>
+      UptimeCrow
+    </div>
+    <div class="nav-links">
+      <a>Features</a><a>Pricing</a><a>Docs</a>
+      <a class="nav-gh"><span class="s">★</span> 1.3k</a>
+      <a class="nav-cta">Get Started</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <span class="tag"><span class="e"></span> Always watching, never blinking*</span>
+      <h1>Your site went down.<br><span class="hl">The crow already knew.<svg viewBox="0 0 240 12" preserveAspectRatio="none" fill="none"><path d="M3 8c50-8 150-8 234-2" stroke="#23c552" stroke-width="4" stroke-linecap="round" opacity=".45"/></svg></span></h1>
+      <p class="sub">It spots the downtime, opens the incident, updates your status page and pings you — <b>all while you're still pouring coffee ☕.</b></p>
+      <div class="actions">
+        <a class="btn primary">Start free — 10 monitors</a>
+        <a class="btn ghost">Self-host unlimited →</a>
+      </div>
+      <p class="reassure">No credit card · <b>open source</b> · up in <b>3 minutes</b>.</p>
+    </div>
+
+    <div class="scene">
+      <div class="stage">
+        <div class="speech">All good over here! <b>99.98%</b> 👀</div>
+        <!-- real logo as the watching mascot -->
+        <svg class="mascot" viewBox="0 0 270 270" fill="none">
+          <rect width="270" height="270" rx="61" fill="#767E8F"/>
+          <path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/>
+          <g class="eyes">
+            <path d="M188.5 103L167 116C170 124 179.5 127.625 184 126.5C189 125.25 194 121.5 194 114C194 108 190.667 104.167 188.5 103Z" fill="#59F94F"/>
+            <path d="M81.5 103L103 116C100 124 90.5 127.625 86 126.5C81 125.25 76 121.5 76 114C76 108 79.3333 104.167 81.5 103Z" fill="#59F94F"/>
+          </g>
+          <path d="M135 190V105L100 145L120 160L135 190Z" fill="#E29B4C"/>
+          <path d="M135 190V105L170 145L150 160L135 190Z" fill="#F3BC6F"/>
+          <path d="M115 105L33 55L135 65L237 55L155 105L135 85L115 105Z" fill="#565C66"/>
+        </svg>
+        <div class="card">
+          <div class="op"><span class="d"><b></b></span><span class="t">All systems operational</span><span class="m">updated 9s ago</span></div>
+          <div class="row"><span class="ck">✓</span><span class="nm">app.yourapp.com</span><span class="up">99.99%</span><span class="ms">142ms</span></div>
+          <div class="row"><span class="ck">✓</span><span class="nm">api.yourapp.com</span><span class="up">100%</span><span class="ms">88ms</span></div>
+          <div class="row"><span class="ck">✓</span><span class="nm">payments</span><span class="up">99.98%</span><span class="ms">176ms</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <span><span class="s">★</span> Loved by <b>indie hackers</b></span>
+    <span><b>Open source</b> · AGPL-3.0</span>
+    <span>one <b>docker compose up</b></span>
+    <span>free for <b>10 monitors</b></span>
+  </div>
+</div>
+</body>
+</html>
