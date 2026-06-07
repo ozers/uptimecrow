@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Plus, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIncidents } from "@/lib/queries/incidents";
+import { useInfiniteIncidents } from "@/lib/queries/incidents";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,6 +16,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
+import { LoadError } from "@/components/load-error";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
@@ -59,14 +60,31 @@ const statusRowAccent: Record<string, string> = {
 };
 
 export function IncidentsList() {
-  const { data: incidents, isLoading } = useIncidents();
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteIncidents();
   const [filter, setFilter] = useState<Filter>("all");
 
   if (isLoading) return <IncidentsListSkeleton />;
 
-  const activeCount = incidents?.filter((i) => i.status !== "resolved").length ?? 0;
+  if (isError)
+    return (
+      <div>
+        <PageHeader title="Incidents" description="Track and manage service incidents" />
+        <LoadError onRetry={() => refetch()} />
+      </div>
+    );
 
-  const filtered = incidents?.filter((i) => {
+  const incidents = data?.pages.flatMap((p) => p.incidents) ?? [];
+  const activeCount = incidents.filter((i) => i.status !== "resolved").length;
+
+  const filtered = incidents.filter((i) => {
     if (filter === "active") return i.status !== "resolved";
     if (filter === "resolved") return i.status === "resolved";
     return true;
@@ -176,6 +194,18 @@ export function IncidentsList() {
               })}
             </TableBody>
           </Table>
+          {hasNextPage && (
+            <div className="flex justify-center py-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+              >
+                {isFetchingNextPage ? "Loading…" : "Load more"}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

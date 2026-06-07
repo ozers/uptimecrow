@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import type { Incident, IncidentUpdate } from "@uptimecrow/shared";
 import { api } from "../api";
 import { analytics } from "../analytics";
@@ -8,6 +13,24 @@ export function useIncidents() {
     queryKey: ["incidents"],
     queryFn: () => api.get<{ incidents: Incident[] }>("/api/incidents"),
     select: (data) => data.incidents,
+  });
+}
+
+// Paginated incidents for the full list page ("Load more"). Kept separate from
+// useIncidents() so the Overview's recent-incidents widget is unaffected.
+const INCIDENTS_PAGE_SIZE = 25;
+export function useInfiniteIncidents() {
+  return useInfiniteQuery({
+    queryKey: ["incidents", "infinite"],
+    queryFn: ({ pageParam }) =>
+      api.get<{ incidents: Incident[] }>(
+        `/api/incidents?limit=${INCIDENTS_PAGE_SIZE}&offset=${pageParam}`,
+      ),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.incidents.length < INCIDENTS_PAGE_SIZE
+        ? undefined
+        : allPages.length * INCIDENTS_PAGE_SIZE,
   });
 }
 
