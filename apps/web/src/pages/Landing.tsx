@@ -10,9 +10,8 @@ import {
   Zap,
   Bell,
   Timer,
-  Menu,
-  X,
 } from "lucide-react";
+import { MarketingNav } from "@/components/marketing-nav";
 import "./landing-redesign.css";
 
 const BRAND = "UptimeCrow";
@@ -267,8 +266,6 @@ const PLANS = [
 
 // ─── Landing page ──────────────────────────────────────────────────────────────
 export function LandingPage() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   usePageMeta({
     title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
     description:
@@ -280,50 +277,7 @@ export function LandingPage() {
   return (
     <div className="lp">
       {/* NAV */}
-      <nav className="lp-nav">
-        <div className="lp-wrap lp-nav-inner">
-          <Link
-            to="/"
-            className="lp-logo"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          >
-            <img src="/logo.svg" alt="UptimeCrow logo" />
-            <span>{BRAND}</span>
-          </Link>
-          <div className="lp-nav-links">
-            <a href="#how">How it works</a>
-            <a href="#features">Features</a>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/docs">Docs</Link>
-            <Link to="/login" className="lp-nav-login">
-              Log in
-            </Link>
-            <Link to="/register" className="lp-nav-cta">
-              Get started free
-            </Link>
-          </div>
-          <button
-            className="lp-hamburger"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="lp-nav-mobile" role="dialog" aria-label="Mobile navigation">
-            <a href="#how" onClick={() => setMobileOpen(false)}>How it works</a>
-            <a href="#features" onClick={() => setMobileOpen(false)}>Features</a>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link to="/docs" onClick={() => setMobileOpen(false)}>Docs</Link>
-            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
-            <Link to="/register" className="lp-nav-cta" onClick={() => setMobileOpen(false)}>
-              Get started free
-            </Link>
-          </div>
-        )}
-      </nav>
+      <MarketingNav />
 
       {/* HERO (reactive) */}
       <ReactiveHero />
