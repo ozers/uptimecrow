@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Mascot hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* WARM, not icy — bone/sand light with warm undertones */
+    --bg1:#f7f3ec; --bg2:#f1ebe0; --surface:#fffdf9; --line:#e9e1d4;
+    --ink:#211d27; --dim:#6c6675; --faint:#9a93a0;
+    /* mascot DNA */
+    --green:#16a34a; --green-glow:#3fd56e; --green-soft:#e7f6ec;
+    --amber:#e8943f; --amber-soft:#fbe9d5; --slate:#3a3744;
+    --rr:999px; --r:18px;
+    --font:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden;
+    background:
+      radial-gradient(70% 50% at 88% 0%, #fbe6cb88 0%, transparent 55%),
+      radial-gradient(60% 50% at 5% 100%, #dcefe066 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    min-height:100vh;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+
+  nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.02em}
+  .logo svg{border-radius:8px}
+  .nav-links{display:flex;gap:26px;align-items:center;color:var(--dim);font-size:14.5px;font-weight:500}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-gh{display:flex;gap:7px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 14px;font-size:13px}
+  .nav-gh .s{color:var(--amber)}
+  .nav-cta{background:var(--ink);color:#fff;padding:10px 19px;border-radius:var(--rr);font-weight:600;font-size:14px}
+
+  .hero{display:grid;grid-template-columns:1.06fr .94fr;gap:32px;align-items:center;padding:40px 0 70px}
+  @media(max-width:880px){.hero{grid-template-columns:1fr;gap:20px;text-align:center}}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rr);padding:7px 15px;font-size:13px;font-weight:600;color:var(--dim)}
+  .badge .e{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green-glow)}
+  h1{font-size:clamp(40px,5.6vw,64px);line-height:1.02;letter-spacing:-.035em;font-weight:800;margin:22px 0 0}
+  h1 .hl{color:var(--green)}
+  .sub{color:var(--dim);font-size:18.5px;line-height:1.6;max-width:480px;margin:22px 0 0}
+  @media(max-width:880px){.sub{margin-inline:auto}}
+  .sub b{color:var(--ink);font-weight:600}
+  .actions{display:flex;gap:13px;margin-top:32px}
+  @media(max-width:880px){.actions{justify-content:center;flex-wrap:wrap}}
+  .btn{padding:14px 26px;border-radius:var(--rr);font-weight:650;font-size:15.5px;letter-spacing:-.01em;transition:transform .12s,box-shadow .2s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--green);color:#fff;box-shadow:0 12px 30px -12px #16a34a88}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 16px 36px -12px #16a34a99}
+  .btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+  .btn.ghost:hover{border-color:var(--amber)}
+  .specs{margin-top:28px;display:flex;flex-wrap:wrap;gap:8px 22px;font-size:13px;color:var(--faint);font-weight:500}
+  @media(max-width:880px){.specs{justify-content:center}}
+  .specs b{color:var(--dim);font-weight:600}
+
+  /* ── mascot stage ── */
+  .stage{position:relative;display:flex;justify-content:center;align-items:center;min-height:420px}
+  .aura{position:absolute;width:380px;height:380px;border-radius:50%;
+    background:radial-gradient(circle, #3fd56e2e 0%, #e8943f14 45%, transparent 70%);
+    filter:blur(8px);animation:breathe 6s ease-in-out infinite;z-index:0}
+  @keyframes breathe{50%{transform:scale(1.08);opacity:.85}}
+  .mascot-wrap{position:relative;z-index:2;animation:float 6s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-14px)}}
+  .mascot{width:330px;max-width:78vw;height:auto;display:block;filter:drop-shadow(0 26px 30px #2a223018)}
+  /* "watching" glint over the eyes — soft green pulse, pro not bouncy */
+  .glint{position:absolute;top:30%;left:50%;transform:translateX(-50%);width:160px;height:46px;
+    background:radial-gradient(ellipse, #4dff8033 0%, transparent 70%);
+    filter:blur(4px);z-index:3;animation:glint 4.5s ease-in-out infinite;pointer-events:none}
+  @keyframes glint{0%,100%{opacity:.4}50%{opacity:.9}}
+  /* fallback if PNG not placed yet */
+  .missing{display:none;flex-direction:column;align-items:center;gap:10px;z-index:2;
+    width:300px;height:300px;border:2px dashed var(--line);border-radius:24px;justify-content:center;
+    color:var(--faint);font-size:13px;text-align:center;padding:24px;background:var(--surface)}
+
+  .pill{position:absolute;z-index:4;display:flex;align-items:center;gap:8px;background:var(--surface);
+    border:1px solid var(--line);border-radius:var(--rr);padding:9px 14px;font-size:12.5px;font-weight:600;
+    box-shadow:0 14px 30px -16px #00000030;animation:floaty 5s ease-in-out infinite}
+  .pill .d{width:8px;height:8px;border-radius:50%;background:var(--green)}
+  .pill.p1{top:14%;right:2%;animation-delay:.3s}
+  .pill.p2{bottom:18%;left:0%;animation-delay:1.2s}
+  @keyframes floaty{50%{transform:translateY(-9px)}}
+
+  .trust{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;padding:6px 0 50px;font-size:13.5px;color:var(--dim);font-weight:500}
+  .trust b{color:var(--ink)} .trust .s{color:var(--amber)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 270 270"><rect width="270" height="270" rx="61" fill="#767E8F"/><path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/><path d="M188.5 103L167 116c3 8 12.5 11.6 17 10.5 5-1.25 10-5 10-12.5 0-6-3.3-9.8-5.5-11Z" fill="#59F94F"/><path d="M81.5 103L103 116c-3 8-12.5 11.6-17 10.5-5-1.25-10-5-10-12.5 0-6 3.3-9.8 5.5-11Z" fill="#59F94F"/><path d="M135 190V105l-35 40 20 15 15 30Z" fill="#E29B4C"/><path d="M135 190V105l35 40-20 15-15 30Z" fill="#F3BC6F"/></svg>
+      UptimeCrow
+    </div>
+    <div class="nav-links">
+      <a>Features</a><a>Pricing</a><a>Docs</a>
+      <a class="nav-gh"><span class="s">★</span> 1.3k</a>
+      <a class="nav-cta">Get started</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <span class="badge"><span class="e"></span> Watching 4 services · 99.98% this month</span>
+      <h1>Your site went down.<br><span class="hl">We caught it first.</span></h1>
+      <p class="sub">Open-source uptime monitoring &amp; status pages that earn trust. The crow watches every endpoint, opens the incident, and updates your page — <b>before your users notice.</b></p>
+      <div class="actions">
+        <a class="btn primary">Start free — 10 monitors</a>
+        <a class="btn ghost">★ Star on GitHub</a>
+      </div>
+      <div class="specs">
+        <span><b>HTTP · TCP · keyword · cron</b></span>
+        <span>self-host <b>unlimited</b></span>
+        <span><b>MCP</b> server for AI</span>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="aura"></div>
+      <div class="pill p1"><span class="d"></span> api.yourapp.com · 88ms</div>
+      <div class="pill p2"><span class="d"></span> All systems operational</div>
+      <div class="mascot-wrap">
+        <!-- Save your mascot as crow-mascot.png next to this file -->
+        <img class="mascot" src="crow-mascot.png" alt="UptimeCrow guardian crow"
+             onerror="this.style.display='none';document.getElementById('miss').style.display='flex'"/>
+        <div class="glint"></div>
+        <div class="missing" id="miss">🐦‍⬛<br>Save your mascot as<br><b>crow-mascot.png</b><br>in this folder to preview it.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust">
+    <span><span class="s">★</span> 1,284 stars on GitHub</span>
+    <span><b>AGPL-3.0</b> — self-host free</span>
+    <span>one <b>docker compose up</b></span>
+    <span>status pages that <b>survive your outage</b></span>
+  </div>
+</div>
+</body>
+</html>
