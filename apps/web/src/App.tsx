@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LandingPage } from "./pages/Landing";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -46,9 +47,20 @@ import DnsLookup from "./pages/tools/DnsLookup";
 import UptimeTest from "./pages/tools/UptimeTest";
 import Changelog from "./pages/Changelog";
 
+// Reset scroll to the top on every route change (e.g. clicking the logo from a
+// scrolled-down page lands you at the top, not mid-page).
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 export function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
