@@ -25,6 +25,8 @@ import { useHeartbeats } from "@/lib/queries/heartbeats";
 import { useAuthStore } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoadError } from "@/components/load-error";
+import { uptimeTextClass } from "@/lib/uptime";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
@@ -438,6 +440,7 @@ export function Overview() {
   const {
     data: monitors,
     isLoading: monitorsLoading,
+    isError: monitorsError,
     dataUpdatedAt,
     refetch: refetchMonitors,
     isRefetching,
@@ -445,9 +448,15 @@ export function Overview() {
   const {
     data: incidents,
     isLoading: incidentsLoading,
+    isError: incidentsError,
     refetch: refetchIncidents,
   } = useIncidents();
-  const { data: statusPages, isLoading: statusPagesLoading } = useStatusPages();
+  const {
+    data: statusPages,
+    isLoading: statusPagesLoading,
+    isError: statusPagesError,
+    refetch: refetchStatusPages,
+  } = useStatusPages();
   const { data: heartbeats } = useHeartbeats();
 
   const totalMonitors = monitors?.length ?? 0;
@@ -456,6 +465,17 @@ export function Overview() {
 
   if (monitorsLoading || incidentsLoading || statusPagesLoading)
     return <OverviewSkeleton />;
+
+  if (monitorsError || incidentsError || statusPagesError)
+    return (
+      <LoadError
+        onRetry={() => {
+          refetchMonitors();
+          refetchIncidents();
+          refetchStatusPages();
+        }}
+      />
+    );
 
   const totalStatusPages = statusPages?.length ?? 0;
 
@@ -608,11 +628,7 @@ export function Overview() {
                 const uptimeColor =
                   uptimePct == null
                     ? "text-muted-foreground/50"
-                    : uptimePct >= 99.9
-                      ? "text-success-foreground"
-                      : uptimePct >= 99
-                        ? "text-warning-foreground"
-                        : "text-danger-foreground";
+                    : uptimeTextClass(uptimePct);
                 return (
                   <Tooltip key={monitor.id}>
                     <TooltipTrigger asChild>
