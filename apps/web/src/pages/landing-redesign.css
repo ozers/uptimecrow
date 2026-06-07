@@ -17,7 +17,7 @@
   color:var(--ink);
   font-family:var(--lp-font);
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  overflow-x:clip; /* clip (not hidden) so the sticky nav keeps sticking */
   min-height:100vh;
 }
 .lp *{margin:0;padding:0;box-sizing:border-box}

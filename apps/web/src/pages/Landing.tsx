@@ -282,10 +282,14 @@ export function LandingPage() {
       {/* NAV */}
       <nav className="lp-nav">
         <div className="lp-wrap lp-nav-inner">
-          <div className="lp-logo">
+          <Link
+            to="/"
+            className="lp-logo"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <img src="/logo.svg" alt="UptimeCrow logo" />
             <span>{BRAND}</span>
-          </div>
+          </Link>
           <div className="lp-nav-links">
             <a href="#how">How it works</a>
             <a href="#features">Features</a>
