@@ -262,7 +262,7 @@ const PLANS = [
   { name: "Free", price: "$0", desc: "For side projects and personal apps.", features: ["1 status page", "10 monitors", "5-minute check intervals", "3 heartbeat monitors", "Email alerts", "Uptime badge", "7-day history"] },
   { name: "Indie", price: "$9", desc: "For indie hackers and solo founders.", features: ["5 status pages + custom domain", "25 monitors", "1-minute check intervals", "10 heartbeat monitors", "Slack, Discord, API access", "1-year history"] },
   { name: "Pro", price: "$29", desc: "For growing SaaS teams.", popular: true, features: ["10 status pages", "100 monitors", "30-second check intervals", "25 heartbeat monitors", "Custom domain + API access", "5 team seats", "1-year history"] },
-  { name: "Team", price: "$79", desc: "For teams that ship fast.", features: ["Everything in Pro", "200 monitors", "100 heartbeat monitors", "10 team seats", "365-day history"] },
+  { name: "Team", price: "$79", desc: "For teams that ship fast.", features: ["Everything in Pro", "200 monitors", "100 heartbeat monitors", "10 team seats", "1-year history"] },
 ];
 
 // ─── Landing page ──────────────────────────────────────────────────────────────
