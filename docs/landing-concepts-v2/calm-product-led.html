@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UptimeCrow — Calm / product-led</title>
+<style>
+  :root{
+    --bg:#050507; --surface:#0c0c10; --surface2:#141418; --border:#1c1c24;
+    --text:#ededf0; --dim:#8b8b97; --faint:#5a5a66;
+    --green:#00e676; --green-dim:#00e6761a; --red:#ff5b5b; --amber:#ffab40;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;
+    /* faint engineered grid — precision, not noise */
+    background-image:linear-gradient(#ffffff05 1px,transparent 1px),linear-gradient(90deg,#ffffff05 1px,transparent 1px);
+    background-size:64px 64px;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 28px}
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0;border-bottom:1px solid var(--border)}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+  .nav-links{display:flex;gap:28px;align-items:center;color:var(--dim);font-size:14px}
+  .nav-links a:hover{color:var(--text)}
+  .ghbtn{display:flex;align-items:center;gap:7px;border:1px solid var(--border);padding:7px 13px;border-radius:8px;font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+  .ghbtn b{color:var(--text)}
+  .nav-cta{background:var(--green);color:#03130a;padding:9px 17px;border-radius:8px;font-weight:650;font-size:14px}
+
+  .hero{display:grid;grid-template-columns:1.04fr .96fr;gap:56px;align-items:center;padding:84px 0 72px}
+  @media(max-width:900px){.hero{grid-template-columns:1fr;gap:44px;padding:56px 0}}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.14em;text-transform:uppercase}
+  h1{font-size:clamp(40px,5.4vw,62px);line-height:1.03;letter-spacing:-.035em;font-weight:800;margin:20px 0 0}
+  h1 .hl{color:var(--green)}
+  .sub{color:var(--dim);font-size:18px;line-height:1.6;max-width:480px;margin:22px 0 0}
+  .sub b{color:var(--text);font-weight:600}
+  .actions{display:flex;gap:12px;margin-top:34px;align-items:center}
+  .btn{padding:13px 22px;border-radius:10px;font-weight:650;font-size:15px}
+  .btn.primary{background:var(--green);color:#03130a}
+  .btn.ghost{border:1px solid var(--border);color:var(--text)}
+  .specs{margin-top:30px;display:flex;flex-wrap:wrap;gap:8px 20px;font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+  .specs span{white-space:nowrap}
+  .specs b{color:var(--dim);font-weight:500}
+
+  /* product card — the hero is the product, calm + precise */
+  .card{background:linear-gradient(180deg,#0d0d12,#0a0a0e);border:1px solid var(--border);border-radius:16px;overflow:hidden;
+    box-shadow:0 50px 120px -50px #000, 0 0 0 1px #ffffff04 inset}
+  .card-bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:#0e0e13}
+  .tl{display:flex;gap:6px}.tl i{width:10px;height:10px;border-radius:50%;display:block}
+  .tl .r{background:#ff5f57}.tl .a{background:#febc2e}.tl .g{background:#28c840}
+  .card-url{margin-left:8px;font-family:var(--mono);font-size:12px;color:var(--faint)}
+  .card-live{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .card-body{padding:20px}
+  .opbar{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--green-dim);background:var(--green-dim);border-radius:11px;margin-bottom:18px}
+  .opbar .dot{position:relative;width:9px;height:9px}
+  .opbar .dot i{position:absolute;inset:0;border-radius:50%;background:var(--green)}
+  .opbar .dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--green);animation:ping 2.4s cubic-bezier(0,0,.2,1) infinite}
+  @keyframes ping{0%{transform:scale(1);opacity:.6}70%,100%{transform:scale(3.2);opacity:0}}
+  .opbar .t{font-weight:650;font-size:14.5px;color:var(--green)}
+  .opbar .meta{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+  .svc{display:flex;align-items:center;gap:12px;padding:11px 2px}
+  .svc + .svc{border-top:1px solid #ffffff08}
+  .svc .nm{font-size:13.5px;font-weight:550;min-width:118px}
+  .spark{display:flex;gap:2px;flex:1}
+  .spark i{flex:1;height:18px;border-radius:1.5px;background:var(--green);opacity:.9}
+  .spark i.b{background:#ffffff12}
+  .spark i.d{background:var(--red)}
+  .svc .pct{font-family:var(--mono);font-size:12.5px;color:var(--green);width:54px;text-align:right}
+  .svc .ms{font-family:var(--mono);font-size:12px;color:var(--faint);width:52px;text-align:right}
+
+  .trust{border-top:1px solid var(--border);padding:22px 0 40px;display:flex;gap:30px;flex-wrap:wrap;font-family:var(--mono);font-size:12.5px;color:var(--faint)}
+  .trust b{color:var(--dim);font-weight:500}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <nav>
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 11c4-1 7 1 9 4 1-5 4-8 9-9-1 4-2 6-5 8 2 0 4-1 5-2-1 4-5 7-10 7-4 0-7-3-8-6z" fill="#00e676"/></svg>
+        UptimeCrow
+      </div>
+      <div class="nav-links">
+        <a>Features</a><a>Pricing</a><a>Docs</a>
+        <a class="ghbtn">★ <b>1,284</b> GitHub</a>
+        <a class="nav-cta">Get Started</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Open source · AGPL-3.0 · self-hostable</div>
+        <h1>Your site went down.<br><span class="hl">You already know.</span></h1>
+        <p class="sub">Downtime detected, incident opened, status page updated, subscribers notified — <b>automatically, before you wake up.</b></p>
+        <div class="actions">
+          <a class="btn primary">Start free — 10 monitors</a>
+          <a class="btn ghost">Self-host unlimited →</a>
+        </div>
+        <div class="specs">
+          <span><b>HTTP · TCP · keyword · cron</b></span>
+          <span><b>status pages</b> that survive your outage</span>
+          <span><b>MCP</b> server for AI</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-bar">
+          <span class="tl"><i class="r"></i><i class="a"></i><i class="g"></i></span>
+          <span class="card-url">status.yourapp.com</span>
+          <span class="card-live">updated 12s ago</span>
+        </div>
+        <div class="card-body">
+          <div class="opbar">
+            <span class="dot"><i></i></span>
+            <span class="t">All systems operational</span>
+            <span class="meta">4 monitors · 99.98%</span>
+          </div>
+          <div class="svc">
+            <span class="nm">app.yourapp.com</span>
+            <span class="spark"></span>
+            <span class="pct">99.99%</span><span class="ms">142ms</span>
+          </div>
+          <div class="svc">
+            <span class="nm">api.yourapp.com</span>
+            <span class="spark"></span>
+            <span class="pct">100%</span><span class="ms">88ms</span>
+          </div>
+          <div class="svc">
+            <span class="nm">auth.yourapp.com</span>
+            <span class="spark" data-dip="34"></span>
+            <span class="pct">99.94%</span><span class="ms">203ms</span>
+          </div>
+          <div class="svc">
+            <span class="nm">payments</span>
+            <span class="spark"></span>
+            <span class="pct">99.99%</span><span class="ms">176ms</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust">
+      <span><b>★ 1,284</b> stars on GitHub</span>
+      <span>AGPL-3.0 — <b>self-host unlimited, free</b></span>
+      <span>one <b>docker compose up</b></span>
+      <span>hosted from <b>$0</b></span>
+    </div>
+  </div>
+
+<script>
+// Build calm 30-segment uptime sparklines (mostly green; one has a tiny dip).
+document.querySelectorAll('.spark').forEach((el)=>{
+  const dip = el.dataset.dip ? parseInt(el.dataset.dip) : -1;
+  for(let i=0;i<30;i++){
+    const seg=document.createElement('i');
+    if(i===dip) seg.className='d';
+    else if(Math.random()<0.04 && i<24) seg.className='b'; // a couple "no data" early
+    el.appendChild(seg);
+  }
+});
+</script>
+</body>
+</html>
