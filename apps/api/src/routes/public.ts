@@ -594,7 +594,7 @@ publicRoutes.get("/badge/:slug", async (c) => {
   const up = Number(stats[0]?.up || 0);
   const uptime = total > 0 ? ((up / total) * 100).toFixed(2) : "N/A";
 
-  const color = uptime === "N/A" ? "#999" : parseFloat(uptime) >= 99.9 ? "#00e676" : parseFloat(uptime) >= 99 ? "#ffab40" : "#ff5252";
+  const color = uptime === "N/A" ? "#999" : parseFloat(uptime) >= 99 ? "#00e676" : parseFloat(uptime) >= 95 ? "#ffab40" : "#ff5252";
 
   return svgBadge(c, "uptime", `${uptime}%`, color);
 });
