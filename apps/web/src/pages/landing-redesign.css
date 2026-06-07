@@ -218,6 +218,35 @@
   .lp .lp-foot-cols{gap:28px}
 }
 
+/* ── auth pages (login / register) — warm marketing card ── */
+.lp .lp-auth{display:flex;justify-content:center;padding:56px 24px 88px;background:
+  radial-gradient(60% 50% at 50% 0%, rgba(251,230,203,.4) 0%, transparent 60%),
+  linear-gradient(180deg,var(--bg1),var(--bg2))}
+.lp .lp-auth-card{width:100%;max-width:410px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:38px 34px;box-shadow:0 30px 60px -34px rgba(0,0,0,.16);text-align:center}
+.lp .lp-auth-mascot{width:74px;height:auto;margin:0 auto 14px;display:block;filter:drop-shadow(0 14px 18px rgba(42,34,48,.1))}
+.lp .lp-auth-card h1{font-size:25px;font-weight:800;letter-spacing:-.025em;color:var(--ink)}
+.lp .lp-auth-sub{color:var(--dim);font-size:14.5px;margin-top:6px}
+.lp .lp-auth-form{margin-top:26px;text-align:left;display:flex;flex-direction:column;gap:15px}
+.lp .lp-auth-field{display:flex;flex-direction:column;gap:7px}
+.lp .lp-auth-field label{font-size:13px;font-weight:600;color:var(--ink)}
+.lp .lp-auth-field input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--surface2);font-size:14.5px;font-family:inherit;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+.lp .lp-auth-field input::placeholder{color:var(--faint)}
+.lp .lp-auth-field input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+.lp .lp-auth-err{color:var(--red);font-size:12.5px}
+.lp .lp-auth-forgot{text-align:right;margin-top:-4px}
+.lp .lp-auth-forgot a{color:var(--dim);font-size:12.5px}
+.lp .lp-auth-forgot a:hover{color:var(--ink)}
+.lp .lp-auth-submit{width:100%;padding:13px;border:0;border-radius:999px;background:var(--green);color:#fff;font-weight:650;font-size:15px;font-family:inherit;cursor:pointer;transition:transform .12s,box-shadow .2s,opacity .2s;box-shadow:0 12px 30px -12px rgba(22,163,74,.5)}
+.lp .lp-auth-submit:hover:not(:disabled){transform:translateY(-1px)}
+.lp .lp-auth-submit:disabled{opacity:.65;cursor:default}
+.lp .lp-auth-divider{display:flex;align-items:center;gap:12px;margin:22px 0;color:var(--faint);font-size:12.5px}
+.lp .lp-auth-divider::before,.lp .lp-auth-divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.lp .lp-auth-google{display:flex;width:100%;align-items:center;justify-content:center;gap:9px;padding:11px;border:1px solid var(--line);border-radius:11px;background:var(--surface);font-size:14px;font-weight:600;color:var(--ink);transition:background .15s}
+.lp .lp-auth-google:hover{background:var(--surface2)}
+.lp .lp-auth-alt{margin-top:24px;text-align:center;font-size:14px;color:var(--dim)}
+.lp .lp-auth-alt a{color:var(--green);font-weight:600}
+.lp .lp-auth-alt a:hover{text-decoration:underline}
+
 /* ── reduced motion: stop all looping/idle animation ── */
 @media (prefers-reduced-motion: reduce){
   .lp .lp-mascot-wrap,.lp .lp-glint,.lp .lp-final .mini{animation:none !important}
