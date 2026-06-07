@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { MarketingNav } from "@/components/marketing-nav";
 import "./Landing.css";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
@@ -41,7 +41,6 @@ const FAQ = [
 ];
 
 export function Pricing() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [annual, setAnnual] = useState(false);
 
   usePageMeta({
@@ -83,38 +82,7 @@ export function Pricing() {
 
   return (
     <div className="landing">
-      <nav>
-        <div className="nav-inner">
-          <div className="logo">
-            <Link to="/" style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "inherit", textDecoration: "none" }}>
-              <img src="/logo.png" alt="UptimeCrow logo" className="logo-img" />
-              <span>{BRAND}</span>
-            </Link>
-          </div>
-          <div className="nav-links">
-            <Link to="/#features">Features</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/login" className="nav-login">Log in</Link>
-            <Link to="/register" className="nav-cta">Get Started Free</Link>
-          </div>
-          <button
-            className="nav-hamburger"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
-            aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="nav-mobile" role="dialog" aria-label="Mobile navigation">
-            <Link to="/#features" onClick={() => setMobileOpen(false)}>Features</Link>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)}>Pricing</Link>
-            <Link to="/login" onClick={() => setMobileOpen(false)}>Log in</Link>
-            <Link to="/register" className="nav-cta mobile-cta" onClick={() => setMobileOpen(false)}>Get Started Free</Link>
-          </div>
-        )}
-      </nav>
+      <MarketingNav />
 
       <section className="hero" style={{ paddingBottom: "2rem" }}>
         <div className="container">
