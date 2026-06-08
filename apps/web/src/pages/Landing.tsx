@@ -226,17 +226,6 @@ function FAQSection() {
   );
 }
 
-const FEATURES = [
-  { Icon: ShieldCheck, title: "Automatic incident detection", desc: "Consecutive-failure confirmation prevents false alarms. When it's really down, an incident opens and your status page updates automatically." },
-  { Icon: Radio, title: "Uptime monitoring", desc: "HTTP, TCP and keyword checks as often as every 30 seconds. Sub-minute detection with configurable confirmation counts." },
-  { Icon: Heart, title: "Heartbeat monitoring", desc: "Watch cron jobs and scheduled tasks. Your service pings a unique URL — miss one and the crow squawks. On every plan." },
-  { Icon: Palette, title: "Beautiful status pages", desc: "Hosted on your custom domain. Clean, fast, branded — pre-rendered so they stay online even when your origin is down." },
-  { Icon: Mail, title: "Subscriber notifications", desc: "Email, Slack, Discord, PagerDuty, Teams and Telegram alerts when incidents start and resolve. Users subscribe themselves." },
-  { Icon: Zap, title: "MCP server for AI", desc: "Query your monitors and incidents straight from Claude Code, Cursor or Windsurf. The only uptime tool with native MCP." },
-  { Icon: Bell, title: "Incident templates", desc: "Nine pre-written templates for common incident types. One click fills the title and update body — comms in seconds." },
-  { Icon: Timer, title: "Uptime badge", desc: "Embed a real-time uptime badge on your site, README or docs. Social proof that builds trust automatically." },
-];
-
 const COMPARISON = [
   { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
   { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
@@ -308,21 +297,21 @@ export function LandingPage() {
             <h2>Set it once. The crow does the rest.</h2>
             <p className="lp-lead">No dashboards to babysit. Add your endpoints and go back to building.</p>
           </div>
-          <div className="lp-steps">
-            <div className="lp-step">
-              <div className="n">1</div>
+          <div className="lp-flow">
+            <div className="lp-flow-step">
+              <div className="lp-flow-num">1</div>
               <h3>Add your endpoints</h3>
               <p>HTTP, TCP, keyword or cron checks — at the interval you choose, as often as every 30 seconds.</p>
             </div>
-            <div className="lp-step">
-              <div className="n">2</div>
+            <div className="lp-flow-step">
+              <div className="lp-flow-num">2</div>
               <h3>The crow watches</h3>
               <p>A blip is confirmed, not panicked over. On a real outage it opens an incident and updates your status page instantly.</p>
             </div>
-            <div className="lp-step">
-              <div className="n">3</div>
+            <div className="lp-flow-step">
+              <div className="lp-flow-num">3</div>
               <h3>You get pinged</h3>
-              <p>Email, Slack, Discord, PagerDuty, Telegram — or ask Claude “is anything down?” via the MCP server.</p>
+              <p>Email, Slack, Discord, PagerDuty, Telegram — or just ask Claude “is anything down?” via the MCP server.</p>
             </div>
           </div>
         </div>
@@ -335,16 +324,80 @@ export function LandingPage() {
             <div className="lp-eyebrow">Everything you need</div>
             <h2>Monitoring, status pages, on-call — one tool.</h2>
           </div>
-          <div className="lp-feat">
-            {FEATURES.map((f) => (
-              <div className="lp-fcard" key={f.title}>
-                <div className="ic">
-                  <f.Icon size={20} aria-hidden="true" />
-                </div>
-                <h3>{f.title}</h3>
-                <p>{f.desc}</p>
+          <div className="lp-bento">
+            {/* Featured: MCP — the differentiator, with a mini terminal */}
+            <div className="b feature">
+              <div className="b-ic">
+                <Zap size={20} aria-hidden="true" />
               </div>
-            ))}
+              <h3>MCP server for AI</h3>
+              <p>
+                Query monitors &amp; incidents straight from Claude, Cursor or Windsurf — the only
+                uptime tool with a native MCP server.
+              </p>
+              <div className="b-term" aria-hidden="true">
+                <div className="b-term-bar">
+                  <i /><i /><i />
+                </div>
+                <div className="b-term-body">
+                  <div className="b-term-in">
+                    <span className="p">claude ›</span> is my API up?
+                  </div>
+                  <div className="b-term-out">✓ all 4 monitors up — api 88ms · last incident 12d ago</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><Radio size={20} aria-hidden="true" /></div>
+              <h3>Uptime monitoring</h3>
+              <p>HTTP, TCP &amp; keyword checks as often as every 30 seconds, with confirmation that kills false alarms.</p>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><Heart size={20} aria-hidden="true" /></div>
+              <h3>Heartbeat monitoring</h3>
+              <p>Cron jobs ping a unique URL — miss one and the crow squawks. On every plan.</p>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><ShieldCheck size={20} aria-hidden="true" /></div>
+              <h3>Auto incident detection</h3>
+              <p>A real outage opens an incident and updates your status page — no human in the loop.</p>
+            </div>
+
+            {/* Wide: alerts everywhere, with channel chips */}
+            <div className="b wide">
+              <div className="b-ic"><Mail size={20} aria-hidden="true" /></div>
+              <h3>Alerts everywhere</h3>
+              <p>Incident start &amp; resolve pushed to every channel your team already lives in.</p>
+              <div className="b-chips">
+                <span>Email</span>
+                <span>Slack</span>
+                <span>Discord</span>
+                <span>PagerDuty</span>
+                <span>Teams</span>
+                <span>Telegram</span>
+              </div>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><Palette size={20} aria-hidden="true" /></div>
+              <h3>Beautiful status pages</h3>
+              <p>Branded, on your domain, pre-rendered so they stay up even when your origin is down.</p>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><Bell size={20} aria-hidden="true" /></div>
+              <h3>Incident templates</h3>
+              <p>Nine pre-written templates — one click fills the title and update body. Comms in seconds.</p>
+            </div>
+
+            <div className="b">
+              <div className="b-ic"><Timer size={20} aria-hidden="true" /></div>
+              <h3>Uptime badge</h3>
+              <p>Drop a live uptime badge in your README or docs — social proof that updates itself.</p>
+            </div>
           </div>
         </div>
       </section>
