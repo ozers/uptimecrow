@@ -1,7 +1,19 @@
 /* Shared marketing header. Warm literals (not vars) so it's identical on every
    page regardless of the parent wrapper (.lp, .landing, auth, …). It is a
-   <header> (not <nav>) on purpose, so the legacy `.landing nav` rules never
-   match it. */
+   <div role="banner"> (not <header>) so the legacy `.landing header` rules
+   never match it.
+
+   Every rule is scoped under `.uc-header` (specificity 0,2,0) so it wins over
+   the landing's aggressive `.lp *{margin:0;padding:0}` reset (0,1,0) — without
+   that, the header's padding gets zeroed and it collapses on the landing only.
+   We also set our own box-sizing for the same reason. */
+.uc-header,
+.uc-header *,
+.uc-header *::before,
+.uc-header *::after {
+  box-sizing: border-box;
+}
+
 .uc-header {
   position: sticky;
   top: 0;
@@ -11,7 +23,7 @@
   border-bottom: 1px solid #e9e1d4;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
-.uc-header-inner {
+.uc-header .uc-header-inner {
   max-width: 1160px;
   margin: 0 auto;
   padding: 14px 28px;
@@ -19,7 +31,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.uc-brand {
+.uc-header .uc-brand {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -29,29 +41,29 @@
   color: #211d27;
   text-decoration: none;
 }
-.uc-brand img {
+.uc-header .uc-brand img {
   width: 30px;
   height: 30px;
 }
-.uc-links {
+.uc-header .uc-links {
   display: flex;
   align-items: center;
   gap: 24px;
 }
-.uc-links a {
+.uc-header .uc-links a {
   color: #6c6675;
   font-size: 14.5px;
   font-weight: 500;
   text-decoration: none;
   transition: color 0.2s;
 }
-.uc-links a:hover {
+.uc-header .uc-links a:hover {
   color: #211d27;
 }
-.uc-links .uc-login {
+.uc-header .uc-links .uc-login {
   font-weight: 600;
 }
-.uc-cta {
+.uc-header .uc-cta {
   background: #211d27;
   color: #fff !important;
   padding: 10px 18px;
@@ -60,10 +72,10 @@
   font-size: 14px;
   transition: opacity 0.2s;
 }
-.uc-cta:hover {
+.uc-header .uc-cta:hover {
   opacity: 0.9;
 }
-.uc-burger {
+.uc-header .uc-burger {
   display: none;
   align-items: center;
   justify-content: center;
@@ -73,7 +85,7 @@
   cursor: pointer;
   padding: 4px;
 }
-.uc-mobile {
+.uc-header .uc-mobile {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -81,25 +93,25 @@
   border-top: 1px solid #e9e1d4;
   background: rgba(255, 253, 249, 0.98);
 }
-.uc-mobile a {
+.uc-header .uc-mobile a {
   padding: 11px 0;
   color: #6c6675;
   font-weight: 500;
   text-decoration: none;
   border-bottom: 1px solid #e9e1d4;
 }
-.uc-mobile a:last-child {
+.uc-header .uc-mobile a:last-child {
   border-bottom: 0;
 }
-.uc-mobile .uc-cta {
+.uc-header .uc-mobile .uc-cta {
   margin-top: 8px;
   text-align: center;
 }
 @media (max-width: 760px) {
-  .uc-links {
+  .uc-header .uc-links {
     display: none;
   }
-  .uc-burger {
+  .uc-header .uc-burger {
     display: flex;
   }
 }
