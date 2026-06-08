@@ -246,6 +246,15 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   const pageName = escapeHtml(data.statusPage.name);
   const logoUrl = sanitizeUrl(data.statusPage.logoUrl);
 
+  // Overall uptime across all monitors — the headline trust metric.
+  const uptimeVals = data.monitors
+    .map((m) => (m.uptimePercent ? parseFloat(m.uptimePercent) : null))
+    .filter((v): v is number => v !== null && !Number.isNaN(v));
+  const overallUptime = uptimeVals.length
+    ? (uptimeVals.reduce((a, b) => a + b, 0) / uptimeVals.length).toFixed(2)
+    : null;
+  const activeCount = data.activeIncidents.length;
+
   const statusColor =
     data.overallStatus === "operational" ? "#22c55e"
       : data.overallStatus === "degraded" ? "#f59e0b"
@@ -357,6 +366,9 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       : uptimePct >= 95 ? "#f59e0b"
       : "#ef4444";
     const bar = renderUptimeBar(m.dailyUptime ?? []);
+    const ms = m.recentResponseMs && m.recentResponseMs.length
+      ? m.recentResponseMs[m.recentResponseMs.length - 1]
+      : null;
     return `<div class="service-row">
   <div class="service-top">
     <div class="service-name-wrap">
@@ -364,6 +376,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       <span class="service-name">${escapeHtml(m.name)}</span>
     </div>
     <div class="service-meta">
+      ${ms !== null && m.status !== "down" ? `<span class="service-ms">${ms} ms</span>` : ""}
       <span class="service-status" style="color:${dc};background:${dc}15">${st}</span>
       ${uptimePct !== null ? `<span class="service-uptime" style="color:${uptimeColor}">${m.uptimePercent}%</span>` : ""}
     </div>
@@ -434,7 +447,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     const sc = incidentStatusColor(inc.status);
     const sl = incidentStatusLabel(inc.status);
     const sevColor = severityColor(inc.severity);
-    return `<div class="incident-card">
+    return `<div class="incident-card" style="border-left-color:${sevColor}">
   <div class="incident-header">
     <div class="incident-title-row">
       <span class="incident-sev" style="background:${sevColor}18;color:${sevColor}">${inc.severity.toUpperCase()}</span>
@@ -544,16 +557,22 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --bg:#08080d;--surface:#0f0f16;--card:#13131c;--border:#1c1c28;--border2:#252535;
-      --text:#ededf5;--text2:#8888a0;--text3:#505068;
-      --bar-empty:#1c1c28;
+      --bg:#fbfbfd;--surface:#ffffff;--card:#ffffff;--border:#ececf1;--border2:#e0e0ea;
+      --text:#16161f;--text2:#5c5c6b;--text3:#9595a6;
+      --bar-empty:#e9e9f1;
       --brand:${brand};
-      --radius:12px;
+      --ok:#16a34a;--warn:#d97706;--bad:#dc2626;
+      --shadow:0 1px 2px rgba(20,20,45,.04),0 10px 28px -18px rgba(20,20,45,.14);
+      --shadow-lg:0 1px 2px rgba(20,20,45,.05),0 26px 50px -30px rgba(20,20,45,.2);
+      --radius:16px;--radius-sm:12px;
     }
-    [data-theme="light"]{
-      --bg:#f4f4f8;--surface:#fff;--card:#fff;--border:#e2e2ee;--border2:#d0d0e0;
-      --text:#0d0d1a;--text2:#5a5a78;--text3:#9090b0;
-      --bar-empty:#e2e2ee;
+    [data-theme="dark"]{
+      --bg:#0a0a0f;--surface:#101017;--card:#14141d;--border:#20202c;--border2:#2b2b3a;
+      --text:#edeef4;--text2:#9292a4;--text3:#5c5c70;
+      --bar-empty:#20202c;
+      --ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 30px -20px rgba(0,0,0,.6);
+      --shadow-lg:0 1px 2px rgba(0,0,0,.35),0 30px 60px -34px rgba(0,0,0,.7);
     }
     html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;scroll-behavior:smooth}
     body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;line-height:1.5;min-height:100vh}
@@ -578,45 +597,35 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     /* ── Status Hero ── */
     .status-hero{
-      padding:32px 28px;
-      border-radius:var(--radius);
-      border:1px solid ${statusBorder};
-      background:${statusBg};
-      margin-bottom:36px;
-      position:relative;
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      gap:20px;
+      position:relative;overflow:hidden;
+      padding:30px 32px;border-radius:var(--radius);
+      border:1px solid ${statusBorder};background:${statusBg};
+      box-shadow:var(--shadow);margin-bottom:14px;
+      display:flex;align-items:center;gap:22px;
     }
     .status-hero::before{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse at 0% 50%, ${statusColor}0a 0%, transparent 60%);
+      background:radial-gradient(130% 110% at 100% 0%, ${statusColor}1a 0%, transparent 58%);
       pointer-events:none;
     }
     .status-icon{
-      width:52px;height:52px;flex-shrink:0;
-      border-radius:14px;
-      background:${statusColor}18;
-      border:1px solid ${statusColor}30;
-      display:flex;align-items:center;justify-content:center;
+      width:62px;height:62px;flex-shrink:0;border-radius:18px;
+      background:${statusColor}24;border:1px solid ${statusColor}3a;
+      display:flex;align-items:center;justify-content:center;position:relative;z-index:1;
     }
-    .status-icon svg{color:${statusColor}}
-    .status-text{flex:1;min-width:0}
-    .status-label{font-size:20px;font-weight:700;letter-spacing:-0.03em;color:${statusColor};line-height:1.2}
-    .status-sub{font-size:12px;color:var(--text3);margin-top:4px;display:flex;align-items:center;gap:6px}
-    .status-sub-dot{width:5px;height:5px;border-radius:50%;background:var(--text3);flex-shrink:0}
-    .status-refresh{
-      display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;
-    }
-    .status-refresh-label{font-size:11px;color:var(--text3);text-align:right}
-    .status-refresh-btn{
-      display:flex;align-items:center;gap:4px;font-size:11px;font-weight:500;
-      color:var(--text3);background:transparent;border:1px solid var(--border2);
-      border-radius:6px;padding:4px 8px;cursor:pointer;font-family:inherit;
-      transition:border-color .15s,color .15s;
-    }
-    .status-refresh-btn:hover{border-color:var(--text2);color:var(--text2)}
+    .status-icon svg{color:${statusColor};width:30px;height:30px}
+    .status-text{flex:1;min-width:0;position:relative;z-index:1}
+    .status-label{font-size:26px;font-weight:800;letter-spacing:-0.035em;color:${statusColor};line-height:1.05}
+    .status-sub{font-size:13px;color:var(--text2);margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .status-sub-dot{width:4px;height:4px;border-radius:50%;background:var(--text3);flex-shrink:0}
+    .status-sub .alert{color:var(--bad);font-weight:700}
+    .status-uptime{flex-shrink:0;text-align:right;position:relative;z-index:1}
+    .status-uptime .big{font-size:32px;font-weight:800;letter-spacing:-0.02em;color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+    .status-uptime .lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-top:6px}
+    /* meta row under hero */
+    .meta-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:34px;padding:0 6px;font-size:12px;color:var(--text3)}
+    .meta-refresh-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text3);background:transparent;border:0;cursor:pointer;font-family:inherit;transition:color .15s}
+    .meta-refresh-btn:hover{color:var(--text2)}
 
     /* ── Section ── */
     .section{margin-top:40px}
@@ -634,29 +643,30 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     /* ── Service Row ── */
     .service-row{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-      padding:16px 18px;margin-bottom:8px;transition:border-color .15s;
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);
+      padding:18px 20px;margin-bottom:10px;box-shadow:var(--shadow);transition:border-color .15s;
     }
     .service-row:hover{border-color:var(--border2)}
-    .service-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-    .service-name-wrap{display:flex;align-items:center;gap:10px;min-width:0}
-    .service-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-    .service-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .service-meta{display:flex;align-items:center;gap:10px;flex-shrink:0}
-    .service-status{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
-    .service-uptime{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;min-width:52px;text-align:right}
+    .service-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .service-name-wrap{display:flex;align-items:center;gap:11px;min-width:0}
+    .service-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .service-name{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .service-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .service-ms{font-size:12px;font-weight:600;color:var(--text3);font-variant-numeric:tabular-nums}
+    .service-status{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+    .service-uptime{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums;min-width:56px;text-align:right}
 
     /* Uptime bar */
     .ubar-wrap{margin-top:4px}
-    .ubar-track{display:flex;gap:2px;height:20px;border-radius:4px;overflow:hidden}
-    .ubar{flex:1;cursor:default;transition:opacity .15s}
-    .ubar:hover{opacity:.8}
-    .ubar-labels{display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--text3)}
+    .ubar-track{display:flex;gap:2px;height:30px;align-items:stretch}
+    .ubar{flex:1;min-width:0;border-radius:2px;cursor:default;transition:opacity .15s,transform .12s}
+    .ubar:hover{opacity:.7;transform:scaleY(1.07)}
+    .ubar-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:10.5px;font-weight:500;color:var(--text3)}
 
     /* ── Incident Card ── */
     .incident-card{
-      background:var(--card);border:1px solid var(--border);border-left:3px solid var(--brand);
-      border-radius:var(--radius);padding:18px 20px;margin-bottom:10px;
+      background:var(--card);border:1px solid var(--border);border-left:4px solid var(--text3);
+      border-radius:var(--radius-sm);padding:20px 22px;margin-bottom:12px;box-shadow:var(--shadow);
     }
     .incident-header{margin-bottom:12px}
     .incident-title-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -690,7 +700,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .subscribe-section{margin-top:48px}
     .subscribe-inner{
       background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-      padding:24px 24px 20px;
+      padding:26px 26px 22px;box-shadow:var(--shadow);
     }
     .subscribe-text{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
     .subscribe-icon{
@@ -765,19 +775,25 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       <div class="status-text">
         <div class="status-label">${statusLabel}</div>
         <div class="status-sub">
-          <span class="status-sub-dot"></span>
           <span id="last-updated">Updated just now</span>
           <span class="status-sub-dot"></span>
           <span>${data.monitors.length} service${data.monitors.length !== 1 ? "s" : ""} monitored</span>
+          ${activeCount > 0 ? `<span class="status-sub-dot"></span><span class="alert">${activeCount} active incident${activeCount !== 1 ? "s" : ""}</span>` : ""}
         </div>
       </div>
-      <div class="status-refresh">
-        <span class="status-refresh-label">Auto-refreshes in <span id="countdown">60</span>s</span>
-        <button class="status-refresh-btn" onclick="location.reload()">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          Refresh
-        </button>
-      </div>
+      ${overallUptime ? `<div class="status-uptime">
+        <div class="big">${overallUptime}%</div>
+        <div class="lbl">Uptime &middot; 90d</div>
+      </div>` : ""}
+    </div>
+
+    <!-- Meta row -->
+    <div class="meta-row">
+      <span>Auto-refreshes in <span id="countdown">60</span>s</span>
+      <button class="meta-refresh-btn" onclick="location.reload()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh now
+      </button>
     </div>
 
     <!-- Services -->
