@@ -322,6 +322,17 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       month: "short", day: "numeric", year: "numeric",
     });
   }
+  function formatDuration(startIso: string, endIso: string) {
+    const mins = Math.max(0, Math.round((new Date(endIso).getTime() - new Date(startIso).getTime()) / 60000));
+    if (mins < 1) return "under a minute";
+    if (mins < 60) return `${mins} min`;
+    const hrs = Math.floor(mins / 60);
+    const remMins = mins % 60;
+    if (hrs < 24) return remMins ? `${hrs}h ${remMins}m` : `${hrs}h`;
+    const days = Math.floor(hrs / 24);
+    const remHrs = hrs % 24;
+    return remHrs ? `${days}d ${remHrs}h` : `${days}d`;
+  }
 
   function renderUptimeBar(daily: Array<{ date: string; percent: number | null; total: number }>) {
     if (!daily || daily.length === 0) return '';
@@ -425,7 +436,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
       const ul = incidentStatusLabel(u.status);
       return `<div class="update-row">
     <div class="update-timeline">
-      <div class="update-dot" style="background:${uc}"></div>
+      <div class="update-dot" style="background:${uc};box-shadow:0 0 0 4px ${uc}1f"></div>
       ${i < updates.length - 1 ? '<div class="update-line"></div>' : ''}
     </div>
     <div class="update-body">
@@ -447,19 +458,22 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     const sc = incidentStatusColor(inc.status);
     const sl = incidentStatusLabel(inc.status);
     const sevColor = severityColor(inc.severity);
-    return `<div class="incident-card" style="border-left-color:${sevColor}">
-  <div class="incident-header">
-    <div class="incident-title-row">
-      <span class="incident-sev" style="background:${sevColor}18;color:${sevColor}">${inc.severity.toUpperCase()}</span>
-      <span class="incident-status-badge" style="background:${sc}18;color:${sc}">${sl}</span>
-    </div>
+    const sevLabel = inc.severity.charAt(0).toUpperCase() + inc.severity.slice(1);
+    const meta: string[] = [
+      `<span class="inc-sev"><span class="inc-sev-dot" style="background:${sevColor}"></span>${sevLabel}</span>`,
+    ];
+    if (isResolved && inc.resolvedAt) {
+      meta.push(`Resolved ${timeAgo(inc.resolvedAt)}`);
+      meta.push(`Lasted ${formatDuration(inc.startedAt, inc.resolvedAt)}`);
+    } else {
+      meta.push(`Started ${timeAgo(inc.startedAt)}`);
+    }
+    return `<div class="incident-card">
+  <div class="incident-head">
     <h3 class="incident-title">${escapeHtml(inc.title)}</h3>
-    <div class="incident-time">
-      ${isResolved && inc.resolvedAt
-        ? `Started ${formatDate(inc.startedAt)} &mdash; <span style="color:#22c55e">Resolved ${timeAgo(inc.resolvedAt)}</span>`
-        : `Started ${timeAgo(inc.startedAt)}`}
-    </div>
+    <span class="incident-pill" style="color:${sc};background:${sc}14">${sl}</span>
   </div>
+  <div class="incident-meta">${meta.join('<span class="incident-meta-sep">&middot;</span>')}</div>
   ${renderIncidentUpdates(inc.updates)}
 </div>`;
   }
@@ -470,16 +484,13 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     const label = m.isActive ? "In Progress" : "Scheduled";
     const start = formatDate(m.scheduledStart);
     const end = formatDate(m.scheduledEnd);
-    return `<div class="incident-card" style="border-left-color:${color}">
-  <div class="incident-header">
-    <div class="incident-title-row">
-      <span class="incident-sev" style="background:${color}18;color:${color}">MAINTENANCE</span>
-      <span class="incident-status-badge" style="background:${color}18;color:${color}">${label}</span>
-    </div>
+    return `<div class="incident-card">
+  <div class="incident-head">
     <h3 class="incident-title">${escapeHtml(m.title)}</h3>
-    <div class="incident-time">${start} &rarr; ${end}</div>
+    <span class="incident-pill" style="color:${color};background:${color}14">${label}</span>
   </div>
-  ${m.body ? `<div class="md" style="margin-top:12px;font-size:13px;color:var(--text2)">${renderMarkdown(m.body)}</div>` : ''}
+  <div class="incident-meta"><span class="inc-sev"><span class="inc-sev-dot" style="background:${color}"></span>Maintenance</span><span class="incident-meta-sep">&middot;</span>${start} &rarr; ${end}</div>
+  ${m.body ? `<div class="md" style="margin-top:14px">${renderMarkdown(m.body)}</div>` : ''}
 </div>`;
   }
 
@@ -665,27 +676,28 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 
     /* ── Incident Card ── */
     .incident-card{
-      background:var(--card);border:1px solid var(--border);border-left:4px solid var(--text3);
-      border-radius:var(--radius-sm);padding:20px 22px;margin-bottom:12px;box-shadow:var(--shadow);
+      background:var(--card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:22px 24px;margin-bottom:12px;box-shadow:var(--shadow);
     }
-    .incident-header{margin-bottom:12px}
-    .incident-title-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-    .incident-sev{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:4px}
-    .incident-status-badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
-    .incident-title{font-size:15px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
-    .incident-time{font-size:12px;color:var(--text3)}
+    .incident-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .incident-title{font-size:16.5px;font-weight:700;letter-spacing:-.015em;color:var(--text);line-height:1.3;min-width:0}
+    .incident-pill{flex-shrink:0;font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;white-space:nowrap}
+    .incident-meta{margin-top:9px;font-size:12.5px;color:var(--text3);display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .incident-meta-sep{color:var(--border2)}
+    .inc-sev{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--text2)}
+    .inc-sev-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
     /* Updates timeline */
-    .updates{margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
-    .update-row{display:flex;gap:14px;padding-bottom:16px}
+    .updates{margin-top:18px;padding-top:18px;border-top:1px solid var(--border)}
+    .update-row{display:flex;gap:15px;padding-bottom:18px}
     .update-row:last-child{padding-bottom:0}
-    .update-timeline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:3px}
-    .update-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-    .update-line{width:1px;flex:1;background:var(--border);margin-top:5px}
-    .update-body{flex:1;min-width:0}
-    .update-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-    .update-status{font-size:11px;font-weight:700;text-transform:capitalize}
-    .update-time{font-size:11px;color:var(--text3)}
+    .update-timeline{display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:2px}
+    .update-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+    .update-line{width:2px;flex:1;background:var(--border);margin-top:6px;border-radius:1px;min-height:16px}
+    .update-body{flex:1;min-width:0;padding-bottom:1px}
+    .update-header{display:flex;align-items:baseline;gap:10px;margin-bottom:5px;flex-wrap:wrap}
+    .update-status{font-size:12px;font-weight:700}
+    .update-time{font-size:11.5px;color:var(--text3);font-variant-numeric:tabular-nums}
 
     /* Markdown */
     .md{font-size:13px;color:var(--text2);line-height:1.65}
