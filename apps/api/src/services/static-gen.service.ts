@@ -246,6 +246,10 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   const pageName = escapeHtml(data.statusPage.name);
   const logoUrl = sanitizeUrl(data.statusPage.logoUrl);
 
+  // Inline crow mark (works on custom domains too, where /assets aren't served).
+  const crowSvg = (size: number) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 270 270" aria-hidden="true" style="flex-shrink:0"><rect width="270" height="270" rx="61" fill="#767E8F"/><path d="M208 83L237 55L155 105L135 85L115 105L33 55L62 83L0 225C0 241 22 270 62 270H208C248 270 270 241 270 225L208 83Z" fill="#353A46"/><path d="M188.5 103L167 116c3 8 12.5 11.6 17 10.5 5-1.25 10-5 10-12.5 0-6-3.3-9.8-5.5-11Z" fill="#59F94F"/><path d="M81.5 103L103 116c-3 8-12.5 11.6-17 10.5-5-1.25-10-5-10-12.5 0-6 3.3-9.8 5.5-11Z" fill="#59F94F"/><path d="M135 190V105l-35 40 20 15 15 30Z" fill="#E29B4C"/><path d="M135 190V105l35 40-20 15-15 30Z" fill="#F3BC6F"/></svg>`;
+
   // Overall uptime across all monitors — the headline trust metric.
   const uptimeVals = data.monitors
     .map((m) => (m.uptimePercent ? parseFloat(m.uptimePercent) : null))
@@ -529,8 +533,8 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     <span>Incident History</span>
   </div>
   <div class="empty-state">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text3);margin-bottom:8px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-    <p>No incidents recorded in the past 90 days.</p>
+    <span style="margin-bottom:10px;opacity:.85">${crowSvg(34)}</span>
+    <p><strong style="color:var(--text2)">All quiet.</strong> No incidents in the past 90 days &mdash; the crow kept watch.</p>
   </div>
 </section>`;
 
@@ -564,23 +568,26 @@ export function renderStatusHtml(data: StaticStatusPage): string {
   <link rel="alternate" type="application/rss+xml" title="${pageName} incidents" href="/status/${escapeAttrValue(data.statusPage.slug)}/rss">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
+    /* UptimeCrow signature palette — the warm bone surface used across the
+       product, so a status page is recognisably "watched by the crow" while
+       the customer's logo/brand colour stays the star. */
     :root{
-      --bg:#fbfbfd;--surface:#ffffff;--card:#ffffff;--border:#ececf1;--border2:#e0e0ea;
-      --text:#16161f;--text2:#5c5c6b;--text3:#9595a6;
-      --bar-empty:#e9e9f1;
+      --bg:#f7f3ec;--surface:#fffdf9;--card:#fffdf9;--border:#e9e1d4;--border2:#d8cebd;
+      --text:#211d27;--text2:#6c6675;--text3:#9a93a0;
+      --bar-empty:#e7dfd0;
       --brand:${brand};
       --ok:#16a34a;--warn:#d97706;--bad:#dc2626;
-      --shadow:0 1px 2px rgba(20,20,45,.04),0 10px 28px -18px rgba(20,20,45,.14);
-      --shadow-lg:0 1px 2px rgba(20,20,45,.05),0 26px 50px -30px rgba(20,20,45,.2);
+      --shadow:0 1px 2px rgba(42,34,48,.04),0 10px 28px -18px rgba(42,34,48,.16);
+      --shadow-lg:0 1px 2px rgba(42,34,48,.05),0 26px 50px -30px rgba(42,34,48,.22);
       --radius:16px;--radius-sm:12px;
     }
     [data-theme="dark"]{
-      --bg:#0a0a0f;--surface:#101017;--card:#14141d;--border:#20202c;--border2:#2b2b3a;
-      --text:#edeef4;--text2:#9292a4;--text3:#5c5c70;
-      --bar-empty:#20202c;
+      --bg:#171318;--surface:#1e191f;--card:#211c23;--border:#2f2832;--border2:#3c3440;
+      --text:#f0ece6;--text2:#a59ea9;--text3:#6e6773;
+      --bar-empty:#2f2832;
       --ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;
       --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 30px -20px rgba(0,0,0,.6);
       --shadow-lg:0 1px 2px rgba(0,0,0,.35),0 30px 60px -34px rgba(0,0,0,.7);
@@ -738,7 +745,11 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     .page-footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text3);flex-wrap:wrap;gap:8px}
     .page-footer a{color:var(--text3);text-decoration:none;transition:color .15s}
     .page-footer a:hover{color:var(--text2)}
-    .footer-powered{display:flex;align-items:center;gap:4px}
+    .footer-powered{display:flex;align-items:center;gap:7px;color:var(--text3);text-decoration:none;font-size:12px;transition:color .15s}
+    .footer-powered:hover{color:var(--text2)}
+    .footer-powered strong{color:var(--text2);font-weight:700}
+    .footer-powered:hover strong{color:var(--text)}
+    .footer-powered svg{border-radius:4px}
 
     @media(max-width:600px){
       .wrap{padding:0 16px 60px}
@@ -830,10 +841,10 @@ export function renderStatusHtml(data: StaticStatusPage): string {
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19.01 7.38 20 6.18 20C4.98 20 4 19.01 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1z"/></svg>
           RSS
         </a>
-        <span class="footer-powered">
-          Powered by
-          <a href="https://uptimecrow.com" target="_blank" rel="noopener noreferrer" style="color:var(--brand);margin-left:4px">UptimeCrow</a>
-        </span>
+        <a class="footer-powered" href="https://uptimecrow.com" target="_blank" rel="noopener noreferrer">
+          ${crowSvg(16)}
+          <span>Watched by <strong>UptimeCrow</strong></span>
+        </a>
       </div>
     </footer>
 
