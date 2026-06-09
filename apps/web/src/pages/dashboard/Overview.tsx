@@ -179,19 +179,19 @@ function EmptyOverview() {
   );
 }
 
-// ─── Status Banner ────────────────────────────────────────────────────────────
+// ─── Live status banner ───────────────────────────────────────────────────────
+// The single source of truth for "is anything down RIGHT NOW" — driven purely by
+// monitor reachability, never by incident records. Green = everything responds.
 
-function StatusBanner({
-  monitorsDown,
-  activeIncidents,
-  hasMonitors,
+function LiveStatusBanner({
+  downMonitors,
+  totalMonitors,
   timestamp,
   onRefetch,
   isRefetching,
 }: {
-  monitorsDown: number;
-  activeIncidents: number;
-  hasMonitors: boolean;
+  downMonitors: { id: string; name: string }[];
+  totalMonitors: number;
   timestamp: number;
   onRefetch: () => void;
   isRefetching: boolean;
@@ -204,66 +204,48 @@ function StatusBanner({
 
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
   const updatedLabel =
-    seconds < 10
-      ? "just now"
-      : seconds < 60
-        ? `${seconds}s ago`
-        : `${Math.floor(seconds / 60)}m ago`;
+    seconds < 10 ? "just now" : seconds < 60 ? `${seconds}s ago` : `${Math.floor(seconds / 60)}m ago`;
 
-  let bg = "";
-  let border = "border-border";
-  let dot: React.ReactNode = null;
-  let headline = "All systems operational";
-  let headlineColor = "text-success-foreground";
-  let sub = "Everything is running smoothly.";
-
-  if (!hasMonitors) {
-    headline = "No monitors yet";
-    headlineColor = "";
-    sub = "Add a monitor below to start tracking uptime.";
-  } else if (monitorsDown > 0) {
-    bg = "bg-danger/5";
-    border = "border-danger/25";
-    headlineColor = "text-danger-foreground";
-    headline = `${monitorsDown} monitor${monitorsDown > 1 ? "s" : ""} down`;
-    sub = "One or more services are unreachable right now.";
-    dot = (
-      <span className="relative flex h-2.5 w-2.5 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-danger opacity-75" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger" />
-      </span>
-    );
-  } else if (activeIncidents > 0) {
-    bg = "bg-warning/5";
-    border = "border-warning/25";
-    headlineColor = "text-warning-foreground";
-    headline = `${activeIncidents} active incident${activeIncidents > 1 ? "s" : ""}`;
-    sub = "An incident is being investigated.";
-    dot = <AlertTriangle className="h-4 w-4 shrink-0 text-warning-foreground" />;
-  } else if (hasMonitors) {
-    dot = (
-      <span className="relative flex h-2.5 w-2.5 shrink-0">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-40" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-success" />
-      </span>
-    );
-  }
+  const down = downMonitors.length > 0;
 
   return (
     <div
       className={cn(
-        "mb-6 flex items-center justify-between gap-4 rounded-xl border px-5 py-4 transition-colors",
-        bg,
-        border,
+        "mb-3 flex items-center justify-between gap-4 rounded-xl border px-5 py-4 transition-colors",
+        down ? "border-danger/30 bg-danger/5" : "border-success/25 bg-success/5",
       )}
     >
-      <div className="flex items-center gap-3">
-        {dot}
-        <div>
-          <p className={cn("text-sm font-bold tracking-tight", headlineColor)}>
-            {headline}
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="relative flex h-2.5 w-2.5 shrink-0">
+          <span
+            className={cn(
+              "absolute inline-flex h-full w-full animate-ping rounded-full",
+              down ? "bg-danger opacity-75" : "bg-success opacity-40",
+            )}
+          />
+          <span
+            className={cn(
+              "relative inline-flex h-2.5 w-2.5 rounded-full",
+              down ? "bg-danger" : "bg-success",
+            )}
+          />
+        </span>
+        <div className="min-w-0">
+          <p
+            className={cn(
+              "text-sm font-bold tracking-tight",
+              down ? "text-danger-foreground" : "text-success-foreground",
+            )}
+          >
+            {down
+              ? `${downMonitors.length} service${downMonitors.length > 1 ? "s" : ""} down right now`
+              : "All systems operational"}
           </p>
-          <p className="text-xs text-muted-foreground">{sub}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {down
+              ? `Unreachable: ${downMonitors.map((m) => m.name).join(", ")}`
+              : `${totalMonitors} service${totalMonitors !== 1 ? "s" : ""} responding normally`}
+          </p>
         </div>
       </div>
       <button
@@ -274,6 +256,52 @@ function StatusBanner({
         <RefreshCw className={cn("h-3 w-3", isRefetching && "animate-spin")} />
         {isRefetching ? "Refreshing…" : `Updated ${updatedLabel}`}
       </button>
+    </div>
+  );
+}
+
+// ─── Open-incidents strip ─────────────────────────────────────────────────────
+// Incidents are the event log, kept deliberately separate from live status. An
+// incident often stays open after the monitor recovers — the #1 source of "is it
+// actually down?" confusion — so we name the service, say plainly whether it's
+// back up, and give a one-click path to resolve.
+
+function OpenIncidentsStrip({
+  incidents,
+  monitorStatusById,
+}: {
+  incidents: { id: string; title: string; monitorId: string | null }[];
+  monitorStatusById: Map<string, string>;
+}) {
+  if (incidents.length === 0) return null;
+  const first = incidents[0];
+  const backUp = first.monitorId ? monitorStatusById.get(first.monitorId) === "up" : false;
+
+  return (
+    <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-warning/30 bg-warning/5 px-5 py-3.5">
+      <div className="flex min-w-0 items-center gap-3">
+        <AlertTriangle className="h-4 w-4 shrink-0 text-warning-foreground" />
+        <div className="min-w-0">
+          <p className="flex items-center gap-2 text-sm font-semibold text-warning-foreground">
+            {incidents.length} open incident{incidents.length > 1 ? "s" : ""}
+            {backUp && (
+              <span className="rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-semibold text-success-foreground">
+                service back up
+              </span>
+            )}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            {first.title}
+            {incidents.length > 1 ? ` · +${incidents.length - 1} more` : ""}
+            {backUp ? " — recovered, ready to resolve." : " — being investigated."}
+          </p>
+        </div>
+      </div>
+      <Button size="sm" variant="outline" asChild className="shrink-0">
+        <Link to={incidents.length === 1 ? `/dashboard/incidents/${first.id}` : "/dashboard/incidents"}>
+          {backUp ? "Resolve" : "Review"}
+        </Link>
+      </Button>
     </div>
   );
 }
@@ -303,32 +331,21 @@ function StatusDot({ status }: { status: string }) {
   );
 }
 
-// ─── Response Bar ─────────────────────────────────────────────────────────────
+// ─── Status Pill ──────────────────────────────────────────────────────────────
+// Plain-language live status so the state is never ambiguous at a glance.
 
-function ResponseBar({ ms }: { ms: number | null | undefined }) {
-  if (ms == null)
-    return (
-      <span className="text-xs tabular-nums text-muted-foreground/50">—</span>
-    );
-  const pct = Math.min(100, (ms / 1500) * 100);
-  const barColor =
-    ms < 300
-      ? "bg-success"
-      : ms < 800
-        ? "bg-warning"
-        : "bg-danger";
+function StatusPill({ status }: { status: string }) {
+  const map: Record<string, { label: string; cls: string }> = {
+    up: { label: "Operational", cls: "bg-success/10 text-success-foreground" },
+    down: { label: "Down", cls: "bg-danger/15 text-danger-foreground" },
+    degraded: { label: "Degraded", cls: "bg-warning/10 text-warning-foreground" },
+    unknown: { label: "Pending", cls: "bg-muted text-muted-foreground" },
+  };
+  const s = map[status] ?? map.unknown;
   return (
-    <div className="flex items-center gap-2">
-      <span className="w-12 text-right text-xs tabular-nums text-muted-foreground">
-        {ms}ms
-      </span>
-      <div className="h-1 w-16 rounded-full bg-border">
-        <div
-          className={cn("h-1 rounded-full", barColor)}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-    </div>
+    <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", s.cls)}>
+      {s.label}
+    </span>
   );
 }
 
@@ -483,9 +500,14 @@ export function Overview() {
     return <EmptyOverview />;
   }
 
-  const monitorsDown = monitors?.filter((m) => m.status === "down").length ?? 0;
+  const downMonitors = monitors?.filter((m) => m.status === "down") ?? [];
+  const monitorsDown = downMonitors.length;
   const activeIncidents = incidents?.filter((i) => i.status !== "resolved") ?? [];
   const recentIncidents = incidents?.slice(0, 5) ?? [];
+  const monitorStatusById = new Map((monitors ?? []).map((m) => [m.id, m.status]));
+  const activeIncidentMonitorIds = new Set(
+    activeIncidents.map((i) => i.monitorId).filter((id): id is string => !!id),
+  );
 
   const uptimeMap = new Map(
     uptimeData?.map((u) => [u.monitorId, u]) ?? [],
@@ -517,15 +539,17 @@ export function Overview() {
   return (
     <TooltipProvider>
       <div>
-        {/* Status banner */}
-        <StatusBanner
-          monitorsDown={monitorsDown}
-          activeIncidents={activeIncidents.length}
-          hasMonitors={hasMonitors}
+        {/* Live status — reachability right now (source of truth) */}
+        <LiveStatusBanner
+          downMonitors={downMonitors}
+          totalMonitors={totalMonitors}
           timestamp={dataUpdatedAt}
           onRefetch={handleRefetch}
           isRefetching={isRefetching}
         />
+
+        {/* Open incidents — event log, kept distinct from live status */}
+        <OpenIncidentsStrip incidents={activeIncidents} monitorStatusById={monitorStatusById} />
 
         {/* Alert banners */}
         {lateHeartbeats.length > 0 && (
@@ -581,11 +605,9 @@ export function Overview() {
             {
               icon: AlertTriangle,
               value: activeIncidents.length,
-              label: `active incident${activeIncidents.length !== 1 ? "s" : ""}`,
+              label: `open incident${activeIncidents.length !== 1 ? "s" : ""}`,
               color: activeIncidents.length > 0 ? "text-warning-foreground" : undefined,
               to: "/dashboard/incidents",
-              badge: activeIncidents.length > 0 ? "live" : undefined,
-              badgeColor: "bg-warning/10 text-warning-foreground",
             },
             {
               icon: Globe,
@@ -629,31 +651,41 @@ export function Overview() {
                   uptimePct == null
                     ? "text-muted-foreground/50"
                     : uptimeTextClass(uptimePct);
+                const hasIncident = activeIncidentMonitorIds.has(monitor.id);
                 return (
                   <Tooltip key={monitor.id}>
                     <TooltipTrigger asChild>
                       <Link
                         to={`/dashboard/monitors/${monitor.id}`}
-                        className="group flex items-center justify-between py-3 transition-colors hover:text-primary"
+                        className="group flex items-center justify-between gap-3 py-3 transition-colors hover:text-primary"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <StatusDot status={monitor.status} />
                           <span className="truncate text-sm font-medium">
                             {monitor.name}
                           </span>
+                          {hasIncident && (
+                            <span className="flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning-foreground">
+                              <AlertTriangle className="h-2.5 w-2.5" />
+                              incident
+                            </span>
+                          )}
                         </div>
-                        <div className="flex shrink-0 items-center gap-5">
+                        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+                          <StatusPill status={monitor.status} />
                           {uptimePct != null && (
                             <span
                               className={cn(
-                                "w-14 text-right text-xs tabular-nums font-medium",
+                                "hidden w-14 text-right text-xs tabular-nums font-medium sm:inline",
                                 uptimeColor,
                               )}
                             >
                               {uptimePct.toFixed(2)}%
                             </span>
                           )}
-                          <ResponseBar ms={monitor.lastResponseMs} />
+                          <span className="hidden w-12 text-right text-xs tabular-nums text-muted-foreground md:inline">
+                            {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
+                          </span>
                           <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
                         </div>
                       </Link>
