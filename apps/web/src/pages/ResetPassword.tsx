@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { LogoStacked } from "@/components/logo";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { usePageMeta } from "@/lib/meta";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MarketingNav } from "@/components/marketing-nav";
+import "./landing-redesign.css";
 
 export function ResetPassword() {
   usePageMeta({
@@ -21,21 +18,6 @@ export function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
-
-  if (!token) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="pt-6 text-center">
-            <p className="text-muted-foreground">Invalid reset link.</p>
-            <Link to="/forgot-password" className="mt-2 inline-block text-primary hover:underline">
-              Request a new one
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,43 +42,59 @@ export function ResetPassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <LogoStacked className="mb-4" />
-          <CardTitle className="text-xl">Set new password</CardTitle>
-          <CardDescription>Enter your new password below.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="password">New password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Min 8 characters"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm">Confirm password</Label>
-              <Input
-                id="confirm"
-                type="password"
-                placeholder="Repeat password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Updating..." : "Update password"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="lp">
+      <MarketingNav />
+      <div className="lp-auth">
+        <div className="lp-auth-card">
+          <img className="lp-auth-mascot" src="/crow-mascot.png" alt="" aria-hidden="true" />
+          {!token ? (
+            <>
+              <h1>Invalid reset link</h1>
+              <p className="lp-auth-sub">This link is invalid or has expired.</p>
+              <p className="lp-auth-alt">
+                <Link to="/forgot-password">Request a new one</Link>
+              </p>
+            </>
+          ) : (
+            <>
+              <h1>Set new password</h1>
+              <p className="lp-auth-sub">Enter your new password below.</p>
+
+              <form className="lp-auth-form" onSubmit={handleSubmit}>
+                <div className="lp-auth-field">
+                  <label htmlFor="password">New password</label>
+                  <input
+                    id="password"
+                    type="password"
+                    placeholder="Min 8 characters"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="lp-auth-field">
+                  <label htmlFor="confirm">Confirm password</label>
+                  <input
+                    id="confirm"
+                    type="password"
+                    placeholder="Repeat password"
+                    value={confirm}
+                    onChange={(e) => setConfirm(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="lp-auth-submit" disabled={loading}>
+                  {loading ? "Updating…" : "Update password"}
+                </button>
+              </form>
+
+              <p className="lp-auth-alt">
+                <Link to="/login">Back to login</Link>
+              </p>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
