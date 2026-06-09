@@ -288,6 +288,28 @@
 .lp .lp-auth-alt a{color:var(--green);font-weight:600}
 .lp .lp-auth-alt a:hover{text-decoration:underline}
 
+/* ── auth extras: invite detail box + ghost button ── */
+.lp .lp-auth-info{margin-top:22px;background:var(--surface2);border:1px solid var(--line);border-radius:13px;padding:14px 16px;display:flex;flex-direction:column;gap:9px;text-align:left}
+.lp .lp-auth-info div{display:flex;justify-content:space-between;gap:12px;font-size:13.5px}
+.lp .lp-auth-info span{color:var(--dim)}
+.lp .lp-auth-info strong{color:var(--ink);font-weight:600}
+.lp .lp-auth-ghost{display:block;width:100%;text-align:center;padding:12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-weight:650;font-size:14.5px;transition:border-color .15s}
+.lp .lp-auth-ghost:hover{border-color:var(--green)}
+
+/* ── legal pages (privacy / terms) ── */
+.lp .lp-legal{max-width:760px;margin:0 auto;padding:52px 28px 72px}
+.lp .lp-legal h1{font-size:clamp(30px,4vw,40px);font-weight:800;letter-spacing:-.03em}
+.lp .lp-legal-date{color:var(--faint);font-size:13px;margin-top:8px}
+.lp .lp-legal-body{margin-top:34px}
+.lp .lp-legal-body p{color:var(--dim);font-size:15px;line-height:1.7;margin-bottom:14px}
+.lp .lp-legal-body h2{font-size:19px;font-weight:700;letter-spacing:-.015em;margin:30px 0 10px}
+.lp .lp-legal-body ul{margin:0 0 14px 22px;display:flex;flex-direction:column;gap:6px}
+.lp .lp-legal-body li{color:var(--dim);font-size:15px;line-height:1.6;list-style:disc}
+.lp .lp-legal-body strong{color:var(--ink);font-weight:600}
+.lp .lp-legal-body a{color:var(--green);font-weight:600}
+.lp .lp-legal-body a:hover{text-decoration:underline}
+.lp .lp-legal-foot{border-top:1px solid var(--line);background:var(--surface2);padding:26px 0;text-align:center;font-size:12.5px;color:var(--faint)}
+
 /* ── reduced motion: stop all looping/idle animation ── */
 @media (prefers-reduced-motion: reduce){
   .lp .lp-mascot-wrap,.lp .lp-glint,.lp .lp-final .mini{animation:none !important}

@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { LogoStacked } from "@/components/logo";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { usePageMeta } from "@/lib/meta";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MarketingNav } from "@/components/marketing-nav";
+import "./landing-redesign.css";
 
 export function ForgotPassword() {
   usePageMeta({
@@ -33,23 +30,23 @@ export function ForgotPassword() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <LogoStacked className="mb-4" />
-          <CardTitle className="text-xl">Reset password</CardTitle>
-          <CardDescription>
+    <div className="lp">
+      <MarketingNav />
+      <div className="lp-auth">
+        <div className="lp-auth-card">
+          <img className="lp-auth-mascot" src="/crow-mascot.png" alt="" aria-hidden="true" />
+          <h1>Reset password</h1>
+          <p className="lp-auth-sub">
             {sent
               ? "Check your email for a reset link."
               : "Enter your email and we'll send you a reset link."}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+          </p>
+
           {!sent ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
+            <form className="lp-auth-form" onSubmit={handleSubmit}>
+              <div className="lp-auth-field">
+                <label htmlFor="email">Email</label>
+                <input
                   id="email"
                   type="email"
                   placeholder="you@company.com"
@@ -58,22 +55,21 @@ export function ForgotPassword() {
                   required
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Sending..." : "Send reset link"}
-              </Button>
+              <button type="submit" className="lp-auth-submit" disabled={loading}>
+                {loading ? "Sending…" : "Send reset link"}
+              </button>
             </form>
           ) : (
-            <p className="text-center text-sm text-muted-foreground">
-              If that email is registered, you'll receive a link shortly.
+            <p className="lp-auth-sub" style={{ marginTop: "22px" }}>
+              If that email is registered, you&apos;ll receive a link shortly.
             </p>
           )}
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            <Link to="/login" className="text-primary hover:underline">
-              Back to login
-            </Link>
+
+          <p className="lp-auth-alt">
+            <Link to="/login">Back to login</Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
