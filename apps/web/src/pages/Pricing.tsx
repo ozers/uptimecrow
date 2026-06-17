@@ -148,7 +148,7 @@ export function Pricing() {
 
       <section className="section" style={{ paddingTop: "1rem" }}>
         <div className="container">
-          <div className="pricing-cards" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+          <div className="pricing-cards">
             {PLAN_CATALOG.map((plan) => {
               const isAnnualPaid = annual && plan.monthlyPrice > 0;
               const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;
