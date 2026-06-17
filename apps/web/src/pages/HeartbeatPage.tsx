@@ -200,19 +200,19 @@ export default function HeartbeatPage() {
                 </tr>
                 <tr>
                   <td>Indie / Starter plan</td>
-                  <td className="you-col">10 @ $9/mo</td>
+                  <td className="you-col">10 @ $10/mo</td>
                   <td>5 @ $9/mo</td>
                   <td>20 @ $0/mo</td>
                 </tr>
                 <tr>
                   <td>Pro plan</td>
-                  <td className="you-col">25 @ $29/mo</td>
+                  <td className="you-col">25 @ $30/mo</td>
                   <td>unlimited @ $99/mo</td>
                   <td>100 @ $20/mo</td>
                 </tr>
                 <tr>
                   <td>Team plan</td>
-                  <td className="you-col">100 @ $79/mo</td>
+                  <td className="you-col">100 @ $80/mo</td>
                   <td>unlimited @ $249/mo</td>
                   <td>—</td>
                 </tr>
@@ -257,9 +257,9 @@ export default function HeartbeatPage() {
           <div className="features-grid">
             {[
               { plan: "Free", count: "3 heartbeats", price: "$0/mo", note: "Forever free — no credit card" },
-              { plan: "Indie", count: "10 heartbeats", price: "$9/mo", note: "Ideal for solo developers" },
-              { plan: "Pro", count: "25 heartbeats", price: "$29/mo", note: "Teams and growing products" },
-              { plan: "Team", count: "100 heartbeats", price: "$79/mo", note: "Unlimited monitors + heartbeats" },
+              { plan: "Indie", count: "10 heartbeats", price: "$10/mo", note: "Ideal for solo developers" },
+              { plan: "Pro", count: "25 heartbeats", price: "$30/mo", note: "Teams and growing products" },
+              { plan: "Team", count: "100 heartbeats", price: "$80/mo", note: "Unlimited monitors + heartbeats" },
             ].map(({ plan, count, price, note }) => (
               <div className="feature" key={plan}>
                 <h3>{plan} — {price}</h3>

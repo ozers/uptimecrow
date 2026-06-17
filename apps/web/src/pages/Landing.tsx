@@ -159,7 +159,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord.",
+    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history. Upgrade to Indie ($10/mo) for 1-minute checks, 1-year history, and Slack/Discord.",
   },
   {
     q: "What is heartbeat monitoring and cron job monitoring?",
@@ -237,7 +237,7 @@ const COMPARISON = [
   { feature: "PagerDuty + Teams + Telegram", us: "✓ Built-in", bs: "✓ Paid", ins: "✗ Partial", sp: "✓ Enterprise" },
   { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
   { feature: "False positive prevention", us: "✓ Multi-check", bs: "✓", ins: "✗", sp: "✗" },
-  { feature: "Starting price", us: "$9/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
+  { feature: "Starting price", us: "$10/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
 ];
 
 function cmpCell(v: string) {
@@ -248,9 +248,9 @@ function cmpCell(v: string) {
 
 const PLANS = [
   { name: "Free", price: "$0", desc: "For side projects and personal apps.", features: ["1 status page", "10 monitors", "5-minute check intervals", "3 heartbeat monitors", "Email alerts", "Uptime badge", "7-day history"] },
-  { name: "Indie", price: "$9", desc: "For indie hackers and solo founders.", features: ["5 status pages + custom domain", "25 monitors", "1-minute check intervals", "10 heartbeat monitors", "Slack, Discord, API access", "1-year history"] },
-  { name: "Pro", price: "$29", desc: "For growing SaaS teams.", popular: true, features: ["10 status pages", "100 monitors", "30-second check intervals", "25 heartbeat monitors", "Custom domain + API access", "5 team seats", "1-year history"] },
-  { name: "Team", price: "$79", desc: "For teams that ship fast.", features: ["Everything in Pro", "200 monitors", "100 heartbeat monitors", "10 team seats", "1-year history"] },
+  { name: "Indie", price: "$10", desc: "For indie hackers and solo founders.", features: ["5 status pages + custom domain", "50 monitors", "1-minute check intervals", "10 heartbeat monitors", "Slack, Discord, API access", "1-year history"] },
+  { name: "Pro", price: "$30", desc: "For growing SaaS teams.", popular: true, features: ["10 status pages", "100 monitors", "30-second check intervals", "25 heartbeat monitors", "Custom domain + API access", "5 team seats", "1-year history"] },
+  { name: "Team", price: "$80", desc: "For teams that ship fast.", features: ["Everything in Pro", "200 monitors", "100 heartbeat monitors", "10 team seats", "1-year history"] },
 ];
 
 // ─── Landing page ──────────────────────────────────────────────────────────────

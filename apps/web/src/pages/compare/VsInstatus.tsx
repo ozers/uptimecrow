@@ -57,7 +57,7 @@ export function VsInstatus() {
         { feature: "Auto status page update", us: "✓ Automatic on state change", them: "✗ Manual" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "✓ Jamstack-rendered" },
-        { feature: "Custom domain", us: "Indie plan ($9/mo)", them: "Paid plans" },
+        { feature: "Custom domain", us: "Indie plan ($10/mo)", them: "Paid plans" },
         { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "Partial (higher tiers)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

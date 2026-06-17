@@ -47,8 +47,8 @@ export function VsUptimeRobot() {
       rows={[
         { feature: "Free tier", us: "10 monitors hosted · unlimited self-host", them: "50 monitors, 5-min checks" },
         { feature: "Heartbeat monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
-        { feature: "Pro plan", us: "$29/mo · 100 monitors", them: "$7/mo · 10 monitors" },
-        { feature: "Team plan", us: "$79/mo · 200 monitors", them: "$15/mo · 50 monitors" },
+        { feature: "Pro plan", us: "$30/mo · 100 monitors", them: "$7/mo · 10 monitors" },
+        { feature: "Team plan", us: "$80/mo · 200 monitors", them: "$15/mo · 50 monitors" },
         { feature: "Min check interval", us: "30s Pro/Team · 1 min Free/Indie", them: "5 min free / 1 min paid" },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },
         { feature: "Status page quality", us: "✓ Modern, pre-rendered", them: "Basic, limited branding" },

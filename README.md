@@ -24,8 +24,8 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 
 | Feature | Free | Indie | Pro | Team |
 |---|---|---|---|---|
-| Price | $0 | $9/mo | $29/mo | $79/mo |
-| Monitors | 10 | 25 | 100 | 200 |
+| Price | $0 | $10/mo | $30/mo | $80/mo |
+| Monitors | 10 | 50 | 100 | 200 |
 | Status Pages | 1 | 5 | 10 | Unlimited |
 | Min Interval | 5 min | 1 min | 30 sec | 30 sec |
 | Heartbeats | 3 | 10 | 25 | 100 |
