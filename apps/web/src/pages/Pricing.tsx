@@ -99,6 +99,8 @@ export function Pricing() {
               type="button"
               onClick={() => setAnnual((v) => !v)}
               aria-label="Toggle annual billing"
+              role="switch"
+              aria-checked={annual}
               style={{
                 position: "relative",
                 width: 44,

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ApiError } from "@/lib/api";
+import { LoadError } from "@/components/load-error";
 
 function nextRotationDate(rotationDays: number, currentIndex: number, totalContacts: number): Date {
   const periodMs = rotationDays * 86_400_000;
@@ -18,7 +19,7 @@ function nextRotationDate(rotationDays: number, currentIndex: number, totalConta
 }
 
 export function OnCallPage() {
-  const { data, isLoading } = useOnCall();
+  const { data, isLoading, isError, refetch } = useOnCall();
   const addContact = useAddContact();
   const deleteContact = useDeleteContact();
   const upsertSchedule = useUpsertSchedule();
@@ -78,6 +79,15 @@ export function OnCallPage() {
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
         </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div>
+        <PageHeader title="On-Call" description="Manage your on-call rotation" />
+        <LoadError onRetry={() => refetch()} />
       </div>
     );
   }
@@ -215,6 +225,7 @@ export function OnCallPage() {
               <Button
                 variant="ghost"
                 size="sm"
+                aria-label="Delete contact"
                 className="h-7 w-7 p-0 text-destructive"
                 onClick={() => handleDelete(contact.id)}
               >

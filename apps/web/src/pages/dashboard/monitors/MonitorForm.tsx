@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createMonitorSchema } from "@uptimecrow/shared";
+import { createMonitorSchema, PLAN_LIMITS } from "@uptimecrow/shared";
 import { api } from "@/lib/api";
+import { useAuthStore } from "@/lib/auth";
 import { normalizeUrl } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
 import { Loader2, Zap, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
@@ -60,6 +61,8 @@ export function MonitorForm({
 }: MonitorFormProps) {
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [testing, setTesting] = useState(false);
+  const plan = useAuthStore((s) => s.user?.plan) ?? "free";
+  const minInterval = PLAN_LIMITS[plan].minInterval;
 
   const {
     register,
@@ -84,6 +87,7 @@ export function MonitorForm({
 
   const monitorType = watch("type");
   const urlValue = watch("url");
+  const watchedInterval = watch("intervalSeconds");
 
   const runTest = async () => {
     const raw = getValues("url");
@@ -252,8 +256,19 @@ export function MonitorForm({
           <Input
             id="intervalSeconds"
             type="number"
+            min={minInterval}
+            max={300}
+            step={10}
             {...register("intervalSeconds", { valueAsNumber: true })}
           />
+          <p className="text-xs text-muted-foreground">
+            Minimum {minInterval}s on your {plan} plan{plan === "free" ? " — upgrade for faster checks" : ""}.
+          </p>
+          {typeof watchedInterval === "number" && watchedInterval < minInterval && (
+            <p className="text-sm text-warning-foreground">
+              Your {plan} plan checks at most every {minInterval}s — lower values are rejected on save.
+            </p>
+          )}
           {errors.intervalSeconds && (
             <p className="text-sm text-destructive">{errors.intervalSeconds.message}</p>
           )}
@@ -279,6 +294,9 @@ export function MonitorForm({
           <Input
             id="timeoutMs"
             type="number"
+            min={1000}
+            max={30000}
+            step={1000}
             {...register("timeoutMs", { valueAsNumber: true })}
           />
           {errors.timeoutMs && (
@@ -291,6 +309,8 @@ export function MonitorForm({
           <Input
             id="expectedStatus"
             type="number"
+            min={100}
+            max={599}
             {...register("expectedStatus", { valueAsNumber: true })}
           />
           <p className="text-xs text-muted-foreground">
@@ -310,6 +330,8 @@ export function MonitorForm({
         <Input
           id="confirmationCount"
           type="number"
+          min={1}
+          max={5}
           {...register("confirmationCount", { valueAsNumber: true })}
         />
         {errors.confirmationCount && (
@@ -326,6 +348,8 @@ export function MonitorForm({
           <Input
             id="sslDaysWarning"
             type="number"
+            min={1}
+            max={365}
             {...register("sslDaysWarning", { valueAsNumber: true })}
           />
         </div>
@@ -340,6 +364,8 @@ export function MonitorForm({
           <Input
             id="domainDaysWarning"
             type="number"
+            min={1}
+            max={365}
             {...register("domainDaysWarning", { valueAsNumber: true })}
           />
         </div>
@@ -353,6 +379,9 @@ export function MonitorForm({
         <Input
           id="slowResponseThresholdMs"
           type="number"
+          min={100}
+          max={60000}
+          step={100}
           placeholder="e.g. 2000"
           {...register("slowResponseThresholdMs", {
             setValueAs: (v) => (v === "" || v == null ? null : Number(v)),

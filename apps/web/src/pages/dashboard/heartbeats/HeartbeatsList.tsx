@@ -61,6 +61,7 @@ function PingUrl({ slug }: { slug: string }) {
         onClick={copy}
         className="shrink-0 rounded p-1 text-muted-foreground hover:text-foreground transition-colors"
         title="Copy ping URL"
+        aria-label="Copy ping URL"
       >
         {copied ? <Check className="h-3.5 w-3.5 text-success-foreground" /> : <Copy className="h-3.5 w-3.5" />}
       </button>
@@ -113,6 +114,7 @@ function HeartbeatRow({
           onClick={() => onToggle(hb.id, !hb.isActive)}
           className="rounded p-1.5 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
           title={hb.isActive ? "Pause" : "Resume"}
+          aria-label={hb.isActive ? "Pause heartbeat" : "Resume heartbeat"}
         >
           {hb.isActive ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>

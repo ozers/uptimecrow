@@ -319,7 +319,7 @@ export function StatusPageDetail() {
                       <TableCell className="text-right">
                         <ConfirmDialog
                           trigger={
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive">
+                            <Button variant="ghost" size="sm" aria-label="Remove subscriber" className="h-8 w-8 p-0 text-destructive">
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           }
