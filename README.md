@@ -6,7 +6,7 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 ![Node](https://img.shields.io/badge/Node-%3E%3D20-green)
 ![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
-> **Open core.** This repository is the full self-hostable platform under AGPL-3.0. The managed service at [uptimecrow.com](https://uptimecrow.com) runs the same code plus a small set of enterprise add-ons (SSO, audit log, multi-region). See [OPEN_CORE.md](./OPEN_CORE.md) for the exact split.
+> **Open core.** This repository is the full self-hostable platform under AGPL-3.0. The managed service at [uptimecrow.com](https://uptimecrow.com) runs the same code plus a small set of managed-only add-ons for larger teams. See [OPEN_CORE.md](./OPEN_CORE.md) for the exact split.
 
 ## Features
 
@@ -303,7 +303,7 @@ Use the returned key as `Authorization: Bearer <key>` on any `/api/*` endpoint.
 - **users** — Accounts with email, password hash, plan tier
 - **organizations** — Multi-tenant org scoping
 - **monitors** — HTTP/keyword monitors with interval, timeout, expected status, confirmation count
-- **check_results** — Time-series check data (status, response time, status code, region)
+- **check_results** — Time-series check data (status, response time, status code)
 - **status_pages** — Branded pages with slug, custom domain, logo, brand color, access token
 - **status_page_monitors** — Junction table linking monitors to status pages
 - **incidents** — Linked to monitors and status pages

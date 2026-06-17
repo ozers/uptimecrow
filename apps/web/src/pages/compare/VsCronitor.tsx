@@ -58,7 +58,7 @@ export function VsCronitor() {
         { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Paid plans" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "✗ Live-rendered" },
         { feature: "Subscriber email notifications", us: true, them: true },
-        { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
+        { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "PagerDuty (paid)" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

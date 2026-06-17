@@ -215,31 +215,6 @@ export function MonitorDetail() {
           })()}
         </div>
 
-        {/* Per-region breakdown (multi-region checks only) */}
-        {monitorUptime?.regions && monitorUptime.regions.length > 1 && (
-          <div className="mb-8">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              By Region (30d)
-            </p>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {monitorUptime.regions.map((r) => (
-                <div key={r.region} className="rounded-md border border-border bg-card p-3">
-                  <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{r.region}</div>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-sm font-medium tabular-nums">
-                      {r.uptimePercent ? `${Number(r.uptimePercent).toFixed(2)}%` : "—"}
-                    </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {r.avgResponseMs != null ? `${r.avgResponseMs}ms avg` : "—"}
-                      {r.p95ResponseMs != null && ` · p95 ${r.p95ResponseMs}ms`}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Response time chart */}
         {checks && checks.length > 0 && (
           <div className="mb-8">
@@ -276,7 +251,6 @@ export function MonitorDetail() {
                     <TableRow className="bg-muted/40 hover:bg-muted/40">
                       <TableHead>Status</TableHead>
                       <TableHead>Code</TableHead>
-                      <TableHead>Region</TableHead>
                       <TableHead>Error</TableHead>
                       <TableHead className="text-right">Failed At</TableHead>
                     </TableRow>
@@ -294,9 +268,6 @@ export function MonitorDetail() {
                         </TableCell>
                         <TableCell className="text-muted-foreground text-sm tabular-nums">
                           {check.statusCode ?? "—"}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground text-sm uppercase">
-                          {check.region || "—"}
                         </TableCell>
                         <TableCell className="max-w-[280px]">
                           {check.errorMessage ? (

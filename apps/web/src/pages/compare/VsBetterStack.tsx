@@ -55,7 +55,7 @@ export function VsBetterStack() {
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered", note: "Matters when your own outage takes down your status page." },
         { feature: "Scheduled maintenance windows", us: true, them: true },
         { feature: "Subscriber email notifications", us: true, them: true },
-        { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
+        { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
         { feature: "SMS alerts (Twilio)", us: "✓ All paid plans", them: "✓ Built-in" },
         { feature: "MCP server (AI assistants)", us: "✓ Native — only uptime tool with this", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: false },

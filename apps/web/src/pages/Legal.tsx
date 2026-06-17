@@ -94,7 +94,7 @@ export function Terms() {
       <h2>The Service</h2>
       <p>
         UptimeCrow provides uptime monitoring, incident management, and public status pages on a subscription basis.
-        Plan limits (monitors, check interval, regions, retention) are enforced as described on our pricing page.
+        Plan limits (monitors, check interval, retention) are enforced as described on our pricing page.
       </p>
 
       <h2>Acceptable Use</h2>

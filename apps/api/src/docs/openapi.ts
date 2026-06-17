@@ -93,7 +93,6 @@ export function buildOpenApiDocument(): unknown {
             statusCode: { type: "integer", nullable: true },
             errorMessage: { type: "string", nullable: true },
             checkedAt: { type: "string", format: "date-time" },
-            region: { type: "string", example: "eu-west" },
           },
         },
         Incident: {

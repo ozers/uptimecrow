@@ -17,7 +17,6 @@ pnpm db:generate                     # Generate Drizzle migration files
 pnpm db:migrate                      # Run DB migrations
 pnpm test                            # Run all tests (vitest)
 pnpm typecheck                       # tsc across all packages
-pnpm lint                            # ESLint across all packages
 pnpm --filter @uptimecrow/api test   # Single-package test (filter by workspace name)
 pnpm dev:api                         # Run API outside Docker (needs local Postgres/Redis)
 pnpm dev:web                         # Run web outside Docker
@@ -73,7 +72,7 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 ### Docker & CI
 - Multi-stage Dockerfiles for API and web (development + production targets). Default `docker-compose.yml` uses `target: development` with bind mounts for hot-reload. `docker-compose.prod.yml` pulls pre-built GHCR images and runs in production mode.
 - Web production image is nginx with SPA fallback and reverse proxy to the API (entrypoint substitutes `API_URL` into the nginx config).
-- CI (`.github/workflows/ci.yml`): lint + typecheck + tests with Postgres 16 + Redis 7 service containers + Docker build validation.
+- CI (`.github/workflows/ci.yml`): typecheck + tests with Postgres 16 + Redis 7 service containers + Docker build validation.
 - Deploy (`.github/workflows/deploy.yml`): pushes API and web images to `ghcr.io/${{ github.repository }}/{api,web}:latest` on `main`.
 
 ## Open core split
