@@ -241,8 +241,32 @@ function escapeAttrValue(input: string): string {
   return input.replace(/[^a-z0-9-]/gi, "");
 }
 
+// Pick a readable (#0a0a0a or #fff) foreground for text placed on top of the
+// user-chosen brand colour, so a light brand (e.g. yellow) doesn't render as
+// white-on-white. Falls back to white for non-hex tokens (named colours).
+function readableForeground(color: string): string {
+  const hex = color.trim().replace(/^#/, "");
+  let r: number, g: number, b: number;
+  if (hex.length === 3) {
+    r = parseInt(hex[0] + hex[0], 16);
+    g = parseInt(hex[1] + hex[1], 16);
+    b = parseInt(hex[2] + hex[2], 16);
+  } else if (hex.length === 6) {
+    r = parseInt(hex.slice(0, 2), 16);
+    g = parseInt(hex.slice(2, 4), 16);
+    b = parseInt(hex.slice(4, 6), 16);
+  } else {
+    return "#ffffff";
+  }
+  if ([r, g, b].some((v) => Number.isNaN(v))) return "#ffffff";
+  // YIQ perceived brightness — light brand → dark text, dark brand → white text.
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "#0a0a0a" : "#ffffff";
+}
+
 export function renderStatusHtml(data: StaticStatusPage): string {
   const brand = sanitizeColor(data.statusPage.brandColor);
+  const brandFg = readableForeground(brand);
   const pageName = escapeHtml(data.statusPage.name);
   const logoUrl = sanitizeUrl(data.statusPage.logoUrl);
 
@@ -552,7 +576,7 @@ export function renderStatusHtml(data: StaticStatusPage): string {
     </div>
     <form id="subscribe-form" class="subscribe-form">
       <input type="email" id="sub-email" class="sub-input" placeholder="you@company.com" required autocomplete="email" />
-      <button type="submit" class="sub-btn" style="background:${brand}">Subscribe</button>
+      <button type="submit" class="sub-btn" style="background:${brand};color:${brandFg}">Subscribe</button>
     </form>
     <p id="subscribe-msg" class="subscribe-msg"></p>
   </div>

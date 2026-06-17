@@ -22,6 +22,7 @@ import {
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { LoadError } from "@/components/load-error";
 
 function StatusPagesListSkeleton() {
   return (
@@ -46,7 +47,7 @@ function StatusPagesListSkeleton() {
 }
 
 export function StatusPagesList() {
-  const { data: statusPages, isLoading } = useStatusPages();
+  const { data: statusPages, isLoading, isError, refetch } = useStatusPages();
   const deleteMutation = useDeleteStatusPage();
 
   const handleDelete = (id: string) => {
@@ -57,6 +58,7 @@ export function StatusPagesList() {
   };
 
   if (isLoading) return <StatusPagesListSkeleton />;
+  if (isError) return <LoadError onRetry={() => refetch()} />;
 
   return (
     <TooltipProvider>
