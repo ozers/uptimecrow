@@ -26,3 +26,7 @@ docs/ai-status-page-landing.html
 docs/lovable-prompt.md
 TEST_CHECKLIST.md
 TEST_CHECKLIST.html
+
+# Playwright MCP + local UX-audit screenshots (not for the repo)
+.playwright-mcp/
+*-mobile-*.png
