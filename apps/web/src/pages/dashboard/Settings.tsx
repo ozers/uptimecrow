@@ -65,6 +65,8 @@ function UpgradeOptions() {
             type="button"
             onClick={() => setAnnual((v) => !v)}
             aria-label="Toggle annual billing"
+            role="switch"
+            aria-checked={annual}
             className="relative h-5 w-9 rounded-full border-none cursor-pointer transition-colors"
             style={{ background: annual ? "hsl(var(--primary))" : "hsl(var(--border))" }}
           >

@@ -13,9 +13,7 @@ import {
   maintenanceWindowMonitors,
 } from "../db/schema.js";
 import { makeQueue } from "../utils/queues.js";
-import { checkSslExpiry, checkDomainExpiry, executeHttpCheck, executeMultiRegionCheck, executeTcpCheck } from "../services/monitor.service.js";
-import { organizations } from "../db/schema.js";
-import { PLAN_LIMITS } from "@uptimecrow/shared";
+import { checkSslExpiry, checkDomainExpiry, executeHttpCheck, executeTcpCheck } from "../services/monitor.service.js";
 import {
   incrementFailureCount,
   resetFailureCount,
@@ -41,62 +39,24 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
 
   if (!monitor || !monitor.isActive) return;
 
-  // Check if org has multi-region enabled
-  const [org] = await db
-    .select({ plan: organizations.plan })
-    .from(organizations)
-    .where(eq(organizations.id, monitor.orgId))
-    .limit(1);
-
-  const planLimits = PLAN_LIMITS[org?.plan || "free"];
-  const useMultiRegion = planLimits.multiRegion;
-
   const checkOpts = {
     timeoutMs: monitor.timeoutMs,
     expectedStatus: monitor.expectedStatus,
     keyword: monitor.keyword,
   };
 
-  let result;
-  if (monitor.type === "tcp") {
-    // TCP checks don't multi-region today (most users add TCP for internal
-    // services where multi-region from third-party IPs doesn't make sense).
-    result = await executeTcpCheck(monitor.url, { timeoutMs: monitor.timeoutMs });
-    await db.insert(checkResults).values({
-      monitorId,
-      status: result.status,
-      responseMs: result.responseMs,
-      statusCode: result.statusCode,
-      errorMessage: result.errorMessage,
-      region: result.region,
-    });
-  } else if (useMultiRegion) {
-    const multiResult = await executeMultiRegionCheck(monitor.url, checkOpts);
-    // Record each region's result
-    for (const r of multiResult.results) {
-      await db.insert(checkResults).values({
-        monitorId,
-        status: r.status,
-        responseMs: r.responseMs,
-        statusCode: r.statusCode,
-        errorMessage: r.errorMessage,
-        region: r.region,
-      });
-    }
-    // Use the primary region result for response time display
-    const primary = multiResult.results[0];
-    result = { ...primary, status: multiResult.overallStatus };
-  } else {
-    result = await executeHttpCheck(monitor.url, checkOpts);
-    await db.insert(checkResults).values({
-      monitorId,
-      status: result.status,
-      responseMs: result.responseMs,
-      statusCode: result.statusCode,
-      errorMessage: result.errorMessage,
-      region: result.region,
-    });
-  }
+  const result =
+    monitor.type === "tcp"
+      ? await executeTcpCheck(monitor.url, { timeoutMs: monitor.timeoutMs })
+      : await executeHttpCheck(monitor.url, checkOpts);
+
+  await db.insert(checkResults).values({
+    monitorId,
+    status: result.status,
+    responseMs: result.responseMs,
+    statusCode: result.statusCode,
+    errorMessage: result.errorMessage,
+  });
 
   // SSL check for HTTPS monitors — re-checked at most once per 24h to avoid per-ping TLS overhead
   if (monitor.type !== "tcp" && monitor.url.startsWith("https://")) {

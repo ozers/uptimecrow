@@ -46,7 +46,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and 100 monitors.",
+      "Start free with 10 monitors. Upgrade to Indie ($10/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($30/mo) for 30-second checks and 100 monitors.",
     canonical: "https://uptimecrow.com/pricing",
     jsonLd: {
       "@context": "https://schema.org",
@@ -99,6 +99,8 @@ export function Pricing() {
               type="button"
               onClick={() => setAnnual((v) => !v)}
               aria-label="Toggle annual billing"
+              role="switch"
+              aria-checked={annual}
               style={{
                 position: "relative",
                 width: 44,
@@ -146,7 +148,7 @@ export function Pricing() {
 
       <section className="section" style={{ paddingTop: "1rem" }}>
         <div className="container">
-          <div className="pricing-cards" style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+          <div className="pricing-cards">
             {PLAN_CATALOG.map((plan) => {
               const isAnnualPaid = annual && plan.monthlyPrice > 0;
               const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;

@@ -51,25 +51,6 @@ analyticsRoutes.get("/uptime", async (c) => {
       const uptimePercent = total > 0 ? ((up / total) * 100).toFixed(4) : null;
       const num = (v: unknown) => (v == null ? null : Math.round(Number(v)));
 
-      // Per-region breakdown
-      const regions = await db
-        .select({
-          region: checkResults.region,
-          total: sql<number>`count(*)`,
-          up: sql<number>`count(*) filter (where ${checkResults.status} = 'up')`,
-          avgResponseMs: sql<number>`avg(${checkResults.responseMs})`,
-          p95: sql<number>`percentile_cont(0.95) within group (order by ${checkResults.responseMs})`,
-        })
-        .from(checkResults)
-        .where(
-          and(
-            eq(checkResults.monitorId, monitor.id),
-            sql`${checkResults.checkedAt} > ${since.toISOString()}`,
-            sql`${checkResults.responseMs} is not null`,
-          ),
-        )
-        .groupBy(checkResults.region);
-
       return {
         monitorId: monitor.id,
         monitorName: monitor.name,
@@ -79,17 +60,6 @@ analyticsRoutes.get("/uptime", async (c) => {
         p50ResponseMs: num(stats?.p50),
         p95ResponseMs: num(stats?.p95),
         p99ResponseMs: num(stats?.p99),
-        regions: regions.map((r) => {
-          const rTotal = Number(r.total || 0);
-          const rUp = Number(r.up || 0);
-          return {
-            region: r.region,
-            totalChecks: rTotal,
-            uptimePercent: rTotal > 0 ? ((rUp / rTotal) * 100).toFixed(4) : null,
-            avgResponseMs: num(r.avgResponseMs),
-            p95ResponseMs: num(r.p95),
-          };
-        }),
       };
     }),
   );
