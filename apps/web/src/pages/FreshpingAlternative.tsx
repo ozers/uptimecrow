@@ -100,10 +100,10 @@ export function FreshpingAlternative() {
             </div>
             <div className="price-card featured">
               <p className="price-name">Indie</p>
-              <p className="price-amount">$9<span>/mo</span></p>
+              <p className="price-amount">$10<span>/mo</span></p>
               <p className="price-desc">For indie hackers and solo founders.</p>
               <ul className="price-features">
-                <li>25 monitors</li>
+                <li>50 monitors</li>
                 <li>5 status pages</li>
                 <li>Custom domain + API</li>
                 <li>10 heartbeat monitors</li>
@@ -113,7 +113,7 @@ export function FreshpingAlternative() {
             </div>
             <div className="price-card">
               <p className="price-name">Pro</p>
-              <p className="price-amount">$29<span>/mo</span></p>
+              <p className="price-amount">$30<span>/mo</span></p>
               <p className="price-desc">For growing SaaS teams.</p>
               <ul className="price-features">
                 <li>100 monitors</li>

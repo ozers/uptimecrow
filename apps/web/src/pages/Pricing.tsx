@@ -46,7 +46,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($29/mo) for 30-second checks and 100 monitors.",
+      "Start free with 10 monitors. Upgrade to Indie ($10/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($30/mo) for 30-second checks and 100 monitors.",
     canonical: "https://uptimecrow.com/pricing",
     jsonLd: {
       "@context": "https://schema.org",

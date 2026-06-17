@@ -47,7 +47,7 @@ export function VsHealthchecks() {
       ]}
       rows={[
         { feature: "Starting price", us: "$0 free forever", them: "$0 free (20 checks)" },
-        { feature: "Pro plan", us: "$29/mo · 100 monitors + 25 heartbeats", them: "$20/mo · 100 checks" },
+        { feature: "Pro plan", us: "$30/mo · 100 monitors + 25 heartbeats", them: "$20/mo · 100 checks" },
         { feature: "Heartbeat / cron monitoring", us: "✓ 5 heartbeats free, 25+ on paid", them: "✓ Core product" },
         { feature: "HTTP / TCP uptime monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
         { feature: "Keyword monitoring", us: "✓ All plans incl. free", them: "✗ Not available" },
@@ -61,7 +61,7 @@ export function VsHealthchecks() {
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✓ BSD-licensed" },
-        { feature: "API access", us: "Indie plan ($9/mo)", them: "✓ All plans" },
+        { feature: "API access", us: "Indie plan ($10/mo)", them: "✓ All plans" },
         { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
       ]}
       whenThem={

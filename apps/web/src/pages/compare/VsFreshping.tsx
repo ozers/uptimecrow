@@ -55,7 +55,7 @@ export function VsFreshping() {
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✗ Not available" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
-        { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Was paid" },
+        { feature: "Custom domain status page", us: "Indie plan ($10/mo)", them: "Was paid" },
         { feature: "Data you can export", us: "✓ REST API", them: "✗ Gone with the service" },
       ]}
       whenThem={

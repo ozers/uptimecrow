@@ -35,7 +35,7 @@ export const PLAN_LIMITS = {
   },
   indie: {
     statusPages: 5,
-    monitors: 25,
+    monitors: 50,
     minInterval: 60,       // 1-minute checks
     customDomain: true,
     slackWebhook: true,
@@ -69,9 +69,9 @@ export const PLAN_LIMITS = {
 } as const;
 
 export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
-  indie: 9,
-  pro: 29,
-  team: 79,
+  indie: 10,
+  pro: 30,
+  team: 80,
 };
 
 export interface PlanCatalogEntry {
@@ -107,12 +107,12 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
   {
     plan: "indie",
     name: "Indie",
-    monthlyPrice: 9,
-    annualMonthlyPrice: 7,
-    annualTotal: 84,
+    monthlyPrice: 10,
+    annualMonthlyPrice: 8,
+    annualTotal: 96,
     desc: "For indie hackers and solo founders.",
     features: [
-      "25 monitors",
+      "50 monitors",
       "5 status pages + custom domain",
       "1-minute check intervals",
       "10 heartbeat monitors",
@@ -126,9 +126,9 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
   {
     plan: "pro",
     name: "Pro",
-    monthlyPrice: 29,
-    annualMonthlyPrice: 24,
-    annualTotal: 288,
+    monthlyPrice: 30,
+    annualMonthlyPrice: 25,
+    annualTotal: 300,
     desc: "For teams that take uptime seriously.",
     features: [
       "100 monitors",
