@@ -31,7 +31,6 @@ export const PLAN_LIMITS = {
     teamSeats: 1,
     retentionDays: 7,
     apiAccess: false,
-    multiRegion: false,
     heartbeats: 3,
   },
   indie: {
@@ -43,7 +42,6 @@ export const PLAN_LIMITS = {
     teamSeats: 2,
     retentionDays: 365,
     apiAccess: true,
-    multiRegion: false,
     heartbeats: 10,
   },
   pro: {
@@ -55,7 +53,6 @@ export const PLAN_LIMITS = {
     teamSeats: 5,
     retentionDays: 365,
     apiAccess: true,
-    multiRegion: false, // single-region today; multi-region infra not yet shipped
     heartbeats: 25,
   },
   team: {
@@ -67,7 +64,6 @@ export const PLAN_LIMITS = {
     teamSeats: 10,
     retentionDays: 365,
     apiAccess: true,
-    multiRegion: false, // single-region today; multi-region infra not yet shipped
     heartbeats: 100,
   },
 } as const;

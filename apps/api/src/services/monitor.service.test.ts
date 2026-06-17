@@ -40,7 +40,6 @@ describe("executeHttpCheck", () => {
     expect(result.statusCode).toBe(200);
     expect(result.errorMessage).toBeNull();
     expect(result.responseMs).toBeGreaterThanOrEqual(0);
-    expect(result.region).toBe("eu-west");
   });
 
   it("treats any 2xx–4xx as UP when expectedStatus=200 (browser-like semantics)", async () => {
@@ -151,7 +150,7 @@ describe("executeHttpCheck", () => {
     expect(result.errorMessage).toBe("ECONNREFUSED");
   });
 
-  it("identifies the region in the User-Agent header", async () => {
+  it("sends a UptimeCrow User-Agent header", async () => {
     let capturedUA: string | null = null;
     mockFetch(((_url: string, init?: RequestInit) => {
       const headers = init?.headers as Record<string, string> | undefined;
@@ -159,13 +158,11 @@ describe("executeHttpCheck", () => {
       return Promise.resolve(new Response("ok", { status: 200 }));
     }) as unknown as typeof fetch);
 
-    await executeHttpCheck(
-      "https://example.com",
-      { timeoutMs: 5000, expectedStatus: 200 },
-      "us-east",
-    );
+    await executeHttpCheck("https://example.com", {
+      timeoutMs: 5000,
+      expectedStatus: 200,
+    });
     expect(capturedUA).toContain("UptimeCrow");
-    expect(capturedUA).toContain("us-east");
   });
 });
 

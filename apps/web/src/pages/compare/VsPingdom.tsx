@@ -30,7 +30,7 @@ export function VsPingdom() {
       whyUs={[
         {
           title: "Up to 90% cheaper for the same core feature set",
-          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 25 monitors at no cost, and the Indie plan ($9/mo) adds a custom domain and API access.",
+          body: "Pingdom's cheapest plan is $15/mo for 10 monitors. UptimeCrow's free tier gives you 10 monitors at no cost, and the Indie plan ($9/mo) adds a custom domain and API access.",
         },
         {
           title: "Heartbeat / cron job monitoring included",
@@ -54,7 +54,7 @@ export function VsPingdom() {
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Manual" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered" },
         { feature: "Custom domain status page", us: "Indie plan ($9/mo)", them: "Paid plans" },
-        { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "Paid plans" },
+        { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "PagerDuty only" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "✓ Built-in (extra cost)" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

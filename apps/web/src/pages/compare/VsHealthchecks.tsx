@@ -56,7 +56,7 @@ export function VsHealthchecks() {
         { feature: "Subscriber email notifications", us: true, them: false },
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Webhook only" },
         { feature: "Maintenance windows", us: "✓ Suppress alerts during planned downtime", them: "✓ Pause checks" },
-        { feature: "Slack / Discord webhooks", us: "✓ All plans incl. free", them: "✓ Available" },
+        { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "✓ Available" },
         { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✓ Built-in" },
         { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },

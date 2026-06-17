@@ -57,7 +57,6 @@ export interface CheckResult {
   statusCode: number | null;
   errorMessage: string | null;
   checkedAt: Date;
-  region: string;
 }
 
 export interface StatusPage {

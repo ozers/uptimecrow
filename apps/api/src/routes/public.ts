@@ -260,8 +260,8 @@ publicRoutes.get("/:slug", async (c) => {
 // Get incident history
 publicRoutes.get("/:slug/incidents", async (c) => {
   const slug = c.req.param("slug");
-  const limit = parseInt(c.req.query("limit") || "20", 10);
-  const offset = parseInt(c.req.query("offset") || "0", 10);
+  const limit = Math.min(100, Math.max(1, parseInt(c.req.query("limit") || "20", 10) || 20));
+  const offset = Math.max(0, parseInt(c.req.query("offset") || "0", 10) || 0);
   const token = c.req.query("token");
 
   const [page] = await db
