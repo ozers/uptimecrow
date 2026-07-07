@@ -11,7 +11,7 @@ import {
   checkResults,
 } from "../db/schema.js";
 import { subscribeSchema } from "@uptimecrow/shared";
-import { renderStatusHtml, type StaticStatusPage } from "../services/static-gen.service.js";
+import { renderStatusHtml, buildStatusPageData } from "../services/static-gen.service.js";
 import { escapeHtml } from "../utils/escape.js";
 import { makeQueue } from "../utils/queues.js";
 
@@ -38,6 +38,17 @@ publicRoutes.get("/:slug", async (c) => {
     if (!token || token !== page.accessToken) {
       return c.json({ error: "Status page not found" }, 404);
     }
+  }
+
+  // Browser requests get the full pre-render-equivalent page — one shared
+  // builder with the static path, so the live page and the pre-rendered
+  // snapshot are always identical.
+  const accept = c.req.header("Accept") || "";
+  if (accept.includes("text/html")) {
+    const staticData = await buildStatusPageData(page);
+    const html = renderStatusHtml(staticData);
+    c.header("Content-Type", "text/html; charset=UTF-8");
+    return c.body(html);
   }
 
   // Get monitors linked to this status page (fall back to all org monitors if none linked)
@@ -95,164 +106,6 @@ publicRoutes.get("/:slug", async (c) => {
     monitors: orgMonitors,
     activeIncidents,
   };
-
-  // Return HTML for browser requests, JSON for API requests
-  const accept = c.req.header("Accept") || "";
-  if (accept.includes("text/html")) {
-    // Calculate per-monitor uptime + daily data + response times
-    const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-    const monitorsWithUptime = await Promise.all(
-      orgMonitors.map(async (m) => {
-        // Overall 90-day uptime
-        const stats = await db
-          .select({
-            total: sql<number>`count(*)`,
-            up: sql<number>`count(*) filter (where ${checkResults.status} = 'up')`,
-          })
-          .from(checkResults)
-          .where(
-            and(
-              eq(checkResults.monitorId, m.id),
-              sql`${checkResults.checkedAt} > ${ninetyDaysAgo.toISOString()}`,
-            ),
-          );
-        const total = Number(stats[0]?.total || 0);
-        const up = Number(stats[0]?.up || 0);
-
-        // Daily uptime for last 90 days
-        const dailyStats = await db
-          .select({
-            day: sql<string>`date(${checkResults.checkedAt})`,
-            total: sql<number>`count(*)`,
-            up: sql<number>`count(*) filter (where ${checkResults.status} = 'up')`,
-          })
-          .from(checkResults)
-          .where(
-            and(
-              eq(checkResults.monitorId, m.id),
-              sql`${checkResults.checkedAt} > ${ninetyDaysAgo.toISOString()}`,
-            ),
-          )
-          .groupBy(sql`date(${checkResults.checkedAt})`)
-          .orderBy(sql`date(${checkResults.checkedAt})`);
-
-        // Build 90-day array (fill missing days as null)
-        const dailyMap = new Map(dailyStats.map((d) => [d.day, d]));
-        const dailyUptime: Array<{ date: string; percent: number | null; total: number }> = [];
-        for (let i = 89; i >= 0; i--) {
-          const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-          const day = dailyMap.get(date);
-          if (day && Number(day.total) > 0) {
-            dailyUptime.push({ date, percent: (Number(day.up) / Number(day.total)) * 100, total: Number(day.total) });
-          } else {
-            dailyUptime.push({ date, percent: null, total: 0 });
-          }
-        }
-
-        // Recent response times (last 30 checks)
-        const recentChecks = await db
-          .select({ responseMs: checkResults.responseMs })
-          .from(checkResults)
-          .where(and(eq(checkResults.monitorId, m.id), sql`${checkResults.responseMs} is not null`))
-          .orderBy(desc(checkResults.checkedAt))
-          .limit(30);
-        const recentResponseMs = recentChecks.map((c) => Number(c.responseMs)).reverse();
-
-        return {
-          name: m.name,
-          status: m.status,
-          lastCheckedAt: m.lastCheckedAt?.toISOString() ?? null,
-          uptimePercent: total > 0 ? ((up / total) * 100).toFixed(2) : null,
-          dailyUptime,
-          recentResponseMs,
-        };
-      }),
-    );
-
-    // Fetch incidents with updates for HTML
-    const incidentsWithUpdates = await Promise.all(
-      activeIncidents.map(async (inc) => {
-        const updates = await db
-          .select({
-            status: incidentUpdates.status,
-            body: incidentUpdates.body,
-            createdAt: incidentUpdates.createdAt,
-          })
-          .from(incidentUpdates)
-          .where(eq(incidentUpdates.incidentId, inc.id))
-          .orderBy(desc(incidentUpdates.createdAt));
-        return {
-          id: inc.id,
-          title: inc.title,
-          status: inc.status,
-          severity: inc.severity,
-          startedAt: inc.startedAt.toISOString(),
-          updates: updates.map((u) => ({
-            status: u.status,
-            body: u.body,
-            createdAt: u.createdAt.toISOString(),
-          })),
-        };
-      }),
-    );
-
-    // Recent resolved incidents
-    const recentResolved = await db
-      .select()
-      .from(incidents)
-      .where(
-        and(
-          eq(incidents.statusPageId, page.id),
-          sql`${incidents.status} = 'resolved'`,
-        ),
-      )
-      .orderBy(desc(incidents.resolvedAt))
-      .limit(5);
-
-    const resolvedWithUpdates = await Promise.all(
-      recentResolved.map(async (inc) => {
-        const updates = await db
-          .select({
-            status: incidentUpdates.status,
-            body: incidentUpdates.body,
-            createdAt: incidentUpdates.createdAt,
-          })
-          .from(incidentUpdates)
-          .where(eq(incidentUpdates.incidentId, inc.id))
-          .orderBy(desc(incidentUpdates.createdAt));
-        return {
-          id: inc.id,
-          title: inc.title,
-          status: inc.status,
-          severity: inc.severity,
-          startedAt: inc.startedAt.toISOString(),
-          resolvedAt: inc.resolvedAt?.toISOString() ?? null,
-          updates: updates.map((u) => ({
-            status: u.status,
-            body: u.body,
-            createdAt: u.createdAt.toISOString(),
-          })),
-        };
-      }),
-    );
-
-    const staticData: StaticStatusPage = {
-      generatedAt: new Date().toISOString(),
-      statusPage: data.statusPage,
-      overallStatus: (orgMonitors.some((m) => m.status === "down")
-        ? "major_outage"
-        : orgMonitors.some((m) => m.status === "degraded")
-          ? "degraded"
-          : "operational") as "operational" | "degraded" | "major_outage",
-      monitors: monitorsWithUptime,
-      activeIncidents: incidentsWithUpdates,
-      resolvedIncidents: resolvedWithUpdates,
-      subscribeEndpoint: `/status/${slug}/subscribe`,
-    };
-    const html = renderStatusHtml(staticData);
-    c.header("Content-Type", "text/html; charset=UTF-8");
-    return c.body(html);
-  }
 
   return c.json(data);
 });
