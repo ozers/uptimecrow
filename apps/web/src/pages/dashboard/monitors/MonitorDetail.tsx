@@ -224,14 +224,14 @@ export function MonitorDetail() {
               )}
             </div>
             {recentFailures.length === 0 ? (
-              <div className="rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success-foreground">
+              <div className="border-y border-l-2 border-success/40 bg-success/5 px-4 py-3 text-sm text-success-foreground">
                 No failures in the last {checks.length} checks.
               </div>
             ) : (
-              <div className="overflow-hidden rounded-xl border border-border bg-card">
+              <div className="border-t border-border">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableRow className="hover:bg-transparent">
                       <TableHead>Status</TableHead>
                       <TableHead>Code</TableHead>
                       <TableHead>Error</TableHead>
@@ -290,10 +290,10 @@ export function MonitorDetail() {
 
           {checks && checks.length > 0 ? (
             <>
-              <div className="overflow-hidden rounded-xl border border-border bg-card">
+              <div className="border-t border-border">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/40 hover:bg-muted/40">
+                    <TableRow className="hover:bg-transparent">
                       <TableHead>Status</TableHead>
                       <TableHead>Response</TableHead>
                       <TableHead>Code</TableHead>
@@ -351,7 +351,7 @@ export function MonitorDetail() {
               )}
             </>
           ) : (
-            <div className="rounded-xl border border-border bg-card py-12 text-center">
+            <div className="border-y border-border py-12 text-center">
               <p className="text-sm text-muted-foreground">No checks recorded yet.</p>
             </div>
           )}

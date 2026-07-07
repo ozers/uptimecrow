@@ -83,7 +83,7 @@ function MetricCards({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="mb-8 grid grid-cols-3 divide-x divide-border overflow-hidden rounded-xl border border-border bg-card">
+    <div className="mb-8 grid grid-cols-3 divide-x divide-border border-y border-border">
       {items.map((item, i) => {
         const Icon = item.icon;
         return (
@@ -210,8 +210,8 @@ function LiveStatusBanner({
   return (
     <div
       className={cn(
-        "mb-3 flex items-center justify-between gap-4 rounded-xl border px-5 py-4 transition-colors",
-        down ? "border-danger/30 bg-danger/5" : "border-success/25 bg-success/5",
+        "mb-3 flex items-center justify-between gap-4 border-y border-l-2 px-5 py-4 transition-colors",
+        down ? "border-danger/40 bg-danger/5" : "border-success/40 bg-success/5",
       )}
     >
       <div className="flex min-w-0 items-center gap-3">
@@ -277,7 +277,7 @@ function OpenIncidentsStrip({
   const backUp = first.monitorId ? monitorStatusById.get(first.monitorId) === "up" : false;
 
   return (
-    <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-warning/30 bg-warning/5 px-5 py-3.5">
+    <div className="mb-6 flex items-center justify-between gap-4 border-y border-l-2 border-warning/40 bg-warning/5 px-5 py-3.5">
       <div className="flex min-w-0 items-center gap-3">
         <AlertTriangle className="h-4 w-4 shrink-0 text-warning-foreground" />
         <div className="min-w-0">
@@ -415,8 +415,8 @@ function FeatureDiscoveryCard({
   to: string;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-dashed border-border px-5 py-4">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+    <div className="flex items-center gap-4 border-t border-border px-1 py-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted">
         <Icon className="h-4 w-4 text-muted-foreground" />
       </div>
       <div className="min-w-0 flex-1">
@@ -444,7 +444,7 @@ function NudgeBanner({
   to: string;
 }) {
   return (
-    <div className="mb-6 flex items-center gap-3 rounded-xl border border-border bg-muted/30 px-5 py-3.5">
+    <div className="mb-6 flex items-center gap-3 border-y border-l-2 border-border bg-muted/20 px-5 py-3.5">
       <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
       <p className="flex-1 text-sm text-muted-foreground">{text}</p>
       <Button size="sm" variant="outline" asChild className="shrink-0">
@@ -592,7 +592,7 @@ export function Overview() {
             addTo="/dashboard/monitors/new"
           />
           {visibleMonitors.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card py-10 text-center">
+            <div className="border-y border-border py-10 text-center">
               <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
               <p className="text-sm font-medium">No monitors yet</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -606,7 +606,7 @@ export function Overview() {
               </Button>
             </div>
           ) : (
-            <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+            <div className="divide-y divide-border border-t border-border">
               {visibleMonitors.map((monitor) => {
                 const hasIncident = activeIncidentMonitorIds.has(monitor.id);
                 return (
@@ -665,7 +665,7 @@ export function Overview() {
             addTo="/dashboard/incidents/new"
           />
           {recentIncidents.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card py-10 text-center">
+            <div className="border-y border-border py-10 text-center">
               <ShieldCheck className="mx-auto mb-3 h-7 w-7 text-success-foreground/50" />
               <p className="text-sm font-medium">All quiet</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -673,7 +673,7 @@ export function Overview() {
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+            <div className="divide-y divide-border border-t border-border">
               {recentIncidents.map((incident) => (
                 <Link
                   key={incident.id}

@@ -7,7 +7,6 @@ import { Send, CheckCircle2 } from "lucide-react";
 import { useIncident, useCreateIncidentUpdate, useUpdateIncident } from "@/lib/queries/incidents";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -131,11 +130,11 @@ export function IncidentDetail() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Timeline</CardTitle>
-            </CardHeader>
-            <CardContent>
+          <section className="border-t border-border pt-5">
+            <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Timeline
+            </p>
+            <div>
               {updates && updates.length > 0 ? (
                 <div className="divide-y divide-border">
                   {updates.map((update, i) => (
@@ -166,17 +165,17 @@ export function IncidentDetail() {
               ) : (
                 <p className="text-sm text-muted-foreground">No updates yet</p>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         </div>
 
         {isActive && (
           <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Post Update</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <section className="border-t border-border pt-5">
+              <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Post Update
+              </p>
+              <div>
                 <form onSubmit={handleSubmit(onSubmitUpdate)} className="space-y-4">
                   <div className="space-y-2">
                     <Label>Status</Label>
@@ -212,8 +211,8 @@ export function IncidentDetail() {
                     {createUpdate.isPending ? "Posting..." : "Post Update"}
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
           </div>
         )}
       </div>

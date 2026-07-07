@@ -21,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { ChevronDown } from "lucide-react";
 import {
@@ -172,7 +171,7 @@ export function IncidentCreate() {
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
 
         {/* Template picker */}
-        <div className="rounded-xl border border-border bg-card p-4">
+        <div className="border-y border-l-2 border-border bg-muted/20 p-4">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
@@ -206,9 +205,8 @@ export function IncidentCreate() {
           </div>
         </div>
 
-        <Card>
-          <CardContent className="space-y-6 pt-6">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+        <section className="space-y-6 border-t border-border pt-6">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Details
             </p>
 
@@ -304,8 +302,7 @@ export function IncidentCreate() {
               />
               {errors.body && <p className="text-sm text-danger-foreground">{errors.body.message}</p>}
             </div>
-          </CardContent>
-        </Card>
+        </section>
 
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={mutation.isPending}>

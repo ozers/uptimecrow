@@ -8,7 +8,6 @@ import { useMonitors } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/page-header";
@@ -135,13 +134,10 @@ export function StatusPageCreate() {
 
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-8">
         {/* Status page details */}
-        <Card>
-          <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+        <section className="space-y-6">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Page details
             </p>
-          </CardHeader>
-          <CardContent className="space-y-6">
             <div className="space-y-1.5">
               <Label htmlFor="name">Page Name</Label>
               <Input
@@ -198,20 +194,18 @@ export function StatusPageCreate() {
                 </Label>
               </div>
             </div>
-          </CardContent>
-        </Card>
+        </section>
 
         {/* Monitors */}
-        <Card>
-          <CardHeader>
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-              Monitors
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Add the services that will appear on this status page
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <section className="space-y-4 border-t border-border pt-6">
+            <div>
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Monitors
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Add the services that will appear on this status page
+              </p>
+            </div>
             {/* Existing monitors */}
             {existingMonitors && existingMonitors.length > 0 && (
               <div>
@@ -320,8 +314,7 @@ export function StatusPageCreate() {
               <Plus className="mr-2 h-4 w-4" />
               Add New Monitor
             </Button>
-          </CardContent>
-        </Card>
+        </section>
 
         <Button type="submit" size="lg" disabled={loading} className="w-full">
           {loading ? "Creating..." : "Create Status Page"}

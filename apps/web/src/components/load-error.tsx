@@ -11,7 +11,7 @@ export function LoadError({
   message?: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-16 text-center">
+    <div className="flex flex-col items-center justify-center border-y border-border py-16 text-center">
       <AlertTriangle className="mb-3 h-8 w-8 text-muted-foreground/40" />
       <p className="text-sm font-medium">{message}</p>
       <p className="mt-1 text-xs text-muted-foreground">

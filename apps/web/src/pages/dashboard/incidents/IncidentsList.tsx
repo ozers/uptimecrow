@@ -156,7 +156,7 @@ export function IncidentsList() {
                   </span>
                   <span className="h-px flex-1 bg-border" />
                 </div>
-                <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+                <div className="divide-y divide-border border-t border-border">
                   {rows.map((incident) => {
                     const isActive = incident.status !== "resolved";
                     const dotColor = severityDotColor[incident.severity] ?? "bg-muted-foreground";

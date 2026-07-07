@@ -114,7 +114,7 @@ function UpgradeOptions() {
         ))}
       </div>
 
-      <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 px-4 py-3">
+      <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-y border-l-2 border-border bg-muted/20 px-4 py-3">
         <div>
           <p className="text-xs font-semibold text-foreground">Need more than Pro?</p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
@@ -242,7 +242,7 @@ export function Settings() {
         {/* Account */}
         <div>
           <SectionLabel icon={User} title="Account" />
-          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card px-5">
+          <div className="divide-y divide-border border-t border-border">
             <div className="flex items-center justify-between py-3.5">
               <span className="w-28 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Name</span>
               <span className="text-sm font-medium">{user.name}</span>
@@ -274,7 +274,7 @@ export function Settings() {
         {/* Plan */}
         <div>
           <SectionLabel icon={CreditCard} title="Plan" />
-          <div className="overflow-hidden rounded-xl border border-border bg-card px-5">
+          <div className="border-t border-border">
             {/* Plan header */}
             <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-2">
@@ -325,7 +325,7 @@ export function Settings() {
         {/* Integrations */}
         <div>
           <SectionLabel icon={Webhook} title="Integrations" />
-          <div className="overflow-hidden rounded-xl border border-border bg-card px-5">
+          <div className="border-t border-border">
             {/* Slack */}
             <div className="py-4 border-b border-border">
               <div className="mb-3">

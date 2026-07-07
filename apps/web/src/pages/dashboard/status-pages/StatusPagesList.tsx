@@ -92,10 +92,10 @@ export function StatusPagesList() {
             }
           />
         ) : (
-          <div className="overflow-hidden rounded-xl border border-border bg-card">
+          <div className="border-t border-border">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted/40 hover:bg-muted/40">
+                <TableRow className="hover:bg-transparent">
                   <TableHead>Name</TableHead>
                   <TableHead className="hidden md:table-cell">Slug</TableHead>
                   <TableHead>Visibility</TableHead>

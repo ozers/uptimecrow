@@ -388,8 +388,8 @@ interface GroupProps {
 function WindowGroup({ label, windows, onDelete, onEdit, accent }: GroupProps) {
   return (
     <div>
-      <div className={`mb-2 font-mono text-[11px] uppercase tracking-[0.16em] ${accent}`}>{label}</div>
-      <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
+      <div className={`mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] ${accent}`}>{label}</div>
+      <div className="divide-y divide-border border-t border-border">
         {windows.map((w) => {
           const isActive = label === "In progress";
           const statusIcon =

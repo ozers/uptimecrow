@@ -7,7 +7,6 @@ const statusPageResolver = zodResolver(createStatusPageSchema) as any;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 
 type StatusPageFormData = {
   name: string;
@@ -101,10 +100,9 @@ export function StatusPageForm({
   }, [name, defaultValues?.slug, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
-      <Card>
-        <CardContent className="space-y-6 p-6">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-8">
+      <section className="space-y-6">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Page details
           </p>
 
@@ -122,12 +120,10 @@ export function StatusPageForm({
             </div>
             {errors.slug && <p className="text-sm text-danger-foreground">{errors.slug.message}</p>}
           </div>
-        </CardContent>
-      </Card>
+      </section>
 
-      <Card>
-        <CardContent className="space-y-6 p-6">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <section className="space-y-6 border-t border-border pt-6">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Branding
           </p>
 
@@ -184,12 +180,10 @@ export function StatusPageForm({
               Publicly accessible
             </Label>
           </div>
-        </CardContent>
-      </Card>
+      </section>
 
-      <Card>
-        <CardContent className="space-y-6 p-6">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <section className="space-y-6 border-t border-border pt-6">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             Visibility
           </p>
           <p className="-mt-4 text-sm text-muted-foreground">
@@ -223,8 +217,7 @@ export function StatusPageForm({
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+      </section>
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}

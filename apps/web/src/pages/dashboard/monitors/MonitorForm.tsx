@@ -10,7 +10,6 @@ import { Loader2, Zap, CheckCircle2, XCircle, AlertTriangle } from "lucide-react
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const monitorResolver = zodResolver(createMonitorSchema) as any;
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -121,9 +120,9 @@ export function MonitorForm({
   };
 
   return (
-    <form onSubmit={handleSubmit((data) => onSubmit({ ...data, url: normalizeUrl(data.url) }))} className="max-w-xl space-y-6">
-      <Card className="space-y-6 p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+    <form onSubmit={handleSubmit((data) => onSubmit({ ...data, url: normalizeUrl(data.url) }))} className="max-w-xl space-y-8">
+      <section className="space-y-6">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           Target
         </p>
         <div className="space-y-1.5">
@@ -151,10 +150,10 @@ export function MonitorForm({
 
         {/* Test Result */}
         {testResult && (
-        <div className={`rounded-lg border p-4 ${
+        <div className={`border-y border-l-2 p-4 ${
           testResult.status === "up"
-            ? "border-success/30 bg-success/5"
-            : "border-danger/30 bg-danger/5"
+            ? "border-success/40 bg-success/5"
+            : "border-danger/40 bg-danger/5"
         }`}>
           <div className="mb-2 flex items-center gap-2">
             {testResult.status === "up" ? (
@@ -240,10 +239,10 @@ export function MonitorForm({
           })()}
         </div>
         )}
-      </Card>
+      </section>
 
-      <Card className="space-y-6 p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <section className="space-y-6 border-t border-border pt-6">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           Check settings
         </p>
         <div className="grid grid-cols-2 gap-4">
@@ -348,10 +347,10 @@ export function MonitorForm({
           <p className="text-sm text-danger-foreground">{errors.confirmationCount.message}</p>
         )}
       </div>
-      </Card>
+      </section>
 
-      <Card className="space-y-6 p-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+      <section className="space-y-6 border-t border-border pt-6">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           Expiry &amp; alerts
         </p>
       {urlValue?.startsWith("https://") && (
@@ -406,7 +405,7 @@ export function MonitorForm({
           <p className="text-sm text-danger-foreground">{errors.slowResponseThresholdMs.message}</p>
         )}
       </div>
-      </Card>
+      </section>
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}
