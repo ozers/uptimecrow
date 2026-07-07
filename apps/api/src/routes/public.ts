@@ -11,9 +11,10 @@ import {
   checkResults,
 } from "../db/schema.js";
 import { subscribeSchema } from "@uptimecrow/shared";
-import { renderStatusHtml, buildStatusPageData } from "../services/static-gen.service.js";
+import { renderStatusHtml, buildStatusPageData, getRenderedPage } from "../services/static-gen.service.js";
 import { escapeHtml } from "../utils/escape.js";
 import { makeQueue } from "../utils/queues.js";
+import { logger } from "../utils/logger.js";
 
 export const publicRoutes = new Hono();
 
@@ -45,10 +46,22 @@ publicRoutes.get("/:slug", async (c) => {
   // snapshot are always identical.
   const accept = c.req.header("Accept") || "";
   if (accept.includes("text/html")) {
-    const staticData = await buildStatusPageData(page);
-    const html = renderStatusHtml(staticData);
-    c.header("Content-Type", "text/html; charset=UTF-8");
-    return c.body(html);
+    try {
+      const staticData = await buildStatusPageData(page);
+      const html = renderStatusHtml(staticData);
+      c.header("Content-Type", "text/html; charset=UTF-8");
+      return c.body(html);
+    } catch (err) {
+      // The status page is the one thing that must stay up — if the live
+      // build fails, serve the last pre-rendered snapshot instead of a 500.
+      logger.error({ err, slug: page.slug }, "[Status] live build failed, falling back to snapshot");
+      const cached = getRenderedPage(page.slug);
+      if (cached) {
+        c.header("Content-Type", "text/html; charset=UTF-8");
+        return c.body(cached.html);
+      }
+      throw err;
+    }
   }
 
   // Get monitors linked to this status page (fall back to all org monitors if none linked)

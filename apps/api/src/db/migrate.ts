@@ -45,6 +45,10 @@ const repairs: Array<{ sql: string; desc: string }> = [
     desc: "organizations.custom_webhook_url",
   },
   {
+    sql: `ALTER TABLE status_page_monitors ADD COLUMN IF NOT EXISTS group_name varchar(255)`,
+    desc: "status_page_monitors.group_name",
+  },
+  {
     sql: `ALTER TYPE "plan" ADD VALUE IF NOT EXISTS 'indie' BEFORE 'pro'`,
     desc: "plan enum: indie",
   },
