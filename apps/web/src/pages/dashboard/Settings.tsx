@@ -237,13 +237,12 @@ export function Settings() {
         description="Account, plan, and integrations"
       />
 
-      {/* Two columns on wide screens so the page fills the same width as the
-          rest of the dashboard instead of stranding a half-empty right side,
-          while each ledger row stays a comfortable measure. */}
-      <div className="grid grid-cols-1 items-start gap-x-14 gap-y-10 lg:grid-cols-2">
+      {/* Single vertical flow — same as every other screen. Full width, no
+          side-by-side split. */}
+      <div className="space-y-10">
 
         {/* Account */}
-        <div className="lg:col-start-1 lg:row-start-1">
+        <div>
           <SectionLabel icon={User} title="Account" />
           <div className="divide-y divide-border border-t border-border">
             <div className="flex items-center justify-between py-3.5">
@@ -275,7 +274,7 @@ export function Settings() {
         </div>
 
         {/* Plan */}
-        <div className="lg:col-start-2 lg:row-start-1 lg:row-span-2">
+        <div>
           <SectionLabel icon={CreditCard} title="Plan" />
           <div className="border-t border-border">
             {/* Plan header */}
@@ -326,7 +325,7 @@ export function Settings() {
         </div>
 
         {/* Integrations */}
-        <div className="lg:col-start-1 lg:row-start-2">
+        <div>
           <SectionLabel icon={Webhook} title="Integrations" />
           <div className="border-t border-border">
             {/* Slack */}
