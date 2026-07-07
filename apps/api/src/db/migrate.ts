@@ -195,6 +195,22 @@ const repairs: Array<{ sql: string; desc: string }> = [
     sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS slow_response_threshold_ms integer`,
     desc: "monitors.slow_response_threshold_ms",
   },
+  {
+    sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS show_incident_history boolean NOT NULL DEFAULT true`,
+    desc: "status_pages.show_incident_history",
+  },
+  {
+    sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS allow_subscribe boolean NOT NULL DEFAULT true`,
+    desc: "status_pages.allow_subscribe",
+  },
+  {
+    sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS show_uptime_bars boolean NOT NULL DEFAULT true`,
+    desc: "status_pages.show_uptime_bars",
+  },
+  {
+    sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS show_maintenance boolean NOT NULL DEFAULT true`,
+    desc: "status_pages.show_maintenance",
+  },
 ];
 
 async function runMigrations(): Promise<void> {

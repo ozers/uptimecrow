@@ -133,6 +133,10 @@ export const statusPages = pgTable("status_pages", {
   logoUrl: varchar("logo_url", { length: 2048 }),
   brandColor: varchar("brand_color", { length: 7 }).notNull().default("#00e676"),
   isPublic: boolean("is_public").notNull().default(true),
+  showIncidentHistory: boolean("show_incident_history").notNull().default(true),
+  allowSubscribe: boolean("allow_subscribe").notNull().default(true),
+  showUptimeBars: boolean("show_uptime_bars").notNull().default(true),
+  showMaintenance: boolean("show_maintenance").notNull().default(true),
   accessToken: uuid("access_token").defaultRandom(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

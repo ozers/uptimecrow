@@ -50,6 +50,10 @@ export const createStatusPageSchema = z.object({
   logoUrl: z.union([z.string().url().max(2048), z.literal("")]).optional().transform((v) => v || undefined),
   brandColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).default("#00e676"),
   isPublic: z.boolean().default(true),
+  showIncidentHistory: z.boolean().optional(),
+  allowSubscribe: z.boolean().optional(),
+  showUptimeBars: z.boolean().optional(),
+  showMaintenance: z.boolean().optional(),
 });
 
 export const updateStatusPageSchema = createStatusPageSchema.partial();

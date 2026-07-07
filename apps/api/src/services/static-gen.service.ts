@@ -291,6 +291,13 @@ export async function buildStatusPageData(page: StatusPageRow): Promise<StaticSt
   else if (hasDown || hasDegraded || anyMaintenanceActive) overallStatus = "degraded";
   else overallStatus = "operational";
 
+  // Owner-configurable visibility toggles. Each defaults to true (existing
+  // behavior); when off, we omit the underlying data so the renderer's existing
+  // "no data → no section" conditionals hide the section cleanly.
+  const monitorsForRender = page.showUptimeBars
+    ? monitorsWithUptime
+    : monitorsWithUptime.map(({ dailyUptime: _dailyUptime, ...rest }) => rest);
+
   return {
     generatedAt: new Date().toISOString(),
     statusPage: {
@@ -300,11 +307,11 @@ export async function buildStatusPageData(page: StatusPageRow): Promise<StaticSt
       brandColor: page.brandColor,
     },
     overallStatus,
-    monitors: monitorsWithUptime,
+    monitors: monitorsForRender,
     activeIncidents: incidentsWithUpdates,
-    resolvedIncidents: resolvedWithUpdates,
-    maintenanceWindows: maintenanceForRender,
-    subscribeEndpoint: `/status/${page.slug}/subscribe`,
+    resolvedIncidents: page.showIncidentHistory ? resolvedWithUpdates : undefined,
+    maintenanceWindows: page.showMaintenance ? maintenanceForRender : undefined,
+    subscribeEndpoint: page.allowSubscribe ? `/status/${page.slug}/subscribe` : undefined,
   };
 }
 
@@ -612,7 +619,12 @@ export function renderStatusHtml(data: StaticStatusPage): string {
 </section>`
     : "";
 
-  const resolvedSection = data.resolvedIncidents && data.resolvedIncidents.length > 0
+  // When resolvedIncidents is undefined the owner has hidden the history
+  // section entirely; an empty array means "history on, but nothing to show"
+  // and still renders the reassuring "all quiet" empty state.
+  const resolvedSection = data.resolvedIncidents === undefined
+    ? ""
+    : data.resolvedIncidents.length > 0
     ? `<section class="section reveal" style="--d:4">
   <h2 class="sec-label mono"><span class="sec-dot c-mute"></span>Incident history</h2>
   ${data.resolvedIncidents.map((inc) => renderIncident(inc, true)).join("")}

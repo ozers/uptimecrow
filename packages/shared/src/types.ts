@@ -68,6 +68,10 @@ export interface StatusPage {
   logoUrl: string | null;
   brandColor: string;
   isPublic: boolean;
+  showIncidentHistory: boolean;
+  allowSubscribe: boolean;
+  showUptimeBars: boolean;
+  showMaintenance: boolean;
   accessToken: string | null;
   createdAt: Date;
 }

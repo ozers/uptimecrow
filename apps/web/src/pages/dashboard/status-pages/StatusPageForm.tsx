@@ -15,7 +15,40 @@ type StatusPageFormData = {
   logoUrl?: string;
   brandColor: string;
   isPublic: boolean;
+  showIncidentHistory: boolean;
+  allowSubscribe: boolean;
+  showUptimeBars: boolean;
+  showMaintenance: boolean;
 };
+
+type VisibilityKey =
+  | "showIncidentHistory"
+  | "allowSubscribe"
+  | "showUptimeBars"
+  | "showMaintenance";
+
+const VISIBILITY_ROWS: Array<{ key: VisibilityKey; title: string; description: string }> = [
+  {
+    key: "showUptimeBars",
+    title: "Uptime bars",
+    description: "Show the 90-day daily uptime bars under each monitor.",
+  },
+  {
+    key: "showIncidentHistory",
+    title: "Incident history",
+    description: "Show past resolved incidents to visitors.",
+  },
+  {
+    key: "showMaintenance",
+    title: "Scheduled maintenance",
+    description: "Show upcoming and in-progress maintenance windows.",
+  },
+  {
+    key: "allowSubscribe",
+    title: "Subscribe form",
+    description: "Let visitors subscribe by email for incident updates.",
+  },
+];
 
 interface StatusPageFormProps {
   defaultValues?: Partial<StatusPageFormData>;
@@ -48,6 +81,10 @@ export function StatusPageForm({
     defaultValues: {
       brandColor: "#00e676",
       isPublic: true,
+      showIncidentHistory: true,
+      allowSubscribe: true,
+      showUptimeBars: true,
+      showMaintenance: true,
       ...defaultValues,
     },
   });
@@ -55,6 +92,7 @@ export function StatusPageForm({
   const name = watch("name");
   const isPublic = watch("isPublic");
   const brandColor = watch("brandColor");
+  const visibility = watch(VISIBILITY_ROWS.map((r) => r.key));
 
   useEffect(() => {
     if (!defaultValues?.slug && name) {
@@ -145,6 +183,45 @@ export function StatusPageForm({
             <Label htmlFor="isPublic" className="cursor-pointer">
               Publicly accessible
             </Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Visibility
+          </p>
+          <p className="-mt-4 text-sm text-muted-foreground">
+            Choose which sections appear on your public status page.
+          </p>
+
+          <div className="divide-y divide-border">
+            {VISIBILITY_ROWS.map((row, i) => {
+              const checked = visibility[i];
+              return (
+                <div key={row.key} className="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                  <div className="space-y-0.5">
+                    <Label htmlFor={row.key} className="cursor-pointer">
+                      {row.title}
+                    </Label>
+                    <p className="text-sm text-muted-foreground">{row.description}</p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={checked}
+                    id={row.key}
+                    onClick={() => setValue(row.key, !checked)}
+                    className={`relative mt-0.5 inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${checked ? "bg-brand" : "bg-muted"}`}
+                  >
+                    <span
+                      className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform ${checked ? "translate-x-5" : "translate-x-0"}`}
+                    />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </CardContent>
       </Card>

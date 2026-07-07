@@ -58,42 +58,44 @@
   }
 
   .light {
-    /* ── Light: warm bone paper ── */
-    --background: 41 45% 92%;      /* #f4eee1 */
-    --foreground: 266 15% 12%;     /* #1d1922 ink */
-    --card: 44 60% 97%;            /* #fcf9f1 */
-    --card-foreground: 266 15% 12%;
-    --popover: 44 60% 97%;
-    --popover-foreground: 266 15% 12%;
+    /* ── Light: cool-warm bone. Dialed the sepia saturation down ~35% vs the
+       status page so the workspace reads as a serious tool, not old paper —
+       the marketing/status pages keep the fuller warmth. ── */
+    --background: 40 16% 93%;      /* bone, low chroma */
+    --foreground: 264 14% 13%;     /* near-ink, faint warm */
+    --card: 42 22% 97%;            /* clean off-white */
+    --card-foreground: 264 14% 13%;
+    --popover: 42 22% 97%;
+    --popover-foreground: 264 14% 13%;
     /* Primary = ink (dark button on paper) */
-    --primary: 266 15% 12%;
-    --primary-foreground: 44 60% 97%;
-    --secondary: 44 46% 93%;       /* #f7f1e2 */
-    --secondary-foreground: 266 15% 12%;
-    --muted: 44 40% 90%;
-    --muted-foreground: 266 6% 43%; /* #6d6675 */
-    --accent: 41 42% 88%;          /* hover wash */
-    --accent-foreground: 266 15% 12%;
-    --destructive: 3 64% 47%;      /* #c2342c */
-    --destructive-foreground: 44 60% 97%;
-    --border: 42 40% 84%;          /* #e5dcc6 */
-    --input: 40 32% 78%;           /* #d2c6ab */
-    --ring: 146 68% 30%;
+    --primary: 264 14% 13%;
+    --primary-foreground: 42 22% 97%;
+    --secondary: 42 16% 94%;
+    --secondary-foreground: 264 14% 13%;
+    --muted: 40 14% 91%;
+    --muted-foreground: 265 6% 42%;
+    --accent: 40 16% 89%;          /* hover wash */
+    --accent-foreground: 264 14% 13%;
+    --destructive: 3 62% 46%;
+    --destructive-foreground: 42 22% 97%;
+    --border: 40 15% 85%;
+    --input: 38 14% 79%;
+    --ring: 146 64% 31%;
 
-    --brand: 146 68% 30%;          /* #187f43 mature green */
-    --brand-foreground: 44 60% 97%;
+    --brand: 146 64% 31%;          /* mature green — unchanged, brand anchor */
+    --brand-foreground: 42 22% 97%;
 
-    --success: 146 68% 30%;
-    --success-fg: 146 68% 28%;
-    --warning: 28 90% 37%;         /* #b45309 */
-    --warning-fg: 28 90% 34%;
-    --danger: 3 64% 47%;
-    --danger-fg: 3 64% 44%;
-    --info: 221 83% 45%;
-    --info-fg: 221 83% 42%;
-    --neutral-fg: 266 6% 43%;
+    --success: 146 64% 31%;
+    --success-fg: 146 64% 29%;
+    --warning: 28 84% 38%;
+    --warning-fg: 28 84% 35%;
+    --danger: 3 62% 46%;
+    --danger-fg: 3 62% 43%;
+    --info: 221 78% 46%;
+    --info-fg: 221 78% 43%;
+    --neutral-fg: 265 6% 42%;
 
-    --grain-opacity: 0.26;
+    --grain-opacity: 0.17;         /* less paper texture in the tool */
     --grain-blend: multiply;
   }
 }

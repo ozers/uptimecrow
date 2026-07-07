@@ -83,7 +83,7 @@ function MetricCards({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="mb-8 grid grid-cols-3 gap-3">
+    <div className="mb-8 grid grid-cols-3 divide-x divide-border overflow-hidden rounded-xl border border-border bg-card">
       {items.map((item, i) => {
         const Icon = item.icon;
         return (
@@ -91,14 +91,15 @@ function MetricCards({
             key={i}
             onClick={item.to ? () => navigate(item.to!) : undefined}
             className={cn(
-              "rounded-xl border border-border bg-card px-4 py-4 text-left transition-all",
-              item.to
-                ? "cursor-pointer hover:border-brand/30 hover:bg-muted/40"
-                : "cursor-default",
+              "px-5 py-4 text-left transition-colors",
+              item.to ? "cursor-pointer hover:bg-muted/40" : "cursor-default",
             )}
           >
             <div className="mb-3 flex items-center justify-between">
-              <Icon className="h-3.5 w-3.5 text-muted-foreground/60" />
+              <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                <Icon className="h-3 w-3 text-muted-foreground/60" />
+                {item.label}
+              </span>
               {item.badge && (
                 <span
                   className={cn(
@@ -112,14 +113,11 @@ function MetricCards({
             </div>
             <p
               className={cn(
-                "font-display text-[34px] font-bold tnum leading-none tracking-[-0.03em]",
+                "font-display text-[32px] font-bold tnum leading-none tracking-[-0.03em]",
                 item.color ?? "text-foreground",
               )}
             >
               {item.value}
-            </p>
-            <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-              {item.label}
             </p>
           </button>
         );

@@ -27,6 +27,10 @@ export function StatusPageEdit() {
           brandColor: statusPage.brandColor,
           logoUrl: statusPage.logoUrl ?? undefined,
           isPublic: statusPage.isPublic,
+          showIncidentHistory: statusPage.showIncidentHistory,
+          allowSubscribe: statusPage.allowSubscribe,
+          showUptimeBars: statusPage.showUptimeBars,
+          showMaintenance: statusPage.showMaintenance,
         }}
         loading={mutation.isPending}
         submitLabel="Save Changes"
