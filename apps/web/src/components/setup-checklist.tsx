@@ -126,10 +126,10 @@ export function SetupChecklist() {
           className="flex w-full items-center gap-3 text-left"
         >
           <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10">
-              <Sparkles className="h-3 w-3 text-primary" />
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand/10">
+              <Sparkles className="h-3 w-3 text-brand" />
             </div>
-            <span className="text-xs font-semibold uppercase tracking-wider">
+            <span className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Get started
             </span>
           </div>
@@ -137,11 +137,11 @@ export function SetupChecklist() {
           <div className="hidden flex-1 items-center gap-3 sm:flex">
             <div className="h-1.5 max-w-[200px] flex-1 overflow-hidden rounded-full bg-border">
               <div
-                className="h-full rounded-full bg-primary transition-all duration-500"
+                className="h-full rounded-full bg-brand transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
-            <span className="text-xs tabular-nums text-muted-foreground">
+            <span className="font-mono text-[11px] tnum text-muted-foreground">
               {totalDone} / {steps.length}
             </span>
           </div>
@@ -151,7 +151,7 @@ export function SetupChecklist() {
               <Link
                 to={nextStep.to}
                 onClick={(e) => e.stopPropagation()}
-                className="hidden items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:flex"
+                className="hidden items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground transition-colors hover:opacity-90 md:flex"
               >
                 {nextStep.done ? "Continue" : nextStep.title}
                 <ArrowRight className="h-3 w-3" />
@@ -195,7 +195,7 @@ export function SetupChecklist() {
                     "group rounded-lg border px-3 py-2.5 transition-all",
                     step.done
                       ? "border-success/20 bg-success/5"
-                      : "border-border bg-card hover:border-primary/30 hover:bg-muted/40",
+                      : "border-border bg-card hover:border-brand/30 hover:bg-muted/40",
                   )}
                 >
                   <div className="flex items-start gap-2.5">
@@ -204,7 +204,7 @@ export function SetupChecklist() {
                         "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                         step.done
                           ? "bg-success/20 text-success-foreground"
-                          : "border-2 border-border bg-background text-muted-foreground group-hover:border-primary/50 group-hover:text-primary",
+                          : "border-2 border-border bg-background text-muted-foreground group-hover:border-brand/50 group-hover:text-brand",
                       )}
                     >
                       {step.done ? (

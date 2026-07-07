@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/page-header";
 import { ChevronDown } from "lucide-react";
 import {
@@ -167,14 +168,17 @@ export function IncidentCreate() {
 
   return (
     <div>
-      <PageHeader title="Report Incident" description="Create a new incident report" />
+      <PageHeader eyebrow="New incident" title="Report Incident" description="Create a new incident report" />
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
 
         {/* Template picker */}
-        <div className="rounded-md border border-border bg-muted/30 p-3">
-          <div className="flex items-center justify-between">
+        <div className="rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium">Quick start from a template</p>
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                Template
+              </p>
+              <p className="mt-1.5 text-sm font-medium text-foreground">Quick start from a template</p>
               <p className="text-xs text-muted-foreground mt-0.5">Pre-fill title and update body for common incident types</p>
             </div>
             <DropdownMenu open={templateOpen} onOpenChange={setTemplateOpen}>
@@ -202,98 +206,106 @@ export function IncidentCreate() {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Status Page</Label>
-          <Select onValueChange={(v) => setValue("statusPageId", v)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select status page" />
-            </SelectTrigger>
-            <SelectContent>
-              {statusPages?.map((sp) => (
-                <SelectItem key={sp.id} value={sp.id}>
-                  {sp.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.statusPageId && (
-            <p className="text-sm text-destructive">{errors.statusPageId.message}</p>
-          )}
-        </div>
+        <Card>
+          <CardContent className="space-y-6 pt-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Details
+            </p>
 
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" placeholder="Service outage on API" {...register("title")} />
-          {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-        </div>
+            <div className="space-y-2">
+              <Label>Status Page</Label>
+              <Select onValueChange={(v) => setValue("statusPageId", v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status page" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusPages?.map((sp) => (
+                    <SelectItem key={sp.id} value={sp.id}>
+                      {sp.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.statusPageId && (
+                <p className="text-sm text-danger-foreground">{errors.statusPageId.message}</p>
+              )}
+            </div>
 
-        <div className="space-y-2">
-          <Label>Monitor (optional)</Label>
-          <Select onValueChange={(v) => setValue("monitorId", v === "none" ? undefined : v)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select monitor" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="none">None</SelectItem>
-              {monitors?.map((m) => (
-                <SelectItem key={m.id} value={m.id}>
-                  {m.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" placeholder="Service outage on API" {...register("title")} />
+              {errors.title && <p className="text-sm text-danger-foreground">{errors.title.message}</p>}
+            </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <Select
-              value={watch("status")}
-              onValueChange={(v) => setValue("status", v as IncidentForm["status"])}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {INCIDENT_STATUSES.map((s) => (
-                  <SelectItem key={s} value={s} className="capitalize">
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="space-y-2">
+              <Label>Monitor (optional)</Label>
+              <Select onValueChange={(v) => setValue("monitorId", v === "none" ? undefined : v)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select monitor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">None</SelectItem>
+                  {monitors?.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label>Severity</Label>
-            <Select
-              value={watch("severity")}
-              onValueChange={(v) => setValue("severity", v as IncidentForm["severity"])}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {INCIDENT_SEVERITIES.map((s) => (
-                  <SelectItem key={s} value={s} className="capitalize">
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select
+                  value={watch("status")}
+                  onValueChange={(v) => setValue("status", v as IncidentForm["status"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INCIDENT_STATUSES.map((s) => (
+                      <SelectItem key={s} value={s} className="capitalize">
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="body">Initial Update</Label>
-          <Textarea
-            id="body"
-            placeholder="Describe what's happening..."
-            rows={4}
-            {...register("body")}
-          />
-          {errors.body && <p className="text-sm text-destructive">{errors.body.message}</p>}
-        </div>
+              <div className="space-y-2">
+                <Label>Severity</Label>
+                <Select
+                  value={watch("severity")}
+                  onValueChange={(v) => setValue("severity", v as IncidentForm["severity"])}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INCIDENT_SEVERITIES.map((s) => (
+                      <SelectItem key={s} value={s} className="capitalize">
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="body">Initial Update</Label>
+              <Textarea
+                id="body"
+                placeholder="Describe what's happening..."
+                rows={4}
+                {...register("body")}
+              />
+              {errors.body && <p className="text-sm text-danger-foreground">{errors.body.message}</p>}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex items-center gap-3">
           <Button type="submit" disabled={mutation.isPending}>

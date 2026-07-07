@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./Landing.css";
+import { Check } from "lucide-react";
+import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
+import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
 import { usePageMeta } from "@/lib/meta";
 import { PLAN_CATALOG } from "@uptimecrow/shared";
-
-const BRAND = "UptimeCrow";
 
 const FAQ = [
   {
@@ -76,221 +75,225 @@ export function Pricing() {
     },
   });
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  useEffect(() => { analytics.pricingViewed(); }, []);
+  useEffect(() => {
+    analytics.pricingViewed();
+  }, []);
 
   const ctaHref = isAuthenticated ? "/dashboard/settings" : "/register";
 
   return (
-    <div className="landing">
+    <div className="min-h-screen bg-background">
       <MarketingNav />
 
-      <section className="hero" style={{ paddingBottom: "2rem" }}>
-        <div className="container">
-          <div className="hero-badge">● Fair pricing, no lock-in</div>
-          <h1>Simple pricing.<br /><span className="highlight">Pick a plan that fits.</span></h1>
-          <p className="hero-sub">
-            Start free forever. Upgrade when you need more monitors, faster checks, or a branded status page.
-          </p>
+      {/* HERO */}
+      <section className="mx-auto max-w-4xl px-6 pb-8 pt-20 text-center sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+          Fair pricing · no lock-in
+        </p>
+        <h1 className="mt-4 font-display text-[42px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[52px]">
+          Simple pricing. <span className="text-brand">Pick a plan that fits.</span>
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
+          Start free forever. Upgrade when you need more monitors, faster checks, or a branded
+          status page.
+        </p>
 
-          {/* Billing toggle */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginTop: "2rem" }}>
-            <span style={{ fontSize: "0.9rem", color: annual ? "var(--text3)" : "var(--text)", fontWeight: annual ? 400 : 600 }}>Monthly</span>
-            <button
-              type="button"
-              onClick={() => setAnnual((v) => !v)}
-              aria-label="Toggle annual billing"
-              role="switch"
-              aria-checked={annual}
-              style={{
-                position: "relative",
-                width: 44,
-                height: 24,
-                borderRadius: 12,
-                border: "none",
-                background: annual ? "var(--green)" : "var(--border)",
-                cursor: "pointer",
-                transition: "background 0.2s",
-                flexShrink: 0,
-              }}
+        {/* Billing toggle */}
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <span
+            className={`font-mono text-[13px] ${
+              annual ? "text-muted-foreground" : "font-medium text-foreground"
+            }`}
+          >
+            Monthly
+          </span>
+          <button
+            type="button"
+            onClick={() => setAnnual((v) => !v)}
+            aria-label="Toggle annual billing"
+            role="switch"
+            aria-checked={annual}
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+              annual ? "bg-brand" : "bg-input"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-background shadow transition-all ${
+                annual ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+          <span className="flex items-center gap-2">
+            <span
+              className={`font-mono text-[13px] ${
+                annual ? "font-medium text-foreground" : "text-muted-foreground"
+              }`}
             >
-              <span style={{
-                position: "absolute",
-                top: 3,
-                left: annual ? 23 : 3,
-                width: 18,
-                height: 18,
-                borderRadius: "50%",
-                background: "#fff",
-                transition: "left 0.2s",
-                display: "block",
-              }} />
-            </button>
-            <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              <span style={{ fontSize: "0.9rem", color: annual ? "var(--text)" : "var(--text3)", fontWeight: annual ? 600 : 400 }}>Annual</span>
-              {annual && (
-                <span style={{
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  color: "var(--green)",
-                  background: "var(--green)18",
-                  border: "1px solid var(--green)40",
-                  borderRadius: 6,
-                  padding: "2px 7px",
-                  letterSpacing: "0.02em",
-                }}>
-                  2 months free
-                </span>
-              )}
+              Annual
             </span>
-          </div>
+            {annual && (
+              <span className="rounded-full border border-brand/40 bg-brand/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-wide text-brand">
+                2 months free
+              </span>
+            )}
+          </span>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: "1rem" }}>
-        <div className="container">
-          <div className="pricing-cards">
-            {PLAN_CATALOG.map((plan) => {
-              const isAnnualPaid = annual && plan.monthlyPrice > 0;
-              const displayPrice = isAnnualPaid ? `$${plan.annualMonthlyPrice}` : plan.monthlyPrice === 0 ? "$0" : `$${plan.monthlyPrice}`;
-              return (
-                <div key={plan.plan} className={`price-card${plan.featured ? " featured" : ""}`}>
-                  <p className="price-name">{plan.name}</p>
-                  <p className="price-amount">
-                    {displayPrice}
-                    <span>/mo</span>
-                  </p>
-                  {isAnnualPaid && (
-                    <p style={{ fontSize: "0.78rem", color: "var(--text3)", marginTop: "-0.25rem", marginBottom: "0.5rem" }}>
-                      billed ${plan.annualTotal}/yr
-                    </p>
-                  )}
-                  <p className="price-desc">{plan.desc}</p>
-                  <ul className="price-features">
-                    {plan.features.map((f) => <li key={f}>{f}</li>)}
-                  </ul>
-                  <Link
-                    to={plan.plan === "free" ? "/register" : ctaHref}
-                    className={`price-btn${plan.featured ? " featured-btn" : ""}`}
-                    onClick={() => analytics.upgradeClicked(plan.name)}
-                  >
-                    {plan.plan === "free" ? "Get Started Free" : isAuthenticated ? "Upgrade Now" : "Get Started"}
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Enterprise / Custom hook */}
-          <div style={{
-            marginTop: "1.5rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "1.25rem",
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "16px",
-            padding: "1.5rem 2rem",
-          }}>
-            <div>
-              <p style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--text)", marginBottom: "0.25rem" }}>
-                Need more than Pro?
-              </p>
-              <p style={{ color: "var(--text2)", fontSize: "0.92rem", margin: 0 }}>
-                More monitors, custom data retention, SSO, DPA, or a custom invoice — tell us what you need.
-              </p>
-            </div>
-            <a
-              href="mailto:support@uptimecrow.com?subject=Custom plan inquiry"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.4rem",
-                padding: "0.65rem 1.4rem",
-                borderRadius: "10px",
-                border: "1.5px solid var(--border)",
-                background: "var(--bg)",
-                color: "var(--text)",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                transition: "border-color 0.15s, color 0.15s",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--green)";
-                (e.currentTarget as HTMLAnchorElement).style.color = "var(--green)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLAnchorElement).style.color = "var(--text)";
-              }}
-            >
-              Contact us →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <p className="section-label">Frequently asked</p>
-          <h2 className="section-title">Before you commit.</h2>
-          <div style={{ display: "grid", gap: "1rem", maxWidth: 760, margin: "2rem auto 0" }}>
-            {FAQ.map((item) => (
-              <details
-                key={item.q}
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "12px",
-                  padding: "1.1rem 1.3rem",
-                }}
+      {/* PLAN CARDS */}
+      <section className="mx-auto max-w-6xl px-6 pt-4 sm:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PLAN_CATALOG.map((plan) => {
+            const isAnnualPaid = annual && plan.monthlyPrice > 0;
+            const displayPrice = isAnnualPaid
+              ? `$${plan.annualMonthlyPrice}`
+              : plan.monthlyPrice === 0
+                ? "$0"
+                : `$${plan.monthlyPrice}`;
+            const pop = plan.featured;
+            return (
+              <div
+                key={plan.plan}
+                className={`relative flex flex-col rounded-2xl border p-6 ${
+                  pop ? "border-transparent bg-foreground text-background" : "border-border bg-card"
+                }`}
               >
-                <summary
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                    color: "var(--text)",
-                    listStyle: "none",
-                  }}
+                {pop && (
+                  <span className="absolute -top-2.5 left-6 rounded-full bg-brand px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-foreground">
+                    Popular
+                  </span>
+                )}
+                <p
+                  className={`font-mono text-[11px] uppercase tracking-[0.16em] ${
+                    pop ? "text-background/60" : "text-muted-foreground"
+                  }`}
                 >
-                  {item.q}
-                </summary>
-                <p style={{ marginTop: "0.8rem", color: "var(--text2)", lineHeight: 1.6, fontSize: "0.95rem" }}>{item.a}</p>
-              </details>
-            ))}
+                  {plan.name}
+                </p>
+                <p className="mt-3 flex items-baseline gap-1">
+                  <span className="font-display text-4xl font-extrabold tracking-[-0.03em] tnum">
+                    {displayPrice}
+                  </span>
+                  <span
+                    className={`font-mono text-sm ${
+                      pop ? "text-background/50" : "text-muted-foreground"
+                    }`}
+                  >
+                    /mo
+                  </span>
+                </p>
+                {isAnnualPaid && (
+                  <p
+                    className={`mt-1 font-mono text-[12px] ${
+                      pop ? "text-background/50" : "text-muted-foreground"
+                    }`}
+                  >
+                    billed ${plan.annualTotal}/yr
+                  </p>
+                )}
+                <p
+                  className={`mt-2 text-[13px] leading-relaxed ${
+                    pop ? "text-background/60" : "text-muted-foreground"
+                  }`}
+                >
+                  {plan.desc}
+                </p>
+                <ul className="mt-5 flex-1 space-y-2.5">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-[13.5px]">
+                      <Check size={14} className="mt-0.5 shrink-0 text-brand" />
+                      <span className={pop ? "text-background/85" : "text-foreground/85"}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  variant={pop ? "brand" : "outline"}
+                  className="mt-6 w-full"
+                  onClick={() => analytics.upgradeClicked(plan.name)}
+                >
+                  <Link to={plan.plan === "free" ? "/register" : ctaHref}>
+                    {plan.plan === "free"
+                      ? "Get started free"
+                      : isAuthenticated
+                        ? "Upgrade now"
+                        : "Get started"}
+                  </Link>
+                </Button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Enterprise hook */}
+        <div className="mt-6 flex flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:px-8">
+          <div>
+            <p className="font-display text-lg font-bold tracking-[-0.02em]">Need more than Pro?</p>
+            <p className="mt-1 text-[14px] text-muted-foreground">
+              More monitors, custom data retention, SSO, DPA, or a custom invoice — tell us what you
+              need.
+            </p>
           </div>
+          <Button asChild variant="outline" className="shrink-0">
+            <a href="mailto:support@uptimecrow.com?subject=Custom plan inquiry">Contact us →</a>
+          </Button>
         </div>
       </section>
 
-      <section className="final-cta">
-        <div className="container">
-          <h2>Ready to know when you're down?</h2>
-          <p>10 monitors, 5-min checks, forever free — or self-host unlimited. No credit card needed.</p>
-          <div className="hero-actions">
-            <Link to="/register" className="hero-btn primary">Get Started Free</Link>
-            <Link to="/login" className="hero-btn secondary">Log in</Link>
-          </div>
+      {/* FAQ */}
+      <section className="mx-auto max-w-3xl px-6 py-20 sm:px-8">
+        <div className="text-center">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+            Frequently asked
+          </p>
+          <h2 className="mt-3 font-display text-[30px] font-bold tracking-[-0.03em] sm:text-[34px]">
+            Before you commit.
+          </h2>
+        </div>
+        <div className="mt-10 space-y-3">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group rounded-xl border border-border bg-card px-5 py-4"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[15px] font-semibold">
+                {item.q}
+                <span className="font-mono text-lg text-muted-foreground transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p className="mt-3 text-[14.5px] leading-relaxed text-muted-foreground">{item.a}</p>
+            </details>
+          ))}
         </div>
       </section>
 
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/docs">API Docs</Link>
-              <Link to="/privacy">Privacy</Link>
-              <Link to="/terms">Terms</Link>
+      {/* FINAL CTA */}
+      <section className="mx-auto max-w-3xl px-6 pb-20 text-center sm:px-8">
+        <div className="rounded-3xl bg-foreground px-8 py-14 text-background sm:px-12">
+          <h2 className="font-display text-[30px] font-extrabold tracking-[-0.03em] sm:text-[36px]">
+            Ready to know when you&apos;re down?
+          </h2>
+          <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-background/60">
+            10 monitors, 5-min checks, forever free — or self-host unlimited. No credit card needed.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" variant="brand">
+              <Link to="/register">Get started free</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-background/25 bg-transparent text-background hover:bg-background/10 hover:text-background"
+            >
               <Link to="/login">Log in</Link>
-            </div>
+            </Button>
           </div>
         </div>
-      </footer>
+      </section>
+
+      <MarketingFooter />
     </div>
   );
 }

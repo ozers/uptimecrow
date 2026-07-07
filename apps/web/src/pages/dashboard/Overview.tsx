@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CrowMark } from "@/components/logo";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
 import type { Plan } from "@uptimecrow/shared";
 import { useMonitors } from "@/lib/queries/monitors";
@@ -82,7 +83,7 @@ function MetricCards({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="mb-6 grid grid-cols-3 gap-3">
+    <div className="mb-8 grid grid-cols-3 gap-3">
       {items.map((item, i) => {
         const Icon = item.icon;
         return (
@@ -90,19 +91,19 @@ function MetricCards({
             key={i}
             onClick={item.to ? () => navigate(item.to!) : undefined}
             className={cn(
-              "rounded-xl border border-border bg-card px-4 py-3.5 text-left transition-all",
+              "rounded-xl border border-border bg-card px-4 py-4 text-left transition-all",
               item.to
-                ? "cursor-pointer hover:border-primary/20 hover:bg-muted/40"
+                ? "cursor-pointer hover:border-brand/30 hover:bg-muted/40"
                 : "cursor-default",
             )}
           >
-            <div className="mb-2 flex items-center justify-between">
+            <div className="mb-3 flex items-center justify-between">
               <Icon className="h-3.5 w-3.5 text-muted-foreground/60" />
               {item.badge && (
                 <span
                   className={cn(
-                    "rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
-                    item.badgeColor ?? "bg-primary/10 text-primary",
+                    "rounded-full px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.06em]",
+                    item.badgeColor ?? "bg-brand/10 text-brand",
                   )}
                 >
                   {item.badge}
@@ -111,13 +112,15 @@ function MetricCards({
             </div>
             <p
               className={cn(
-                "text-2xl font-bold tabular-nums leading-none tracking-tight",
+                "font-display text-[34px] font-bold tnum leading-none tracking-[-0.03em]",
                 item.color ?? "text-foreground",
               )}
             >
               {item.value}
             </p>
-            <p className="mt-1 text-xs text-muted-foreground">{item.label}</p>
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+              {item.label}
+            </p>
           </button>
         );
       })}
@@ -133,10 +136,13 @@ function MetricCards({
 function EmptyOverview() {
   return (
     <div className="mx-auto max-w-2xl py-12 text-center">
-      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-        <Activity className="h-5 w-5 text-primary" />
-      </div>
-      <h1 className="text-2xl font-bold tracking-tight">Welcome to UptimeCrow</h1>
+      <CrowMark size={52} className="mx-auto mb-5" />
+      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+        The watch begins
+      </p>
+      <h1 className="mt-3 font-display text-[30px] font-bold tracking-[-0.03em]">
+        Welcome to UptimeCrow
+      </h1>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
         Use the setup guide above to get going. Start by adding a monitor — paste
         any HTTP URL, and we&apos;ll watch it around the clock.
@@ -165,7 +171,7 @@ function EmptyOverview() {
             key={text}
             className="flex items-start gap-2.5 rounded-lg border border-dashed border-border px-3 py-3"
           >
-            <I className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/70" />
+            <I className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" />
             <p className="text-xs leading-relaxed text-muted-foreground">{text}</p>
           </div>
         ))}
@@ -228,7 +234,7 @@ function LiveStatusBanner({
         <div className="min-w-0">
           <p
             className={cn(
-              "text-sm font-bold tracking-tight",
+              "font-display text-[15px] font-bold tracking-[-0.02em]",
               down ? "text-danger-foreground" : "text-success-foreground",
             )}
           >
@@ -246,7 +252,7 @@ function LiveStatusBanner({
       <button
         onClick={onRefetch}
         disabled={isRefetching}
-        className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50 cursor-pointer"
+        className="flex shrink-0 items-center gap-1.5 font-mono text-[11px] tnum text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50 cursor-pointer"
       >
         <RefreshCw className={cn("h-3 w-3", isRefetching && "animate-spin")} />
         {isRefetching ? "Refreshing…" : `Updated ${updatedLabel}`}
@@ -338,7 +344,12 @@ function StatusPill({ status }: { status: string }) {
   };
   const s = map[status] ?? map.unknown;
   return (
-    <span className={cn("shrink-0 rounded-full px-2.5 py-0.5 text-[11px] font-semibold", s.cls)}>
+    <span
+      className={cn(
+        "shrink-0 rounded-full px-2.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.06em]",
+        s.cls,
+      )}
+    >
       {s.label}
     </span>
   );
@@ -358,22 +369,22 @@ function SectionHeader({
   addTo?: string;
 }) {
   return (
-    <div className="mb-0 flex items-center justify-between pb-2">
+    <div className="mb-3 flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
           {title}
         </p>
         {badge != null && badge > 0 && (
-          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-danger/20 px-1 text-[10px] font-bold text-danger-foreground">
+          <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-danger/20 px-1 font-mono text-[10px] font-bold text-danger-foreground">
             {badge}
           </span>
         )}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.08em]">
         {addTo && (
           <Link
             to={addTo}
-            className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-primary"
+            className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-brand"
           >
             <Plus className="h-3 w-3" />
             Add
@@ -381,7 +392,7 @@ function SectionHeader({
         )}
         <Link
           to={to}
-          className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+          className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
         >
           View all <ArrowRight className="h-3 w-3" />
         </Link>
@@ -583,7 +594,7 @@ export function Overview() {
             addTo="/dashboard/monitors/new"
           />
           {visibleMonitors.length === 0 ? (
-            <div className="border-t border-b border-border py-10 text-center">
+            <div className="rounded-xl border border-border bg-card py-10 text-center">
               <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
               <p className="text-sm font-medium">No monitors yet</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
@@ -597,7 +608,7 @@ export function Overview() {
               </Button>
             </div>
           ) : (
-            <div className="divide-y divide-border border-t border-b border-border">
+            <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
               {visibleMonitors.map((monitor) => {
                 const hasIncident = activeIncidentMonitorIds.has(monitor.id);
                 return (
@@ -605,15 +616,15 @@ export function Overview() {
                     <TooltipTrigger asChild>
                       <Link
                         to={`/dashboard/monitors/${monitor.id}`}
-                        className="group flex items-center justify-between gap-3 py-3 transition-colors hover:text-primary"
+                        className="group flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <StatusDot status={monitor.status} />
-                          <span className="truncate text-sm font-medium">
+                          <span className="truncate text-sm font-medium transition-colors group-hover:text-brand">
                             {monitor.name}
                           </span>
                           {hasIncident && (
-                            <span className="flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-[10px] font-semibold text-warning-foreground">
+                            <span className="flex shrink-0 items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] text-warning-foreground">
                               <AlertTriangle className="h-2.5 w-2.5" />
                               incident
                             </span>
@@ -621,7 +632,7 @@ export function Overview() {
                         </div>
                         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
                           <StatusPill status={monitor.status} />
-                          <span className="hidden w-12 text-right text-xs tabular-nums text-muted-foreground md:inline">
+                          <span className="hidden w-14 text-right font-mono text-[11px] tnum text-muted-foreground md:inline">
                             {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
                           </span>
                           <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
@@ -637,7 +648,7 @@ export function Overview() {
               {hiddenCount > 0 && (
                 <Link
                   to="/dashboard/monitors"
-                  className="flex items-center gap-1.5 py-3 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex items-center gap-1.5 px-4 py-3 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Plus className="h-3 w-3" />
                   {hiddenCount} more monitor{hiddenCount > 1 ? "s" : ""}
@@ -656,20 +667,20 @@ export function Overview() {
             addTo="/dashboard/incidents/new"
           />
           {recentIncidents.length === 0 ? (
-            <div className="border-t border-b border-border py-10 text-center">
+            <div className="rounded-xl border border-border bg-card py-10 text-center">
               <ShieldCheck className="mx-auto mb-3 h-7 w-7 text-success-foreground/50" />
-              <p className="text-sm font-medium">All clear</p>
+              <p className="text-sm font-medium">All quiet</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 No incidents recorded.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-border border-t border-b border-border">
+            <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
               {recentIncidents.map((incident) => (
                 <Link
                   key={incident.id}
                   to={`/dashboard/incidents/${incident.id}`}
-                  className="group flex items-center justify-between gap-4 py-3 transition-colors hover:text-primary"
+                  className="group flex items-center justify-between gap-4 px-4 py-3 transition-colors hover:bg-muted/40"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     {incident.status === "resolved" ? (
@@ -677,7 +688,7 @@ export function Overview() {
                     ) : (
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-danger-foreground" />
                     )}
-                    <span className="truncate text-sm font-medium">
+                    <span className="truncate text-sm font-medium transition-colors group-hover:text-brand">
                       {incident.title}
                     </span>
                     <div className="hidden items-center gap-1.5 sm:flex shrink-0">
@@ -700,7 +711,7 @@ export function Overview() {
         {/* Feature discovery */}
         {isSettledIn && (
           <div className="mb-8 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <p className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Discover
             </p>
             <FeatureDiscoveryCard
@@ -717,10 +728,10 @@ export function Overview() {
         {plan === "free" && totalMonitors >= Math.floor(planLimit * 0.66) && (
           <div className="flex items-center justify-between border-t border-border pt-5">
             <div className="flex items-center gap-2.5">
-              <Zap className="h-4 w-4 shrink-0 text-primary" />
+              <Zap className="h-4 w-4 shrink-0 text-brand" />
               <p className="text-sm text-muted-foreground">
                 Using{" "}
-                <span className="font-semibold text-foreground">
+                <span className="font-mono font-semibold tnum text-foreground">
                   {totalMonitors} of {planLimit}
                 </span>{" "}
                 monitors on the free plan.

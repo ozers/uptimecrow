@@ -12,7 +12,7 @@ export function MonitorCreate() {
 
   return (
     <div>
-      <PageHeader title="Add Monitor" description="Start monitoring a new service" />
+      <PageHeader eyebrow="New monitor" title="Add Monitor" description="Start monitoring a new service" />
       <MonitorForm
         loading={mutation.isPending}
         onSubmit={(data) =>

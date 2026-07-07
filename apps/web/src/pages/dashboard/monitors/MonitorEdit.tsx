@@ -17,7 +17,7 @@ export function MonitorEdit() {
 
   return (
     <div>
-      <PageHeader title={`Edit: ${monitor.name}`} />
+      <PageHeader eyebrow="Edit monitor" title={monitor.name} description="Adjust monitoring settings" />
       <MonitorForm
         defaultValues={{
           name: monitor.name,

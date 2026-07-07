@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Send, CheckCircle2 } from "lucide-react";
 import { useIncident, useCreateIncidentUpdate, useUpdateIncident } from "@/lib/queries/incidents";
 import { ApiError } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { PageHeader } from "@/components/page-header";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
@@ -26,6 +26,13 @@ import { RelativeTime } from "@/components/relative-time";
 import type { z } from "zod";
 
 type UpdateForm = z.infer<typeof createIncidentUpdateSchema>;
+
+const updateDotColor: Record<string, string> = {
+  investigating: "bg-danger",
+  identified: "bg-warning",
+  monitoring: "bg-info",
+  resolved: "bg-success",
+};
 
 function IncidentDetailSkeleton() {
   return (
@@ -82,11 +89,12 @@ export function IncidentDetail() {
   return (
     <div>
       <PageHeader
+        eyebrow={`Incident · ${incident.status}`}
         title={incident.title}
         action={
           isActive && (
             <Button
-              className="bg-success hover:bg-success text-white"
+              className="bg-success text-success-foreground shadow-sm hover:-translate-y-px hover:shadow-md hover:brightness-105"
               onClick={() =>
                 updateIncident.mutate(
                   { status: "resolved" },
@@ -106,11 +114,17 @@ export function IncidentDetail() {
         <IncidentStatusBadge status={incident.status} />
         <SeverityBadge severity={incident.severity} />
         <span className="text-sm text-muted-foreground">
-          Started <RelativeTime date={incident.startedAt} />
+          Started{" "}
+          <span className="font-mono tnum">
+            <RelativeTime date={incident.startedAt} />
+          </span>
         </span>
         {incident.resolvedAt && (
           <span className="text-sm text-muted-foreground">
-            Resolved <RelativeTime date={incident.resolvedAt} />
+            Resolved{" "}
+            <span className="font-mono tnum">
+              <RelativeTime date={incident.resolvedAt} />
+            </span>
           </span>
         )}
       </div>
@@ -123,35 +137,29 @@ export function IncidentDetail() {
             </CardHeader>
             <CardContent>
               {updates && updates.length > 0 ? (
-                <div className="space-y-0">
+                <div className="divide-y divide-border">
                   {updates.map((update, i) => (
-                    <div key={update.id}>
-                      <div className="flex gap-4 py-4">
-                        <div className="flex flex-col items-center">
-                          <div
-                            className={`h-3 w-3 rounded-full ${
-                              update.status === "resolved"
-                                ? "bg-success"
-                                : update.status === "investigating"
-                                  ? "bg-danger"
-                                  : "bg-warning"
-                            }`}
-                          />
-                          {i < updates.length - 1 && (
-                            <div className="mt-1 w-px flex-1 bg-border" />
+                    <div key={update.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={cn(
+                            "mt-1 h-2.5 w-2.5 shrink-0 rounded-full",
+                            updateDotColor[update.status] ?? "bg-muted-foreground",
                           )}
-                        </div>
-                        <div className="flex-1 pb-2">
-                          <div className="mb-1 flex items-center gap-2">
-                            <IncidentStatusBadge status={update.status} />
-                            <span className="text-xs text-muted-foreground">
-                              <RelativeTime date={update.createdAt} />
-                            </span>
-                          </div>
-                          <p className="text-sm text-foreground/80">{update.body}</p>
-                        </div>
+                        />
+                        {i < updates.length - 1 && (
+                          <div className="mt-1 w-px flex-1 bg-border" />
+                        )}
                       </div>
-                      {i < updates.length - 1 && <Separator />}
+                      <div className="flex-1">
+                        <div className="mb-1.5 flex flex-wrap items-center gap-2">
+                          <IncidentStatusBadge status={update.status} />
+                          <span className="font-mono tnum text-xs text-muted-foreground">
+                            <RelativeTime date={update.createdAt} />
+                          </span>
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground/80">{update.body}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -196,7 +204,7 @@ export function IncidentDetail() {
                       {...register("body")}
                     />
                     {errors.body && (
-                      <p className="text-sm text-destructive">{errors.body.message}</p>
+                      <p className="text-sm text-danger-foreground">{errors.body.message}</p>
                     )}
                   </div>
                   <Button type="submit" className="w-full" disabled={createUpdate.isPending}>

@@ -7,8 +7,10 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
 import { usePageMeta } from "@/lib/meta";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./landing-redesign.css";
+import { AuthShell } from "@/components/auth-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { z } from "zod";
 
 type RegisterForm = z.infer<typeof registerSchema>;
@@ -46,45 +48,38 @@ export function Register() {
   };
 
   return (
-    <div className="lp">
-      <MarketingNav />
-      <div className="lp-auth">
-        <div className="lp-auth-card">
-          <img className="lp-auth-mascot" src="/crow-mascot.png" alt="" aria-hidden="true" />
-          <h1>Create your account</h1>
-          <p className="lp-auth-sub">Free forever — 10 monitors, no credit card.</p>
-
-          <form className="lp-auth-form" onSubmit={handleSubmit(onSubmit)}>
-            <div className="lp-auth-field">
-              <label htmlFor="name">Name</label>
-              <input id="name" placeholder="Your name" {...register("name")} />
-              {errors.name && <p className="lp-auth-err">{errors.name.message}</p>}
-            </div>
-            <div className="lp-auth-field">
-              <label htmlFor="email">Email</label>
-              <input id="email" type="email" placeholder="you@company.com" {...register("email")} />
-              {errors.email && <p className="lp-auth-err">{errors.email.message}</p>}
-            </div>
-            <div className="lp-auth-field">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Min 8 characters"
-                {...register("password")}
-              />
-              {errors.password && <p className="lp-auth-err">{errors.password.message}</p>}
-            </div>
-            <button type="submit" className="lp-auth-submit" disabled={loading}>
-              {loading ? "Creating account…" : "Create free account"}
-            </button>
-          </form>
-
-          <p className="lp-auth-alt">
-            Already have an account? <Link to="/login">Sign in</Link>
-          </p>
+    <AuthShell
+      eyebrow="Create your account"
+      title="Put a crow on your uptime."
+      subtitle="Free forever — 10 monitors, 1 status page, 5-minute checks. No credit card."
+    >
+      <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
+        <div className="space-y-1.5">
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" placeholder="Your name" autoComplete="name" {...register("name")} />
+          {errors.name && <p className="text-xs text-danger-foreground">{errors.name.message}</p>}
         </div>
-      </div>
-    </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" type="email" placeholder="you@company.com" autoComplete="email" {...register("email")} />
+          {errors.email && <p className="text-xs text-danger-foreground">{errors.email.message}</p>}
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="password">Password</Label>
+          <Input id="password" type="password" placeholder="Min 8 characters" autoComplete="new-password" {...register("password")} />
+          {errors.password && <p className="text-xs text-danger-foreground">{errors.password.message}</p>}
+        </div>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          {loading ? "Creating account…" : "Create free account"}
+        </Button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Already have an account?{" "}
+        <Link to="/login" className="font-semibold text-brand hover:underline">
+          Sign in
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

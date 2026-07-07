@@ -118,6 +118,7 @@ export function StatusPageDetail() {
   return (
     <div>
       <PageHeader
+        eyebrow="Status page"
         title={statusPage.name}
         description={`/status/${statusPage.slug}`}
         action={
@@ -141,11 +142,11 @@ export function StatusPageDetail() {
       {/* Inline stats */}
       <div className="mb-8 flex flex-wrap items-center gap-x-6 gap-y-2">
         <div className="flex items-baseline gap-1.5 text-sm">
-          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{linkedMonitors.length}</span>
+          <span className="font-mono tnum text-xl font-bold leading-none tracking-tight">{linkedMonitors.length}</span>
           <span className="text-xs text-muted-foreground">monitor{linkedMonitors.length !== 1 ? "s" : ""}</span>
         </div>
         <div className="flex items-baseline gap-1.5 text-sm">
-          <span className="text-xl font-bold tabular-nums leading-none tracking-tight">{subscriberCount}</span>
+          <span className="font-mono tnum text-xl font-bold leading-none tracking-tight">{subscriberCount}</span>
           <span className="text-xs text-muted-foreground">subscriber{subscriberCount !== 1 ? "s" : ""}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
@@ -153,7 +154,7 @@ export function StatusPageDetail() {
           <span className="font-mono text-xs text-muted-foreground">{statusPage.brandColor}</span>
         </div>
         <div className="flex items-center gap-1.5 text-sm">
-          <Badge variant={statusPage.isPublic ? "default" : "secondary"} className="text-xs">
+          <Badge variant={statusPage.isPublic ? "default" : "secondary"} className="font-mono text-[10px] uppercase tracking-[0.12em]">
             {statusPage.isPublic ? "Public" : "Private"}
           </Badge>
           {!statusPage.isPublic && (
@@ -195,7 +196,7 @@ export function StatusPageDetail() {
             <Activity className="mr-2 h-4 w-4" />
             Monitors
             {linkedMonitors.length > 0 && (
-              <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+              <span className="ml-1.5 rounded-full bg-brand/10 px-1.5 py-0.5 font-mono tnum text-[10px] font-semibold text-brand">
                 {linkedMonitors.length}
               </span>
             )}
@@ -204,7 +205,7 @@ export function StatusPageDetail() {
             <Mail className="mr-2 h-4 w-4" />
             Subscribers
             {subscriberCount > 0 && (
-              <span className="ml-1.5 rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+              <span className="ml-1.5 rounded-full bg-brand/10 px-1.5 py-0.5 font-mono tnum text-[10px] font-semibold text-brand">
                 {subscriberCount}
               </span>
             )}
@@ -235,14 +236,14 @@ export function StatusPageDetail() {
                         <div className={cn(
                           "flex h-4 w-4 shrink-0 items-center justify-center rounded border text-[10px] font-bold transition-colors",
                           linked
-                            ? "border-primary bg-primary text-primary-foreground"
+                            ? "border-brand bg-brand text-brand-foreground"
                             : "border-muted-foreground/30 group-hover:border-muted-foreground/60",
                         )}>
                           {linked && "✓"}
                         </div>
                         <div className="min-w-0">
                           <span className="text-sm font-medium">{monitor.name}</span>
-                          <span className="ml-2 text-xs text-muted-foreground truncate">{monitor.url}</span>
+                          <span className="ml-2 font-mono text-xs text-muted-foreground truncate">{monitor.url}</span>
                         </div>
                       </button>
                       <div className="flex items-center gap-2 flex-shrink-0">
@@ -275,7 +276,7 @@ export function StatusPageDetail() {
               <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
               <p className="text-sm text-muted-foreground">
                 No monitors available.{" "}
-                <Link to="/dashboard/monitors/new" className="text-primary hover:underline">
+                <Link to="/dashboard/monitors/new" className="text-brand hover:underline">
                   Create one
                 </Link>{" "}
                 first.
@@ -287,7 +288,7 @@ export function StatusPageDetail() {
         {/* Subscribers tab */}
         <TabsContent value="subscribers" className="mt-0">
           {subscribers && subscribers.length > 0 ? (
-            <div className="border-t border-border">
+            <div className="mt-4 overflow-hidden rounded-xl border border-border bg-card">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -300,15 +301,16 @@ export function StatusPageDetail() {
                 <TableBody>
                   {subscribers.map((sub) => (
                     <TableRow key={sub.id}>
-                      <TableCell className="font-medium">{sub.email}</TableCell>
+                      <TableCell className="font-mono text-sm">{sub.email}</TableCell>
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className={
+                          className={cn(
+                            "font-mono text-[10px] uppercase tracking-[0.12em]",
                             sub.isVerified
-                              ? "bg-success/15 text-success-foreground border-success/30"
-                              : "bg-warning/15 text-warning-foreground border-warning/30"
-                          }
+                              ? "bg-success/10 text-success-foreground border-success/30"
+                              : "bg-warning/10 text-warning-foreground border-warning/30",
+                          )}
                         >
                           {sub.isVerified ? "Verified" : "Pending"}
                         </Badge>

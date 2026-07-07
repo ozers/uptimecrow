@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
+import { Plus, CheckCircle2, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInfiniteIncidents } from "@/lib/queries/incidents";
 import { Button } from "@/components/ui/button";
@@ -52,13 +52,6 @@ const severityDotColor: Record<string, string> = {
   minor: "bg-muted-foreground",
 };
 
-const statusRowAccent: Record<string, string> = {
-  investigating: "border-l-2 border-l-red-500",
-  identified: "border-l-2 border-l-yellow-500",
-  monitoring: "border-l-2 border-l-yellow-500",
-  resolved: "",
-};
-
 export function IncidentsList() {
   const {
     data,
@@ -76,7 +69,7 @@ export function IncidentsList() {
   if (isError)
     return (
       <div>
-        <PageHeader title="Incidents" description="Track and manage service incidents" />
+        <PageHeader eyebrow="Incident log" title="Incidents" description="Track and manage service incidents" />
         <LoadError onRetry={() => refetch()} />
       </div>
     );
@@ -95,6 +88,7 @@ export function IncidentsList() {
   return (
     <div>
       <PageHeader
+        eyebrow="Incident log"
         title="Incidents"
         description="Track and manage service incidents"
         action={
@@ -124,12 +118,12 @@ export function IncidentsList() {
 
       {!filtered?.length ? (
         <EmptyState
-          icon={AlertTriangle}
+          eyebrow="Incident log"
           title="No incidents"
           description={filter === "all" ? "No incidents have been recorded" : `No ${filter} incidents`}
         />
       ) : (
-        <div className="border-t border-border">
+        <div className="overflow-hidden rounded-xl border border-border bg-card">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -146,9 +140,8 @@ export function IncidentsList() {
               {filtered.map((incident) => {
                 const isActive = incident.status !== "resolved";
                 const dotColor = severityDotColor[incident.severity] ?? "bg-muted-foreground";
-                const rowAccent = statusRowAccent[incident.status] ?? "";
                 return (
-                  <TableRow key={incident.id} className={cn(rowAccent)}>
+                  <TableRow key={incident.id}>
                     <TableCell>
                       <div className="flex items-center gap-2.5">
                         <span className="relative flex h-2 w-2 shrink-0">
@@ -159,7 +152,7 @@ export function IncidentsList() {
                         </span>
                         <Link
                           to={`/dashboard/incidents/${incident.id}`}
-                          className="font-medium hover:text-primary transition-colors"
+                          className="font-medium hover:text-brand transition-colors"
                         >
                           {incident.title}
                         </Link>
@@ -172,7 +165,7 @@ export function IncidentsList() {
                       <SeverityBadge severity={incident.severity} />
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-1.5 font-mono tnum">
                         <Clock className="h-3 w-3 shrink-0" />
                         <RelativeTime date={incident.startedAt} />
                       </div>
@@ -180,12 +173,12 @@ export function IncidentsList() {
                     {showResolved && (
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
                         {incident.resolvedAt ? (
-                          <div className="flex items-center gap-1.5 text-success-foreground/80">
+                          <div className="flex items-center gap-1.5 font-mono tnum text-success-foreground/80">
                             <CheckCircle2 className="h-3 w-3 shrink-0" />
                             <RelativeTime date={incident.resolvedAt} />
                           </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground/50">—</span>
+                          <span className="font-mono text-xs text-muted-foreground/50">—</span>
                         )}
                       </TableCell>
                     )}

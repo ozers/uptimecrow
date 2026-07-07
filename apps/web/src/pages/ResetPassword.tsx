@@ -3,8 +3,10 @@ import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { usePageMeta } from "@/lib/meta";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./landing-redesign.css";
+import { AuthShell } from "@/components/auth-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function ResetPassword() {
   usePageMeta({
@@ -41,60 +43,66 @@ export function ResetPassword() {
     }
   };
 
+  if (!token) {
+    return (
+      <AuthShell
+        eyebrow="Reset password"
+        title="This link expired."
+        subtitle="Reset links are single-use and time-limited. Request a fresh one."
+      >
+        <Link to="/forgot-password">
+          <Button size="lg" className="w-full">Request a new link</Button>
+        </Link>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          <Link to="/login" className="font-semibold text-brand hover:underline">
+            &larr; Back to login
+          </Link>
+        </p>
+      </AuthShell>
+    );
+  }
+
   return (
-    <div className="lp">
-      <MarketingNav />
-      <div className="lp-auth">
-        <div className="lp-auth-card">
-          <img className="lp-auth-mascot" src="/crow-mascot.png" alt="" aria-hidden="true" />
-          {!token ? (
-            <>
-              <h1>Invalid reset link</h1>
-              <p className="lp-auth-sub">This link is invalid or has expired.</p>
-              <p className="lp-auth-alt">
-                <Link to="/forgot-password">Request a new one</Link>
-              </p>
-            </>
-          ) : (
-            <>
-              <h1>Set new password</h1>
-              <p className="lp-auth-sub">Enter your new password below.</p>
-
-              <form className="lp-auth-form" onSubmit={handleSubmit}>
-                <div className="lp-auth-field">
-                  <label htmlFor="password">New password</label>
-                  <input
-                    id="password"
-                    type="password"
-                    placeholder="Min 8 characters"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="lp-auth-field">
-                  <label htmlFor="confirm">Confirm password</label>
-                  <input
-                    id="confirm"
-                    type="password"
-                    placeholder="Repeat password"
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    required
-                  />
-                </div>
-                <button type="submit" className="lp-auth-submit" disabled={loading}>
-                  {loading ? "Updating…" : "Update password"}
-                </button>
-              </form>
-
-              <p className="lp-auth-alt">
-                <Link to="/login">Back to login</Link>
-              </p>
-            </>
-          )}
+    <AuthShell
+      eyebrow="Set new password"
+      title="Choose a new key."
+      subtitle="Pick something at least 8 characters. You'll sign in with it next time."
+    >
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        <div className="space-y-1.5">
+          <Label htmlFor="password">New password</Label>
+          <Input
+            id="password"
+            type="password"
+            placeholder="Min 8 characters"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
-      </div>
-    </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="confirm">Confirm password</Label>
+          <Input
+            id="confirm"
+            type="password"
+            placeholder="Repeat password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+          />
+        </div>
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          {loading ? "Updating…" : "Update password"}
+        </Button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        <Link to="/login" className="font-semibold text-brand hover:underline">
+          &larr; Back to login
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

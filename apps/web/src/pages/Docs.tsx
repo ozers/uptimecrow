@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MarketingNav } from "@/components/marketing-nav";
+import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
 import { ExternalLink, Copy, Check } from "lucide-react";
-import "./Landing.css";
+import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 import { usePageMeta } from "@/lib/meta";
-
-const BRAND = "UptimeCrow";
 
 function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
@@ -16,37 +14,13 @@ function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
     setTimeout(() => setCopied(false), 1800);
   };
   return (
-    <div style={{ position: "relative", marginBottom: "1rem" }}>
-      <pre style={{
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: 10,
-        padding: "1rem 1.25rem",
-        overflowX: "auto",
-        fontSize: "0.82rem",
-        lineHeight: 1.7,
-        color: "var(--text2)",
-        margin: 0,
-      }}>
+    <div className="relative mb-4">
+      <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-foreground/80">
         <code className={`language-${lang}`}>{code}</code>
       </pre>
       <button
         onClick={copy}
-        style={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          background: "var(--surface2)",
-          border: "1px solid var(--border)",
-          borderRadius: 6,
-          color: "var(--text3)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: 4,
-          fontSize: "0.72rem",
-          padding: "3px 8px",
-        }}
+        className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-md border border-border bg-secondary px-2 py-1 font-mono text-[11px] text-muted-foreground transition-colors hover:text-foreground"
         aria-label="Copy code"
       >
         {copied ? <Check size={12} /> : <Copy size={12} />}
@@ -56,8 +30,78 @@ function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
   );
 }
 
+const ENDPOINT_GROUPS = [
+  {
+    tag: "Monitors",
+    endpoints: [
+      "GET /api/monitors",
+      "POST /api/monitors",
+      "GET /api/monitors/:id",
+      "PATCH /api/monitors/:id",
+      "DELETE /api/monitors/:id",
+      "GET /api/monitors/:id/checks",
+    ],
+  },
+  {
+    tag: "Incidents",
+    endpoints: [
+      "GET /api/incidents",
+      "POST /api/incidents",
+      "GET /api/incidents/:id",
+      "PATCH /api/incidents/:id",
+      "POST /api/incidents/:id/updates",
+    ],
+  },
+  {
+    tag: "Status Pages",
+    endpoints: [
+      "GET /api/status-pages",
+      "GET /api/status-pages/:id",
+      "PUT /api/status-pages/:id/monitors",
+    ],
+  },
+  {
+    tag: "Maintenance",
+    endpoints: [
+      "GET /api/maintenance-windows",
+      "POST /api/maintenance-windows",
+      "PATCH /api/maintenance-windows/:id",
+      "DELETE /api/maintenance-windows/:id",
+    ],
+  },
+  {
+    tag: "Public",
+    endpoints: [
+      "GET /status/:slug",
+      "GET /status/:slug/incidents",
+      "POST /status/:slug/subscribe",
+      "GET /badge/:slug.svg",
+    ],
+  },
+];
+
+function DocSection({
+  eyebrow,
+  title,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mb-14">
+      <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">{eyebrow}</p>
+      <h2 className="mt-2 font-display text-[24px] font-bold tracking-[-0.02em]">{title}</h2>
+      <div className="mt-5">{children}</div>
+    </div>
+  );
+}
+
 export function Docs() {
-  useEffect(() => { analytics.docsViewed(); }, []);
+  useEffect(() => {
+    analytics.docsViewed();
+  }, []);
 
   usePageMeta({
     title: "API Documentation — UptimeCrow Developer Docs",
@@ -67,57 +111,62 @@ export function Docs() {
   });
 
   return (
-    <div className="landing">
+    <div className="min-h-screen bg-background">
       <MarketingNav />
 
-      <section className="hero" style={{ paddingBottom: "2rem" }}>
-        <div className="container">
-          <div className="hero-badge">● Developer API</div>
-          <h1>REST API for uptime monitoring</h1>
-          <p className="hero-sub">
-            Automate monitor creation, trigger incidents, manage status pages — all from your CI/CD pipeline or scripts.
-          </p>
-          <div className="hero-actions">
-            <a href="/api/docs" target="_blank" rel="noopener noreferrer" className="hero-btn primary">
-              Open API Reference <ExternalLink size={14} style={{ marginLeft: 4, verticalAlign: "middle" }} />
+      {/* HERO */}
+      <section className="mx-auto max-w-4xl px-6 pb-8 pt-20 text-center sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">Developer API</p>
+        <h1 className="mt-4 font-display text-[38px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[46px]">
+          REST API for uptime monitoring
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
+          Automate monitor creation, trigger incidents, manage status pages — all from your CI/CD
+          pipeline or scripts.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg">
+            <a href="/api/docs" target="_blank" rel="noopener noreferrer">
+              Open API Reference <ExternalLink size={14} />
             </a>
-            <Link to="/register" className="hero-btn secondary">Create Free Account</Link>
-          </div>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/register">Create free account</Link>
+          </Button>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: "1rem" }}>
-        <div className="container" style={{ maxWidth: 860 }}>
-
-          {/* Authentication */}
-          <div style={{ marginBottom: "3rem" }}>
-            <p className="section-label">Authentication</p>
-            <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>Session tokens</h2>
-            <p style={{ color: "var(--text2)", lineHeight: 1.7, marginBottom: "1rem" }}>
-              Log in with <code>POST /api/auth/login</code> to receive a JWT. Pass it as a Bearer
-              token in every request (the dashboard uses the same token as an HTTP-only cookie):
-            </p>
-            <CodeBlock code={`# Get a token
+      {/* BODY */}
+      <section className="mx-auto max-w-3xl px-6 py-14 sm:px-8">
+        <DocSection eyebrow="Authentication" title="Session tokens">
+          <p className="mb-4 text-[15px] leading-relaxed text-muted-foreground">
+            Log in with{" "}
+            <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12.5px] text-foreground">
+              POST /api/auth/login
+            </code>{" "}
+            to receive a JWT. Pass it as a Bearer token in every request (the dashboard uses the same
+            token as an HTTP-only cookie):
+          </p>
+          <CodeBlock
+            code={`# Get a token
 curl -X POST https://uptimecrow.com/api/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{"email": "you@company.com", "password": "..."}'
 
 # Use it
 curl https://uptimecrow.com/api/monitors \\
-  -H "Authorization: Bearer <token>"`} />
-            <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "1rem 1.25rem", fontSize: "0.88rem", color: "var(--text2)" }}>
-              <strong style={{ color: "var(--text)" }}>Note:</strong> tokens are valid for 7 days and are
-              scoped to your organization — one token can manage all your monitors and status pages.
-            </div>
+  -H "Authorization: Bearer <token>"`}
+          />
+          <div className="rounded-xl border border-border bg-card px-5 py-4 text-[14px] leading-relaxed text-muted-foreground">
+            <strong className="text-foreground">Note:</strong> tokens are valid for 7 days and are
+            scoped to your organization — one token can manage all your monitors and status pages.
           </div>
+        </DocSection>
 
-          {/* Quick Start */}
-          <div style={{ marginBottom: "3rem" }}>
-            <p className="section-label">Quick Start</p>
-            <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "1.5rem" }}>5 minutes to full monitoring</h2>
-
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "var(--text)" }}>1. Create a monitor</h3>
-            <CodeBlock code={`curl -X POST https://uptimecrow.com/api/monitors \\
+        <DocSection eyebrow="Quick Start" title="5 minutes to full monitoring">
+          <h3 className="mb-2 font-display text-[15px] font-bold">1. Create a monitor</h3>
+          <CodeBlock
+            code={`curl -X POST https://uptimecrow.com/api/monitors \\
   -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -125,10 +174,14 @@ curl https://uptimecrow.com/api/monitors \\
     "url": "https://api.yourapp.com/health",
     "type": "http",
     "intervalSeconds": 60
-  }'`} />
+  }'`}
+          />
 
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>2. Create an incident manually</h3>
-            <CodeBlock code={`curl -X POST https://uptimecrow.com/api/incidents \\
+          <h3 className="mb-2 mt-6 font-display text-[15px] font-bold">
+            2. Create an incident manually
+          </h3>
+          <CodeBlock
+            code={`curl -X POST https://uptimecrow.com/api/incidents \\
   -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -137,75 +190,50 @@ curl https://uptimecrow.com/api/monitors \\
     "severity": "major",
     "status": "investigating",
     "body": "We are investigating elevated error rates on our API. Updates to follow."
-  }'`} />
+  }'`}
+          />
 
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>3. Resolve it</h3>
-            <CodeBlock code={`curl -X POST https://uptimecrow.com/api/incidents/{id}/updates \\
+          <h3 className="mb-2 mt-6 font-display text-[15px] font-bold">3. Resolve it</h3>
+          <CodeBlock
+            code={`curl -X POST https://uptimecrow.com/api/incidents/{id}/updates \\
   -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
-  -d '{"status": "resolved", "body": "The issue has been resolved. All systems operational."}'`} />
-          </div>
+  -d '{"status": "resolved", "body": "The issue has been resolved. All systems operational."}'`}
+          />
+        </DocSection>
 
-          {/* Endpoints overview */}
-          <div style={{ marginBottom: "3rem" }}>
-            <p className="section-label">Endpoints</p>
-            <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "1.25rem" }}>Full API surface</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1rem" }}>
-              {[
-                { tag: "Monitors", color: "#00e676", endpoints: ["GET /api/monitors", "POST /api/monitors", "GET /api/monitors/:id", "PATCH /api/monitors/:id", "DELETE /api/monitors/:id", "GET /api/monitors/:id/checks"] },
-                { tag: "Incidents", color: "#ff7043", endpoints: ["GET /api/incidents", "POST /api/incidents", "GET /api/incidents/:id", "PATCH /api/incidents/:id", "POST /api/incidents/:id/updates"] },
-                { tag: "Status Pages", color: "#40c4ff", endpoints: ["GET /api/status-pages", "GET /api/status-pages/:id", "PUT /api/status-pages/:id/monitors"] },
-                { tag: "Maintenance", color: "#ffd740", endpoints: ["GET /api/maintenance-windows", "POST /api/maintenance-windows", "PATCH /api/maintenance-windows/:id", "DELETE /api/maintenance-windows/:id"] },
-                { tag: "Public", color: "#e040fb", endpoints: ["GET /status/:slug", "GET /status/:slug/incidents", "POST /status/:slug/subscribe", "GET /badge/:slug.svg"] },
-              ].map((group) => (
-                <div key={group.tag} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1.1rem 1.25rem" }}>
-                  <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: group.color, marginBottom: "0.6rem" }}>
-                    {group.tag}
-                  </div>
-                  <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                    {group.endpoints.map((ep) => (
-                      <li key={ep} style={{ fontSize: "0.78rem", fontFamily: "monospace", color: "var(--text2)", lineHeight: 1.9 }}>{ep}</li>
-                    ))}
-                  </ul>
+        <DocSection eyebrow="Endpoints" title="Full API surface">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {ENDPOINT_GROUPS.map((group) => (
+              <div key={group.tag} className="rounded-xl border border-border bg-card p-5">
+                <div className="font-mono text-[11px] uppercase tracking-[0.14em] text-brand">
+                  {group.tag}
                 </div>
-              ))}
-            </div>
+                <ul className="mt-3 space-y-1.5">
+                  {group.endpoints.map((ep) => (
+                    <li key={ep} className="font-mono text-[12px] text-muted-foreground">
+                      {ep}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
+        </DocSection>
 
-          {/* CTA */}
-          <div style={{ textAlign: "center", padding: "2rem 0" }}>
-            <a
-              href="/api/docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hero-btn primary"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8 }}
-            >
-              Open interactive API reference
-              <ExternalLink size={14} />
+        <div className="py-6 text-center">
+          <Button asChild size="lg">
+            <a href="/api/docs" target="_blank" rel="noopener noreferrer">
+              Open interactive API reference <ExternalLink size={14} />
             </a>
-            <p style={{ marginTop: "1rem", fontSize: "0.85rem", color: "var(--text3)" }}>
-              Powered by Swagger UI — try every endpoint in the browser.
-            </p>
-          </div>
-
+          </Button>
+          <p className="mt-4 font-mono text-[12px] text-muted-foreground">
+            Powered by Swagger UI — try every endpoint in the browser.
+          </p>
         </div>
       </section>
 
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/docs">API Docs</Link>
-              <Link to="/privacy">Privacy</Link>
-              <Link to="/login">Log in</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

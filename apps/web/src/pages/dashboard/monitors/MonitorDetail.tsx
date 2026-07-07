@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Pencil, Trash2, ExternalLink, ChevronDown } from "lucide-react";
 import { useMonitor, useMonitorChecks, useDeleteMonitor } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { MonitorStatusBadge } from "@/components/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -117,6 +117,7 @@ export function MonitorDetail() {
     <TooltipProvider>
       <div>
         <PageHeader
+          eyebrow={`${monitor.type} monitor`}
           title={monitor.name}
           description={monitor.url}
           action={
@@ -158,18 +159,18 @@ export function MonitorDetail() {
               )}
               <span className={cn("relative inline-flex h-2 w-2 rounded-full", statusDotColor)} />
             </span>
-            <span className={cn("text-xl font-bold capitalize leading-none tracking-tight", statusColor)}>
+            <span className={cn("font-mono text-xl font-bold uppercase leading-none tracking-tight", statusColor)}>
               {monitor.status}
             </span>
           </button>
           <div className="flex items-baseline gap-1.5 text-sm">
-            <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
+            <span className="font-mono tnum text-xl font-bold leading-none tracking-tight">
               {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
             </span>
             <span className="text-xs text-muted-foreground">response</span>
           </div>
           <div className="flex items-baseline gap-1.5 text-sm">
-            <span className="text-xl font-bold tabular-nums leading-none tracking-tight text-primary">
+            <span className="font-mono tnum text-xl font-bold leading-none tracking-tight text-brand">
               {uptimePercent}
             </span>
             <span className="text-xs text-muted-foreground">
@@ -177,7 +178,7 @@ export function MonitorDetail() {
             </span>
           </div>
           <div className="flex items-baseline gap-1.5 text-sm">
-            <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
+            <span className="font-mono tnum text-xl font-bold leading-none tracking-tight">
               {monitor.intervalSeconds}s
             </span>
             <span className="text-xs text-muted-foreground">interval</span>
@@ -188,7 +189,7 @@ export function MonitorDetail() {
             const warning = days < 14;
             return (
               <div className="flex items-baseline gap-1.5 text-sm">
-                <span className={cn("text-xl font-bold tabular-nums leading-none tracking-tight", expired ? "text-destructive" : warning ? "text-warning-foreground" : "")}>
+                <span className={cn("font-mono tnum text-xl font-bold leading-none tracking-tight", expired ? "text-danger-foreground" : warning ? "text-warning-foreground" : "")}>
                   {expired ? "Expired" : `${days}d`}
                 </span>
                 <span className="text-xs text-muted-foreground">SSL expiry</span>
@@ -200,7 +201,7 @@ export function MonitorDetail() {
         {/* Response time chart */}
         {checks && checks.length > 0 && (
           <div className="mb-8">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
               Response Time
             </p>
             <ResponseChart checks={checks} />
@@ -213,21 +214,21 @@ export function MonitorDetail() {
         {checks && checks.length > 0 && (
           <div className="mb-8">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                 Recent Failures
               </p>
               {failedChecks.length > 0 && (
-                <span className="text-xs text-muted-foreground tabular-nums">
+                <span className="text-xs text-muted-foreground font-mono tnum">
                   {failedChecks.length} in last {checks.length} checks
                 </span>
               )}
             </div>
             {recentFailures.length === 0 ? (
-              <div className="rounded-md border border-success/20 bg-success/5 px-4 py-3 text-sm text-success-foreground">
+              <div className="rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-sm text-success-foreground">
                 No failures in the last {checks.length} checks.
               </div>
             ) : (
-              <div className="border-t border-border">
+              <div className="overflow-hidden rounded-xl border border-border bg-card">
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -241,14 +242,9 @@ export function MonitorDetail() {
                     {recentFailures.map((check) => (
                       <TableRow key={check.id}>
                         <TableCell>
-                          <Badge
-                            variant="outline"
-                            className="bg-danger/15 text-danger-foreground border-danger/30"
-                          >
-                            {check.status}
-                          </Badge>
+                          <MonitorStatusBadge status={check.status} />
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm tabular-nums">
+                        <TableCell className="text-muted-foreground text-sm font-mono tnum">
                           {check.statusCode ?? "—"}
                         </TableCell>
                         <TableCell className="max-w-[280px]">
@@ -282,11 +278,11 @@ export function MonitorDetail() {
         {/* Check history */}
         <div>
           <div className="mb-0 flex items-center justify-between pb-3">
-            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
               Check History
             </p>
             {totalChecks > 0 && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground font-mono tnum">
                 {visibleChecks.length} of {totalChecks}
               </span>
             )}
@@ -294,7 +290,7 @@ export function MonitorDetail() {
 
           {checks && checks.length > 0 ? (
             <>
-              <div className="border-t border-border">
+              <div className="overflow-hidden rounded-xl border border-border bg-card">
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -309,21 +305,12 @@ export function MonitorDetail() {
                     {visibleChecks.map((check) => (
                       <TableRow key={check.id}>
                         <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={
-                              check.status === "up"
-                                ? "bg-success/15 text-success-foreground border-success/30"
-                                : "bg-danger/15 text-danger-foreground border-danger/30"
-                            }
-                          >
-                            {check.status}
-                          </Badge>
+                          <MonitorStatusBadge status={check.status} />
                         </TableCell>
-                        <TableCell className="tabular-nums text-muted-foreground text-sm">
+                        <TableCell className="font-mono tnum text-muted-foreground text-sm">
                           {check.responseMs != null ? `${check.responseMs}ms` : "—"}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-muted-foreground text-sm font-mono tnum">
                           {check.statusCode ?? "—"}
                         </TableCell>
                         <TableCell className="max-w-[200px]">
@@ -364,7 +351,7 @@ export function MonitorDetail() {
               )}
             </>
           ) : (
-            <div className="border-t border-border py-12 text-center">
+            <div className="rounded-xl border border-border bg-card py-12 text-center">
               <p className="text-sm text-muted-foreground">No checks recorded yet.</p>
             </div>
           )}

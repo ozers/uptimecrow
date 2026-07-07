@@ -48,7 +48,7 @@ function UpgradeOptions() {
   return (
     <div className="border-t border-border/50 pt-4 space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-muted-foreground">Upgrade your plan</p>
+        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Upgrade your plan</p>
         <div className="flex items-center gap-2">
           <span className={`text-xs ${annual ? "text-muted-foreground" : "text-foreground font-medium"}`}>Monthly</span>
           <button
@@ -58,7 +58,7 @@ function UpgradeOptions() {
             role="switch"
             aria-checked={annual}
             className="relative h-5 w-9 rounded-full border-none cursor-pointer transition-colors"
-            style={{ background: annual ? "hsl(var(--primary))" : "hsl(var(--border))" }}
+            style={{ background: annual ? "hsl(var(--brand))" : "hsl(var(--border))" }}
           >
             <span
               className="absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all"
@@ -67,7 +67,7 @@ function UpgradeOptions() {
           </button>
           <span className={`text-xs ${annual ? "text-foreground font-medium" : "text-muted-foreground"}`}>
             Annual
-            {annual && <span className="ml-1 text-primary font-semibold">2 mo free</span>}
+            {annual && <span className="ml-1 text-brand font-semibold">2 mo free</span>}
           </span>
         </div>
       </div>
@@ -76,14 +76,14 @@ function UpgradeOptions() {
         {UPGRADE_PLANS.map((p) => (
           <div
             key={p.plan}
-            className={`rounded-lg border p-3 space-y-2 ${p.featured ? "border-primary/50 bg-primary/5" : "border-border"}`}
+            className={`rounded-lg border p-3 space-y-2 ${p.featured ? "border-brand/50 bg-brand/5" : "border-border"}`}
           >
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold">{p.name}</span>
-              {p.featured && <span className="text-[10px] font-bold text-primary uppercase tracking-wide">Popular</span>}
+              {p.featured && <span className="font-mono text-[10px] font-bold text-brand uppercase tracking-[0.1em]">Popular</span>}
             </div>
             <div className="flex items-baseline gap-0.5">
-              <span className="text-xl font-bold">${annual ? p.annualMonthlyPrice : p.monthlyPrice}</span>
+              <span className="font-display text-xl font-bold tnum">${annual ? p.annualMonthlyPrice : p.monthlyPrice}</span>
               <span className="text-xs text-muted-foreground">/mo</span>
             </div>
             {annual && (
@@ -92,7 +92,7 @@ function UpgradeOptions() {
             <ul className="space-y-0.5">
               {p.features.map((f) => (
                 <li key={f} className="text-[11px] text-muted-foreground flex items-center gap-1">
-                  <span className="text-primary">✓</span> {f}
+                  <span className="text-brand">✓</span> {f}
                 </li>
               ))}
             </ul>
@@ -123,7 +123,7 @@ function UpgradeOptions() {
         </div>
         <a
           href="mailto:support@uptimecrow.com?subject=Custom plan inquiry"
-          className="shrink-0 text-xs font-semibold text-foreground hover:text-primary transition-colors whitespace-nowrap"
+          className="shrink-0 text-xs font-semibold text-foreground hover:text-brand transition-colors whitespace-nowrap"
         >
           Contact us →
         </a>
@@ -143,8 +143,10 @@ function formatInterval(seconds: number): string {
 function SectionLabel({ icon: Icon, title }: { icon: React.ElementType; title: string }) {
   return (
     <div className="flex items-center gap-2 pb-3">
-      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">{title}</p>
+      <Icon className="h-3.5 w-3.5 text-brand" />
+      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        {title}
+      </p>
     </div>
   );
 }
@@ -229,34 +231,38 @@ export function Settings() {
 
   return (
     <div>
-      <PageHeader title="Settings" description="Account, plan, and integrations" />
+      <PageHeader
+        eyebrow="Control room"
+        title="Settings"
+        description="Account, plan, and integrations"
+      />
 
-      <div className="max-w-2xl space-y-10">
+      <div className="max-w-2xl space-y-8">
 
         {/* Account */}
         <div>
           <SectionLabel icon={User} title="Account" />
-          <div className="divide-y divide-border border-t border-b border-border">
+          <div className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card px-5">
             <div className="flex items-center justify-between py-3.5">
-              <span className="text-xs text-muted-foreground w-28">Name</span>
+              <span className="w-28 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Name</span>
               <span className="text-sm font-medium">{user.name}</span>
             </div>
             <div className="flex items-center justify-between py-3.5">
-              <span className="text-xs text-muted-foreground w-28">Email</span>
+              <span className="w-28 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Email</span>
               <span className="text-sm font-medium">{user.email}</span>
             </div>
             <div className="flex items-center justify-between py-3.5">
-              <span className="text-xs text-muted-foreground w-28">Organization</span>
+              <span className="w-28 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Organization</span>
               <span className="text-sm font-medium">{org?.name ?? "—"}</span>
             </div>
             <div className="flex items-center justify-between py-3.5">
-              <span className="text-xs text-muted-foreground w-28">Setup guide</span>
+              <span className="w-28 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">Setup guide</span>
               <button
                 onClick={() => {
                   restartOnboarding();
                   toast.success("Setup guide reopened");
                 }}
-                className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+                className="flex items-center gap-1.5 text-sm font-medium text-brand transition-colors hover:opacity-80"
               >
                 <Sparkles className="h-3.5 w-3.5" />
                 Show setup guide
@@ -268,12 +274,12 @@ export function Settings() {
         {/* Plan */}
         <div>
           <SectionLabel icon={CreditCard} title="Plan" />
-          <div className="border-t border-b border-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card px-5">
             {/* Plan header */}
-            <div className="flex items-center justify-between py-3.5">
+            <div className="flex items-center justify-between py-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold capitalize">{plan}</span>
-                <Badge variant={plan === "free" ? "secondary" : "default"} className="text-xs capitalize">
+                <span className="font-display text-lg font-bold capitalize tracking-[-0.02em]">{plan}</span>
+                <Badge variant={plan === "free" ? "secondary" : "default"} className="capitalize">
                   {plan}
                 </Badge>
               </div>
@@ -304,8 +310,8 @@ export function Settings() {
                 { label: "Data Retention", value: limits.retentionDays >= 365 ? "1 year" : `${limits.retentionDays} days` },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between py-3">
-                  <span className="text-xs text-muted-foreground">{label}</span>
-                  <span className="text-sm font-medium tabular-nums">{value}</span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">{label}</span>
+                  <span className="font-mono text-sm font-medium tnum">{value}</span>
                 </div>
               ))}
             </div>
@@ -319,7 +325,7 @@ export function Settings() {
         {/* Integrations */}
         <div>
           <SectionLabel icon={Webhook} title="Integrations" />
-          <div className="border-t border-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card px-5">
             {/* Slack */}
             <div className="py-4 border-b border-border">
               <div className="mb-3">
@@ -330,7 +336,7 @@ export function Settings() {
                     href="https://api.slack.com/messaging/webhooks"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary hover:underline"
+                    className="text-brand hover:underline"
                   >
                     Create an Incoming Webhook
                   </a>{" "}

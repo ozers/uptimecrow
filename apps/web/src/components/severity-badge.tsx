@@ -1,17 +1,25 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { IncidentSeverity } from "@uptimecrow/shared";
+import type { VariantProps } from "class-variance-authority";
+import type { badgeVariants } from "@/components/ui/badge";
 
-const severityConfig: Record<IncidentSeverity, { label: string; className: string }> = {
-  minor: { label: "Minor", className: "bg-warning/10 text-warning-foreground border-warning/25" },
-  major: { label: "Major", className: "bg-warning/15 text-warning-foreground border-warning/40" },
-  critical: { label: "Critical", className: "bg-danger/15 text-danger-foreground border-danger/30" },
+type BadgeVariant = VariantProps<typeof badgeVariants>["variant"];
+
+const severityConfig: Record<
+  IncidentSeverity,
+  { label: string; variant: BadgeVariant; dot: string }
+> = {
+  minor: { label: "Minor", variant: "warning", dot: "bg-warning" },
+  major: { label: "Major", variant: "warning", dot: "bg-warning" },
+  critical: { label: "Critical", variant: "destructive", dot: "bg-danger" },
 };
 
 export function SeverityBadge({ severity }: { severity: IncidentSeverity }) {
   const config = severityConfig[severity];
   return (
-    <Badge variant="outline" className={cn("font-medium", config.className)}>
+    <Badge variant={config.variant} className="gap-1.5">
+      <span className={cn("inline-block h-1.5 w-1.5 rounded-full", config.dot)} />
       {config.label}
     </Badge>
   );

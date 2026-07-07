@@ -1,74 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════════════════════════════════════
+   "The Watch Log" — UptimeCrow's product identity. Warm paper + ink type +
+   mono instrumentation, shared with the public status page so the whole app
+   is recognisably one product. Ink is the primary action; green is meaning
+   (up / success / focus); everything else stays calm.
+   ══════════════════════════════════════════════════════════════════════════ */
+
 @layer base {
   :root,
   .dark {
-    --background: 240 6% 2%;
-    --foreground: 240 6% 92%;
-    --card: 240 6% 7%;
-    --card-foreground: 240 6% 92%;
-    --popover: 240 6% 7%;
-    --popover-foreground: 240 6% 92%;
-    --primary: 151 100% 45%;
-    --primary-foreground: 240 6% 2%;
-    --secondary: 240 5% 14%;
-    --secondary-foreground: 240 6% 92%;
-    --muted: 240 5% 14%;
-    --muted-foreground: 240 5% 55%;
-    --accent: 240 5% 17%;
-    --accent-foreground: 240 6% 92%;
-    --destructive: 0 84% 60%;
+    /* ── Dark: deep aubergine-ink paper ── */
+    --background: 266 22% 8%;      /* #141018 */
+    --foreground: 41 33% 91%;      /* #f0ebe2 ink-on-dark */
+    --card: 270 18% 11%;           /* #1c1721 */
+    --card-foreground: 41 33% 91%;
+    --popover: 270 18% 12%;
+    --popover-foreground: 41 33% 91%;
+    /* Primary = paper (inverse button), the "ink band" from the status page */
+    --primary: 41 33% 91%;
+    --primary-foreground: 266 22% 10%;
+    --secondary: 270 17% 14%;      /* #211b27 */
+    --secondary-foreground: 41 33% 91%;
+    --muted: 270 16% 15%;
+    --muted-foreground: 267 8% 55%; /* text2/3 */
+    --accent: 270 16% 17%;
+    --accent-foreground: 41 33% 91%;
+    --destructive: 4 85% 61%;      /* #f05548 */
     --destructive-foreground: 0 0% 100%;
-    --border: 240 5% 18%;
-    --input: 240 5% 18%;
-    --ring: 151 100% 45%;
-    --radius: 0.5rem;
+    --border: 267 16% 18%;         /* #2e2735 */
+    --input: 267 16% 22%;
+    --ring: 142 62% 50%;           /* brand green focus */
+    --radius: 0.75rem;
 
-    /* Semantic status colors — tuned per theme so the same `text-success`
-       class reads well on dark and light backgrounds. */
-    --success: 151 90% 50%;
-    --success-fg: 151 90% 60%;
-    --warning: 38 95% 60%;
-    --warning-fg: 38 95% 60%;
-    --danger: 0 84% 65%;
-    --danger-fg: 0 84% 70%;
-    --neutral-fg: 240 5% 55%;
+    /* Brand accent — the crow's green, used for links/active/focus */
+    --brand: 142 62% 50%;          /* #2fce6f */
+    --brand-foreground: 266 22% 10%;
+
+    /* Semantic status — tuned per theme */
+    --success: 142 62% 50%;
+    --success-fg: 142 62% 55%;
+    --warning: 38 91% 55%;         /* #f5a623 */
+    --warning-fg: 38 91% 58%;
+    --danger: 4 85% 61%;
+    --danger-fg: 4 85% 66%;
+    --info: 213 94% 68%;           /* #60a5fa */
+    --info-fg: 213 94% 72%;
+    --neutral-fg: 267 8% 55%;
+
+    /* Paper grain visibility (screen blend on dark) */
+    --grain-opacity: 0.10;
+    --grain-blend: screen;
   }
 
   .light {
-    /* Slightly off-white background so cards (pure white) stand out via
-       elevation, not just borders. Previously both were `0 0% 100%`. */
-    --background: 220 14% 96%;
-    --foreground: 240 10% 8%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --primary: 151 82% 30%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 14% 93%;
-    --secondary-foreground: 240 10% 8%;
-    --muted: 220 14% 93%;
-    --muted-foreground: 240 5% 38%;
-    --accent: 220 14% 90%;
-    --accent-foreground: 240 10% 8%;
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 151 82% 30%;
+    /* ── Light: warm bone paper ── */
+    --background: 41 45% 92%;      /* #f4eee1 */
+    --foreground: 266 15% 12%;     /* #1d1922 ink */
+    --card: 44 60% 97%;            /* #fcf9f1 */
+    --card-foreground: 266 15% 12%;
+    --popover: 44 60% 97%;
+    --popover-foreground: 266 15% 12%;
+    /* Primary = ink (dark button on paper) */
+    --primary: 266 15% 12%;
+    --primary-foreground: 44 60% 97%;
+    --secondary: 44 46% 93%;       /* #f7f1e2 */
+    --secondary-foreground: 266 15% 12%;
+    --muted: 44 40% 90%;
+    --muted-foreground: 266 6% 43%; /* #6d6675 */
+    --accent: 41 42% 88%;          /* hover wash */
+    --accent-foreground: 266 15% 12%;
+    --destructive: 3 64% 47%;      /* #c2342c */
+    --destructive-foreground: 44 60% 97%;
+    --border: 42 40% 84%;          /* #e5dcc6 */
+    --input: 40 32% 78%;           /* #d2c6ab */
+    --ring: 146 68% 30%;
 
-    --success: 151 82% 30%;
-    --success-fg: 151 82% 28%;
-    --warning: 32 95% 38%;
-    --warning-fg: 32 95% 35%;
-    --danger: 0 72% 45%;
-    --danger-fg: 0 72% 42%;
-    --neutral-fg: 240 5% 38%;
+    --brand: 146 68% 30%;          /* #187f43 mature green */
+    --brand-foreground: 44 60% 97%;
+
+    --success: 146 68% 30%;
+    --success-fg: 146 68% 28%;
+    --warning: 28 90% 37%;         /* #b45309 */
+    --warning-fg: 28 90% 34%;
+    --danger: 3 64% 47%;
+    --danger-fg: 3 64% 44%;
+    --info: 221 83% 45%;
+    --info-fg: 221 83% 42%;
+    --neutral-fg: 266 6% 43%;
+
+    --grain-opacity: 0.26;
+    --grain-blend: multiply;
   }
 }
 
@@ -78,39 +104,40 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Sora', system-ui, sans-serif;
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    font-optical-sizing: auto;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
-  /* Subtle radial glow — only in dark mode */
-  :root body,
-  .dark body {
-    background-image: radial-gradient(ellipse 80% 50% at 10% -10%, hsl(151 100% 45% / 0.04) 0%, transparent 60%);
+
+  /* Paper grain — one fixed overlay, blends per theme. The signature texture
+     that ties the app to the status page. */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
-  .light body {
-    background-image: none;
+
+  /* Headings lean into the display face */
+  h1, h2, h3, .font-display {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
+
+  ::selection { background: hsl(var(--foreground)); color: hsl(var(--background)); }
 
   /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground));
-  }
-
-  /* Firefox */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--border)) transparent;
-  }
+  ::-webkit-scrollbar { width: 7px; height: 7px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+  * { scrollbar-width: thin; scrollbar-color: hsl(var(--border)) transparent; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -119,4 +146,11 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+@layer utilities {
+  .font-mono { font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; }
+  .text-brand { color: hsl(var(--brand)); }
+  .bg-brand { background-color: hsl(var(--brand)); }
+  .tnum { font-variant-numeric: tabular-nums; }
 }

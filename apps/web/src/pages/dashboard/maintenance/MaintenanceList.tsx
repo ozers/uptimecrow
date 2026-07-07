@@ -138,6 +138,7 @@ export function MaintenanceList() {
     return (
       <div>
         <PageHeader
+          eyebrow="Planned downtime"
           title="Maintenance"
           description="Schedule planned maintenance windows and stop incidents from paging subscribers during expected downtime"
         />
@@ -222,6 +223,7 @@ export function MaintenanceList() {
   return (
     <div>
       <PageHeader
+        eyebrow="Planned downtime"
         title="Maintenance"
         description="Schedule planned maintenance windows and stop incidents from paging subscribers during expected downtime"
         action={
@@ -246,7 +248,7 @@ export function MaintenanceList() {
               windows={grouped.active}
               onDelete={handleDelete}
               onEdit={openEdit}
-              accent="text-blue-400"
+              accent="text-info-foreground"
             />
           )}
           {grouped.upcoming.length > 0 && (
@@ -255,7 +257,7 @@ export function MaintenanceList() {
               windows={grouped.upcoming}
               onDelete={handleDelete}
               onEdit={openEdit}
-              accent="text-violet-400"
+              accent="text-brand"
             />
           )}
           {grouped.past.length > 0 && (
@@ -276,8 +278,8 @@ export function MaintenanceList() {
             <DialogTitle>{editingId ? "Edit maintenance window" : "Schedule maintenance window"}</DialogTitle>
           </DialogHeader>
           {form && (
-            <div className="space-y-4 py-2">
-              <div>
+            <div className="space-y-6 py-2">
+              <div className="space-y-1.5">
                 <Label htmlFor="mw-title">Title</Label>
                 <Input
                   id="mw-title"
@@ -286,7 +288,7 @@ export function MaintenanceList() {
                   placeholder="Database migration"
                 />
               </div>
-              <div>
+              <div className="space-y-1.5">
                 <Label htmlFor="mw-body">Description (optional)</Label>
                 <Textarea
                   id="mw-body"
@@ -297,27 +299,29 @@ export function MaintenanceList() {
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div>
+                <div className="space-y-1.5">
                   <Label htmlFor="mw-start">Starts</Label>
                   <Input
                     id="mw-start"
                     type="datetime-local"
+                    className="font-mono"
                     value={form.scheduledStart}
                     onChange={(e) => setForm({ ...form, scheduledStart: e.target.value })}
                   />
                 </div>
-                <div>
+                <div className="space-y-1.5">
                   <Label htmlFor="mw-end">Ends</Label>
                   <Input
                     id="mw-end"
                     type="datetime-local"
+                    className="font-mono"
                     value={form.scheduledEnd}
                     onChange={(e) => setForm({ ...form, scheduledEnd: e.target.value })}
                   />
                 </div>
               </div>
               {(statusPages?.length ?? 0) > 1 && (
-                <div>
+                <div className="space-y-1.5">
                   <Label>Status page</Label>
                   <Select
                     value={form.statusPageId}
@@ -334,9 +338,9 @@ export function MaintenanceList() {
                   </Select>
                 </div>
               )}
-              <div>
+              <div className="space-y-1.5">
                 <Label>Affected monitors (optional)</Label>
-                <p className="mb-2 text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   Checks still run so history stays accurate; we just won't create incidents or page subscribers.
                 </p>
                 <div className="max-h-40 space-y-1 overflow-y-auto rounded-md border border-border p-2">
@@ -349,7 +353,7 @@ export function MaintenanceList() {
                           type="checkbox"
                           checked={form.monitorIds.includes(m.id)}
                           onChange={() => toggleMonitor(m.id)}
-                          className="h-4 w-4"
+                          className="h-4 w-4 accent-brand"
                         />
                         <span className="text-sm">{m.name}</span>
                       </label>
@@ -384,8 +388,8 @@ interface GroupProps {
 function WindowGroup({ label, windows, onDelete, onEdit, accent }: GroupProps) {
   return (
     <div>
-      <div className={`mb-2 text-xs font-semibold uppercase tracking-widest ${accent}`}>{label}</div>
-      <div className="divide-y divide-border border-t border-border">
+      <div className={`mb-2 font-mono text-[11px] uppercase tracking-[0.16em] ${accent}`}>{label}</div>
+      <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
         {windows.map((w) => {
           const isActive = label === "In progress";
           const statusIcon =
@@ -394,14 +398,14 @@ function WindowGroup({ label, windows, onDelete, onEdit, accent }: GroupProps) {
               : Clock;
           const StatusIcon = statusIcon;
           return (
-            <div key={w.id} className="flex items-center gap-3 py-3">
-              <StatusIcon className={`h-4 w-4 shrink-0 ${isActive ? "text-blue-400" : "text-muted-foreground"}`} />
+            <div key={w.id} className="flex items-center gap-3 px-4 py-3">
+              <StatusIcon className={`h-4 w-4 shrink-0 ${isActive ? "text-info-foreground" : "text-muted-foreground"}`} />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium">{w.title}</span>
-                  <Badge variant="outline" className="text-[10px] capitalize">{w.status.replace("_", " ")}</Badge>
+                  <Badge variant="outline" className="font-mono text-[10px] uppercase tracking-[0.12em]">{w.status.replace("_", " ")}</Badge>
                 </div>
-                <div className="mt-0.5 text-xs text-muted-foreground">
+                <div className="mt-0.5 font-mono text-xs text-muted-foreground">
                   <RelativeTime date={w.scheduledStart} /> → <RelativeTime date={w.scheduledEnd} />
                   {w.monitorIds.length > 0 && ` · ${w.monitorIds.length} monitor${w.monitorIds.length === 1 ? "" : "s"}`}
                 </div>

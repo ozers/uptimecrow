@@ -7,6 +7,7 @@ const statusPageResolver = zodResolver(createStatusPageSchema) as any;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 
 type StatusPageFormData = {
   name: string;
@@ -63,74 +64,90 @@ export function StatusPageForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="name">Page Name</Label>
-        <Input id="name" placeholder="My Service Status" {...register("name")} />
-        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-      </div>
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Page details
+          </p>
 
-      <div className="space-y-2">
-        <Label htmlFor="slug">Slug</Label>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">/status/</span>
-          <Input id="slug" placeholder="my-service" {...register("slug")} />
-        </div>
-        {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="brandColor">Brand Color</Label>
-          <div className="flex items-center gap-2">
-            <div
-              className="h-10 w-10 shrink-0 rounded-md border border-border cursor-pointer overflow-hidden"
-              style={{ backgroundColor: brandColor }}
-            >
-              <input
-                type="color"
-                className="opacity-0 h-full w-full cursor-pointer"
-                value={brandColor}
-                onChange={(e) => setValue("brandColor", e.target.value)}
-              />
-            </div>
-            <Input
-              id="brandColor"
-              className="flex-1"
-              placeholder="#00e676"
-              {...register("brandColor")}
-            />
+          <div className="space-y-1.5">
+            <Label htmlFor="name">Page Name</Label>
+            <Input id="name" placeholder="My Service Status" {...register("name")} />
+            {errors.name && <p className="text-sm text-danger-foreground">{errors.name.message}</p>}
           </div>
-          {errors.brandColor && (
-            <p className="text-sm text-destructive">{errors.brandColor.message}</p>
-          )}
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="logoUrl">Logo URL (optional)</Label>
-          <Input id="logoUrl" placeholder="https://..." {...register("logoUrl")} />
-          {errors.logoUrl && (
-            <p className="text-sm text-destructive">{errors.logoUrl.message}</p>
-          )}
-        </div>
-      </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="slug">Slug</Label>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-sm text-muted-foreground">/status/</span>
+              <Input id="slug" className="font-mono" placeholder="my-service" {...register("slug")} />
+            </div>
+            {errors.slug && <p className="text-sm text-danger-foreground">{errors.slug.message}</p>}
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          role="switch"
-          aria-checked={isPublic}
-          id="isPublic"
-          onClick={() => setValue("isPublic", !isPublic)}
-          className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isPublic ? "bg-primary" : "bg-muted"}`}
-        >
-          <span
-            className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform ${isPublic ? "translate-x-5" : "translate-x-0"}`}
-          />
-        </button>
-        <Label htmlFor="isPublic" className="cursor-pointer">
-          Publicly accessible
-        </Label>
-      </div>
+      <Card>
+        <CardContent className="space-y-6 p-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+            Branding
+          </p>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="brandColor">Brand Color</Label>
+              <div className="flex items-center gap-2">
+                <div
+                  className="h-10 w-10 shrink-0 rounded-md border border-border cursor-pointer overflow-hidden"
+                  style={{ backgroundColor: brandColor }}
+                >
+                  <input
+                    type="color"
+                    className="opacity-0 h-full w-full cursor-pointer"
+                    value={brandColor}
+                    onChange={(e) => setValue("brandColor", e.target.value)}
+                  />
+                </div>
+                <Input
+                  id="brandColor"
+                  className="flex-1 font-mono"
+                  placeholder="#00e676"
+                  {...register("brandColor")}
+                />
+              </div>
+              {errors.brandColor && (
+                <p className="text-sm text-danger-foreground">{errors.brandColor.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="logoUrl">Logo URL (optional)</Label>
+              <Input id="logoUrl" className="font-mono" placeholder="https://..." {...register("logoUrl")} />
+              {errors.logoUrl && (
+                <p className="text-sm text-danger-foreground">{errors.logoUrl.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isPublic}
+              id="isPublic"
+              onClick={() => setValue("isPublic", !isPublic)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isPublic ? "bg-brand" : "bg-muted"}`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm ring-0 transition-transform ${isPublic ? "translate-x-5" : "translate-x-0"}`}
+              />
+            </button>
+            <Label htmlFor="isPublic" className="cursor-pointer">
+              Publicly accessible
+            </Label>
+          </div>
+        </CardContent>
+      </Card>
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}

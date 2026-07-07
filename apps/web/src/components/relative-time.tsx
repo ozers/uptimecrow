@@ -3,7 +3,7 @@ import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 export function RelativeTime({ date }: { date: string | Date }) {
   const d = typeof date === "string" ? new Date(date) : date;
   return (
-    <span title={d.toLocaleString()}>
+    <span title={d.toLocaleString()} className="font-mono tnum">
       {formatDistanceToNow(d, { addSuffix: true })}
     </span>
   );
@@ -22,7 +22,7 @@ export function AbsoluteTime({ date }: { date: string | Date }) {
   }
 
   return (
-    <span title={d.toLocaleString()}>
+    <span title={d.toLocaleString()} className="font-mono tnum">
       {display}
     </span>
   );

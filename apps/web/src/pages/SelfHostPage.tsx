@@ -1,18 +1,10 @@
 import { Link } from "react-router-dom";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./Landing.css";
+import { Check } from "lucide-react";
+import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
+import { Button } from "@/components/ui/button";
 import { usePageMeta } from "@/lib/meta";
 
 const BRAND = "UptimeCrow";
-
-const codeBlockStyle: React.CSSProperties = {
-  background: "var(--surface)",
-  border: "1px solid var(--border)",
-  borderRadius: 10,
-  padding: "1rem 1.25rem",
-  overflowX: "auto",
-  fontSize: "0.82rem",
-};
 
 const COMPOSE_SNIPPET = `services:
   postgres:
@@ -83,8 +75,25 @@ docker compose logs -f api
 # Verify everything is healthy
 docker compose ps`;
 
-export default function SelfHostPage() {
+function CodeBlock({ code }: { code: string }) {
+  return (
+    <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-foreground/80">
+      <code>{code}</code>
+    </pre>
+  );
+}
 
+const COMPARISON: { feature: string; self: [boolean, string]; cloud: [boolean, string] }[] = [
+  { feature: "Data ownership", self: [true, "100% yours"], cloud: [false, "Hosted on our infra"] },
+  { feature: "Cost at scale", self: [true, "VPS cost only"], cloud: [false, "Per-plan pricing"] },
+  { feature: "Setup time", self: [false, "~5 minutes"], cloud: [true, "30 seconds"] },
+  { feature: "Maintenance", self: [false, "You manage updates"], cloud: [true, "Automatic"] },
+  { feature: "Uptime SLA", self: [false, "Depends on your VPS"], cloud: [true, "99.9%"] },
+  { feature: "Custom extensions", self: [true, "Full source access"], cloud: [false, "Fixed feature set"] },
+  { feature: "License", self: [true, "AGPL-3.0 — full source"], cloud: [false, "SaaS ToS"] },
+];
+
+export default function SelfHostPage() {
   usePageMeta({
     title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
     description:
@@ -136,192 +145,211 @@ export default function SelfHostPage() {
   });
 
   return (
-    <div className="landing">
+    <div className="min-h-screen bg-background">
       <MarketingNav />
 
-      {/* Hero */}
-      <section className="hero">
-        <div className="container">
-          <div className="hero-badge">● AGPL-3.0 Licensed — own your monitoring stack</div>
-          <h1>Run your own uptime<br />monitor in 5 minutes.</h1>
-          <p className="hero-sub">
-            4 Docker containers. 512 MB RAM. Any VPS. Full source code included —
-            fork it, extend it, or just run it as-is.
-          </p>
-          <div className="hero-actions">
-            <Link to="/register" className="hero-btn primary">Use the cloud version free</Link>
-            <a
-              href="https://github.com/ozers/uptimecrow"
-              className="hero-btn secondary"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+      {/* HERO */}
+      <section className="mx-auto max-w-4xl px-6 pb-8 pt-20 text-center sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+          AGPL-3.0 licensed · own your monitoring stack
+        </p>
+        <h1 className="mt-4 font-display text-[40px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[50px]">
+          Run your own uptime monitor{" "}
+          <span className="text-brand">in 5 minutes.</span>
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
+          4 Docker containers. 512 MB RAM. Any VPS. Full source code included — fork it, extend it,
+          or just run it as-is.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg">
+            <Link to="/register">Use the cloud version free</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <a href="https://github.com/ozers/uptimecrow" target="_blank" rel="noopener noreferrer">
               View on GitHub
             </a>
-          </div>
+          </Button>
         </div>
       </section>
 
-      {/* Requirements */}
-      <section className="section">
-        <div className="container">
-          <p className="section-label">Requirements</p>
-          <h2 className="section-title">Nothing exotic.</h2>
-          <div className="features-grid" style={{ maxWidth: 760, margin: "0 auto" }}>
-            <div className="feature">
-              <h3>Docker + Compose</h3>
-              <p>Any machine running Docker Engine 24+ and Docker Compose v2. That's the only hard requirement.</p>
+      {/* REQUIREMENTS */}
+      <section className="mx-auto max-w-4xl px-6 py-16 sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">Requirements</p>
+        <h2 className="mt-2 font-display text-[28px] font-bold tracking-[-0.03em]">
+          Nothing exotic.
+        </h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              h: "Docker + Compose",
+              p: "Any machine running Docker Engine 24+ and Docker Compose v2. That's the only hard requirement.",
+            },
+            {
+              h: "512 MB RAM",
+              p: "A $4/mo VPS handles dozens of monitors comfortably. Scale up when you need more check frequency or history retention.",
+            },
+            {
+              h: "Optional: SES",
+              p: "Email alerts need Amazon SES. Slack and Discord webhooks work without any email config — you can add SES later.",
+            },
+          ].map((r) => (
+            <div key={r.h} className="rounded-xl border border-border bg-card p-5">
+              <h3 className="font-display text-[15px] font-bold">{r.h}</h3>
+              <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{r.p}</p>
             </div>
-            <div className="feature">
-              <h3>512 MB RAM</h3>
-              <p>A $4/mo VPS handles dozens of monitors comfortably. Scale up when you need more check frequency or history retention.</p>
-            </div>
-            <div className="feature">
-              <h3>Optional: SES</h3>
-              <p>Email alerts need Amazon SES. Slack and Discord webhooks work without any email config — you can add SES later.</p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
-      {/* docker-compose.yml */}
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <p className="section-label">Configuration</p>
-          <h2 className="section-title">The full stack in one file.</h2>
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-            <p style={{ color: "var(--text2)", marginBottom: "1.25rem", lineHeight: 1.6 }}>
-              Postgres 16, Redis 7, the {BRAND} API + worker, and the nginx-served web UI.
-              Copy this into <code>docker-compose.yml</code> and create a <code>.env</code> alongside it.
-            </p>
-            <pre style={codeBlockStyle}><code>{COMPOSE_SNIPPET}</code></pre>
+      {/* CONFIGURATION */}
+      <section className="mx-auto max-w-3xl px-6 py-4 sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">Configuration</p>
+        <h2 className="mt-2 font-display text-[28px] font-bold tracking-[-0.03em]">
+          The full stack in one file.
+        </h2>
+        <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+          Postgres 16, Redis 7, the {BRAND} API + worker, and the nginx-served web UI. Copy this into{" "}
+          <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12.5px] text-foreground">
+            docker-compose.yml
+          </code>{" "}
+          and create a{" "}
+          <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12.5px] text-foreground">
+            .env
+          </code>{" "}
+          alongside it.
+        </p>
+        <div className="mt-5">
+          <CodeBlock code={COMPOSE_SNIPPET} />
+        </div>
 
-            <p style={{ fontWeight: 600, margin: "1.75rem 0 0.5rem", color: "var(--text)" }}>
-              Environment variables (<code>.env</code>)
-            </p>
-            <pre style={codeBlockStyle}><code>{ENV_SNIPPET}</code></pre>
+        <p className="mb-2 mt-8 font-display text-[15px] font-bold">
+          Environment variables{" "}
+          <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12.5px] font-normal text-foreground">
+            .env
+          </code>
+        </p>
+        <CodeBlock code={ENV_SNIPPET} />
 
-            <p style={{ fontWeight: 600, margin: "1.75rem 0 0.5rem", color: "var(--text)" }}>
-              Start everything
-            </p>
-            <pre style={codeBlockStyle}><code>{START_SNIPPET}</code></pre>
+        <p className="mb-2 mt-8 font-display text-[15px] font-bold">Start everything</p>
+        <CodeBlock code={START_SNIPPET} />
 
-            <p style={{ color: "var(--text2)", fontSize: "0.9rem", marginTop: "1rem", lineHeight: 1.6 }}>
-              After <code>docker compose up</code>: the web UI is on <strong style={{ color: "var(--text)" }}>:80</strong> (nginx, production)
-              or <strong style={{ color: "var(--text)" }}>:5173</strong> (Vite dev server). API is always on <strong style={{ color: "var(--text)" }}>:3000</strong>.
-            </p>
-          </div>
+        <p className="mt-4 text-[14px] leading-relaxed text-muted-foreground">
+          After <code className="font-mono text-foreground">docker compose up</code>: the web UI is
+          on <strong className="text-foreground">:80</strong> (nginx, production) or{" "}
+          <strong className="text-foreground">:5173</strong> (Vite dev server). API is always on{" "}
+          <strong className="text-foreground">:3000</strong>.
+        </p>
+      </section>
+
+      {/* SELF-HOST VS CLOUD */}
+      <section className="mx-auto max-w-4xl px-6 py-16 sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+          Self-host vs cloud
+        </p>
+        <h2 className="mt-2 font-display text-[28px] font-bold tracking-[-0.03em]">
+          Pick what fits your situation.
+        </h2>
+        <div className="mt-8 overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="py-3 pr-4 text-left"></th>
+                <th className="px-4 py-3 text-left font-display text-[15px] font-bold text-brand">
+                  Self-hosted
+                </th>
+                <th className="px-4 py-3 text-left font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                  {BRAND} Cloud
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPARISON.map((row) => (
+                <tr key={row.feature} className="border-b border-border">
+                  <td className="py-3.5 pr-4 font-medium">{row.feature}</td>
+                  <td className="bg-brand/[0.06] px-4 py-3.5 text-[13.5px]">
+                    <span className="inline-flex items-center gap-1.5">
+                      {row.self[0] && <Check size={14} className="shrink-0 text-brand" />}
+                      <span className={row.self[0] ? "" : "text-muted-foreground"}>
+                        {row.self[1]}
+                      </span>
+                    </span>
+                  </td>
+                  <td className="px-4 py-3.5 text-[13.5px]">
+                    <span className="inline-flex items-center gap-1.5">
+                      {row.cloud[0] && <Check size={14} className="shrink-0 text-brand" />}
+                      <span className={row.cloud[0] ? "" : "text-muted-foreground"}>
+                        {row.cloud[1]}
+                      </span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* vs cloud */}
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <p className="section-label">Self-host vs cloud</p>
-          <h2 className="section-title">Pick what fits your situation.</h2>
-          <div className="comparison-scroll">
-            <table className="comparison-table">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col" className="you">Self-hosted</th>
-                  <th scope="col">{BRAND} Cloud</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Data ownership</td>
-                  <td className="you-col"><span className="check">✓</span> 100% yours</td>
-                  <td>Hosted on our infra</td>
-                </tr>
-                <tr>
-                  <td>Cost at scale</td>
-                  <td className="you-col"><span className="check">✓</span> VPS cost only</td>
-                  <td>Per-plan pricing</td>
-                </tr>
-                <tr>
-                  <td>Setup time</td>
-                  <td className="you-col">~5 minutes</td>
-                  <td><span className="check">✓</span> 30 seconds</td>
-                </tr>
-                <tr>
-                  <td>Maintenance</td>
-                  <td className="you-col">You manage updates</td>
-                  <td><span className="check">✓</span> Automatic</td>
-                </tr>
-                <tr>
-                  <td>Uptime SLA</td>
-                  <td className="you-col">Depends on your VPS</td>
-                  <td><span className="check">✓</span> 99.9%</td>
-                </tr>
-                <tr>
-                  <td>Custom extensions</td>
-                  <td className="you-col"><span className="check">✓</span> Full source access</td>
-                  <td>Fixed feature set</td>
-                </tr>
-                <tr>
-                  <td>License</td>
-                  <td className="you-col"><span className="check">✓</span> AGPL-3.0 — full source access</td>
-                  <td>SaaS ToS</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* Why self-host */}
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div className="container">
-          <p className="section-label">Common reasons</p>
-          <h2 className="section-title">When self-hosting is the right call.</h2>
-          <div className="features-grid">
-            <div className="feature">
-              <h3>Compliance requirements</h3>
-              <p>SOC 2, HIPAA, or internal policies that forbid sending infrastructure data to third-party SaaS tools.</p>
+      {/* WHY SELF-HOST */}
+      <section className="mx-auto max-w-4xl px-6 py-16 sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">Common reasons</p>
+        <h2 className="mt-2 font-display text-[28px] font-bold tracking-[-0.03em]">
+          When self-hosting is the right call.
+        </h2>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          {[
+            {
+              h: "Compliance requirements",
+              p: "SOC 2, HIPAA, or internal policies that forbid sending infrastructure data to third-party SaaS tools.",
+            },
+            {
+              h: "Air-gapped environments",
+              p: "Monitor internal services that are never exposed to the public internet. Your checker runs inside your network.",
+            },
+            {
+              h: "Cost predictability",
+              p: "Monitoring 500 endpoints? A $20/mo VPS beats any per-monitor pricing tier at that scale.",
+            },
+            {
+              h: "Full customisation",
+              p: "Add custom check types, notification channels, or integrate with internal tooling. It's your codebase now.",
+            },
+          ].map((r) => (
+            <div key={r.h} className="rounded-xl border border-border bg-card p-5">
+              <h3 className="font-display text-[15px] font-bold">{r.h}</h3>
+              <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">{r.p}</p>
             </div>
-            <div className="feature">
-              <h3>Air-gapped environments</h3>
-              <p>Monitor internal services that are never exposed to the public internet. Your checker runs inside your network.</p>
-            </div>
-            <div className="feature">
-              <h3>Cost predictability</h3>
-              <p>Monitoring 500 endpoints? A $20/mo VPS beats any per-monitor pricing tier at that scale.</p>
-            </div>
-            <div className="feature">
-              <h3>Full customisation</h3>
-              <p>Add custom check types, notification channels, or integrate with internal tooling. It's your codebase now.</p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* CTA */}
-      <section className="final-cta">
-        <div className="container">
-          <h2>Start on the cloud. Move to self-host whenever.</h2>
-          <p>The cloud version is free for up to 10 monitors — or self-host unlimited. Export your data and self-host whenever you're ready.</p>
-          <div className="hero-actions">
-            <Link to="/register" className="hero-btn primary">Get Started Free</Link>
-            <Link to="/docs" className="hero-btn secondary">Self-host docs</Link>
+      <section className="mx-auto max-w-3xl px-6 pb-20 text-center sm:px-8">
+        <div className="rounded-3xl bg-foreground px-8 py-14 text-background sm:px-12">
+          <h2 className="font-display text-[28px] font-extrabold tracking-[-0.03em] sm:text-[34px]">
+            Start on the cloud. Move to self-host whenever.
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-[15px] leading-relaxed text-background/60">
+            The cloud version is free for up to 10 monitors — or self-host unlimited. Export your
+            data and self-host whenever you&apos;re ready.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg" variant="brand">
+              <Link to="/register">Get started free</Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-background/25 bg-transparent text-background hover:bg-background/10 hover:text-background"
+            >
+              <Link to="/docs">Self-host docs</Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/docs">Docs</Link>
-              <Link to="/privacy">Privacy</Link>
-              <Link to="/login">Log in</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

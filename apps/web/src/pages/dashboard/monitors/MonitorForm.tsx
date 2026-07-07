@@ -10,6 +10,7 @@ import { Loader2, Zap, CheckCircle2, XCircle, AlertTriangle } from "lucide-react
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const monitorResolver = zodResolver(createMonitorSchema) as any;
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -121,31 +122,35 @@ export function MonitorForm({
 
   return (
     <form onSubmit={handleSubmit((data) => onSubmit({ ...data, url: normalizeUrl(data.url) }))} className="max-w-xl space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="name">Monitor Name</Label>
-        <Input id="name" placeholder="My Website" {...register("name")} />
-        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="url">URL</Label>
-        <div className="flex gap-2">
-          <Input id="url" placeholder="example.com" {...register("url")} className="flex-1" />
-          <Button
-            type="button"
-            variant="outline"
-            onClick={runTest}
-            disabled={testing || !urlValue}
-          >
-            {testing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
-            Test
-          </Button>
+      <Card className="space-y-6 p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Target
+        </p>
+        <div className="space-y-1.5">
+          <Label htmlFor="name">Monitor Name</Label>
+          <Input id="name" placeholder="My Website" {...register("name")} />
+          {errors.name && <p className="text-sm text-danger-foreground">{errors.name.message}</p>}
         </div>
-        {errors.url && <p className="text-sm text-destructive">{errors.url.message}</p>}
-      </div>
 
-      {/* Test Result */}
-      {testResult && (
+        <div className="space-y-1.5">
+          <Label htmlFor="url">URL</Label>
+          <div className="flex gap-2">
+            <Input id="url" placeholder="example.com" {...register("url")} className="flex-1" />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={runTest}
+              disabled={testing || !urlValue}
+            >
+              {testing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
+              Test
+            </Button>
+          </div>
+          {errors.url && <p className="text-sm text-danger-foreground">{errors.url.message}</p>}
+        </div>
+
+        {/* Test Result */}
+        {testResult && (
         <div className={`rounded-lg border p-4 ${
           testResult.status === "up"
             ? "border-success/30 bg-success/5"
@@ -161,7 +166,7 @@ export function MonitorForm({
               {testResult.status === "up" ? "Reachable" : "Unreachable"}
             </span>
             {testResult.statusCode && (
-              <span className={`text-xs px-2 py-0.5 rounded-full ${
+              <span className={`text-xs px-2 py-0.5 rounded-full font-mono tnum ${
                 testResult.statusCode >= 200 && testResult.statusCode < 300
                   ? "bg-success/15 text-success-foreground"
                   : testResult.statusCode >= 400 && testResult.statusCode < 500
@@ -174,7 +179,7 @@ export function MonitorForm({
               </span>
             )}
             {testResult.responseMs != null && (
-              <span className="text-xs text-muted-foreground">{testResult.responseMs}ms</span>
+              <span className="text-xs text-muted-foreground font-mono tnum">{testResult.responseMs}ms</span>
             )}
           </div>
           {testResult.errorMessage && (
@@ -216,7 +221,7 @@ export function MonitorForm({
                           key={s}
                           type="button"
                           onClick={() => setValue("keyword", s)}
-                          className="rounded-md border border-primary/30 bg-primary/5 px-2.5 py-1 text-xs font-medium text-primary transition-colors hover:bg-primary/15"
+                          className="rounded-md border border-brand/30 bg-brand/10 px-2.5 py-1 text-xs font-medium text-brand transition-colors hover:bg-brand/20"
                         >
                           {s}
                         </button>
@@ -234,10 +239,15 @@ export function MonitorForm({
             );
           })()}
         </div>
-      )}
+        )}
+      </Card>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+      <Card className="space-y-6 p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Check settings
+        </p>
+        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-1.5">
           <Label>Monitor Type</Label>
           <Select value={monitorType} onValueChange={(v) => setValue("type", v as "http" | "tcp" | "keyword")}>
             <SelectTrigger>
@@ -251,7 +261,7 @@ export function MonitorForm({
           </Select>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="intervalSeconds">Check Interval (seconds)</Label>
           <Input
             id="intervalSeconds"
@@ -270,13 +280,13 @@ export function MonitorForm({
             </p>
           )}
           {errors.intervalSeconds && (
-            <p className="text-sm text-destructive">{errors.intervalSeconds.message}</p>
+            <p className="text-sm text-danger-foreground">{errors.intervalSeconds.message}</p>
           )}
         </div>
       </div>
 
       {/* Keyword field */}
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label htmlFor="keyword">Keyword (optional)</Label>
         <Input
           id="keyword"
@@ -289,7 +299,7 @@ export function MonitorForm({
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="timeoutMs">Timeout (ms)</Label>
           <Input
             id="timeoutMs"
@@ -300,11 +310,11 @@ export function MonitorForm({
             {...register("timeoutMs", { valueAsNumber: true })}
           />
           {errors.timeoutMs && (
-            <p className="text-sm text-destructive">{errors.timeoutMs.message}</p>
+            <p className="text-sm text-danger-foreground">{errors.timeoutMs.message}</p>
           )}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="expectedStatus">Expected Status Code</Label>
           <Input
             id="expectedStatus"
@@ -317,12 +327,12 @@ export function MonitorForm({
             200 = smart mode (5xx is down, rest is up)
           </p>
           {errors.expectedStatus && (
-            <p className="text-sm text-destructive">{errors.expectedStatus.message}</p>
+            <p className="text-sm text-danger-foreground">{errors.expectedStatus.message}</p>
           )}
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label htmlFor="confirmationCount">Confirmation Count</Label>
         <p className="text-xs text-muted-foreground">
           Number of consecutive failures before marking as down
@@ -335,12 +345,17 @@ export function MonitorForm({
           {...register("confirmationCount", { valueAsNumber: true })}
         />
         {errors.confirmationCount && (
-          <p className="text-sm text-destructive">{errors.confirmationCount.message}</p>
+          <p className="text-sm text-danger-foreground">{errors.confirmationCount.message}</p>
         )}
       </div>
+      </Card>
 
+      <Card className="space-y-6 p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+          Expiry &amp; alerts
+        </p>
       {urlValue?.startsWith("https://") && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="sslDaysWarning">SSL Warning Threshold (days)</Label>
           <p className="text-xs text-muted-foreground">
             Alert when the SSL certificate expires within this many days
@@ -356,7 +371,7 @@ export function MonitorForm({
       )}
 
       {(urlValue?.startsWith("https://") || urlValue?.startsWith("http://")) && (
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="domainDaysWarning">Domain Warning Threshold (days)</Label>
           <p className="text-xs text-muted-foreground">
             Alert when the domain registration expires within this many days
@@ -371,7 +386,7 @@ export function MonitorForm({
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-1.5">
         <Label htmlFor="slowResponseThresholdMs">Slow Response Alert (ms, optional)</Label>
         <p className="text-xs text-muted-foreground">
           Send a notification when a successful check takes longer than this. Leave empty to disable.
@@ -388,9 +403,10 @@ export function MonitorForm({
           })}
         />
         {errors.slowResponseThresholdMs && (
-          <p className="text-sm text-destructive">{errors.slowResponseThresholdMs.message}</p>
+          <p className="text-sm text-danger-foreground">{errors.slowResponseThresholdMs.message}</p>
         )}
       </div>
+      </Card>
 
       <Button type="submit" disabled={loading}>
         {loading ? "Saving..." : submitLabel}

@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { usePageMeta } from "@/lib/meta";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./landing-redesign.css";
+import { AuthShell } from "@/components/auth-shell";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function ForgotPassword() {
   usePageMeta({
@@ -30,46 +32,44 @@ export function ForgotPassword() {
   };
 
   return (
-    <div className="lp">
-      <MarketingNav />
-      <div className="lp-auth">
-        <div className="lp-auth-card">
-          <img className="lp-auth-mascot" src="/crow-mascot.png" alt="" aria-hidden="true" />
-          <h1>Reset password</h1>
-          <p className="lp-auth-sub">
-            {sent
-              ? "Check your email for a reset link."
-              : "Enter your email and we'll send you a reset link."}
-          </p>
-
-          {!sent ? (
-            <form className="lp-auth-form" onSubmit={handleSubmit}>
-              <div className="lp-auth-field">
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <button type="submit" className="lp-auth-submit" disabled={loading}>
-                {loading ? "Sending…" : "Send reset link"}
-              </button>
-            </form>
-          ) : (
-            <p className="lp-auth-sub" style={{ marginTop: "22px" }}>
-              If that email is registered, you&apos;ll receive a link shortly.
-            </p>
-          )}
-
-          <p className="lp-auth-alt">
-            <Link to="/login">Back to login</Link>
-          </p>
+    <AuthShell
+      eyebrow="Reset password"
+      title={sent ? "Check your inbox." : "Lost the key?"}
+      subtitle={
+        sent
+          ? "If that email is registered, a reset link is on its way."
+          : "Enter your email and we'll send you a reset link."
+      }
+    >
+      {!sent ? (
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div className="space-y-1.5">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <Button type="submit" size="lg" className="w-full" disabled={loading}>
+            {loading ? "Sending…" : "Send reset link"}
+          </Button>
+        </form>
+      ) : (
+        <div className="rounded-xl border border-success/30 bg-success/10 px-4 py-3 font-mono text-[13px] text-success-foreground">
+          Reset link sent. Check your email.
         </div>
-      </div>
-    </div>
+      )}
+
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        <Link to="/login" className="font-semibold text-brand hover:underline">
+          &larr; Back to login
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

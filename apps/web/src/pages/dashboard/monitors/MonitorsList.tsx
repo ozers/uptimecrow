@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { Plus, Activity, Pencil, Trash2, ShieldAlert, Globe } from "lucide-react";
+import { Plus, Pencil, Trash2, ShieldAlert, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useMonitors, useDeleteMonitor } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
+import { MonitorStatusBadge } from "@/components/status-badge";
 import {
   Table,
   TableBody,
@@ -63,6 +64,7 @@ export function MonitorsList() {
     <TooltipProvider>
       <div>
         <PageHeader
+          eyebrow="The watch"
           title="Monitors"
           description="Track the uptime of your services"
           action={
@@ -77,7 +79,7 @@ export function MonitorsList() {
 
         {!monitors?.length ? (
           <EmptyState
-            icon={Activity}
+            eyebrow="The watch"
             title="No monitors yet"
             description="Add your first monitor to start tracking uptime"
             action={
@@ -90,7 +92,7 @@ export function MonitorsList() {
             }
           />
         ) : (
-          <div className="border-t border-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -110,8 +112,8 @@ export function MonitorsList() {
                     <TableRow
                       key={monitor.id}
                       className={cn(
-                        monitor.status === "down" && "border-l-2 border-l-red-500",
-                        monitor.status === "degraded" && "border-l-2 border-l-yellow-500",
+                        monitor.status === "down" && "border-l-2 border-l-danger",
+                        monitor.status === "degraded" && "border-l-2 border-l-warning",
                       )}
                     >
                       <TableCell>
@@ -129,7 +131,7 @@ export function MonitorsList() {
                           </span>
                           <Link
                             to={`/dashboard/monitors/${monitor.id}`}
-                            className="font-medium text-foreground hover:text-primary transition-colors"
+                            className="font-medium text-foreground hover:text-brand transition-colors"
                           >
                             {monitor.name}
                           </Link>
@@ -139,17 +141,9 @@ export function MonitorsList() {
                         {monitor.url}
                       </TableCell>
                       <TableCell>
-                        <span className={cn(
-                          "text-xs font-semibold uppercase tracking-wide",
-                          monitor.status === "up" && "text-success-foreground",
-                          monitor.status === "down" && "text-danger-foreground",
-                          monitor.status === "degraded" && "text-warning-foreground",
-                          monitor.status === "unknown" && "text-muted-foreground",
-                        )}>
-                          {monitor.status}
-                        </span>
+                        <MonitorStatusBadge status={monitor.status} />
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm tabular-nums">
+                      <TableCell className="hidden sm:table-cell text-muted-foreground text-sm font-mono tnum">
                         {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
@@ -168,7 +162,7 @@ export function MonitorsList() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <span className={cn(
-                                  "inline-flex items-center gap-1 text-xs font-medium tabular-nums",
+                                  "inline-flex items-center gap-1 text-xs font-mono tnum",
                                   expired ? "text-danger-foreground" : warning ? "text-warning-foreground" : "text-success-foreground",
                                 )}>
                                   <ShieldAlert className="h-3 w-3" />
@@ -193,7 +187,7 @@ export function MonitorsList() {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <span className={cn(
-                                  "inline-flex items-center gap-1 text-xs font-medium tabular-nums",
+                                  "inline-flex items-center gap-1 text-xs font-mono tnum",
                                   expired ? "text-danger-foreground" : warning ? "text-warning-foreground" : "text-success-foreground",
                                 )}>
                                   <Globe className="h-3 w-3" />

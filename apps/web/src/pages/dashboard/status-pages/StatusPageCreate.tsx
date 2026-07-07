@@ -8,7 +8,7 @@ import { useMonitors } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/page-header";
@@ -128,6 +128,7 @@ export function StatusPageCreate() {
   return (
     <div>
       <PageHeader
+        eyebrow="New status page"
         title="Create Status Page"
         description="Set up a status page and add the services you want to monitor"
       />
@@ -136,10 +137,12 @@ export function StatusPageCreate() {
         {/* Status page details */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Page Details</CardTitle>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Page details
+            </p>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
+          <CardContent className="space-y-6">
+            <div className="space-y-1.5">
               <Label htmlFor="name">Page Name</Label>
               <Input
                 id="name"
@@ -150,12 +153,13 @@ export function StatusPageCreate() {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="slug">Slug</Label>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">/status/</span>
+                <span className="font-mono text-sm text-muted-foreground">/status/</span>
                 <Input
                   id="slug"
+                  className="font-mono"
                   placeholder="my-service"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
@@ -165,7 +169,7 @@ export function StatusPageCreate() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label>Brand Color</Label>
                 <div className="flex items-center gap-2">
                   <Input
@@ -177,7 +181,7 @@ export function StatusPageCreate() {
                   <Input
                     value={brandColor}
                     onChange={(e) => setBrandColor(e.target.value)}
-                    className="flex-1"
+                    className="flex-1 font-mono"
                   />
                 </div>
               </div>
@@ -187,7 +191,7 @@ export function StatusPageCreate() {
                   id="isPublic"
                   checked={isPublic}
                   onChange={(e) => setIsPublic(e.target.checked)}
-                  className="h-4 w-4 rounded border-border"
+                  className="h-4 w-4 rounded border-border accent-brand"
                 />
                 <Label htmlFor="isPublic" className="cursor-pointer">
                   Publicly accessible
@@ -200,7 +204,9 @@ export function StatusPageCreate() {
         {/* Monitors */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Monitors</CardTitle>
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              Monitors
+            </p>
             <p className="text-sm text-muted-foreground">
               Add the services that will appear on this status page
             </p>
@@ -209,7 +215,7 @@ export function StatusPageCreate() {
             {/* Existing monitors */}
             {existingMonitors && existingMonitors.length > 0 && (
               <div>
-                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                   Existing monitors
                 </p>
                 <div className="space-y-2">
@@ -222,15 +228,15 @@ export function StatusPageCreate() {
                         onClick={() => toggleExisting(monitor.id)}
                         className={`flex w-full items-center justify-between rounded-lg border p-3 text-left transition-colors ${
                           selected
-                            ? "border-primary/30 bg-primary/5"
-                            : "border-border hover:border-primary/20"
+                            ? "border-brand/30 bg-brand/10"
+                            : "border-border hover:border-brand/20"
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
                             className={`flex h-5 w-5 items-center justify-center rounded border text-xs ${
                               selected
-                                ? "border-primary bg-primary text-primary-foreground"
+                                ? "border-brand bg-brand text-brand-foreground"
                                 : "border-muted-foreground/30"
                             }`}
                           >
@@ -238,7 +244,7 @@ export function StatusPageCreate() {
                           </div>
                           <div>
                             <span className="text-sm font-medium">{monitor.name}</span>
-                            <span className="ml-2 text-xs text-muted-foreground">{monitor.url}</span>
+                            <span className="ml-2 font-mono text-xs text-muted-foreground">{monitor.url}</span>
                           </div>
                         </div>
                         <MonitorStatusBadge status={monitor.status} />
@@ -253,14 +259,14 @@ export function StatusPageCreate() {
             {/* New monitors */}
             {newMonitors.length > 0 && (
               <div>
-                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                   New monitors
                 </p>
                 <div className="space-y-3">
                   {newMonitors.map((m) => (
                     <div key={m.id} className="rounded-lg border border-border p-4">
                       <div className="mb-3 flex items-center justify-between">
-                        <Badge variant="secondary" className="text-xs">New</Badge>
+                        <Badge variant="secondary" className="font-mono text-[10px] uppercase tracking-[0.12em]">New</Badge>
                         <Button
                           type="button"
                           variant="ghost"
@@ -272,7 +278,7 @@ export function StatusPageCreate() {
                         </Button>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <Label className="text-xs">Name</Label>
                           <Input
                             placeholder="API Server"
@@ -280,19 +286,21 @@ export function StatusPageCreate() {
                             onChange={(e) => updateNewMonitor(m.id, "name", e.target.value)}
                           />
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <Label className="text-xs">URL</Label>
                           <Input
+                            className="font-mono"
                             placeholder="api.example.com"
                             value={m.url}
                             onChange={(e) => updateNewMonitor(m.id, "url", e.target.value)}
                           />
                         </div>
                       </div>
-                      <div className="mt-3 w-32 space-y-1">
+                      <div className="mt-3 w-32 space-y-1.5">
                         <Label className="text-xs">Interval (sec)</Label>
                         <Input
                           type="number"
+                          className="font-mono tnum"
                           value={m.intervalSeconds}
                           onChange={(e) => updateNewMonitor(m.id, "intervalSeconds", Number(e.target.value))}
                         />

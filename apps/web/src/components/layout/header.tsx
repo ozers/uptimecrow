@@ -31,7 +31,11 @@ function Breadcrumbs() {
       : (ROUTE_LABELS[segments[segments.length - 1]] ?? segments[segments.length - 1]);
 
   if (segments.length === 0) {
-    return <span className="text-sm font-semibold">Overview</span>;
+    return (
+      <span className="font-mono text-[13px] uppercase tracking-[0.08em] text-foreground">
+        Overview
+      </span>
+    );
   }
 
   const crumbs = segments
@@ -46,22 +50,24 @@ function Breadcrumbs() {
   return (
     <nav aria-label="Breadcrumb">
       {/* Mobile: show only current page */}
-      <span className="text-sm font-semibold md:hidden">{currentLabel}</span>
+      <span className="font-mono text-[13px] uppercase tracking-[0.08em] md:hidden">
+        {currentLabel}
+      </span>
 
       {/* Desktop: full chain */}
-      <ol className="hidden md:flex items-center gap-1">
+      <ol className="hidden md:flex items-center gap-1.5 font-mono text-[12px] uppercase tracking-[0.08em]">
         <li>
-          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/dashboard" className="text-muted-foreground hover:text-brand transition-colors">
             Overview
           </Link>
         </li>
         {crumbs.map((crumb) => (
-          <li key={crumb.path} className="flex items-center gap-1">
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40" />
+          <li key={crumb.path} className="flex items-center gap-1.5">
+            <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
             {crumb.isLast ? (
-              <span className="text-sm font-semibold">{crumb.label}</span>
+              <span className="text-foreground">{crumb.label}</span>
             ) : (
-              <Link to={crumb.path} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to={crumb.path} className="text-muted-foreground hover:text-brand transition-colors">
                 {crumb.label}
               </Link>
             )}
@@ -80,7 +86,7 @@ function UserAvatar({ name }: { name: string }) {
     .join("")
     .toUpperCase();
   return (
-    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-xs font-semibold text-primary select-none">
+    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/15 font-mono text-[11px] font-semibold text-brand select-none">
       {initials}
     </span>
   );
@@ -100,7 +106,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="flex h-14 items-center justify-between border-b border-border px-4 md:px-6">
+    <header className="flex h-16 items-center justify-between border-b border-border bg-card/40 px-4 md:px-6">
       <div className="flex items-center gap-3">
         {/* Hamburger — mobile only */}
         <Button
@@ -120,7 +126,7 @@ export function Header({ onMenuClick }: HeaderProps) {
           <Button variant="ghost" className="gap-2 px-2 h-9">
             <UserAvatar name={user?.name ?? "U"} />
             <span className="hidden sm:inline text-sm">{user?.name}</span>
-            <Badge variant="outline" className="hidden sm:inline-flex text-xs capitalize">
+            <Badge variant="outline" className="hidden sm:inline-flex capitalize">
               {user?.plan}
             </Badge>
           </Button>

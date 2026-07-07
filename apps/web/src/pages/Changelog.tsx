@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
-import { MarketingNav } from "@/components/marketing-nav";
-import "./Landing.css";
+import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
+import { Button } from "@/components/ui/button";
 import { usePageMeta } from "@/lib/meta";
-
-const BRAND = "UptimeCrow";
 
 interface ChangelogEntry {
   date: string;
@@ -77,15 +75,15 @@ const ENTRIES: ChangelogEntry[] = [
   },
 ];
 
-const TYPE_STYLES: Record<ChangelogEntry["type"], { color: string; label: string }> = {
-  feature: { color: "var(--accent)", label: "Feature" },
-  improvement: { color: "#42a5f5", label: "Improvement" },
-  fix: { color: "#ab47bc", label: "Fix" },
-  security: { color: "#ff5252", label: "Security" },
+// Semantic token classes per type — theme-aware, no hardcoded hex.
+const TYPE_STYLES: Record<ChangelogEntry["type"], { className: string; label: string }> = {
+  feature: { className: "border-brand/40 bg-brand/10 text-brand", label: "Feature" },
+  improvement: { className: "border-info/40 bg-info/10 text-info-foreground", label: "Improvement" },
+  fix: { className: "border-border bg-secondary text-muted-foreground", label: "Fix" },
+  security: { className: "border-danger/40 bg-danger/10 text-danger-foreground", label: "Security" },
 };
 
 export default function Changelog() {
-
   usePageMeta({
     title: "Changelog — UptimeCrow",
     description:
@@ -94,88 +92,78 @@ export default function Changelog() {
   });
 
   return (
-    <div className="landing">
+    <div className="min-h-screen bg-background">
       <MarketingNav />
 
-      <section className="hero" style={{ paddingBottom: "2rem" }}>
-        <div className="container">
-          <div className="hero-badge">● Built in the open</div>
-          <h1>Changelog</h1>
-          <p className="hero-sub">
-            Every shipped feature, improvement, and security update. Newest first.
-          </p>
+      {/* HERO */}
+      <section className="mx-auto max-w-4xl px-6 pb-8 pt-20 text-center sm:px-8">
+        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
+          Built in the open
+        </p>
+        <h1 className="mt-4 font-display text-[42px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[50px]">
+          Changelog
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
+          Every shipped feature, improvement, and security update. Newest first.
+        </p>
+      </section>
+
+      {/* ENTRIES */}
+      <section className="mx-auto max-w-3xl px-6 py-10 sm:px-8">
+        <ol className="space-y-3">
+          {ENTRIES.map((entry) => {
+            const meta = TYPE_STYLES[entry.type];
+            return (
+              <li
+                key={`${entry.date}-${entry.title}`}
+                className="rounded-xl border border-border bg-card p-6"
+              >
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`rounded-full border px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.1em] ${meta.className}`}
+                  >
+                    {meta.label}
+                  </span>
+                  <time
+                    className="font-mono text-[12px] tnum text-muted-foreground"
+                    dateTime={entry.date}
+                  >
+                    {entry.date}
+                  </time>
+                </div>
+                <h3 className="mt-3 font-display text-[17px] font-bold tracking-[-0.02em]">
+                  {entry.title}
+                </h3>
+                <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground">
+                  {entry.body}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+
+      {/* CTA */}
+      <section className="mx-auto max-w-3xl px-6 pb-20 pt-8 text-center sm:px-8">
+        <h2 className="font-display text-[30px] font-extrabold tracking-[-0.03em] sm:text-[36px]">
+          Follow along.
+        </h2>
+        <p className="mx-auto mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+          Open-source on GitHub. Subscribe to releases or follow us for updates.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Button asChild size="lg">
+            <a href="https://github.com/ozers/uptimecrow" target="_blank" rel="noreferrer">
+              GitHub
+            </a>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link to="/register">Get started free</Link>
+          </Button>
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: "1rem" }}>
-        <div className="container" style={{ maxWidth: 760 }}>
-          <ol style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {ENTRIES.map((entry) => {
-              const meta = TYPE_STYLES[entry.type];
-              return (
-                <li
-                  key={`${entry.date}-${entry.title}`}
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: 12,
-                    padding: "1.25rem 1.5rem",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem", flexWrap: "wrap" }}>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        padding: "0.15rem 0.55rem",
-                        borderRadius: 999,
-                        fontSize: "0.7rem",
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                        background: meta.color,
-                        color: "#000",
-                      }}
-                    >
-                      {meta.label}
-                    </span>
-                    <time style={{ color: "var(--text3)", fontSize: "0.85rem" }} dateTime={entry.date}>
-                      {entry.date}
-                    </time>
-                  </div>
-                  <h3 style={{ margin: "0 0 0.5rem", color: "var(--text)", fontSize: "1.05rem" }}>{entry.title}</h3>
-                  <p style={{ margin: 0, color: "var(--text2)", lineHeight: 1.6 }}>{entry.body}</p>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      </section>
-
-      <section className="final-cta">
-        <div className="container">
-          <h2>Follow along.</h2>
-          <p>Open-source on GitHub. Subscribe to releases or follow us for updates.</p>
-          <div className="hero-actions">
-            <a href="https://github.com/ozers/uptimecrow" target="_blank" rel="noreferrer" className="hero-btn primary">GitHub</a>
-            <Link to="/register" className="hero-btn secondary">Get Started Free</Link>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        <div className="container">
-          <div className="footer-bottom">
-            <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
-            <div className="footer-links">
-              <Link to="/">Home</Link>
-              <Link to="/pricing">Pricing</Link>
-              <Link to="/docs">Docs</Link>
-              <Link to="/changelog">Changelog</Link>
-              <Link to="/privacy">Privacy</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   );
 }

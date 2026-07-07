@@ -19,7 +19,7 @@ export function StatusPageEdit() {
 
   return (
     <div>
-      <PageHeader title={`Edit: ${statusPage.name}`} />
+      <PageHeader eyebrow="Edit status page" title={`Edit: ${statusPage.name}`} />
       <StatusPageForm
         defaultValues={{
           name: statusPage.name,

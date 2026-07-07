@@ -64,6 +64,7 @@ export function StatusPagesList() {
     <TooltipProvider>
       <div>
         <PageHeader
+          eyebrow="Public pages"
           title="Status Pages"
           description="Public status pages for your services"
           action={
@@ -91,7 +92,7 @@ export function StatusPagesList() {
             }
           />
         ) : (
-          <div className="border-t border-border">
+          <div className="overflow-hidden rounded-xl border border-border bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/40 hover:bg-muted/40">
@@ -113,7 +114,7 @@ export function StatusPagesList() {
                         />
                         <Link
                           to={`/dashboard/status-pages/${sp.id}`}
-                          className="font-medium text-foreground hover:text-primary transition-colors"
+                          className="font-medium text-foreground hover:text-brand transition-colors"
                         >
                           {sp.name}
                         </Link>
@@ -127,13 +128,17 @@ export function StatusPagesList() {
                     <TableCell>
                       <Badge
                         variant={sp.isPublic ? "default" : "secondary"}
-                        className="text-xs"
+                        className="font-mono text-[10px] uppercase tracking-[0.12em]"
                       >
                         {sp.isPublic ? "Public" : "Private"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
-                      {sp.customDomain ?? "—"}
+                      {sp.customDomain ? (
+                        <span className="font-mono text-xs">{sp.customDomain}</span>
+                      ) : (
+                        "—"
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
