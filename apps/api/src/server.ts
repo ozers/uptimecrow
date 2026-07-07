@@ -16,7 +16,6 @@ import { docsRoutes } from "./routes/docs.js";
 import heartbeatRoutes from "./routes/heartbeats.js";
 import { mcpRoutes } from "./routes/mcp.js";
 import { teamRoutes } from "./routes/team.js";
-import { oncallRoutes } from "./routes/oncall.js";
 import { toolsRoutes } from "./routes/tools.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { db, redis } from "./db/index.js";
@@ -143,7 +142,6 @@ app.route("/api/api-keys", apiKeyRoutes);
 app.route("/api/heartbeats", heartbeatRoutes);
 app.route("/api/mcp", mcpRoutes);
 app.route("/api/team", teamRoutes);
-app.route("/api/oncall", oncallRoutes);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);

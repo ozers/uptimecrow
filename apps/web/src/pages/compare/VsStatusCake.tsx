@@ -22,15 +22,15 @@ export function VsStatusCake() {
             "contact sales" tier.
           </p>
           <p style={{ marginTop: "1rem" }}>
-            Pre-rendered status pages and built-in on-call rotation make UptimeCrow a single tool where
-            StatusCake users typically end up buying StatusCake + Statuspage.io + PagerDuty.
+            Pre-rendered status pages and built-in alerting make UptimeCrow a single tool where
+            StatusCake users typically end up buying StatusCake + Statuspage.io.
           </p>
         </>
       }
       whyUs={[
         {
           title: "All channels on every plan",
-          body: "StatusCake gates Slack, Teams, and SMS behind higher tiers. UptimeCrow includes Slack, Discord, PagerDuty, Microsoft Teams, Telegram, custom webhooks, and email on every plan — even free.",
+          body: "StatusCake gates modern integrations behind higher tiers. UptimeCrow includes email on every plan, plus Slack, Discord, and custom webhooks on paid plans.",
         },
         {
           title: "Open source, self-hostable",
@@ -57,9 +57,7 @@ export function VsStatusCake() {
         { feature: "Maintenance windows", us: "✓ All plans", them: "✓ All plans" },
         { feature: "Custom domain status page", us: "Indie plan ($10/mo)", them: "Business plan" },
         { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
-        { feature: "PagerDuty / Teams / Telegram", us: "✓ Indie & up", them: "Paid plans" },
-        { feature: "SMS alerts", us: "✓ Twilio integration", them: "Pay-per-SMS extra" },
-        { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
+        { feature: "Slack / Discord / webhooks", us: "✓ Indie & up", them: "Paid plans" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "API access", us: "Indie plan ($10/mo)", them: "Paid plans" },

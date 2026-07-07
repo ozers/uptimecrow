@@ -11,7 +11,6 @@ import {
   Sun,
   Moon,
   User,
-  PhoneCall,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
@@ -59,12 +58,6 @@ const navItems: NavItem[] = [
     label: "Status Pages",
     href: "/dashboard/status-pages",
     icon: Globe,
-  },
-  {
-    label: "On-Call",
-    href: "/dashboard/oncall",
-    icon: PhoneCall,
-    desc: "Rotation schedule for alerts",
   },
 ];
 

@@ -35,13 +35,13 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 - `index.ts` — Entry; dispatches to `startServer()` and/or `startWorker()` based on `MODE`. Asserts a strong `JWT_SECRET` in production.
 - `server.ts` — Hono app: CORS, logger, health check, route mounting. Production requires `APP_URL` for CORS.
 - `worker.ts` — BullMQ worker bootstrap (registers repeatable check jobs for all monitors at startup).
-- `routes/` — `auth`, `monitors`, `incidents`, `status-pages`, `subscribers`, `analytics`, `billing`, `settings`, `heartbeats`, `maintenance`, `api-keys`, `mcp`, `team`, `oncall`, `tools`, `docs`, `public`.
+- `routes/` — `auth`, `monitors`, `incidents`, `status-pages`, `subscribers`, `analytics`, `billing`, `settings`, `heartbeats`, `maintenance`, `api-keys`, `mcp`, `team`, `tools`, `docs`, `public`.
 - `middleware/auth.ts` — JWT auth (reads cookie or `Authorization: Bearer`).
 - `middleware/rate-limit.ts` — Redis-backed rate limiting.
 - `middleware/custom-domain.ts` — Routes requests on a custom-domain Host header to the matching status page.
 - `db/schema.ts` + `db/index.ts` — Drizzle schema and connection (uses `postgres` driver, not `pg`).
 - `services/monitor.service.ts` — HTTP/TCP/keyword checks (with SSRF guard).
-- `services/notification.service.ts` — Email via Amazon SES + Slack/Discord/PagerDuty/Teams/Telegram/custom webhooks. Gracefully no-ops if AWS credentials are missing.
+- `services/notification.service.ts` — Email via Amazon SES + Slack/Discord/custom webhooks. Gracefully no-ops if AWS credentials are missing.
 - `services/static-gen.service.ts` — Pre-renders status pages to JSON + HTML.
 - `jobs/check.job.ts` / `notify.job.ts` / `generate.job.ts` / `heartbeat-check.job.ts` / `retention.job.ts` — BullMQ handlers.
 - `utils/auth.ts` — `jose` JWT sign/verify (HS256, 7-day expiry).
@@ -66,7 +66,7 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 
 ### Web Routing
 - Public: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/pricing`, `/docs`, `/mcp`, `/self-host`, `/changelog`, `/tools/*`, `/vs/*`, `/freshping-alternative`.
-- Authed (nested under `ProtectedRoute` → `DashboardLayout`): `/dashboard`, `/dashboard/monitors[...]`, `/dashboard/incidents[...]`, `/dashboard/status-pages[...]`, `/dashboard/heartbeats[...]`, `/dashboard/maintenance[...]`, `/dashboard/oncall`, `/dashboard/settings`.
+- Authed (nested under `ProtectedRoute` → `DashboardLayout`): `/dashboard`, `/dashboard/monitors[...]`, `/dashboard/incidents[...]`, `/dashboard/status-pages[...]`, `/dashboard/heartbeats[...]`, `/dashboard/maintenance[...]`, `/dashboard/settings`.
 - `PublicRoute` redirects logged-in users away from landing/login/register.
 
 ### Docker & CI

@@ -53,7 +53,7 @@ export function VsUptimeKuma() {
         { feature: "REST API", us: "✓ Full CRUD API", them: "✗ Not available", note: "Kuma's most-requested feature" },
         { feature: "Multi-user / teams", us: "✓ Org-based multi-user", them: "✗ Single user" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
-        { feature: "Notification integrations", us: "Email, Slack, Discord, PagerDuty, Teams, Telegram", them: "90+ integrations" },
+        { feature: "Notification integrations", us: "Email, Slack, Discord, webhooks", them: "90+ integrations" },
         { feature: "Heartbeat / cron monitoring", us: "✓ All plans", them: "✓ Available" },
         { feature: "Maintenance windows", us: "✓ Dashboard + status page", them: "✓ Available" },
         { feature: "Automatic incident management", us: "✓ Auto-created + auto-resolved", them: "✗ No incident tracking" },

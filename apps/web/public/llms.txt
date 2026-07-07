@@ -1,13 +1,13 @@
 # UptimeCrow
 
-> Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints; alert on incidents via email, Slack, Discord, PagerDuty, Microsoft Teams, and Telegram; and serve pre-rendered status pages that stay online even when your origin goes down. AGPL-3.0 open-source, self-hostable with Docker. Free hosted tier: 10 monitors, 1 status page, 5-minute checks, 7-day history — or self-host unlimited under AGPL-3.0.
+> Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints; alert on incidents via email, Slack, Discord, and webhooks; and serve pre-rendered status pages that stay online even when your origin goes down. AGPL-3.0 open-source, self-hostable with Docker. Free hosted tier: 10 monitors, 1 status page, 5-minute checks, 7-day history — or self-host unlimited under AGPL-3.0.
 
 UptimeCrow is built for developers and small teams who want production-grade monitoring without the enterprise pricing. The platform pairs a managed cloud offering at uptimecrow.com with a fully self-hostable container stack on GitHub. Status pages are pre-rendered to disk so they remain available even during a customer-side outage. A built-in MCP server exposes monitor state to AI assistants like Claude Code, Cursor, and Windsurf via JSON-RPC over HTTP.
 
 ## Core pages
 
 - [Home](https://uptimecrow.com/): Product overview, "your site went down — we caught it first" positioning, hero demo, social proof, dashboard preview, and call-to-action.
-- [Pricing](https://uptimecrow.com/pricing): Three tiers — Free ($0, 10 monitors, 5-min checks, 7-day history, email only), Indie ($9/mo, 25 monitors, 1-min checks, 5 status pages, 1-year history, Slack/Discord/PagerDuty/webhooks, custom domain), Pro ($29/mo, 100 monitors, 30s checks, 1-year history, 5 seats). Custom plans via email.
+- [Pricing](https://uptimecrow.com/pricing): Three tiers — Free ($0, 10 monitors, 5-min checks, 7-day history, email only), Indie ($9/mo, 25 monitors, 1-min checks, 5 status pages, 1-year history, Slack/Discord/webhooks, custom domain), Pro ($29/mo, 100 monitors, 30s checks, 1-year history, 5 seats). Custom plans via email.
 - [Docs](https://uptimecrow.com/docs): How to add monitors, configure alerts, create status pages, embed badges, use the REST API and MCP server, and self-host with Docker Compose.
 - [MCP Server](https://uptimecrow.com/mcp): Native Model Context Protocol endpoint at /api/mcp (POST JSON-RPC, Bearer-token auth). Tools: get_status_summary, list_monitors, list_active_incidents, get_monitor_detail, list_heartbeats. Lets AI assistants answer "is my API up?" without leaving the editor.
 - [Self-Host](https://uptimecrow.com/self-host): AGPL-3.0 licensed Docker Compose stack — API + Postgres + Redis + BullMQ worker + Vite/nginx web. One command up; deploy to your own VPS in minutes.
@@ -22,7 +22,7 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 - [vs Instatus](https://uptimecrow.com/vs/instatus): Combined monitoring + status pages instead of status-pages-only.
 - [vs Pingdom](https://uptimecrow.com/vs/pingdom): Modern, developer-first take at a tenth of the price.
 - [vs Cronitor](https://uptimecrow.com/vs/cronitor): Heartbeat monitoring plus full HTTP/TCP/keyword checks in one tool.
-- [vs Healthchecks.io](https://uptimecrow.com/vs/healthchecks): Healthchecks for crons + UptimeCrow for HTTP, status pages, on-call — one tool instead of three.
+- [vs Healthchecks.io](https://uptimecrow.com/vs/healthchecks): Healthchecks for crons + UptimeCrow for HTTP, status pages, alerts — one tool instead of three.
 - [vs StatusCake](https://uptimecrow.com/vs/statuscake): Modern, open-source alternative without per-feature paywalls.
 - [Freshping alternative](https://uptimecrow.com/freshping-alternative): Migration guide for users leaving the shutdown Freshping product.
 - [Free tools](https://uptimecrow.com/tools): SSL certificate checker, DNS lookup, and one-shot uptime tester — public, no signup, 10 requests/min per IP.
@@ -34,7 +34,7 @@ UptimeCrow is built for developers and small teams who want production-grade mon
 - Check types: HTTP (status code + optional keyword), TCP (raw socket), keyword (HTTP with required substring), SSL certificate expiry, domain expiry (WHOIS), heartbeat (inbound ping).
 - Confirmation logic: two consecutive failures across multiple regions before an incident is opened, so a single network blip never pages anyone.
 - Status pages: pre-rendered to static HTML + JSON on every state change. They survive an origin outage because they don't touch the database to render.
-- Integrations: Slack, Discord, custom webhooks, PagerDuty (Events API v2), Microsoft Teams (MessageCard), Telegram bots, email (Amazon SES).
+- Integrations: Email (Amazon SES), Slack, Discord, custom webhooks.
 - MCP support: First-class. The same API key authenticates both REST and MCP requests.
 - Pricing model: Flat monthly plans, no per-monitor or per-seat surcharges within a tier. Free tier is permanent, not a trial.
 - Hosting: Managed at uptimecrow.com; self-host anywhere Docker runs.

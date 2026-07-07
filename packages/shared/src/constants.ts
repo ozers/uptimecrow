@@ -116,7 +116,7 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
       "5 status pages + custom domain",
       "1-minute check intervals",
       "10 heartbeat monitors",
-      "Slack, Discord, PagerDuty, webhooks",
+      "Slack, Discord, webhook alerts",
       "API access",
       "2 team seats",
       "1-year history",

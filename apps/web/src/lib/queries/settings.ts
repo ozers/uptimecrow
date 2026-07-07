@@ -9,14 +9,6 @@ export interface OrgSettings {
   slackWebhookUrl: string | null;
   discordWebhookUrl: string | null;
   customWebhookUrl: string | null;
-  pagerdutyIntegrationKey: string | null;
-  teamsWebhookUrl: string | null;
-  telegramBotToken: string | null;
-  telegramChatId: string | null;
-  twilioAccountSid: string | null;
-  twilioAuthToken: string | null;
-  twilioFromNumber: string | null;
-  twilioToNumber: string | null;
 }
 
 export function useOrgSettings() {
@@ -32,13 +24,5 @@ export function useOrgSettings() {
 
 export function hasNotificationChannel(s: OrgSettings | undefined): boolean {
   if (!s) return false;
-  return Boolean(
-    s.slackWebhookUrl ||
-      s.discordWebhookUrl ||
-      s.customWebhookUrl ||
-      s.teamsWebhookUrl ||
-      s.pagerdutyIntegrationKey ||
-      (s.telegramBotToken && s.telegramChatId) ||
-      (s.twilioAccountSid && s.twilioAuthToken && s.twilioFromNumber && s.twilioToNumber),
-  );
+  return Boolean(s.slackWebhookUrl || s.discordWebhookUrl || s.customWebhookUrl);
 }

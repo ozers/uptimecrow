@@ -32,7 +32,7 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 | Data Retention | 7 days | 1 year | 1 year | 1 year |
 | Seats | 1 | 2 | 5 | 10 |
 | Custom Domain | No | Yes | Yes | Yes |
-| Slack / Discord / PagerDuty / etc. | No | Yes | Yes | Yes |
+| Slack / Discord / webhooks | No | Yes | Yes | Yes |
 | API + MCP Access | No | Yes | Yes | Yes |
 
 > **Self-hosting?** The AGPL-3.0 core is unlimited and free forever — these limits apply only to the managed cloud at [uptimecrow.com](https://uptimecrow.com).
@@ -160,7 +160,7 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml logs -f api
 ```
 
-Web UI on port `80`, API on `3000`. Put nginx/Caddy in front for TLS. Email (SES), billing (Polar), and SMS (Twilio) integrations are all optional — UptimeCrow runs fine with just the four core containers.
+Web UI on port `80`, API on `3000`. Put nginx/Caddy in front for TLS. Email (SES) and billing (Polar) integrations are optional — UptimeCrow runs fine with just the four core containers.
 
 ### Local Development (without Docker)
 

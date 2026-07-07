@@ -20,7 +20,7 @@ You add a monitor by pasting a URL or a host:port. UptimeCrow then runs a check 
 
 The state machine is the most important part of the product. Redis tracks consecutive failures per monitor; you don't go DOWN until you've failed `confirmationCount` checks in a row (default 2). One successful check returns you to UP. This eliminates the false alarms that plague naive ping monitors.
 
-When a monitor transitions UP→DOWN, UptimeCrow opens an incident automatically, regenerates the affected status page, and enqueues notification jobs (email via Amazon SES, plus Slack/Discord/PagerDuty/Teams/Telegram/custom-webhook fan-out). On DOWN→UP, it resolves the incident, regenerates the page, and notifies subscribers of the resolution.
+When a monitor transitions UP→DOWN, UptimeCrow opens an incident automatically, regenerates the affected status page, and enqueues notification jobs (email via Amazon SES, plus Slack/Discord/custom-webhook fan-out). On DOWN→UP, it resolves the incident, regenerates the page, and notifies subscribers of the resolution.
 
 ## How do status pages work?
 
@@ -49,7 +49,7 @@ This lets developers ask "is my API up?" inside Claude Code, Cursor, or Windsurf
 - **Pro — $29 (most popular)**: 100 monitors, 10 status pages, 30-second checks, 25 heartbeats, custom domain + API access, 5 team seats, 1-year history.
 - **Team — $79**: Everything in Pro plus 200 monitors, 100 heartbeats, 10 seats, 365-day history.
 
-All plans include unlimited subscribers on the status pages they're entitled to, every integration (Slack, Discord, PagerDuty, Teams, Telegram, custom webhooks, email), MCP and API access on Indie and above, and incident templates. There are no per-monitor surcharges within a tier. The Free tier is permanent, not a trial — no credit card required.
+All plans include unlimited subscribers on the status pages they're entitled to, every integration (email, Slack, Discord, custom webhooks), MCP and API access on Indie and above, and incident templates. There are no per-monitor surcharges within a tier. The Free tier is permanent, not a trial — no credit card required.
 
 ## Self-hosting
 
@@ -78,7 +78,7 @@ UptimeCrow is AGPL-3.0 licensed at https://github.com/ozers/uptimecrow. Clone th
 
 **Can I self-host?** Yes. The full source is AGPL-3.0 licensed on GitHub; everything runs with `docker compose up`.
 
-**What notification channels are supported?** Email (Amazon SES), Slack, Discord, custom webhooks, PagerDuty Events API v2, Microsoft Teams (MessageCard webhooks), and Telegram bots.
+**What notification channels are supported?** Email (Amazon SES), Slack, Discord, and custom webhooks.
 
 **How do I migrate from Freshping / UptimeRobot / Pingdom?** Each comparison page at `/vs/<competitor>` lists the migration path. The /freshping-alternative page has a step-by-step guide for users whose Freshping account is shutting down.
 

@@ -110,7 +110,7 @@ export default function HeartbeatPage() {
             {[
               { step: "1", title: "Create a heartbeat", body: `Give it a name, set the expected period (e.g. every 24h), and a grace window (e.g. 30 min). ${BRAND} generates a unique ping URL.` },
               { step: "2", title: "Add the ping to your job", body: "Append a curl call to your cron entry, Celery task, GitHub Action, or any scheduler. The ping takes < 1ms and uses no credentials." },
-              { step: "3", title: "Get alerted on silence", body: `If the heartbeat URL isn't hit within period + grace, ${BRAND} triggers an alert — email, Slack, Discord, PagerDuty, or Telegram.` },
+              { step: "3", title: "Get alerted on silence", body: `If the heartbeat URL isn't hit within period + grace, ${BRAND} triggers an alert — email, Slack, Discord, or webhook.` },
             ].map(({ step, title, body }) => (
               <div key={step} style={{ display: "flex", gap: "1.25rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1.25rem 1.5rem", alignItems: "flex-start" }}>
                 <div style={{ flexShrink: 0, width: 36, height: 36, borderRadius: "50%", background: "var(--accent)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem" }}>

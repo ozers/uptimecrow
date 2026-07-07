@@ -234,8 +234,7 @@ const COMPARISON = [
   { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
   { feature: "Heartbeat monitoring", us: "✓ All plans (3 free)", bs: "✓ Paid only", ins: "✗", sp: "✗" },
   { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
-  { feature: "PagerDuty + Teams + Telegram", us: "✓ Built-in", bs: "✓ Paid", ins: "✗ Partial", sp: "✓ Enterprise" },
-  { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
+    { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
   { feature: "False positive prevention", us: "✓ Multi-check", bs: "✓", ins: "✗", sp: "✗" },
   { feature: "Starting price", us: "$10/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
 ];
@@ -311,7 +310,7 @@ export function LandingPage() {
             <div className="lp-flow-step">
               <div className="lp-flow-num">3</div>
               <h3>You get pinged</h3>
-              <p>Email, Slack, Discord, PagerDuty, Telegram — or just ask Claude “is anything down?” via the MCP server.</p>
+              <p>Email, Slack, Discord, webhooks — or just ask Claude “is anything down?” via the MCP server.</p>
             </div>
           </div>
         </div>
@@ -322,7 +321,7 @@ export function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-sec-head">
             <div className="lp-eyebrow">Everything you need</div>
-            <h2>Monitoring, status pages, on-call — one tool.</h2>
+            <h2>Monitoring, status pages, alerts — one tool.</h2>
           </div>
           <div className="lp-bento">
             {/* Featured: MCP — the differentiator, with a mini terminal */}
@@ -375,9 +374,7 @@ export function LandingPage() {
                 <span>Email</span>
                 <span>Slack</span>
                 <span>Discord</span>
-                <span>PagerDuty</span>
-                <span>Teams</span>
-                <span>Telegram</span>
+                <span>Webhooks</span>
               </div>
             </div>
 

@@ -16,7 +16,7 @@ export function VsFreshping() {
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow picks up where Freshping left off — and goes further. You get <strong>automatic incident
             creation and status page updates</strong> the moment a monitor goes down, heartbeat monitoring for your
-            cron jobs, Slack/Discord/PagerDuty/Teams/Telegram alerts, and a pre-rendered status page that stays
+            cron jobs, email/Slack/Discord/webhook alerts, and a pre-rendered status page that stays
             online even if your own origin goes down. All on a free tier, no credit card required.
           </p>
           <p style={{ marginTop: "1rem" }}>
@@ -52,7 +52,7 @@ export function VsFreshping() {
         { feature: "Status page auto-update", us: "✓ Automatic", them: "✗ Manual" },
         { feature: "Pre-rendered status page", us: "✓ Survives origin downtime", them: "Live-rendered" },
         { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
-        { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✗ Not available" },
+        { feature: "Slack / Discord / webhooks", us: "✓ Built-in", them: "✗ Limited" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✗ Closed source" },
         { feature: "Custom domain status page", us: "Indie plan ($10/mo)", them: "Was paid" },

@@ -68,8 +68,8 @@ POSTGRES_PASSWORD=$(openssl rand -hex 24)
 JWT_SECRET=$(openssl rand -hex 32)
 APP_URL=https://uptime.yourdomain.com
 
-# Optional: Amazon SES for email alerts. Slack/Discord/PagerDuty/Teams/
-# Telegram work without these — leave blank to disable email.
+# Optional: Amazon SES for email alerts. Slack/Discord/webhook alerts
+# work without these — leave blank to disable email.
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=`;
 

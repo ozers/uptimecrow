@@ -42,7 +42,7 @@ export function VsHealthchecks() {
         },
         {
           title: "MCP server for AI assistants",
-          body: "Query monitor status, schedule maintenance, or check on-call rotation from Claude or Cursor. Healthchecks has a REST API — UptimeCrow has REST + MCP.",
+          body: "Query monitor status or schedule maintenance from Claude or Cursor. Healthchecks has a REST API — UptimeCrow has REST + MCP.",
         },
       ]}
       rows={[
@@ -57,12 +57,10 @@ export function VsHealthchecks() {
         { feature: "Auto-created incidents", us: "✓ Zero clicks", them: "✗ Webhook only" },
         { feature: "Maintenance windows", us: "✓ Suppress alerts during planned downtime", them: "✓ Pause checks" },
         { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "✓ Available" },
-        { feature: "PagerDuty / Teams / Telegram", us: "✓ Built-in", them: "✓ Built-in" },
-        { feature: "SMS alerts", us: "✓ Twilio integration", them: "Paid plans" },
+        { feature: "Slack / Discord / webhooks", us: "✓ Built-in", them: "✓ Built-in" },
         { feature: "MCP server (AI assistants)", us: "✓ Native", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: "✓ BSD-licensed" },
         { feature: "API access", us: "Indie plan ($10/mo)", them: "✓ All plans" },
-        { feature: "On-call rotation built-in", us: "✓ Email + SMS", them: "✗ Use PagerDuty" },
       ]}
       whenThem={
         <>

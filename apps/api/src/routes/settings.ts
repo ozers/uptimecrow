@@ -21,14 +21,6 @@ settingsRoutes.get("/", async (c) => {
       slackWebhookUrl: organizations.slackWebhookUrl,
       discordWebhookUrl: organizations.discordWebhookUrl,
       customWebhookUrl: organizations.customWebhookUrl,
-      pagerdutyIntegrationKey: organizations.pagerdutyIntegrationKey,
-      teamsWebhookUrl: organizations.teamsWebhookUrl,
-      telegramBotToken: organizations.telegramBotToken,
-      telegramChatId: organizations.telegramChatId,
-      twilioAccountSid: organizations.twilioAccountSid,
-      twilioAuthToken: organizations.twilioAuthToken,
-      twilioFromNumber: organizations.twilioFromNumber,
-      twilioToNumber: organizations.twilioToNumber,
     })
     .from(organizations)
     .where(eq(organizations.id, orgId))
@@ -47,11 +39,6 @@ settingsRoutes.get("/", async (c) => {
     slackWebhookUrl: mask(org.slackWebhookUrl),
     discordWebhookUrl: mask(org.discordWebhookUrl),
     customWebhookUrl: mask(org.customWebhookUrl),
-    pagerdutyIntegrationKey: mask(org.pagerdutyIntegrationKey),
-    teamsWebhookUrl: mask(org.teamsWebhookUrl),
-    telegramBotToken: mask(org.telegramBotToken),
-    twilioAccountSid: mask(org.twilioAccountSid),
-    twilioAuthToken: mask(org.twilioAuthToken),
   };
 
   return c.json({ organization: masked });
@@ -64,28 +51,12 @@ settingsRoutes.patch("/", async (c) => {
     slackWebhookUrl?: string | null;
     discordWebhookUrl?: string | null;
     customWebhookUrl?: string | null;
-    pagerdutyIntegrationKey?: string | null;
-    teamsWebhookUrl?: string | null;
-    telegramBotToken?: string | null;
-    telegramChatId?: string | null;
-    twilioAccountSid?: string | null;
-    twilioAuthToken?: string | null;
-    twilioFromNumber?: string | null;
-    twilioToNumber?: string | null;
   }>();
 
   const updates: Record<string, string | null> = {};
   if ("slackWebhookUrl" in body) updates.slackWebhookUrl = body.slackWebhookUrl || null;
   if ("discordWebhookUrl" in body) updates.discordWebhookUrl = body.discordWebhookUrl || null;
   if ("customWebhookUrl" in body) updates.customWebhookUrl = body.customWebhookUrl || null;
-  if ("pagerdutyIntegrationKey" in body) updates.pagerdutyIntegrationKey = body.pagerdutyIntegrationKey || null;
-  if ("teamsWebhookUrl" in body) updates.teamsWebhookUrl = body.teamsWebhookUrl || null;
-  if ("telegramBotToken" in body) updates.telegramBotToken = body.telegramBotToken || null;
-  if ("telegramChatId" in body) updates.telegramChatId = body.telegramChatId || null;
-  if ("twilioAccountSid" in body) updates.twilioAccountSid = body.twilioAccountSid || null;
-  if ("twilioAuthToken" in body) updates.twilioAuthToken = body.twilioAuthToken || null;
-  if ("twilioFromNumber" in body) updates.twilioFromNumber = body.twilioFromNumber || null;
-  if ("twilioToNumber" in body) updates.twilioToNumber = body.twilioToNumber || null;
 
   if (Object.keys(updates).length === 0) {
     return c.json({ error: "No fields to update" }, 400);
@@ -103,21 +74,13 @@ settingsRoutes.patch("/", async (c) => {
 // Test webhook
 settingsRoutes.post("/test-webhook", async (c) => {
   const { orgId } = c.get("user");
-  const { type } = await c.req.json<{ type: "slack" | "discord" | "custom" | "pagerduty" | "teams" | "telegram" | "sms" }>();
+  const { type } = await c.req.json<{ type: "slack" | "discord" | "custom" }>();
 
   const [org] = await db
     .select({
       slackWebhookUrl: organizations.slackWebhookUrl,
       discordWebhookUrl: organizations.discordWebhookUrl,
       customWebhookUrl: organizations.customWebhookUrl,
-      pagerdutyIntegrationKey: organizations.pagerdutyIntegrationKey,
-      teamsWebhookUrl: organizations.teamsWebhookUrl,
-      telegramBotToken: organizations.telegramBotToken,
-      telegramChatId: organizations.telegramChatId,
-      twilioAccountSid: organizations.twilioAccountSid,
-      twilioAuthToken: organizations.twilioAuthToken,
-      twilioFromNumber: organizations.twilioFromNumber,
-      twilioToNumber: organizations.twilioToNumber,
     })
     .from(organizations)
     .where(eq(organizations.id, orgId))
@@ -146,33 +109,8 @@ settingsRoutes.post("/test-webhook", async (c) => {
       if (!org.customWebhookUrl) return c.json({ error: "No custom webhook URL configured" }, 400);
       const { sendCustomWebhook } = await import("../services/notification.service.js");
       await sendCustomWebhook({ ...testParams, webhookUrl: org.customWebhookUrl });
-    } else if (type === "pagerduty") {
-      if (!org.pagerdutyIntegrationKey) return c.json({ error: "No PagerDuty integration key configured" }, 400);
-      const { sendPagerDutyAlert } = await import("../services/notification.service.js");
-      await sendPagerDutyAlert({ ...testParams, integrationKey: org.pagerdutyIntegrationKey });
-    } else if (type === "teams") {
-      if (!org.teamsWebhookUrl) return c.json({ error: "No Teams webhook URL configured" }, 400);
-      const { sendTeamsWebhook } = await import("../services/notification.service.js");
-      await sendTeamsWebhook({ ...testParams, webhookUrl: org.teamsWebhookUrl });
-    } else if (type === "telegram") {
-      if (!org.telegramBotToken || !org.telegramChatId) return c.json({ error: "No Telegram bot token or chat ID configured" }, 400);
-      const { sendTelegramMessage } = await import("../services/notification.service.js");
-      await sendTelegramMessage({ ...testParams, botToken: org.telegramBotToken, chatId: org.telegramChatId });
-    } else if (type === "sms") {
-      if (!org.twilioAccountSid || !org.twilioAuthToken || !org.twilioFromNumber || !org.twilioToNumber) {
-        return c.json({ error: "Twilio SMS not fully configured" }, 400);
-      }
-      const { sendSmsAlert } = await import("../services/notification.service.js");
-      await sendSmsAlert({
-        accountSid: org.twilioAccountSid,
-        authToken: org.twilioAuthToken,
-        fromNumber: org.twilioFromNumber,
-        toNumber: org.twilioToNumber,
-        type: "incident_created",
-        statusPageName: "Test",
-        incidentTitle: "Test SMS from UptimeCrow",
-        severity: "minor",
-      });
+    } else {
+      return c.json({ error: "Unknown integration type" }, 400);
     }
     return c.json({ ok: true, message: `${type} test sent` });
   } catch {

@@ -21,7 +21,7 @@ export function VsBetterStack() {
           </p>
           <p style={{ marginTop: "1rem" }}>
             UptimeCrow is also the <strong>only uptime monitor with a native MCP server</strong> — query your monitor
-            status, acknowledge incidents, and manage on-call directly from Claude, Cursor, or any AI assistant.
+            status, acknowledge incidents, and schedule maintenance directly from Claude, Cursor, or any AI assistant.
             And if you'd rather not depend on another hosted service, the entire stack is{" "}
             <strong>AGPL-3.0 licensed and self-hostable</strong> with a single Docker Compose command.
           </p>
@@ -56,7 +56,6 @@ export function VsBetterStack() {
         { feature: "Scheduled maintenance windows", us: true, them: true },
         { feature: "Subscriber email notifications", us: true, them: true },
         { feature: "Slack / Discord webhooks", us: "✓ Indie & up", them: "Paid plans" },
-        { feature: "SMS alerts (Twilio)", us: "✓ All paid plans", them: "✓ Built-in" },
         { feature: "MCP server (AI assistants)", us: "✓ Native — only uptime tool with this", them: "✗ Not available" },
         { feature: "Self-host option", us: "✓ AGPL-3.0", them: false },
         { feature: "API access", us: "Pro plan", them: "Paid plans" },

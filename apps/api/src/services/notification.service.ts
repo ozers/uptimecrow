@@ -4,7 +4,7 @@ import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { logger } from "../utils/logger.js";
 import { assertPublicUrl } from "../utils/ssrf.js";
 
-// User-controlled webhook URLs (Slack, Discord, custom, Teams) must be
+// User-controlled webhook URLs (Slack, Discord, custom) must be
 // validated against private/internal address ranges before we dial them —
 // otherwise an attacker can configure a webhook that points at the metadata
 // service or an internal admin panel and turn our notifier into an SSRF probe.
@@ -271,125 +271,6 @@ export async function sendCustomWebhook(params: {
     logger.info(`[Notification] Custom webhook sent for "${params.incidentTitle}"`);
   } catch (err) {
     logger.error({ err }, "[Notification] Custom webhook failed");
-  }
-}
-
-export async function sendPagerDutyAlert(params: {
-  integrationKey: string;
-  type: "incident_created" | "incident_resolved";
-  incidentTitle: string;
-  severity?: string;
-  updateBody: string;
-  dedupKey?: string;
-}): Promise<void> {
-  const eventAction = params.type === "incident_resolved" ? "resolve" : "trigger";
-  const pdSeverity =
-    params.severity === "critical" ? "critical"
-      : params.severity === "major" ? "error"
-      : "warning";
-
-  const payload = {
-    routing_key: params.integrationKey,
-    event_action: eventAction,
-    dedup_key: params.dedupKey ?? params.incidentTitle,
-    payload: {
-      summary: params.incidentTitle,
-      severity: pdSeverity,
-      source: "UptimeCrow",
-      custom_details: { update: params.updateBody },
-    },
-  };
-
-  try {
-    const res = await fetch("https://events.pagerduty.com/v2/enqueue", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error(`PagerDuty returned ${res.status}`);
-    logger.info(`[Notification] PagerDuty ${eventAction} sent for "${params.incidentTitle}"`);
-  } catch (err) {
-    logger.error({ err }, "[Notification] PagerDuty alert failed");
-  }
-}
-
-export async function sendTeamsWebhook(params: {
-  webhookUrl: string;
-  type: "incident_created" | "incident_resolved";
-  statusPageName: string;
-  incidentTitle: string;
-  severity?: string;
-  updateBody: string;
-}): Promise<void> {
-  const isResolved = params.type === "incident_resolved";
-  const themeColor = isResolved ? "00e676"
-    : params.severity === "critical" ? "ff5252"
-    : params.severity === "major" ? "ffab40"
-    : "ffd54f";
-
-  const payload = {
-    "@type": "MessageCard",
-    "@context": "http://schema.org/extensions",
-    themeColor,
-    summary: params.incidentTitle,
-    sections: [{
-      activityTitle: isResolved
-        ? `✅ Resolved: ${params.incidentTitle}`
-        : `🔴 New Incident: ${params.incidentTitle}`,
-      activitySubtitle: params.statusPageName,
-      facts: [
-        { name: "Status", value: isResolved ? "Resolved" : "Investigating" },
-        ...(params.severity ? [{ name: "Severity", value: params.severity.toUpperCase() }] : []),
-        { name: "Update", value: params.updateBody },
-      ],
-      markdown: true,
-    }],
-  };
-
-  try {
-    const res = await fetchUserWebhook(params.webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error(`Teams webhook returned ${res.status}`);
-    logger.info(`[Notification] Teams webhook sent for "${params.incidentTitle}"`);
-  } catch (err) {
-    logger.error({ err }, "[Notification] Teams webhook failed");
-  }
-}
-
-export async function sendTelegramMessage(params: {
-  botToken: string;
-  chatId: string;
-  type: "incident_created" | "incident_resolved";
-  statusPageName: string;
-  incidentTitle: string;
-  severity?: string;
-  updateBody: string;
-}): Promise<void> {
-  const isResolved = params.type === "incident_resolved";
-  const emoji = isResolved ? "✅" : params.severity === "critical" ? "🔴" : params.severity === "major" ? "🟠" : "🟡";
-  const text = [
-    `${emoji} *${isResolved ? "Resolved" : "New Incident"}: ${params.incidentTitle}*`,
-    `📋 *Status Page:* ${params.statusPageName}`,
-    ...(params.severity ? [`⚠️ *Severity:* ${params.severity.toUpperCase()}`] : []),
-    ``,
-    params.updateBody,
-    ``,
-    `_Powered by UptimeCrow_`,
-  ].join("\n");
-
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${params.botToken}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: params.chatId, text, parse_mode: "Markdown" }),
-    });
-    if (!res.ok) throw new Error(`Telegram API returned ${res.status}`);
-    logger.info(`[Notification] Telegram message sent for "${params.incidentTitle}"`);
-  } catch (err) {
-    logger.error({ err }, "[Notification] Telegram message failed");
   }
 }
 
@@ -708,52 +589,5 @@ export async function sendSlowResponseNotification(params: {
     } catch (err) {
       logger.error({ err }, "[Notification] Slow-response Discord alert failed");
     }
-  }
-}
-
-export interface SmsAlertParams {
-  accountSid: string;
-  authToken: string;
-  fromNumber: string;
-  toNumber: string;
-  type: "incident_created" | "incident_resolved";
-  statusPageName: string;
-  incidentTitle: string;
-  severity: string;
-}
-
-export async function sendSmsAlert(params: SmsAlertParams): Promise<void> {
-  const { accountSid, authToken, fromNumber, toNumber, type, statusPageName, incidentTitle, severity } = params;
-
-  const emoji = type === "incident_resolved" ? "✅" : severity === "critical" ? "🔴" : severity === "major" ? "🟠" : "🟡";
-  const verb = type === "incident_resolved" ? "Resolved" : "Incident";
-  const body = `${emoji} UptimeCrow ${verb} [${statusPageName}]: ${incidentTitle}`;
-
-  const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-  const creds = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
-
-  const formData = new URLSearchParams({
-    From: fromNumber,
-    To: toNumber,
-    Body: body,
-  });
-
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${creds}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData.toString(),
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Twilio returned ${res.status}: ${text}`);
-    }
-    logger.info(`[Notification] SMS sent to ${toNumber} via Twilio`);
-  } catch (err) {
-    logger.error({ err }, "[Notification] SMS alert failed");
-    throw err;
   }
 }

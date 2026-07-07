@@ -74,7 +74,7 @@ export function SetupChecklist() {
       id: "notify",
       icon: Bell,
       title: "Connect a notification channel",
-      desc: "Slack, Discord, email, PagerDuty, or webhook — pick at least one.",
+      desc: "Email, Slack, Discord, or webhook — pick at least one.",
       to: "/dashboard/settings",
       done: hasNotificationChannel(settings),
     },
