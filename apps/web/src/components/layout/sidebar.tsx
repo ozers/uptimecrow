@@ -24,33 +24,50 @@ interface NavItem {
   desc?: string;
 }
 
-const navItems: NavItem[] = [
+interface NavGroup {
+  header?: string;
+  items: NavItem[];
+}
+
+// Information architecture: status pages are the product — they lead. Below
+// them, the monitoring machinery that feeds them. Overview sits on its own.
+const navGroups: NavGroup[] = [
   {
-    label: "Overview",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    items: [{ label: "Overview", href: "/dashboard", icon: LayoutDashboard }],
   },
   {
-    label: "Monitors",
-    href: "/dashboard/monitors",
-    icon: Activity,
-    desc: "HTTP, TCP & keyword checks",
+    header: "Pages",
+    items: [
+      {
+        label: "Status Pages",
+        href: "/dashboard/status-pages",
+        icon: Globe,
+        desc: "Public pages & subscribers",
+      },
+    ],
   },
   {
-    label: "Incidents",
-    href: "/dashboard/incidents",
-    icon: AlertTriangle,
-  },
-  {
-    label: "Maintenance",
-    href: "/dashboard/maintenance",
-    icon: Wrench,
-    desc: "Schedule planned downtime",
-  },
-  {
-    label: "Status Pages",
-    href: "/dashboard/status-pages",
-    icon: Globe,
+    header: "Monitoring",
+    items: [
+      {
+        label: "Monitors",
+        href: "/dashboard/monitors",
+        icon: Activity,
+        desc: "HTTP, TCP & keyword checks",
+      },
+      {
+        label: "Incidents",
+        href: "/dashboard/incidents",
+        icon: AlertTriangle,
+        desc: "Communicate outages",
+      },
+      {
+        label: "Maintenance",
+        href: "/dashboard/maintenance",
+        icon: Wrench,
+        desc: "Schedule planned downtime",
+      },
+    ],
   },
 ];
 
@@ -130,17 +147,25 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        <p className="px-3 pb-2 pt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/60">
-          The Watch
-        </p>
-        {navItems.map((item) => (
-          <NavRow
-            key={item.href}
-            item={item}
-            active={isActive(item.href)}
-            onNavClick={onNavClick}
-          />
+      <nav className="flex-1 overflow-y-auto p-3">
+        {navGroups.map((group, gi) => (
+          <div key={group.header ?? gi} className={cn(gi > 0 && "mt-5")}>
+            {group.header && (
+              <p className="px-3 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/60">
+                {group.header}
+              </p>
+            )}
+            <div className="space-y-1">
+              {group.items.map((item) => (
+                <NavRow
+                  key={item.href}
+                  item={item}
+                  active={isActive(item.href)}
+                  onNavClick={onNavClick}
+                />
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
 
