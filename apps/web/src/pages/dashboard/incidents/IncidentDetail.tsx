@@ -129,7 +129,9 @@ export function IncidentDetail() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+        {/* Timeline fills the row when there's no post-update panel (resolved
+            incidents), so the page never strands an empty right third. */}
+        <div className={cn("space-y-6", isActive ? "lg:col-span-2" : "lg:col-span-3")}>
           <section className="border-t border-border pt-5">
             <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Timeline
