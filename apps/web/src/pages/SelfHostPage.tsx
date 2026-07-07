@@ -316,7 +316,6 @@ export default function SelfHostPage() {
               <Link to="/">Home</Link>
               <Link to="/pricing">Pricing</Link>
               <Link to="/docs">Docs</Link>
-              <Link to="/vs/betterstack">vs BetterStack</Link>
               <Link to="/privacy">Privacy</Link>
               <Link to="/login">Log in</Link>
             </div>

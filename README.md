@@ -1,6 +1,6 @@
 # UptimeCrow
 
-Developer-first uptime monitoring and status page platform. Monitor your services, notify subscribers on incidents, and serve pre-rendered status pages that stay online even when your origin goes down.
+Open-source status pages that stay up when you're down. Built-in uptime monitoring feeds your public status page: incidents open automatically, subscribers get notified, and the page itself is pre-rendered so it keeps serving even when your origin goes down. Self-host under AGPL-3.0 or use the hosted cloud.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)
 ![Node](https://img.shields.io/badge/Node-%3E%3D20-green)
@@ -10,12 +10,14 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 
 ## Features
 
-- **HTTP / TCP / Keyword Monitoring** — Configurable interval checks with timeout, expected status codes, and keyword-in-body matching
 - **Pre-Rendered Status Pages** — Static HTML/JSON pages survive origin downtime; your users see status even when you're down
-- **Redis State Machine** — Consecutive-failure confirmation (configurable, default 2) prevents single-blip false alarms
-- **Email + Chat Notifications** — Amazon SES for transactional email to subscribers; native Slack and Discord webhooks
 - **Branded Status Pages** — Custom logo, brand color, custom domain, private-access tokens, embeddable SVG badges
+- **Built-In Uptime Monitoring** — HTTP / TCP / keyword checks with configurable interval, timeout, expected status codes, and keyword-in-body matching
+- **Redis State Machine** — Consecutive-failure confirmation (configurable, default 2) prevents single-blip false alarms
+- **Automatic Incidents** — Real outages open incidents and update your status page with no human in the loop; manual incidents and updates supported
 - **Subscriber Management** — Double opt-in verification, one-click unsubscribe (HTML confirmation pages)
+- **Email + Chat Notifications** — Amazon SES for transactional email to subscribers; native Slack, Discord, and custom webhooks
+- **Maintenance Windows** — Planned downtime pauses alerts and shows on the status page
 - **Multi-Tenancy** — Organization-scoped resources
 - **Tiered Plans** — Free, Indie, Pro, and Team with enforced limits on monitors, pages, intervals, and retention
 - **Billing** — Polar integration with Standard Webhooks signature verification
@@ -25,15 +27,12 @@ Developer-first uptime monitoring and status page platform. Monitor your service
 | Feature | Free | Indie | Pro | Team |
 |---|---|---|---|---|
 | Price | $0 | $10/mo | $30/mo | $80/mo |
-| Monitors | 10 | 50 | 100 | 200 |
 | Status Pages | 1 | 5 | 10 | Unlimited |
+| Monitors | 10 | 50 | 100 | 200 |
 | Min Interval | 5 min | 1 min | 30 sec | 30 sec |
-| Heartbeats | 3 | 10 | 25 | 100 |
 | Data Retention | 7 days | 1 year | 1 year | 1 year |
-| Seats | 1 | 2 | 5 | 10 |
 | Custom Domain | No | Yes | Yes | Yes |
 | Slack / Discord / webhooks | No | Yes | Yes | Yes |
-| API + MCP Access | No | Yes | Yes | Yes |
 
 > **Self-hosting?** The AGPL-3.0 core is unlimited and free forever — these limits apply only to the managed cloud at [uptimecrow.com](https://uptimecrow.com).
 
@@ -58,7 +57,7 @@ uptimecrow/
 ├── apps/
 │   ├── api/                 # Hono backend + BullMQ workers
 │   │   ├── src/
-│   │   │   ├── routes/      # Auth, monitors, incidents, status pages, analytics, billing, public
+│   │   │   ├── routes/      # Auth, monitors, incidents, status pages, subscribers, maintenance, settings, billing, public
 │   │   │   ├── services/    # Monitor checks, notifications (SES/Slack/Discord), static gen
 │   │   │   ├── routes/billing.ts  # Polar checkout, customer portal, webhook
 │   │   │   ├── jobs/        # BullMQ handlers: check, notify, generate
@@ -267,16 +266,6 @@ pnpm --filter @uptimecrow/web build   # Build web only
 ### API Documentation
 
 Interactive Swagger UI at `/api/docs` and the raw OpenAPI 3.1 document at `/api/openapi.json`.
-
-### API Keys (Team plan, dashboard only)
-
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/api-keys` | List active keys |
-| `POST` | `/api/api-keys` | Create a key (secret shown once) |
-| `DELETE` | `/api/api-keys/:id` | Revoke a key |
-
-Use the returned key as `Authorization: Bearer <key>` on any `/api/*` endpoint.
 
 ### Billing (authenticated)
 

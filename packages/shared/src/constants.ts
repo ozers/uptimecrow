@@ -30,8 +30,6 @@ export const PLAN_LIMITS = {
     slackWebhook: false,   // email only on free
     teamSeats: 1,
     retentionDays: 7,
-    apiAccess: false,
-    heartbeats: 3,
   },
   indie: {
     statusPages: 5,
@@ -41,8 +39,6 @@ export const PLAN_LIMITS = {
     slackWebhook: true,
     teamSeats: 2,
     retentionDays: 365,
-    apiAccess: true,
-    heartbeats: 10,
   },
   pro: {
     statusPages: 10,
@@ -52,8 +48,6 @@ export const PLAN_LIMITS = {
     slackWebhook: true,
     teamSeats: 5,
     retentionDays: 365,
-    apiAccess: true,
-    heartbeats: 25,
   },
   team: {
     statusPages: Infinity,
@@ -63,8 +57,6 @@ export const PLAN_LIMITS = {
     slackWebhook: true,
     teamSeats: 10,
     retentionDays: 365,
-    apiAccess: true,
-    heartbeats: 100,
   },
 } as const;
 
@@ -94,10 +86,9 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
     annualTotal: 0,
     desc: "Try it out. No credit card.",
     features: [
-      "10 monitors",
       "1 status page",
+      "10 monitors",
       "5-minute check intervals",
-      "3 heartbeat monitors",
       "Email alerts",
       "Uptime badge",
       "7-day history",
@@ -112,13 +103,11 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
     annualTotal: 96,
     desc: "For indie hackers and solo founders.",
     features: [
-      "50 monitors",
       "5 status pages + custom domain",
+      "50 monitors",
       "1-minute check intervals",
-      "10 heartbeat monitors",
       "Slack, Discord, webhook alerts",
-      "API access",
-      "2 team seats",
+      "Email subscribers",
       "1-year history",
     ],
     featured: false,
@@ -131,11 +120,9 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
     annualTotal: 300,
     desc: "For teams that take uptime seriously.",
     features: [
-      "100 monitors",
       "10 status pages + custom domain",
+      "100 monitors",
       "30-second check intervals",
-      "25 heartbeat monitors",
-      "5 team seats",
       "1-year history",
       "Priority support",
     ],

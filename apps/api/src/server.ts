@@ -7,21 +7,14 @@ import { incidentRoutes } from "./routes/incidents.js";
 import { statusPageRoutes } from "./routes/status-pages.js";
 import { subscriberRoutes } from "./routes/subscribers.js";
 import { publicRoutes } from "./routes/public.js";
-import { analyticsRoutes } from "./routes/analytics.js";
 import { settingsRoutes } from "./routes/settings.js";
 import { billingRoutes } from "./routes/billing.js";
 import { maintenanceRoutes } from "./routes/maintenance.js";
-import { apiKeyRoutes } from "./routes/api-keys.js";
 import { docsRoutes } from "./routes/docs.js";
-import heartbeatRoutes from "./routes/heartbeats.js";
-import { mcpRoutes } from "./routes/mcp.js";
-import { teamRoutes } from "./routes/team.js";
-import { toolsRoutes } from "./routes/tools.js";
 import { getRenderedPage } from "./services/static-gen.service.js";
 import { db, redis } from "./db/index.js";
-import { heartbeats } from "./db/schema.js";
-import { eq, sql } from "drizzle-orm";
-import { authRateLimit, apiRateLimit, publicRateLimit, toolsRateLimit } from "./middleware/rate-limit.js";
+import { sql } from "drizzle-orm";
+import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
 import { logger } from "./utils/logger.js";
@@ -98,29 +91,9 @@ app.get("/s/:slug", (c) => {
   return c.body(rendered.html);
 });
 
-// Heartbeat ping endpoint — public, no auth
-app.get("/hb/:slug", publicRateLimit, async (c) => {
-  const slug = c.req.param("slug") as string;
-  const [hb] = await db
-    .select({ id: heartbeats.id, isActive: heartbeats.isActive })
-    .from(heartbeats)
-    .where(eq(heartbeats.slug, slug));
-  if (!hb || !hb.isActive) return c.text("Not found", 404);
-  await db
-    .update(heartbeats)
-    .set({ lastPingAt: new Date(), status: "healthy" })
-    .where(eq(heartbeats.id, hb.id));
-  return c.text("OK", 200);
-});
-
 // Public API routes (no auth)
 app.use("/status/*", publicRateLimit);
 app.route("/status", publicRoutes);
-
-// Free public tools — strict rate limit, no auth. Used by SEO landing
-// pages at /tools/* to drive organic traffic and showcase capabilities.
-app.use("/api/tools/*", toolsRateLimit);
-app.route("/api/tools", toolsRoutes);
 
 // Auth routes (strict rate limit on login/register, not on /me)
 app.use("/api/auth/login", authRateLimit);
@@ -134,14 +107,9 @@ app.route("/api/monitors", monitorRoutes);
 app.route("/api/incidents", incidentRoutes);
 app.route("/api/status-pages", statusPageRoutes);
 app.route("/api/subscribers", subscriberRoutes);
-app.route("/api/analytics", analyticsRoutes);
 app.route("/api/settings", settingsRoutes);
 app.route("/api/billing", billingRoutes);
 app.route("/api/maintenance-windows", maintenanceRoutes);
-app.route("/api/api-keys", apiKeyRoutes);
-app.route("/api/heartbeats", heartbeatRoutes);
-app.route("/api/mcp", mcpRoutes);
-app.route("/api/team", teamRoutes);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);

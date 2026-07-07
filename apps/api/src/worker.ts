@@ -5,7 +5,6 @@ import { processCheckJob } from "./jobs/check.job.js";
 import { processNotifyJob } from "./jobs/notify.job.js";
 import { processGenerateJob } from "./jobs/generate.job.js";
 import { processRetentionJob } from "./jobs/retention.job.js";
-import { processHeartbeatCheckJob } from "./jobs/heartbeat-check.job.js";
 import { logger } from "./utils/logger.js";
 import { isTerminalFailure } from "./utils/queues.js";
 import { captureException } from "./utils/sentry.js";
@@ -110,16 +109,6 @@ export async function startWorker() {
     ...removeOpts,
   });
 
-  const heartbeatCheckWorker = new Worker(
-    "heartbeat-checks",
-    processHeartbeatCheckJob,
-    {
-      connection: redis,
-      concurrency: 1,
-      ...removeOpts,
-    },
-  );
-
   const retentionQueue = new Queue("retention", { connection: redis });
   // Run once daily at 03:15 UTC — off-peak for most regions.
   await retentionQueue.add(
@@ -131,24 +120,12 @@ export async function startWorker() {
     },
   );
 
-  const heartbeatQueue = new Queue("heartbeat-checks", { connection: redis });
-  // Run every 60 seconds to detect late heartbeats.
-  await heartbeatQueue.add(
-    "check-late-heartbeats",
-    {},
-    {
-      jobId: "repeat-heartbeat-check",
-      repeat: { every: 60_000 },
-    },
-  );
-
   checkWorker.on("failed", (job, err) => logJobFailure("monitor-checks", job, err));
   notifyWorker.on("failed", (job, err) => logJobFailure("notifications", job, err));
   generateWorker.on("failed", (job, err) => logJobFailure("status-page-generate", job, err));
   retentionWorker.on("failed", (job, err) => logJobFailure("retention", job, err));
-  heartbeatCheckWorker.on("failed", (job, err) => logJobFailure("heartbeat-checks", job, err));
 
   logger.info(
-    "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention, heartbeat-checks",
+    "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention",
   );
 }

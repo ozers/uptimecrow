@@ -35,15 +35,15 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 - `index.ts` — Entry; dispatches to `startServer()` and/or `startWorker()` based on `MODE`. Asserts a strong `JWT_SECRET` in production.
 - `server.ts` — Hono app: CORS, logger, health check, route mounting. Production requires `APP_URL` for CORS.
 - `worker.ts` — BullMQ worker bootstrap (registers repeatable check jobs for all monitors at startup).
-- `routes/` — `auth`, `monitors`, `incidents`, `status-pages`, `subscribers`, `analytics`, `billing`, `settings`, `heartbeats`, `maintenance`, `api-keys`, `mcp`, `team`, `tools`, `docs`, `public`.
+- `routes/` — `auth`, `monitors`, `incidents`, `status-pages`, `subscribers`, `billing`, `settings`, `maintenance`, `docs`, `public`.
 - `middleware/auth.ts` — JWT auth (reads cookie or `Authorization: Bearer`).
 - `middleware/rate-limit.ts` — Redis-backed rate limiting.
 - `middleware/custom-domain.ts` — Routes requests on a custom-domain Host header to the matching status page.
-- `db/schema.ts` + `db/index.ts` — Drizzle schema and connection (uses `postgres` driver, not `pg`).
+- `db/schema.ts` + `db/index.ts` — Drizzle schema and connection (uses `postgres` driver, not `pg`). The schema still contains tables/columns for removed features (`heartbeats`, `api_keys`, `org_invites`, `users.googleId`) — dead by design, do not drop or reuse without a migration plan.
 - `services/monitor.service.ts` — HTTP/TCP/keyword checks (with SSRF guard).
 - `services/notification.service.ts` — Email via Amazon SES + Slack/Discord/custom webhooks. Gracefully no-ops if AWS credentials are missing.
 - `services/static-gen.service.ts` — Pre-renders status pages to JSON + HTML.
-- `jobs/check.job.ts` / `notify.job.ts` / `generate.job.ts` / `heartbeat-check.job.ts` / `retention.job.ts` — BullMQ handlers.
+- `jobs/check.job.ts` / `notify.job.ts` / `generate.job.ts` / `retention.job.ts` — BullMQ handlers.
 - `utils/auth.ts` — `jose` JWT sign/verify (HS256, 7-day expiry).
 - `utils/state-machine.ts` — Redis-backed consecutive-failure counter + transition evaluator.
 - `utils/ssrf.ts` — Public-URL guard for any outbound HTTP triggered by user input (webhooks, monitor URLs).
@@ -54,7 +54,7 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 - **Transitions trigger side effects:** Only on UP→DOWN / DOWN→UP transitions do we enqueue notify + status-page regen jobs. Routine checks only persist a `check_result` row.
 - **Static status pages:** Pages are pre-rendered so they survive origin downtime — regenerate on incident/monitor changes, don't render on request.
 - **BullMQ repeatable jobs:** One repeatable job per monitor, decoupled from HTTP server. When a monitor's interval changes, the old repeatable must be removed and a new one added.
-- **Public routes (no auth):** `/status/:slug`, `/status/:slug/incidents`, `/status/:slug/subscribe`, verify/unsubscribe confirmation pages (HTML), `/badge/:slug.svg`, `/hb/:slug` (heartbeat ping), `/health`, `/api/tools/*` (free public tools).
+- **Public routes (no auth):** `/status/:slug`, `/status/:slug/incidents`, `/status/:slug/subscribe`, verify/unsubscribe confirmation pages (HTML), `/badge/:slug.svg`, `/health`.
 - **Plan limits:** Enforced at the app layer using `packages/shared/src/constants.ts` (`PLAN_LIMITS`, `PLAN_CATALOG`). That file is the single source of truth — README and landing copy follow it, not the other way around.
 
 ### Database Enums
@@ -65,8 +65,8 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 - `incident_severity`: minor | major | critical
 
 ### Web Routing
-- Public: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/pricing`, `/docs`, `/mcp`, `/self-host`, `/changelog`, `/tools/*`, `/vs/*`, `/freshping-alternative`.
-- Authed (nested under `ProtectedRoute` → `DashboardLayout`): `/dashboard`, `/dashboard/monitors[...]`, `/dashboard/incidents[...]`, `/dashboard/status-pages[...]`, `/dashboard/heartbeats[...]`, `/dashboard/maintenance[...]`, `/dashboard/settings`.
+- Public: `/`, `/login`, `/register`, `/forgot-password`, `/reset-password`, `/privacy`, `/terms`, `/pricing`, `/docs`, `/self-host`, `/changelog`.
+- Authed (nested under `ProtectedRoute` → `DashboardLayout`): `/dashboard`, `/dashboard/monitors[...]`, `/dashboard/incidents[...]`, `/dashboard/status-pages[...]`, `/dashboard/maintenance[...]`, `/dashboard/settings`.
 - `PublicRoute` redirects logged-in users away from landing/login/register.
 
 ### Docker & CI

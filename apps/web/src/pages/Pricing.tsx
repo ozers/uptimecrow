@@ -28,7 +28,7 @@ const FAQ = [
   },
   {
     q: "What counts as a monitor?",
-    a: "Each HTTP, TCP, or keyword check is one monitor. Heartbeat monitors are counted separately — they track your cron jobs and scheduled tasks.",
+    a: "Each HTTP, TCP, or keyword check is one monitor. A monitor can appear on any number of your status pages.",
   },
   {
     q: "Do you offer annual discounts or a custom plan?",
@@ -54,10 +54,10 @@ export function Pricing() {
       name: "UptimeCrow",
       url: "https://uptimecrow.com",
       applicationCategory: "DeveloperApplication",
-      applicationSubCategory: "Uptime monitoring and status pages",
+      applicationSubCategory: "Status pages and uptime monitoring",
       operatingSystem: "Any (web, Docker)",
       description:
-        "Developer-first uptime monitoring and status page platform. Monitor HTTP, TCP, and keyword endpoints; auto-create incidents; serve pre-rendered status pages that survive origin downtime; native MCP server for AI assistants.",
+        "Open-source status page platform with built-in uptime monitoring. Monitor HTTP, TCP, and keyword endpoints; auto-create incidents; serve pre-rendered status pages that survive origin downtime.",
       offers: PLAN_CATALOG.map((p) => ({
         "@type": "Offer",
         name: p.name,
@@ -283,8 +283,7 @@ export function Pricing() {
             <p>&copy; 2026 {BRAND}. Built with care in Istanbul.</p>
             <div className="footer-links">
               <Link to="/">Home</Link>
-              <Link to="/vs/betterstack">vs Betterstack</Link>
-              <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
+              <Link to="/docs">API Docs</Link>
               <Link to="/privacy">Privacy</Link>
               <Link to="/terms">Terms</Link>
               <Link to="/login">Log in</Link>

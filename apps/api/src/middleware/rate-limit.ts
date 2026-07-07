@@ -75,12 +75,3 @@ export const publicRateLimit = createRateLimiter({
   max: 60,
   prefix: "pub",
 });
-
-// Free tools (SSL/DNS/uptime checkers): 10 requests per minute per IP.
-// Each request can hit a third-party (WHOIS/DNS/target URL), so we keep
-// this tight to prevent abuse while still feeling instant for humans.
-export const toolsRateLimit = createRateLimiter({
-  windowMs: 60 * 1000,
-  max: 10,
-  prefix: "tools",
-});

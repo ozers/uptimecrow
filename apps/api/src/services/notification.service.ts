@@ -274,59 +274,6 @@ export async function sendCustomWebhook(params: {
   }
 }
 
-export async function sendHeartbeatLateAlert(params: {
-  heartbeatName: string;
-  slackWebhookUrl?: string | null;
-  discordWebhookUrl?: string | null;
-}): Promise<void> {
-  const title = `💔 Heartbeat missed: ${params.heartbeatName}`;
-  const body = `No ping received within the expected window. Check that your scheduled job or cron is running.`;
-
-  if (params.slackWebhookUrl) {
-    const payload = {
-      attachments: [{
-        color: "#ff5370",
-        pretext: title,
-        fields: [{ title: "Details", value: body, short: false }],
-        footer: "UptimeCrow Heartbeats",
-        ts: Math.floor(Date.now() / 1000),
-      }],
-    };
-    try {
-      const res = await fetchUserWebhook(params.slackWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`Slack webhook returned ${res.status}`);
-    } catch (err) {
-      logger.error({ err }, "[Notification] Heartbeat Slack alert failed");
-    }
-  }
-
-  if (params.discordWebhookUrl) {
-    const payload = {
-      embeds: [{
-        title,
-        description: body,
-        color: 0xff5370,
-        timestamp: new Date().toISOString(),
-        footer: { text: "UptimeCrow Heartbeats" },
-      }],
-    };
-    try {
-      const res = await fetchUserWebhook(params.discordWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`Discord webhook returned ${res.status}`);
-    } catch (err) {
-      logger.error({ err }, "[Notification] Heartbeat Discord alert failed");
-    }
-  }
-}
-
 export async function sendDomainExpiryNotification(params: {
   ownerEmail: string;
   monitorName: string;

@@ -22,28 +22,10 @@ import { StatusPageEdit } from "./pages/dashboard/status-pages/StatusPageEdit";
 import { StatusPageDetail } from "./pages/dashboard/status-pages/StatusPageDetail";
 import { Settings } from "./pages/dashboard/Settings";
 import { MaintenanceList } from "./pages/dashboard/maintenance/MaintenanceList";
-import { HeartbeatsList } from "./pages/dashboard/heartbeats/HeartbeatsList";
 import { Privacy, Terms } from "./pages/Legal";
 import { Pricing } from "./pages/Pricing";
 import { Docs } from "./pages/Docs";
-import { AcceptInvite } from "./pages/AcceptInvite";
-import { VsBetterStack } from "./pages/compare/VsBetterStack";
-import { VsUptimeRobot } from "./pages/compare/VsUptimeRobot";
-import { VsFreshping } from "./pages/compare/VsFreshping";
-import { VsUptimeKuma } from "./pages/compare/VsUptimeKuma";
-import { VsInstatus } from "./pages/compare/VsInstatus";
-import { VsPingdom } from "./pages/compare/VsPingdom";
-import { VsCronitor } from "./pages/compare/VsCronitor";
-import { VsHealthchecks } from "./pages/compare/VsHealthchecks";
-import { VsStatusCake } from "./pages/compare/VsStatusCake";
-import McpPage from "./pages/McpPage";
 import SelfHostPage from "./pages/SelfHostPage";
-import HeartbeatPage from "./pages/HeartbeatPage";
-import { FreshpingAlternative } from "./pages/FreshpingAlternative";
-import ToolsIndex from "./pages/tools/ToolsIndex";
-import SslChecker from "./pages/tools/SslChecker";
-import DnsLookup from "./pages/tools/DnsLookup";
-import UptimeTest from "./pages/tools/UptimeTest";
 import Changelog from "./pages/Changelog";
 
 // Reset scroll to the top on every route change (e.g. clicking the logo from a
@@ -68,25 +50,8 @@ export function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/docs" element={<Docs />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/vs/betterstack" element={<VsBetterStack />} />
-        <Route path="/vs/uptimerobot" element={<VsUptimeRobot />} />
-        <Route path="/vs/freshping" element={<VsFreshping />} />
-        <Route path="/vs/uptime-kuma" element={<VsUptimeKuma />} />
-        <Route path="/vs/instatus" element={<VsInstatus />} />
-        <Route path="/vs/pingdom" element={<VsPingdom />} />
-        <Route path="/vs/cronitor" element={<VsCronitor />} />
-        <Route path="/vs/healthchecks" element={<VsHealthchecks />} />
-        <Route path="/vs/statuscake" element={<VsStatusCake />} />
-        <Route path="/mcp" element={<McpPage />} />
         <Route path="/self-host" element={<SelfHostPage />} />
-        <Route path="/heartbeat-monitoring" element={<HeartbeatPage />} />
-        <Route path="/freshping-alternative" element={<FreshpingAlternative />} />
-        <Route path="/tools" element={<ToolsIndex />} />
-        <Route path="/tools/ssl-checker" element={<SslChecker />} />
-        <Route path="/tools/dns-lookup" element={<DnsLookup />} />
-        <Route path="/tools/uptime-test" element={<UptimeTest />} />
         <Route path="/changelog" element={<Changelog />} />
-        <Route path="/invite/:token" element={<AcceptInvite />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
@@ -103,7 +68,6 @@ export function App() {
             <Route path="/dashboard/status-pages/new" element={<StatusPageCreate />} />
             <Route path="/dashboard/status-pages/:id" element={<StatusPageDetail />} />
             <Route path="/dashboard/status-pages/:id/edit" element={<StatusPageEdit />} />
-            <Route path="/dashboard/heartbeats" element={<HeartbeatsList />} />
             <Route path="/dashboard/maintenance" element={<MaintenanceList />} />
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>

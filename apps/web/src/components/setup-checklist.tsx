@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import {
   Activity,
   Globe,
-  Heart,
   Bell,
   Check,
   ChevronDown,
@@ -15,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useStatusPages } from "@/lib/queries/status-pages";
-import { useHeartbeats } from "@/lib/queries/heartbeats";
 import { useOrgSettings, hasNotificationChannel } from "@/lib/queries/settings";
 import { toast } from "sonner";
 
@@ -46,7 +44,6 @@ type Step = {
 export function SetupChecklist() {
   const { data: monitors, isLoading: l1 } = useMonitors();
   const { data: statusPages, isLoading: l2 } = useStatusPages();
-  const { data: heartbeats, isLoading: l3 } = useHeartbeats();
   const { data: settings, isLoading: l4 } = useOrgSettings();
 
   const [dismissed, setDismissed] = useState(isOnboardingDismissed);
@@ -59,7 +56,7 @@ export function SetupChecklist() {
     return () => window.removeEventListener("uc-onboarding-restart", handler);
   }, []);
 
-  const loading = l1 || l2 || l3 || l4;
+  const loading = l1 || l2 || l4;
 
   const steps: Step[] = [
     {
@@ -85,15 +82,6 @@ export function SetupChecklist() {
       desc: "A public, pre-rendered page that stays online even if you don't.",
       to: "/dashboard/status-pages/new",
       done: (statusPages?.length ?? 0) > 0,
-    },
-    {
-      id: "heartbeat",
-      icon: Heart,
-      title: "Monitor a cron job",
-      desc: "Add one curl line to any scheduled task. Get paged when it stops.",
-      to: "/dashboard/heartbeats",
-      done: (heartbeats?.length ?? 0) > 0,
-      optional: true,
     },
   ];
 
@@ -196,7 +184,7 @@ export function SetupChecklist() {
 
         {/* Expanded panel */}
         {expanded && (
-          <div className="mt-3 grid grid-cols-1 gap-2 pb-1 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-3 grid grid-cols-1 gap-2 pb-1 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map((step) => {
               const Icon = step.icon;
               return (

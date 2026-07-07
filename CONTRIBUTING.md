@@ -56,7 +56,7 @@ Tip: `@uptimecrow/shared` must be built once before the web app can resolve it.
 - **New billing providers** — we are standardized on Polar; please don't add a parallel Stripe/Lemon Squeezy track without discussing first
 - **Major architectural rewrites** — open a discussion first, do not surprise us with a 4,000-line PR
 - **Features that belong in managed-only** — see [OPEN_CORE.md](./OPEN_CORE.md). SSO, audit logs, multi-region orchestration etc. are out of scope here
-- **Breaking changes to the public REST API or MCP server** without a clear migration path
+- **Breaking changes to the public REST API** without a clear migration path
 
 ## Pull request checklist
 

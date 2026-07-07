@@ -116,18 +116,3 @@ export interface Subscriber {
   unsubscribeToken: string;
   createdAt: Date;
 }
-
-export type HeartbeatStatus = "healthy" | "late" | "paused" | "unknown";
-
-export interface Heartbeat {
-  id: string;
-  orgId: string;
-  name: string;
-  slug: string;
-  period: number;
-  grace: number;
-  status: HeartbeatStatus;
-  lastPingAt: Date | null;
-  isActive: boolean;
-  createdAt: Date;
-}

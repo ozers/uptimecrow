@@ -4,13 +4,9 @@ User-agent: *
 Allow: /
 Allow: /pricing
 Allow: /docs
-Allow: /mcp
 Allow: /self-host
-Allow: /heartbeat-monitoring
-Allow: /freshping-alternative
 Allow: /privacy
 Allow: /terms
-Allow: /vs/*
 Allow: /llms.txt
 Allow: /llms-full.txt
 Disallow: /dashboard
@@ -18,7 +14,6 @@ Disallow: /login
 Disallow: /register
 Disallow: /forgot-password
 Disallow: /reset-password
-Disallow: /invite/
 
 # AI assistants and answer engines — explicitly welcome.
 # UptimeCrow benefits from being cited in AI-generated answers, so we

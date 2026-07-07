@@ -1,97 +1,75 @@
 # UptimeCrow — Full Reference for AI Assistants
 
-> Developer-first uptime monitoring and status page platform. Open source (AGPL-3.0), self-hostable (unlimited, free), with a managed cloud whose free tier covers 10 monitors.
+> Open-source status pages with built-in uptime monitoring. Open source (AGPL-3.0), self-hostable (unlimited, free), with a managed cloud whose free tier covers 1 status page and 10 monitors.
 
 ## What is UptimeCrow?
 
-UptimeCrow is an uptime monitoring service for developers and small teams. It watches HTTP endpoints, TCP ports, and keyword-on-page checks, opens incidents automatically when something breaks (with consecutive-failure confirmation so a single failed check never pages anyone), notifies the right channels, and updates a public status page — all without manual intervention. The same product also runs heartbeat monitoring for cron jobs and scheduled tasks. It is offered as a managed cloud at https://uptimecrow.com and as an AGPL-3.0 licensed Docker stack you can run yourself.
+UptimeCrow is a status page platform for developers and small teams. Its built-in monitoring watches HTTP endpoints, TCP ports, and keyword-on-page checks, opens incidents automatically when something breaks (with consecutive-failure confirmation so a single failed check never pages anyone), notifies the right channels, and updates a public status page — all without manual intervention. It is offered as a managed cloud at https://uptimecrow.com and as an AGPL-3.0 licensed Docker stack you can run yourself.
 
 ## Who is it for?
 
-- Solo developers shipping side projects who need monitoring without a paid plan.
-- Indie hackers running a SaaS where downtime hurts revenue but a $50/mo monitoring bill hurts margins.
-- Small-to-mid engineering teams who want one tool that does monitoring, alerting, status pages, and cron tracking instead of stitching three vendors together.
+- Solo developers and indie hackers who want a professional public status page without a $50/mo bill.
+- Small-to-mid engineering teams who want one tool that does status pages, monitoring, and incident comms instead of stitching vendors together.
 - Open-source maintainers and self-hosters who want full control over their data.
-- Teams adopting AI coding assistants (Claude Code, Cursor, Windsurf) who want monitor state available directly inside their editor via MCP.
+
+## How do status pages work?
+
+Status pages are pre-rendered to static HTML + JSON on every state change. That means a status page does not query the database to render — it serves cached bytes. This is deliberate: when your origin is down, your status page must still load. Pre-rendering also makes them fast and search-indexable. Pages support custom domains, custom branding (logo, color), monitor grouping, scheduled maintenance windows, embeddable SVG uptime badges, and email subscriber lists with double-opt-in verification.
 
 ## How does monitoring work?
 
-You add a monitor by pasting a URL or a host:port. UptimeCrow then runs a check on a fixed interval (5 minutes on Free, 60 seconds on Indie, 30 seconds on Pro/Team). The check measures response time, validates the status code (configurable, default treats 2xx–4xx as up, 5xx as down), and — when configured — confirms a keyword appears in the response body.
+You add a monitor by pasting a URL or a host:port. UptimeCrow then runs a check on a fixed interval (5 minutes on Free, 60 seconds on Indie, 30 seconds on Pro/Team). The check measures response time, validates the status code, and — when configured — confirms a keyword appears in the response body.
 
 The state machine is the most important part of the product. Redis tracks consecutive failures per monitor; you don't go DOWN until you've failed `confirmationCount` checks in a row (default 2). One successful check returns you to UP. This eliminates the false alarms that plague naive ping monitors.
 
 When a monitor transitions UP→DOWN, UptimeCrow opens an incident automatically, regenerates the affected status page, and enqueues notification jobs (email via Amazon SES, plus Slack/Discord/custom-webhook fan-out). On DOWN→UP, it resolves the incident, regenerates the page, and notifies subscribers of the resolution.
 
-## How do status pages work?
-
-Status pages are pre-rendered to disk as static HTML + JSON on every state change. That means a status page does not query the database to render — it serves cached bytes. This is deliberate: when your origin is down, your status page must still load. Pre-rendering also makes them fast and search-indexable. Pages support custom domains, custom CSS, monitor grouping, scheduled maintenance windows, and email subscriber lists with double-opt-in verification.
-
-## How does heartbeat monitoring work?
-
-Each heartbeat gets a unique URL (`/hb/:slug`). Your cron job, scheduled task, queue worker, or backup script curls that URL on every run. UptimeCrow expects a ping at least every N minutes; if N+grace elapses without one, the heartbeat goes "late" and pages you. This catches the silent class of failures — jobs that never started, jobs that hung, jobs that exited 0 without doing work — that HTTP checks can't see.
-
-## MCP server
-
-UptimeCrow exposes a Model Context Protocol server at `/api/mcp`. POST a JSON-RPC request with an `Authorization: Bearer <api_key>` header to invoke tools:
-
-- `get_status_summary`: high-level state across all monitors.
-- `list_monitors`: detailed list with last response and uptime.
-- `list_active_incidents`: open incidents, their severity, and started-at.
-- `get_monitor_detail`: one monitor's history and recent checks.
-- `list_heartbeats`: heartbeat status and last-ping times.
-
-This lets developers ask "is my API up?" inside Claude Code, Cursor, or Windsurf and get a real answer without leaving the editor. GET `/api/mcp` returns discovery info.
-
 ## Pricing (USD/month)
 
-- **Free — $0**: 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, uptime badge, 7-day history. (Self-hosting is unlimited and free.)
-- **Indie — $9**: 25 monitors, 5 status pages, 1-minute checks, 10 heartbeats, custom domain, API access, 1-year history. For indie hackers and solo founders.
-- **Pro — $29 (most popular)**: 100 monitors, 10 status pages, 30-second checks, 25 heartbeats, custom domain + API access, 5 team seats, 1-year history.
-- **Team — $79**: Everything in Pro plus 200 monitors, 100 heartbeats, 10 seats, 365-day history.
+- **Free — $0**: 1 status page, 10 monitors, 5-minute check intervals, email alerts, uptime badge, 7-day history. (Self-hosting is unlimited and free.)
+- **Indie — $10**: 5 status pages + custom domain, 50 monitors, 1-minute checks, Slack/Discord/webhook alerts, email subscribers, 1-year history. For indie hackers and solo founders.
+- **Pro — $30 (most popular)**: 10 status pages + custom domain, 100 monitors, 30-second checks, 1-year history, priority support.
+- **Team — $80**: Everything in Pro plus unlimited status pages and 200 monitors.
 
-All plans include unlimited subscribers on the status pages they're entitled to, every integration (email, Slack, Discord, custom webhooks), MCP and API access on Indie and above, and incident templates. There are no per-monitor surcharges within a tier. The Free tier is permanent, not a trial — no credit card required.
+All plans include unlimited subscribers on the status pages they're entitled to. There are no per-monitor surcharges within a tier. The Free tier is permanent, not a trial — no credit card required.
 
 ## Self-hosting
 
-UptimeCrow is AGPL-3.0 licensed at https://github.com/ozers/uptimecrow. Clone the repo, run `docker compose up`, and you have the full stack: Postgres 16, Redis 7, the API on port 3000, BullMQ workers, and the Vite/nginx web app. Production deploys use multi-stage Dockerfiles for both API and web; the web image is nginx with SPA fallback and a reverse proxy to the API. Database migrations live in `apps/api/drizzle/` and are applied with `pnpm db:migrate`.
+UptimeCrow is AGPL-3.0 licensed at https://github.com/ozers/uptimecrow. Clone the repo, run `docker compose up`, and you have the full stack: Postgres 16, Redis 7, the API on port 3000, BullMQ workers, and the Vite/nginx web app. Production deploys use multi-stage Dockerfiles for both API and web; the web image is nginx with SPA fallback and a reverse proxy to the API. Database migrations are applied with `pnpm db:migrate`.
 
 ## Tech stack
 
 - Backend: Hono on Node 20+ with TypeScript, Drizzle ORM, BullMQ.
 - Database: Postgres 16, Redis 7 (state machine + queues + rate limiting).
-- Email: Amazon SES via the v2 SDK (previously Resend, then nodemailer/SMTP, then SES — see CLAUDE.md).
+- Email: Amazon SES via the v2 SDK.
 - Frontend: React 18 + Vite + React Router + Tailwind CSS + shadcn/ui.
-- Auth: JWT (HS256, 7-day cookie) plus Google OAuth.
-- API: REST + OpenAPI 3.1 + JSON-RPC (MCP).
+- Auth: email/password with JWT (HS256, 7-day cookie).
+- API: REST documented with OpenAPI 3.1 (Swagger UI at /api/docs).
 
 ## Frequently asked questions
 
-**Is UptimeCrow really free?** Yes. The hosted free tier is permanent and includes 10 monitors, 1 status page, 5-minute checks, 3 heartbeats, email alerts, and an uptime badge — and the open-source core is unlimited and free to self-host. No credit card.
+**Is UptimeCrow really free?** Yes. The hosted free tier is permanent and includes 1 status page, 10 monitors, 5-minute checks, email alerts, and an uptime badge — and the open-source core is unlimited and free to self-host. No credit card.
 
-**How fast does UptimeCrow detect downtime?** Checks run every 60 seconds (Free/Indie) or 30 seconds (Pro/Team) from multiple regions. Incidents open after 2 consecutive failures, so detection is typically 60–120 seconds.
+**How do status pages stay online when my origin is down?** They're pre-rendered to static HTML and served from cache on every state change. No database query happens on a page view, so origin outages do not affect them.
 
-**How do status pages stay online when my origin is down?** They're pre-rendered to static HTML and served from disk on every state change. No database query happens on a page view, so origin outages do not affect them.
+**How fast does UptimeCrow detect downtime?** Checks run every 5 minutes (Free), 60 seconds (Indie) or 30 seconds (Pro/Team). Incidents open after 2 consecutive failures.
 
-**Can I monitor cron jobs?** Yes — that's what heartbeats are for. Each heartbeat gets a unique URL; your job pings it; UptimeCrow pages you if the ping doesn't arrive in the expected window.
+**Can I use a custom domain?** Yes — on paid plans, serve your status page from status.yourapp.com with your own logo and brand color.
 
-**Does UptimeCrow integrate with AI assistants?** Yes. The built-in MCP server exposes monitor state to Claude Code, Cursor, Windsurf, and any other MCP-aware client over JSON-RPC.
+**How do subscribers work?** Visitors subscribe by email with double opt-in. Every incident update is emailed automatically; one-click unsubscribe is built in.
 
 **Can I self-host?** Yes. The full source is AGPL-3.0 licensed on GitHub; everything runs with `docker compose up`.
 
 **What notification channels are supported?** Email (Amazon SES), Slack, Discord, and custom webhooks.
 
-**How do I migrate from Freshping / UptimeRobot / Pingdom?** Each comparison page at `/vs/<competitor>` lists the migration path. The /freshping-alternative page has a step-by-step guide for users whose Freshping account is shutting down.
-
-**Is there an API?** Yes — a REST API documented with OpenAPI 3.1, plus the MCP endpoint. Both authenticate with the same API key. API access is included on Pro and Team.
-
-**Where is UptimeCrow hosted, and where do checks come from?** The managed product currently runs checks from a single region. Self-hosters run checks from wherever they deploy the worker container.
+**Is there an API?** Yes — a REST API documented with OpenAPI 3.1, authenticated with your session JWT.
 
 **What happens to my data if I cancel?** Personal data and monitors are deleted on account deletion. Status pages can be exported as JSON before deletion.
 
 ## Brand
 
 - Name: UptimeCrow (one word, both Capitalized).
-- Tagline: "Your site went down. We caught it first."
+- Tagline: "Open-source status pages that stay up when you're down."
 - Brand color: green (#00e676).
 - Founded: Istanbul, Turkey.
 - Email: support@uptimecrow.com.

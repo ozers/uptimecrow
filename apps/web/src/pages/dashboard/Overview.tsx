@@ -10,9 +10,7 @@ import {
   RefreshCw,
   ShieldCheck,
   Zap,
-  Heart,
   Wrench,
-  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PLAN_LIMITS } from "@uptimecrow/shared";
@@ -20,13 +18,10 @@ import type { Plan } from "@uptimecrow/shared";
 import { useMonitors } from "@/lib/queries/monitors";
 import { useIncidents } from "@/lib/queries/incidents";
 import { useStatusPages } from "@/lib/queries/status-pages";
-import { useUptime } from "@/lib/queries/analytics";
-import { useHeartbeats } from "@/lib/queries/heartbeats";
 import { useAuthStore } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadError } from "@/components/load-error";
-import { uptimeTextClass } from "@/lib/uptime";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
@@ -43,8 +38,8 @@ function OverviewSkeleton() {
   return (
     <div>
       <Skeleton className="mb-6 h-[80px] w-full rounded-xl" />
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="mb-6 grid grid-cols-3 gap-3">
+        {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-[72px] rounded-xl" />
         ))}
       </div>
@@ -87,7 +82,7 @@ function MetricCards({
 }) {
   const navigate = useNavigate();
   return (
-    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="mb-6 grid grid-cols-3 gap-3">
       {items.map((item, i) => {
         const Icon = item.icon;
         return (
@@ -474,11 +469,9 @@ export function Overview() {
     isError: statusPagesError,
     refetch: refetchStatusPages,
   } = useStatusPages();
-  const { data: heartbeats } = useHeartbeats();
 
   const totalMonitors = monitors?.length ?? 0;
   const hasMonitors = totalMonitors > 0;
-  const { data: uptimeData } = useUptime(hasMonitors);
 
   if (monitorsLoading || incidentsLoading || statusPagesLoading)
     return <OverviewSkeleton />;
@@ -509,15 +502,6 @@ export function Overview() {
     activeIncidents.map((i) => i.monitorId).filter((id): id is string => !!id),
   );
 
-  const uptimeMap = new Map(
-    uptimeData?.map((u) => [u.monitorId, u]) ?? [],
-  );
-  const validUptime = uptimeData?.filter((u) => u.uptimePercent != null) ?? [];
-  const avgUptime =
-    validUptime.length > 0
-      ? `${(validUptime.reduce((sum, u) => sum + Number(u.uptimePercent), 0) / validUptime.length).toFixed(2)}%`
-      : "—";
-
   const plan = (user?.plan ?? "free") as Plan;
   const planLimit = PLAN_LIMITS[plan].monitors;
 
@@ -529,10 +513,6 @@ export function Overview() {
   const SHOW_COUNT = 6;
   const visibleMonitors = monitors?.slice(0, SHOW_COUNT) ?? [];
   const hiddenCount = (monitors?.length ?? 0) - SHOW_COUNT;
-
-  const lateHeartbeats =
-    heartbeats?.filter((h) => h.isActive && h.status === "late") ?? [];
-  const hasHeartbeats = (heartbeats?.length ?? 0) > 0;
 
   const isSettledIn = hasMonitors && totalStatusPages > 0;
 
@@ -552,23 +532,6 @@ export function Overview() {
         <OpenIncidentsStrip incidents={activeIncidents} monitorStatusById={monitorStatusById} />
 
         {/* Alert banners */}
-        {lateHeartbeats.length > 0 && (
-          <NudgeBanner
-            icon={Heart}
-            text={
-              <>
-                <span className="font-semibold text-danger-foreground">
-                  {lateHeartbeats.length} heartbeat
-                  {lateHeartbeats.length > 1 ? "s" : ""} late
-                </span>{" "}
-                — a scheduled task hasn&apos;t pinged in time.
-              </>
-            }
-            cta="View heartbeats"
-            to="/dashboard/heartbeats"
-          />
-        )}
-
         {!totalStatusPages && (
           <NudgeBanner
             icon={Globe}
@@ -595,12 +558,6 @@ export function Overview() {
               to: "/dashboard/monitors",
               badge: monitorsDown > 0 ? `${monitorsDown} down` : undefined,
               badgeColor: monitorsDown > 0 ? "bg-danger/15 text-danger-foreground" : undefined,
-            },
-            {
-              icon: TrendingUp,
-              value: avgUptime,
-              label: "avg uptime",
-              color: "text-primary",
             },
             {
               icon: AlertTriangle,
@@ -642,15 +599,6 @@ export function Overview() {
           ) : (
             <div className="divide-y divide-border border-t border-b border-border">
               {visibleMonitors.map((monitor) => {
-                const uptime = uptimeMap.get(monitor.id);
-                const uptimePct =
-                  uptime?.uptimePercent != null
-                    ? Number(uptime.uptimePercent)
-                    : null;
-                const uptimeColor =
-                  uptimePct == null
-                    ? "text-muted-foreground/50"
-                    : uptimeTextClass(uptimePct);
                 const hasIncident = activeIncidentMonitorIds.has(monitor.id);
                 return (
                   <Tooltip key={monitor.id}>
@@ -673,16 +621,6 @@ export function Overview() {
                         </div>
                         <div className="flex shrink-0 items-center gap-3 sm:gap-4">
                           <StatusPill status={monitor.status} />
-                          {uptimePct != null && (
-                            <span
-                              className={cn(
-                                "hidden w-14 text-right text-xs tabular-nums font-medium sm:inline",
-                                uptimeColor,
-                              )}
-                            >
-                              {uptimePct.toFixed(2)}%
-                            </span>
-                          )}
                           <span className="hidden w-12 text-right text-xs tabular-nums text-muted-foreground md:inline">
                             {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
                           </span>
@@ -760,18 +698,11 @@ export function Overview() {
         </div>
 
         {/* Feature discovery */}
-        {isSettledIn && !hasHeartbeats && (
+        {isSettledIn && (
           <div className="mb-8 space-y-3">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
               Discover
             </p>
-            <FeatureDiscoveryCard
-              icon={Heart}
-              title="Heartbeat monitoring"
-              desc="Make your cron jobs and scheduled tasks ping a URL. Get alerted when they stop running."
-              cta="Set up a heartbeat"
-              to="/dashboard/heartbeats"
-            />
             <FeatureDiscoveryCard
               icon={Wrench}
               title="Maintenance windows"

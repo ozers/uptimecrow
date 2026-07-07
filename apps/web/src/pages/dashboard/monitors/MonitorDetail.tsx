@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Pencil, Trash2, ExternalLink, ChevronDown } from "lucide-react";
 import { useMonitor, useMonitorChecks, useDeleteMonitor } from "@/lib/queries/monitors";
-import { useUptime } from "@/lib/queries/analytics";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -76,7 +75,6 @@ export function MonitorDetail() {
 
   const { data: monitor, isLoading } = useMonitor(id!);
   const { data: checks } = useMonitorChecks(id!);
-  const { data: uptimeData } = useUptime(true);
   const deleteMutation = useDeleteMonitor();
 
   if (isLoading) return <MonitorDetailSkeleton />;
@@ -91,13 +89,11 @@ export function MonitorDetail() {
     });
   };
 
-  const monitorUptime = uptimeData?.find((u) => u.monitorId === monitor.id);
-  const uptimePercent =
-    monitorUptime?.uptimePercent != null
-      ? `${Number(monitorUptime.uptimePercent).toFixed(2)}%`
-      : "—";
-
+  // Uptime computed client-side from the recent check history we already fetch.
   const totalChecks = checks?.length ?? 0;
+  const upChecks = checks?.filter((c) => c.status === "up").length ?? 0;
+  const uptimePercent =
+    totalChecks > 0 ? `${((upChecks / totalChecks) * 100).toFixed(2)}%` : "—";
   const visibleChecks = checks?.slice(0, page * PAGE_SIZE) ?? [];
   const hasMore = totalChecks > page * PAGE_SIZE;
   const failedChecks = checks?.filter((c) => c.status !== "up") ?? [];
@@ -176,7 +172,9 @@ export function MonitorDetail() {
             <span className="text-xl font-bold tabular-nums leading-none tracking-tight text-primary">
               {uptimePercent}
             </span>
-            <span className="text-xs text-muted-foreground">uptime 30d</span>
+            <span className="text-xs text-muted-foreground">
+              uptime{totalChecks > 0 ? ` · last ${totalChecks} checks` : ""}
+            </span>
           </div>
           <div className="flex items-baseline gap-1.5 text-sm">
             <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
@@ -184,22 +182,6 @@ export function MonitorDetail() {
             </span>
             <span className="text-xs text-muted-foreground">interval</span>
           </div>
-          {monitorUptime?.p95ResponseMs != null && (
-            <div className="flex items-baseline gap-1.5 text-sm">
-              <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
-                {monitorUptime.p95ResponseMs}ms
-              </span>
-              <span className="text-xs text-muted-foreground">p95 30d</span>
-            </div>
-          )}
-          {monitorUptime?.p99ResponseMs != null && (
-            <div className="flex items-baseline gap-1.5 text-sm">
-              <span className="text-xl font-bold tabular-nums leading-none tracking-tight">
-                {monitorUptime.p99ResponseMs}ms
-              </span>
-              <span className="text-xs text-muted-foreground">p99 30d</span>
-            </div>
-          )}
           {monitor.sslExpiresAt != null && monitor.url.startsWith("https://") && (() => {
             const days = Math.round((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
             const expired = days < 0;

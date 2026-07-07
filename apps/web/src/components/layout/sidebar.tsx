@@ -7,7 +7,6 @@ import {
   Settings,
   Zap,
   Wrench,
-  Heart,
   Sun,
   Moon,
   User,
@@ -36,12 +35,6 @@ const navItems: NavItem[] = [
     href: "/dashboard/monitors",
     icon: Activity,
     desc: "HTTP, TCP & keyword checks",
-  },
-  {
-    label: "Heartbeats",
-    href: "/dashboard/heartbeats",
-    icon: Heart,
-    desc: "Cron job & scheduled task monitoring",
   },
   {
     label: "Incidents",
@@ -141,7 +134,7 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
                 Upgrade your plan
               </p>
               <p className="text-xs text-muted-foreground truncate">
-                More monitors, heartbeats & custom domain
+                More monitors, status pages & custom domain
               </p>
             </div>
           </Link>

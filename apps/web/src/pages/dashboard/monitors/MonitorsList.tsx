@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import { Plus, Activity, Pencil, Trash2, ShieldAlert, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { uptimeBarClass, uptimeTextClass } from "@/lib/uptime";
 import { toast } from "sonner";
 import { useMonitors, useDeleteMonitor } from "@/lib/queries/monitors";
-import { useUptime } from "@/lib/queries/analytics";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -25,29 +23,6 @@ import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { RelativeTime } from "@/components/relative-time";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-
-function UptimeBar({ percent }: { percent: number | null }) {
-  if (percent == null) {
-    return <span className="text-xs text-muted-foreground/50">—</span>;
-  }
-  const pct = Number(percent);
-  const barColor = uptimeBarClass(pct);
-  const textColor = uptimeTextClass(pct);
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-border">
-        <div
-          className={cn("h-full rounded-full transition-all", barColor)}
-          style={{ width: `${Math.min(100, pct)}%` }}
-        />
-      </div>
-      <span className={cn("w-14 text-right text-xs tabular-nums font-medium", textColor)}>
-        {pct.toFixed(2)}%
-      </span>
-    </div>
-  );
-}
 
 function MonitorsListSkeleton() {
   return (
@@ -73,7 +48,6 @@ function MonitorsListSkeleton() {
 
 export function MonitorsList() {
   const { data: monitors, isLoading } = useMonitors();
-  const { data: uptimeData } = useUptime(!!(monitors?.length));
   const deleteMutation = useDeleteMonitor();
 
   const handleDelete = (id: string) => {
@@ -84,8 +58,6 @@ export function MonitorsList() {
   };
 
   if (isLoading) return <MonitorsListSkeleton />;
-
-  const uptimeMap = new Map(uptimeData?.map((u) => [u.monitorId, u]) ?? []);
 
   return (
     <TooltipProvider>
@@ -126,7 +98,6 @@ export function MonitorsList() {
                   <TableHead className="hidden md:table-cell">URL</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="hidden sm:table-cell">Response</TableHead>
-                  <TableHead>Uptime 30d</TableHead>
                   <TableHead className="hidden sm:table-cell">Last Check</TableHead>
                   <TableHead className="hidden lg:table-cell">SSL</TableHead>
                   <TableHead className="hidden lg:table-cell">Domain</TableHead>
@@ -135,7 +106,6 @@ export function MonitorsList() {
               </TableHeader>
               <TableBody>
                 {monitors.map((monitor) => {
-                  const uptime = uptimeMap.get(monitor.id);
                   return (
                     <TableRow
                       key={monitor.id}
@@ -181,9 +151,6 @@ export function MonitorsList() {
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm tabular-nums">
                         {monitor.lastResponseMs != null ? `${monitor.lastResponseMs}ms` : "—"}
-                      </TableCell>
-                      <TableCell>
-                        <UptimeBar percent={uptime?.uptimePercent != null ? Number(uptime.uptimePercent) : null} />
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
                         {monitor.lastCheckedAt ? (

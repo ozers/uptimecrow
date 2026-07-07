@@ -47,7 +47,7 @@ function reset() {
 export const analytics = {
   // Auth
   register: () => track("register"),
-  login: (method: "email" | "google") => track("login", { method }),
+  login: (method: "email") => track("login", { method }),
 
   // Monitors
   monitorCreated: (type: string) => track("monitor_created", { type }),
@@ -60,13 +60,6 @@ export const analytics = {
 
   // Status pages
   statusPageCreated: () => track("status_page_created"),
-
-  // Heartbeats
-  heartbeatCreated: () => track("heartbeat_created"),
-
-  // Team
-  inviteSent: () => track("invite_sent"),
-  inviteAccepted: () => track("invite_accepted"),
 
   // Integrations
   integrationSaved: (type: string) => track("integration_saved", { type }),

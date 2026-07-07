@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/logo.svg">
-  <title>UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages</title>
-  <meta name="description" content="Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 10 monitors free, or self-host unlimited.">
+  <title>UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring</title>
+  <meta name="description" content="Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, email subscribers, and custom domains. Self-host under AGPL-3.0 or use the hosted free tier.">
   <meta name="theme-color" content="#00e676">
-  <meta name="keywords" content="uptime monitoring, status page, website monitoring, API monitoring, heartbeat monitoring, incident management, uptime checker, free uptime monitor">
+  <meta name="keywords" content="status page, open source status page, uptime monitoring, website monitoring, API monitoring, incident management, self-hosted status page">
   <meta name="author" content="UptimeCrow">
 
   <link rel="canonical" href="https://uptimecrow.com/">
@@ -20,15 +20,15 @@
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://uptimecrow.com/">
-  <meta property="og:title" content="UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages">
-  <meta property="og:description" content="Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. 10 monitors free, or self-host unlimited.">
+  <meta property="og:title" content="UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring">
+  <meta property="og:description" content="Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, and email subscribers. Self-host free or use the hosted tier.">
   <meta property="og:image" content="https://uptimecrow.com/og-image.png">
   <meta property="og:site_name" content="UptimeCrow">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@uptimecrow">
-  <meta name="twitter:title" content="UptimeCrow — Free, Open-Source Uptime Monitoring &amp; Status Pages">
-  <meta name="twitter:description" content="Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. 10 monitors free, or self-host unlimited.">
+  <meta name="twitter:title" content="UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring">
+  <meta name="twitter:description" content="Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, and email subscribers. Self-host free or use the hosted tier.">
   <meta name="twitter:image" content="https://uptimecrow.com/og-image.png">
 
   <script type="application/ld+json">
@@ -37,7 +37,7 @@
     "@type": "SoftwareApplication",
     "name": "UptimeCrow",
     "url": "https://uptimecrow.com",
-    "description": "Developer-first uptime monitoring and status page platform. Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down.",
+    "description": "Open-source status page platform with built-in uptime monitoring. Monitor your APIs and websites, alert on incidents, and serve pre-rendered status pages that stay online even when your origin goes down.",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
     "offers": [
@@ -46,38 +46,37 @@
         "name": "Free",
         "price": "0",
         "priceCurrency": "USD",
-        "description": "10 monitors, 1 status page, 5-minute checks — free forever"
+        "description": "1 status page, 10 monitors, 5-minute checks — free forever"
       },
       {
         "@type": "Offer",
         "name": "Indie",
-        "price": "12",
+        "price": "10",
         "priceCurrency": "USD",
-        "description": "25 monitors, 5 status pages, custom domain + API"
+        "description": "5 status pages + custom domain, 50 monitors, 1-minute checks"
       },
       {
         "@type": "Offer",
         "name": "Pro",
-        "price": "29",
+        "price": "30",
         "priceCurrency": "USD",
-        "description": "100 monitors, 10 status pages, 30-second checks, API access"
+        "description": "10 status pages + custom domain, 100 monitors, 30-second checks"
       },
       {
         "@type": "Offer",
         "name": "Team",
-        "price": "79",
+        "price": "80",
         "priceCurrency": "USD",
-        "description": "200 monitors, 30-second checks, 10 team seats"
+        "description": "Unlimited status pages, 200 monitors, 30-second checks"
       }
     ],
     "featureList": [
-      "Uptime monitoring (HTTP, TCP, keyword)",
       "Pre-rendered static status pages",
-      "Heartbeat monitoring for cron jobs",
+      "Custom domains and branding",
+      "Built-in uptime monitoring (HTTP, TCP, keyword)",
       "Automatic incident management",
-      "Email and Slack/Discord notifications",
-      "PagerDuty, Microsoft Teams, Telegram integration",
-      "MCP server for AI assistants",
+      "Email subscribers with double opt-in",
+      "Email, Slack, Discord, and webhook notifications",
       "AGPL-3.0 open-source, self-hostable with Docker"
     ]
   }
@@ -106,23 +105,19 @@
     "@type": "FAQPage",
     "mainEntity": [
       { "@type": "Question", "name": "What is UptimeCrow?",
-        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow is a developer-first uptime monitoring and status page platform. It automatically monitors your APIs, websites, and cron jobs — creating incidents, updating your status page, and alerting subscribers the moment downtime is detected. No manual work needed." } },
-      { "@type": "Question", "name": "How is UptimeCrow different from UptimeRobot or BetterStack?",
-        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an AGPL-3.0 open-source core you can self-host. Free plan includes 10 monitors (self-host is unlimited) — BetterStack starts at $29/mo for serious use." } },
+        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow is an open-source status page platform with built-in uptime monitoring. It watches your APIs and websites, opens incidents automatically, updates your public status page, and alerts subscribers the moment downtime is detected. No manual work needed." } },
+      { "@type": "Question", "name": "How do status pages stay online when my origin is down?",
+        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow pre-renders your status page as static HTML on every incident update. The pre-rendered page is served completely decoupled from your origin. Even if your app, API, and database are all down, subscribers can still view your status page and incident updates." } },
       { "@type": "Question", "name": "Is UptimeCrow really free? What's in the free plan?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history — or self-host unlimited." } },
-      { "@type": "Question", "name": "What is heartbeat monitoring and cron job monitoring?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (5 heartbeats)." } },
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes — free forever, no credit card required. The free plan includes 1 status page, 10 monitors, 5-minute check intervals, email alerts, and 7-day history — or self-host unlimited." } },
       { "@type": "Question", "name": "How does UptimeCrow prevent false alarms?",
         "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow uses a consecutive-failure state machine. By default, a monitor must fail 2 consecutive checks before an incident is created — a single network blip never pages your team. The confirmation count is configurable per monitor." } },
+      { "@type": "Question", "name": "Can I use my own domain for my status page?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. On paid plans you can serve your status page from a custom domain like status.yourapp.com, with your own logo and brand color." } },
       { "@type": "Question", "name": "Can I self-host UptimeCrow?",
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. UptimeCrow's full stack is AGPL-3.0 licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure." } },
-      { "@type": "Question", "name": "What is the MCP server and how does it work with Claude?",
-        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow exposes a native MCP (Model Context Protocol) server. AI assistants — Claude Code, Cursor, Windsurf — can query your monitor status, list active incidents, and check heartbeat health without leaving the editor. Authenticate with an API key." } },
       { "@type": "Question", "name": "How often does UptimeCrow check my websites and APIs?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Every 60 seconds on Free and Indie plans. Every 30 seconds on Pro and Team. Checks run from multiple regions to reduce false positives — a single regional failure won't trigger an incident." } },
-      { "@type": "Question", "name": "How do status pages stay online when my origin is down?",
-        "acceptedAnswer": { "@type": "Answer", "text": "UptimeCrow pre-renders your status page as static HTML on every incident update. The pre-rendered page is served completely decoupled from your origin. Even if your app, API, and database are all down, subscribers can still view your status page and incident updates." } }
+        "acceptedAnswer": { "@type": "Answer", "text": "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro and Team. A configurable consecutive-failure confirmation means a single blip won't trigger a false incident." } }
     ]
   }
   </script>
@@ -133,7 +128,7 @@
     "@type": "WebSite",
     "name": "UptimeCrow",
     "url": "https://uptimecrow.com",
-    "description": "Developer-first uptime monitoring and status page platform. Free for 10 monitors, or self-host unlimited.",
+    "description": "Open-source status pages with built-in uptime monitoring. Free tier included, or self-host unlimited.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": "https://uptimecrow.com/docs?q={search_term_string}",

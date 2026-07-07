@@ -62,7 +62,7 @@ export function Docs() {
   usePageMeta({
     title: "API Documentation — UptimeCrow Developer Docs",
     description:
-      "UptimeCrow REST API reference for monitors, incidents, status pages, and heartbeats. Authenticate with API keys. Full OpenAPI spec available.",
+      "UptimeCrow REST API reference for monitors, incidents, status pages, and maintenance windows. Full OpenAPI spec available.",
     canonical: "https://uptimecrow.com/docs",
   });
 
@@ -75,14 +75,13 @@ export function Docs() {
           <div className="hero-badge">● Developer API</div>
           <h1>REST API for uptime monitoring</h1>
           <p className="hero-sub">
-            Automate monitor creation, trigger incidents, manage status pages — all from your CI/CD pipeline, scripts, or the{" "}
-            <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer" style={{ color: "var(--green)" }}>MCP server</a>.
+            Automate monitor creation, trigger incidents, manage status pages — all from your CI/CD pipeline or scripts.
           </p>
           <div className="hero-actions">
             <a href="/api/docs" target="_blank" rel="noopener noreferrer" className="hero-btn primary">
               Open API Reference <ExternalLink size={14} style={{ marginLeft: 4, verticalAlign: "middle" }} />
             </a>
-            <Link to="/register" className="hero-btn secondary">Get API Key Free</Link>
+            <Link to="/register" className="hero-btn secondary">Create Free Account</Link>
           </div>
         </div>
       </section>
@@ -93,16 +92,22 @@ export function Docs() {
           {/* Authentication */}
           <div style={{ marginBottom: "3rem" }}>
             <p className="section-label">Authentication</p>
-            <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>API Keys</h2>
+            <h2 className="section-title" style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>Session tokens</h2>
             <p style={{ color: "var(--text2)", lineHeight: 1.7, marginBottom: "1rem" }}>
-              Create an API key in <strong>Settings → API Keys</strong> (Indie plan or higher).
-              Pass it as a Bearer token in every request:
+              Log in with <code>POST /api/auth/login</code> to receive a JWT. Pass it as a Bearer
+              token in every request (the dashboard uses the same token as an HTTP-only cookie):
             </p>
-            <CodeBlock code={`curl https://uptimecrow.com/api/monitors \\
-  -H "Authorization: Bearer uc_live_your_key_here"`} />
+            <CodeBlock code={`# Get a token
+curl -X POST https://uptimecrow.com/api/auth/login \\
+  -H "Content-Type: application/json" \\
+  -d '{"email": "you@company.com", "password": "..."}'
+
+# Use it
+curl https://uptimecrow.com/api/monitors \\
+  -H "Authorization: Bearer <token>"`} />
             <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 10, padding: "1rem 1.25rem", fontSize: "0.88rem", color: "var(--text2)" }}>
-              <strong style={{ color: "var(--text)" }}>Rate limits:</strong> 100 requests / minute per key.
-              Keys are scoped to your organization — one key can manage all your monitors and status pages.
+              <strong style={{ color: "var(--text)" }}>Note:</strong> tokens are valid for 7 days and are
+              scoped to your organization — one token can manage all your monitors and status pages.
             </div>
           </div>
 
@@ -113,7 +118,7 @@ export function Docs() {
 
             <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "0.5rem", color: "var(--text)" }}>1. Create a monitor</h3>
             <CodeBlock code={`curl -X POST https://uptimecrow.com/api/monitors \\
-  -H "Authorization: Bearer uc_live_your_key_here" \\
+  -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
   -d '{
     "name": "Production API",
@@ -122,19 +127,9 @@ export function Docs() {
     "intervalSeconds": 60
   }'`} />
 
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>2. Add a heartbeat for your cron job</h3>
-            <CodeBlock code={`# Create the heartbeat
-curl -X POST https://uptimecrow.com/api/heartbeats \\
-  -H "Authorization: Bearer uc_live_your_key_here" \\
-  -H "Content-Type: application/json" \\
-  -d '{"name": "Nightly backup", "period": 86400, "grace": 300}'
-
-# Then add to your cron job (use the pingUrl from the response):
-# 0 2 * * * /run-backup.sh && curl -s https://uptimecrow.com/heartbeat/your-slug`} />
-
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>3. Create an incident manually</h3>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>2. Create an incident manually</h3>
             <CodeBlock code={`curl -X POST https://uptimecrow.com/api/incidents \\
-  -H "Authorization: Bearer uc_live_your_key_here" \\
+  -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
   -d '{
     "statusPageId": "your-status-page-id",
@@ -144,9 +139,9 @@ curl -X POST https://uptimecrow.com/api/heartbeats \\
     "body": "We are investigating elevated error rates on our API. Updates to follow."
   }'`} />
 
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>4. Resolve it</h3>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, margin: "1.5rem 0 0.5rem", color: "var(--text)" }}>3. Resolve it</h3>
             <CodeBlock code={`curl -X POST https://uptimecrow.com/api/incidents/{id}/updates \\
-  -H "Authorization: Bearer uc_live_your_key_here" \\
+  -H "Authorization: Bearer <token>" \\
   -H "Content-Type: application/json" \\
   -d '{"status": "resolved", "body": "The issue has been resolved. All systems operational."}'`} />
           </div>
@@ -158,11 +153,10 @@ curl -X POST https://uptimecrow.com/api/heartbeats \\
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "1rem" }}>
               {[
                 { tag: "Monitors", color: "#00e676", endpoints: ["GET /api/monitors", "POST /api/monitors", "GET /api/monitors/:id", "PATCH /api/monitors/:id", "DELETE /api/monitors/:id", "GET /api/monitors/:id/checks"] },
-                { tag: "Heartbeats", color: "#69f0ae", endpoints: ["GET /api/heartbeats", "POST /api/heartbeats", "PATCH /api/heartbeats/:id", "DELETE /api/heartbeats/:id", "GET /heartbeat/:slug (public)"] },
                 { tag: "Incidents", color: "#ff7043", endpoints: ["GET /api/incidents", "POST /api/incidents", "GET /api/incidents/:id", "PATCH /api/incidents/:id", "POST /api/incidents/:id/updates"] },
                 { tag: "Status Pages", color: "#40c4ff", endpoints: ["GET /api/status-pages", "GET /api/status-pages/:id", "PUT /api/status-pages/:id/monitors"] },
                 { tag: "Maintenance", color: "#ffd740", endpoints: ["GET /api/maintenance-windows", "POST /api/maintenance-windows", "PATCH /api/maintenance-windows/:id", "DELETE /api/maintenance-windows/:id"] },
-                { tag: "API Keys", color: "#e040fb", endpoints: ["GET /api/api-keys", "POST /api/api-keys", "DELETE /api/api-keys/:id"] },
+                { tag: "Public", color: "#e040fb", endpoints: ["GET /status/:slug", "GET /status/:slug/incidents", "POST /status/:slug/subscribe", "GET /badge/:slug.svg"] },
               ].map((group) => (
                 <div key={group.tag} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 12, padding: "1.1rem 1.25rem" }}>
                   <div style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: group.color, marginBottom: "0.6rem" }}>
@@ -176,27 +170,6 @@ curl -X POST https://uptimecrow.com/api/heartbeats \\
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* MCP Server */}
-          <div style={{ marginBottom: "3rem", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: 14, padding: "1.5rem 1.8rem" }}>
-            <p className="section-label" style={{ margin: 0 }}>AI-native</p>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: "0.5rem 0 0.75rem" }}>MCP Server</h3>
-            <p style={{ color: "var(--text2)", lineHeight: 1.7, marginBottom: "1rem" }}>
-              {BRAND} ships an <strong>MCP (Model Context Protocol) server</strong> — the only uptime monitoring
-              tool with one. Connect it to Claude, Cursor, or any MCP-compatible AI to manage your infrastructure
-              conversationally.
-            </p>
-            <CodeBlock lang="json" code={`// .cursor/mcp.json or claude_desktop_config.json
-{
-  "mcpServers": {
-    "uptimecrow": {
-      "command": "npx",
-      "args": ["-y", "@uptimecrow/mcp"],
-      "env": { "UPTIMECROW_API_KEY": "uc_live_your_key_here" }
-    }
-  }
-}`} />
           </div>
 
           {/* CTA */}

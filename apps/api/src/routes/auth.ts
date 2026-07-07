@@ -1,11 +1,11 @@
 import { Hono } from "hono";
-import { setCookie, deleteCookie, getCookie } from "hono/cookie";
+import { setCookie, deleteCookie } from "hono/cookie";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { redis } from "../db/index.js";
-import { users, organizations, orgMembers, orgInvites } from "../db/schema.js";
+import { users, organizations, orgMembers } from "../db/schema.js";
 import { createToken } from "../utils/auth.js";
 import { registerSchema, loginSchema } from "@uptimecrow/shared";
 import { authMiddleware } from "../middleware/auth.js";
@@ -37,32 +37,10 @@ authRoutes.post("/register", async (c) => {
     .values({ email, name, passwordHash })
     .returning({ id: users.id, email: users.email, name: users.name });
 
-  // Handle invite token — join existing org instead of creating a new one
-  const inviteToken = (body as Record<string, unknown>).inviteToken as string | undefined;
-  let orgId: string;
-
-  if (inviteToken) {
-    const [invite] = await db
-      .select({ id: orgInvites.id, orgId: orgInvites.orgId, expiresAt: orgInvites.expiresAt, acceptedAt: orgInvites.acceptedAt, role: orgInvites.role })
-      .from(orgInvites)
-      .where(eq(orgInvites.token, inviteToken as `${string}-${string}-${string}-${string}-${string}`))
-      .limit(1);
-
-    if (invite && !invite.acceptedAt && new Date(invite.expiresAt) > new Date()) {
-      await db.insert(orgMembers).values({ orgId: invite.orgId, userId: user.id, role: invite.role }).onConflictDoNothing();
-      await db.update(orgInvites).set({ acceptedAt: new Date() }).where(eq(orgInvites.id, invite.id));
-      orgId = invite.orgId;
-    } else {
-      // Invite invalid — fall through to create own org
-      const slug = email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
-      const [org] = await db.insert(organizations).values({ name: `${name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id }).returning({ id: organizations.id });
-      orgId = org.id;
-    }
-  } else {
-    const slug = email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
-    const [org] = await db.insert(organizations).values({ name: `${name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id }).returning({ id: organizations.id });
-    orgId = org.id;
-  }
+  // Every new account gets its own organization.
+  const slug = email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
+  const [org] = await db.insert(organizations).values({ name: `${name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id }).returning({ id: organizations.id });
+  const orgId = org.id;
 
   const token = await createToken({ sub: user.id, email: user.email, orgId });
 
@@ -75,40 +53,6 @@ authRoutes.post("/register", async (c) => {
   });
 
   return c.json({ user: { id: user.id, email: user.email, name: user.name }, token }, 201);
-});
-
-// Accept invite while already logged in
-authRoutes.post("/accept-invite", authMiddleware, async (c) => {
-  const { sub } = c.get("user");
-  const { token: inviteToken } = await c.req.json<{ token: string }>();
-
-  const [invite] = await db
-    .select({ id: orgInvites.id, orgId: orgInvites.orgId, expiresAt: orgInvites.expiresAt, acceptedAt: orgInvites.acceptedAt, role: orgInvites.role })
-    .from(orgInvites)
-    .where(eq(orgInvites.token, inviteToken as `${string}-${string}-${string}-${string}-${string}`))
-    .limit(1);
-
-  if (!invite) return c.json({ error: "Invite not found" }, 404);
-  if (invite.acceptedAt) return c.json({ error: "Invite already accepted" }, 410);
-  if (new Date(invite.expiresAt) < new Date()) return c.json({ error: "Invite expired" }, 410);
-
-  await db.insert(orgMembers).values({ orgId: invite.orgId, userId: sub, role: invite.role }).onConflictDoNothing();
-  await db.update(orgInvites).set({ acceptedAt: new Date() }).where(eq(orgInvites.id, invite.id));
-
-  const [user] = await db.select({ email: users.email, name: users.name }).from(users).where(eq(users.id, sub)).limit(1);
-  if (!user) return c.json({ error: "User not found" }, 404);
-
-  const newToken = await createToken({ sub, email: user.email, orgId: invite.orgId });
-
-  setCookie(c, "token", newToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60,
-    path: "/",
-  });
-
-  return c.json({ ok: true, token: newToken });
 });
 
 authRoutes.post("/login", async (c) => {
@@ -131,9 +75,9 @@ authRoutes.post("/login", async (c) => {
   }
 
   if (!user.passwordHash) {
-    // Same generic error as below to prevent account enumeration via the
-    // "this email uses Google" leak. Users who sign in with Google won't try
-    // password login anyway; legitimate confusion is rare.
+    // Legacy accounts created without a password (e.g. via a since-removed
+    // OAuth flow) get the same generic error to prevent account enumeration.
+    // They can regain access through the password-reset flow.
     return c.json({ error: "Invalid email or password" }, 401);
   }
 
@@ -240,119 +184,6 @@ authRoutes.post("/reset-password", async (c) => {
   await redis.del(`pw-reset:${token}`);
 
   return c.json({ message: "Password updated. You can now log in." });
-});
-
-// Google OAuth — redirect to Google
-authRoutes.get("/google", async (c) => {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  if (!clientId) return c.json({ error: "Google OAuth not configured" }, 503);
-
-  const state = crypto.randomBytes(16).toString("hex");
-  await redis.set(`oauth-state:${state}`, "1", "EX", 600);
-
-  const appUrl = process.env.APP_URL || "http://localhost:3000";
-  const redirectUri = `${appUrl}/api/auth/google/callback`;
-
-  const params = new URLSearchParams({
-    client_id: clientId,
-    redirect_uri: redirectUri,
-    response_type: "code",
-    scope: "openid email profile",
-    state,
-    access_type: "online",
-    prompt: "select_account",
-  });
-
-  return c.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
-});
-
-// Google OAuth — callback
-authRoutes.get("/google/callback", async (c) => {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  if (!clientId || !clientSecret) return c.text("Google OAuth not configured", 503);
-
-  const code = c.req.query("code");
-  const state = c.req.query("state");
-  const error = c.req.query("error");
-
-  const appUrl = process.env.APP_URL || "http://localhost:5173";
-
-  if (error || !code || !state) {
-    return c.redirect(`${appUrl}/login?error=google_cancelled`);
-  }
-
-  const stateValid = await redis.get(`oauth-state:${state}`);
-  if (!stateValid) return c.redirect(`${appUrl}/login?error=google_state`);
-  await redis.del(`oauth-state:${state}`);
-
-  // Exchange code for token
-  const redirectUri = `${process.env.APP_URL || "http://localhost:3000"}/api/auth/google/callback`;
-  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      code,
-      client_id: clientId,
-      client_secret: clientSecret,
-      redirect_uri: redirectUri,
-      grant_type: "authorization_code",
-    }),
-  });
-
-  if (!tokenRes.ok) return c.redirect(`${appUrl}/login?error=google_token`);
-  const tokenData = await tokenRes.json() as { access_token: string };
-
-  // Get user info
-  const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-    headers: { Authorization: `Bearer ${tokenData.access_token}` },
-  });
-  if (!userInfoRes.ok) return c.redirect(`${appUrl}/login?error=google_userinfo`);
-  const googleUser = await userInfoRes.json() as { sub: string; email: string; name: string };
-
-  // Upsert user by google_id or email
-  let user = (await db.select({ id: users.id, email: users.email, name: users.name }).from(users).where(eq(users.googleId, googleUser.sub)).limit(1))[0]
-    ?? (await db.select({ id: users.id, email: users.email, name: users.name }).from(users).where(eq(users.email, googleUser.email)).limit(1))[0];
-
-  if (!user) {
-    // New user — create account + org
-    const [newUser] = await db
-      .insert(users)
-      .values({ email: googleUser.email, name: googleUser.name, googleId: googleUser.sub })
-      .returning({ id: users.id, email: users.email, name: users.name });
-    user = newUser;
-
-    const slug = googleUser.email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
-    await db.insert(organizations).values({ name: `${googleUser.name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id });
-  } else if (!user) {
-    return c.redirect(`${appUrl}/login?error=google_create`);
-  } else {
-    // Link google_id if not set
-    await db.update(users).set({ googleId: googleUser.sub }).where(and(eq(users.id, user.id)));
-  }
-
-  // Get org
-  const [membership] = await db.select({ orgId: orgMembers.orgId }).from(orgMembers).where(eq(orgMembers.userId, user.id)).limit(1);
-  let orgId: string;
-  if (membership) {
-    orgId = membership.orgId;
-  } else {
-    const [org] = await db.select({ id: organizations.id }).from(organizations).where(eq(organizations.ownerId, user.id)).limit(1);
-    if (!org) return c.redirect(`${appUrl}/login?error=no_org`);
-    orgId = org.id;
-  }
-
-  const jwtToken = await createToken({ sub: user.id, email: user.email, orgId });
-
-  setCookie(c, "token", jwtToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60,
-    path: "/",
-  });
-
-  return c.redirect(`${appUrl}/dashboard`);
 });
 
 authRoutes.get("/me", authMiddleware, async (c) => {

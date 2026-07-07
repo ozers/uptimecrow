@@ -171,7 +171,6 @@ export default function Changelog() {
               <Link to="/pricing">Pricing</Link>
               <Link to="/docs">Docs</Link>
               <Link to="/changelog">Changelog</Link>
-              <Link to="/tools">Free Tools</Link>
               <Link to="/privacy">Privacy</Link>
             </div>
           </div>

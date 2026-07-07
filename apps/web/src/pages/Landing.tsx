@@ -4,10 +4,10 @@ import { usePageMeta } from "@/lib/meta";
 import {
   ShieldCheck,
   Radio,
-  Heart,
   Palette,
   Mail,
-  Zap,
+  Globe,
+  Users,
   Bell,
   Timer,
 } from "lucide-react";
@@ -83,18 +83,18 @@ function ReactiveHero() {
             {badge}
           </span>
           <h1>
-            Your site went down.
+            Open-source status pages
             <br />
-            <span className="hl">We caught it first.</span>
+            <span className="hl">that stay up when you're down.</span>
           </h1>
           <p className="lp-sub">
-            Open-source uptime monitoring &amp; status pages that earn trust. The crow watches
-            every endpoint, opens the incident and updates your status page —{" "}
-            <b>before your users notice.</b>
+            Built-in uptime monitoring, automatic incidents, email subscribers and custom
+            domains. Your status page is pre-rendered, so it keeps answering —{" "}
+            <b>even when everything else doesn't.</b>
           </p>
           <div className="lp-actions">
             <Link to="/register" className="lp-btn primary">
-              Start free — 10 monitors
+              Create your status page — free
             </Link>
             <a className="lp-btn ghost" href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
               ★ Star on GitHub
@@ -102,13 +102,13 @@ function ReactiveHero() {
           </div>
           <div className="lp-specs">
             <span>
-              <b>HTTP · TCP · keyword · cron</b>
+              <b>HTTP · TCP · keyword</b> checks
             </span>
             <span>
-              self-host <b>unlimited</b>
+              self-host <b>unlimited</b> (AGPL)
             </span>
             <span>
-              <b>MCP</b> server for AI
+              or <b>hosted</b>, free tier
             </span>
           </div>
         </div>
@@ -147,43 +147,35 @@ function ReactiveHero() {
 const FAQ_ITEMS = [
   {
     q: "What is UptimeCrow?",
-    a: "UptimeCrow is a developer-first uptime monitoring and status page platform. It automatically monitors your APIs, websites, and cron jobs — creating incidents, updating your status page, and alerting subscribers the moment downtime is detected. No manual work needed.",
+    a: "UptimeCrow is an open-source status page platform with built-in uptime monitoring. It watches your APIs and websites, opens incidents automatically, updates your public status page, and alerts subscribers the moment downtime is detected. No manual work needed.",
   },
   {
-    q: "How is UptimeCrow different from UptimeRobot or BetterStack?",
-    a: "UptimeCrow is the only uptime tool with a native MCP server (query your monitors from Claude or Cursor), pre-rendered status pages that survive origin downtime, and an AGPL-3.0 open-source core you can self-host. Free plan includes 10 monitors — BetterStack starts at $24/mo for serious use.",
-  },
-  {
-    q: "How is UptimeCrow different from Uptime Kuma?",
-    a: "Uptime Kuma is a great single-user self-hosted monitor. UptimeCrow is what you reach for when you outgrow it: multi-tenant orgs with teammates, status pages as a real product (custom domain, subscribers, pre-rendered to survive origin downtime), a full REST API, and a native MCP server — plus a managed cloud if you'd rather not run your own server. UptimeCrow is open source too (AGPL-3.0), so you can still self-host unlimited monitors for free.",
+    q: "How do status pages stay online when my origin is down?",
+    a: "UptimeCrow pre-renders your status page as static HTML on every incident update. The pre-rendered page is served completely decoupled from your origin. Even if your app, API, and database are all down, subscribers can still view your status page and incident updates.",
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 10 monitors, 1 status page, 5-minute check intervals, 3 heartbeat monitors, email alerts, and 7-day history. Upgrade to Indie ($10/mo) for 1-minute checks, 1-year history, and Slack/Discord.",
-  },
-  {
-    q: "What is heartbeat monitoring and cron job monitoring?",
-    a: "Heartbeat monitoring (also called cron monitoring) tracks whether your scheduled jobs run on time. Your cron job or background worker pings a unique UptimeCrow URL on each successful run. If a ping is missed, UptimeCrow alerts you immediately. Available on all plans including free (3 heartbeats).",
+    a: "Yes — free forever, no credit card required. The free plan includes 1 status page, 10 monitors, 5-minute check intervals, email alerts, and 7-day history. Upgrade to Indie ($10/mo) for 1-minute checks, custom domains, 1-year history, and Slack/Discord.",
   },
   {
     q: "How does UptimeCrow prevent false alarms?",
     a: "UptimeCrow uses a consecutive-failure state machine. By default, a monitor must fail 2 consecutive checks before an incident is created — a single network blip never pages your team. The confirmation count is configurable per monitor.",
   },
   {
+    q: "Can I use my own domain for my status page?",
+    a: "Yes. On paid plans you can serve your status page from a custom domain like status.yourapp.com, with your own logo and brand color. Free status pages live at a clean uptimecrow.com URL.",
+  },
+  {
+    q: "How do subscribers get notified?",
+    a: "Visitors subscribe to your status page by email with double opt-in verification. On incident updates, UptimeCrow emails subscribers automatically — and pushes updates to your team via Slack, Discord, or custom webhooks.",
+  },
+  {
     q: "Can I self-host UptimeCrow?",
     a: "Yes. UptimeCrow's full stack is AGPL-3.0 licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure.",
   },
   {
-    q: "What is the MCP server and how does it work with Claude?",
-    a: "UptimeCrow exposes a native MCP (Model Context Protocol) server. AI assistants — Claude Code, Cursor, Windsurf — can query your monitor status, list active incidents, and check heartbeat health without leaving the editor. Authenticate with an API key.",
-  },
-  {
     q: "How often does UptimeCrow check my websites and APIs?",
     a: "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro. A configurable consecutive-failure confirmation means a single blip won't trigger a false incident.",
-  },
-  {
-    q: "How do status pages stay online when my origin is down?",
-    a: "UptimeCrow pre-renders your status page as static HTML on every incident update. The pre-rendered page is served completely decoupled from your origin. Even if your app, API, and database are all down, subscribers can still view your status page and incident updates.",
   },
 ];
 
@@ -229,12 +221,12 @@ function FAQSection() {
 const COMPARISON = [
   { feature: "Auto incident creation", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
   { feature: "Auto status page update", us: "✓ Automatic", bs: "✗ Manual", ins: "✗ Manual", sp: "✗ Manual" },
+  { feature: "Survives origin downtime", us: "✓ Pre-rendered", bs: "✓", ins: "✓", sp: "✓" },
   { feature: "Uptime monitoring", us: "✓ 5min free, 30s Pro", bs: "✓ 3-min free", ins: "✓ 2-min free", sp: "Add-on" },
   { feature: "Free monitors", us: "✓ 10 free forever", bs: "✓ 10 free", ins: "✓ 15 free", sp: "✗ None" },
   { feature: "Subscriber notifications", us: "✓ Email + Slack", bs: "✓", ins: "✓", sp: "✓" },
-  { feature: "Heartbeat monitoring", us: "✓ All plans (3 free)", bs: "✓ Paid only", ins: "✗", sp: "✗" },
-  { feature: "MCP server (AI assistants)", us: "✓ Native", bs: "✗", ins: "✗", sp: "✗" },
-    { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
+  { feature: "Open source / self-host", us: "✓ AGPL-3.0", bs: "✗", ins: "✗", sp: "✗" },
+  { feature: "Incident templates", us: "✓ 9 templates", bs: "✗", ins: "✗", sp: "✓" },
   { feature: "False positive prevention", us: "✓ Multi-check", bs: "✓", ins: "✗", sp: "✗" },
   { feature: "Starting price", us: "$10/mo (Indie)", bs: "$24/mo", ins: "$20/mo", sp: "$79/mo" },
 ];
@@ -246,18 +238,18 @@ function cmpCell(v: string) {
 }
 
 const PLANS = [
-  { name: "Free", price: "$0", desc: "For side projects and personal apps.", features: ["1 status page", "10 monitors", "5-minute check intervals", "3 heartbeat monitors", "Email alerts", "Uptime badge", "7-day history"] },
-  { name: "Indie", price: "$10", desc: "For indie hackers and solo founders.", features: ["5 status pages + custom domain", "50 monitors", "1-minute check intervals", "10 heartbeat monitors", "Slack, Discord, API access", "1-year history"] },
-  { name: "Pro", price: "$30", desc: "For growing SaaS teams.", popular: true, features: ["10 status pages", "100 monitors", "30-second check intervals", "25 heartbeat monitors", "Custom domain + API access", "5 team seats", "1-year history"] },
-  { name: "Team", price: "$80", desc: "For teams that ship fast.", features: ["Everything in Pro", "200 monitors", "100 heartbeat monitors", "10 team seats", "1-year history"] },
+  { name: "Free", price: "$0", desc: "For side projects and personal apps.", features: ["1 status page", "10 monitors", "5-minute check intervals", "Email alerts", "Uptime badge", "7-day history"] },
+  { name: "Indie", price: "$10", desc: "For indie hackers and solo founders.", features: ["5 status pages + custom domain", "50 monitors", "1-minute check intervals", "Slack, Discord, webhook alerts", "Email subscribers", "1-year history"] },
+  { name: "Pro", price: "$30", desc: "For growing SaaS teams.", popular: true, features: ["10 status pages + custom domain", "100 monitors", "30-second check intervals", "1-year history", "Priority support"] },
+  { name: "Team", price: "$80", desc: "For teams that ship fast.", features: ["Everything in Pro", "Unlimited status pages", "200 monitors", "1-year history"] },
 ];
 
 // ─── Landing page ──────────────────────────────────────────────────────────────
 export function LandingPage() {
   usePageMeta({
-    title: "UptimeCrow — Free, Open-Source Uptime Monitoring & Status Pages",
+    title: "UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring",
     description:
-      "Free uptime monitoring for developers — open source and self-hostable. Monitor APIs, websites, and cron jobs. Auto incidents, status page updates, and subscriber alerts. 10 monitors free, or self-host unlimited.",
+      "Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, email subscribers, and custom domains. Self-host under AGPL-3.0 or use the hosted free tier.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });
@@ -294,23 +286,23 @@ export function LandingPage() {
           <div className="lp-sec-head">
             <div className="lp-eyebrow">How it works</div>
             <h2>Set it once. The crow does the rest.</h2>
-            <p className="lp-lead">No dashboards to babysit. Add your endpoints and go back to building.</p>
+            <p className="lp-lead">No dashboards to babysit. Add your endpoints, publish your page, go back to building.</p>
           </div>
           <div className="lp-flow">
             <div className="lp-flow-step">
               <div className="lp-flow-num">1</div>
               <h3>Add your endpoints</h3>
-              <p>HTTP, TCP, keyword or cron checks — at the interval you choose, as often as every 30 seconds.</p>
+              <p>HTTP, TCP or keyword checks — at the interval you choose, as often as every 30 seconds.</p>
             </div>
             <div className="lp-flow-step">
               <div className="lp-flow-num">2</div>
-              <h3>The crow watches</h3>
-              <p>A blip is confirmed, not panicked over. On a real outage it opens an incident and updates your status page instantly.</p>
+              <h3>Publish your status page</h3>
+              <p>Branded, on your own domain, pre-rendered. A blip is confirmed, not panicked over — a real outage opens an incident and updates the page instantly.</p>
             </div>
             <div className="lp-flow-step">
               <div className="lp-flow-num">3</div>
-              <h3>You get pinged</h3>
-              <p>Email, Slack, Discord, webhooks — or just ask Claude “is anything down?” via the MCP server.</p>
+              <h3>Everyone stays informed</h3>
+              <p>Subscribers get emailed on every incident update. Your team gets pinged on Slack, Discord or webhooks.</p>
             </div>
           </div>
         </div>
@@ -321,18 +313,18 @@ export function LandingPage() {
         <div className="lp-wrap">
           <div className="lp-sec-head">
             <div className="lp-eyebrow">Everything you need</div>
-            <h2>Monitoring, status pages, alerts — one tool.</h2>
+            <h2>Status pages, monitoring, alerts — one tool.</h2>
           </div>
           <div className="lp-bento">
-            {/* Featured: MCP — the differentiator, with a mini terminal */}
+            {/* Featured: pre-rendered status pages — the differentiator */}
             <div className="b feature">
               <div className="b-ic">
-                <Zap size={20} aria-hidden="true" />
+                <Globe size={20} aria-hidden="true" />
               </div>
-              <h3>MCP server for AI</h3>
+              <h3>Status pages that survive outages</h3>
               <p>
-                Query monitors &amp; incidents straight from Claude, Cursor or Windsurf — the only
-                uptime tool with a native MCP server.
+                Every page is pre-rendered to static HTML on each incident update — it serves
+                cached bytes, never your database. Down is exactly when it works.
               </p>
               <div className="b-term" aria-hidden="true">
                 <div className="b-term-bar">
@@ -340,23 +332,23 @@ export function LandingPage() {
                 </div>
                 <div className="b-term-body">
                   <div className="b-term-in">
-                    <span className="p">claude ›</span> is my API up?
+                    <span className="p">$</span> curl -I status.yourapp.com
                   </div>
-                  <div className="b-term-out">✓ all 4 monitors up — api 88ms · last incident 12d ago</div>
+                  <div className="b-term-out">HTTP/2 200 · pre-rendered · 12ms — even mid-outage</div>
                 </div>
               </div>
             </div>
 
             <div className="b">
               <div className="b-ic"><Radio size={20} aria-hidden="true" /></div>
-              <h3>Uptime monitoring</h3>
+              <h3>Built-in uptime monitoring</h3>
               <p>HTTP, TCP &amp; keyword checks as often as every 30 seconds, with confirmation that kills false alarms.</p>
             </div>
 
             <div className="b">
-              <div className="b-ic"><Heart size={20} aria-hidden="true" /></div>
-              <h3>Heartbeat monitoring</h3>
-              <p>Cron jobs ping a unique URL — miss one and the crow squawks. On every plan.</p>
+              <div className="b-ic"><Users size={20} aria-hidden="true" /></div>
+              <h3>Email subscribers</h3>
+              <p>Double opt-in subscriber lists per status page. Every incident update lands in their inbox automatically.</p>
             </div>
 
             <div className="b">
@@ -380,8 +372,8 @@ export function LandingPage() {
 
             <div className="b">
               <div className="b-ic"><Palette size={20} aria-hidden="true" /></div>
-              <h3>Beautiful status pages</h3>
-              <p>Branded, on your domain, pre-rendered so they stay up even when your origin is down.</p>
+              <h3>Your brand, your domain</h3>
+              <p>Custom logo, brand color and a custom domain like status.yourapp.com. Maintenance windows included.</p>
             </div>
 
             <div className="b">
@@ -557,15 +549,8 @@ export function LandingPage() {
                 <a href="#features">Features</a>
                 <Link to="/pricing">Pricing</Link>
                 <Link to="/docs">API Docs</Link>
-                <Link to="/mcp">MCP Server</Link>
-              </div>
-              <div className="lp-foot-col">
-                <span className="lbl">Compare</span>
-                <Link to="/vs/betterstack">vs BetterStack</Link>
-                <Link to="/vs/uptimerobot">vs UptimeRobot</Link>
-                <Link to="/vs/uptime-kuma">vs Uptime Kuma</Link>
-                <Link to="/vs/freshping">vs Freshping</Link>
-                <Link to="/vs/instatus">vs Instatus</Link>
+                <Link to="/self-host">Self-host</Link>
+                <Link to="/changelog">Changelog</Link>
               </div>
               <div className="lp-foot-col">
                 <span className="lbl">Legal</span>

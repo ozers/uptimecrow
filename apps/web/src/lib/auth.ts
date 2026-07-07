@@ -8,7 +8,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string, inviteToken?: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   setUser: (user: User | null) => void;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
@@ -40,8 +40,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: data.user, isAuthenticated: true, isLoading: false });
   },
 
-  register: async (email: string, password: string, name: string, inviteToken?: string) => {
-    const data = await api.post<{ user: User }>("/api/auth/register", { email, password, name, ...(inviteToken ? { inviteToken } : {}) });
+  register: async (email: string, password: string, name: string) => {
+    const data = await api.post<{ user: User }>("/api/auth/register", { email, password, name });
     analytics.register();
     analytics.identify(data.user.id, { email: data.user.email });
     set({ user: data.user, isAuthenticated: true, isLoading: false });

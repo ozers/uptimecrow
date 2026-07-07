@@ -1,4 +1,4 @@
-// OpenAPI 3.1 spec for the public, key-authenticated API surface.
+// OpenAPI 3.1 spec for the authenticated API surface.
 // Hand-maintained — keep in sync with routes/*.ts when adding endpoints.
 
 export function buildOpenApiDocument(): unknown {
@@ -9,14 +9,14 @@ export function buildOpenApiDocument(): unknown {
       title: "UptimeCrow API",
       version: "1.0.0",
       description:
-        "REST API for UptimeCrow uptime monitoring platform.\n\n" +
+        "REST API for UptimeCrow status pages and uptime monitoring.\n\n" +
         "## Authentication\n\n" +
-        "All endpoints require an API key passed as a Bearer token:\n\n" +
-        "```\nAuthorization: Bearer uc_live_...\n```\n\n" +
-        "Create API keys in **Settings → API Keys** (Indie plan or higher). " +
-        "Each key is shown once at creation — copy it immediately.\n\n" +
+        "Endpoints authenticate with your session JWT, sent either as the `token` cookie " +
+        "set at login or as a Bearer token:\n\n" +
+        "```\nAuthorization: Bearer <jwt>\n```\n\n" +
+        "Obtain a token via `POST /api/auth/login`.\n\n" +
         "## Rate Limits\n\n" +
-        "100 requests/minute per API key. Rate-limited responses return `429 Too Many Requests`.\n\n" +
+        "Rate-limited responses return `429 Too Many Requests`.\n\n" +
         "## Base URL\n\n" +
         "All paths are relative to `" + url + "`.",
       contact: { email: "support@uptimecrow.com", url: "https://uptimecrow.com" },
@@ -28,11 +28,11 @@ export function buildOpenApiDocument(): unknown {
     ],
     components: {
       securitySchemes: {
-        ApiKeyAuth: {
+        BearerAuth: {
           type: "http",
           scheme: "bearer",
-          bearerFormat: "UC-API-KEY",
-          description: "API key created from Settings → API Keys. Prefix: `uc_live_`.",
+          bearerFormat: "JWT",
+          description: "Session JWT issued by POST /api/auth/login.",
         },
       },
       schemas: {
@@ -135,32 +135,6 @@ export function buildOpenApiDocument(): unknown {
             createdAt: { type: "string", format: "date-time" },
           },
         },
-        Heartbeat: {
-          type: "object",
-          description: "Heartbeat monitor for cron jobs and scheduled tasks.",
-          properties: {
-            id: { type: "string", format: "uuid" },
-            orgId: { type: "string", format: "uuid" },
-            name: { type: "string", example: "Nightly backup" },
-            slug: { type: "string", description: "Ping URL slug: /heartbeat/{slug}" },
-            period: { type: "integer", description: "Expected ping interval in seconds.", example: 86400 },
-            grace: { type: "integer", description: "Grace period in seconds before alerting.", example: 300 },
-            status: { type: "string", enum: ["healthy", "late", "paused", "unknown"] },
-            lastPingAt: { type: "string", format: "date-time", nullable: true },
-            isActive: { type: "boolean" },
-            createdAt: { type: "string", format: "date-time" },
-            pingUrl: { type: "string", format: "uri", description: "URL to GET/POST from your cron job to signal health." },
-          },
-        },
-        HeartbeatInput: {
-          type: "object",
-          required: ["name"],
-          properties: {
-            name: { type: "string", minLength: 1, maxLength: 255, example: "Nightly backup" },
-            period: { type: "integer", minimum: 60, maximum: 2592000, default: 86400, description: "Seconds between expected pings." },
-            grace: { type: "integer", minimum: 60, maximum: 3600, default: 300, description: "Grace seconds before alerting." },
-          },
-        },
         MaintenanceWindow: {
           type: "object",
           properties: {
@@ -186,20 +160,10 @@ export function buildOpenApiDocument(): unknown {
             monitorIds: { type: "array", items: { type: "string", format: "uuid" } },
           },
         },
-        ApiKey: {
-          type: "object",
-          properties: {
-            id: { type: "string", format: "uuid" },
-            name: { type: "string" },
-            prefix: { type: "string", example: "uc_live_xXxX" },
-            lastUsedAt: { type: "string", format: "date-time", nullable: true },
-            createdAt: { type: "string", format: "date-time" },
-          },
-        },
       },
       responses: {
         Unauthorized: {
-          description: "Missing or invalid API key",
+          description: "Missing or invalid credentials",
           content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
         },
         NotFound: {
@@ -216,7 +180,7 @@ export function buildOpenApiDocument(): unknown {
         },
       },
     },
-    security: [{ ApiKeyAuth: [] }],
+    security: [{ BearerAuth: [] }],
     paths: {
       // ── Monitors ──
       "/api/monitors": {
@@ -325,53 +289,6 @@ export function buildOpenApiDocument(): unknown {
             401: { $ref: "#/components/responses/Unauthorized" },
             404: { $ref: "#/components/responses/NotFound" },
           },
-        },
-      },
-
-      // ── Heartbeats ──
-      "/api/heartbeats": {
-        get: {
-          summary: "List heartbeat monitors",
-          operationId: "listHeartbeats",
-          tags: ["Heartbeats"],
-          description: "Heartbeats let you monitor cron jobs and scheduled tasks by having them ping UptimeCrow.",
-          responses: {
-            200: {
-              description: "All heartbeats in your organization",
-              content: { "application/json": { schema: { type: "object", properties: { heartbeats: { type: "array", items: { $ref: "#/components/schemas/Heartbeat" } } } } } },
-            },
-            401: { $ref: "#/components/responses/Unauthorized" },
-          },
-        },
-        post: {
-          summary: "Create a heartbeat monitor",
-          operationId: "createHeartbeat",
-          tags: ["Heartbeats"],
-          requestBody: {
-            required: true,
-            content: { "application/json": { schema: { $ref: "#/components/schemas/HeartbeatInput" } } },
-          },
-          responses: {
-            201: { description: "Created", content: { "application/json": { schema: { type: "object", properties: { heartbeat: { $ref: "#/components/schemas/Heartbeat" } } } } } },
-            400: { $ref: "#/components/responses/BadRequest" },
-            401: { $ref: "#/components/responses/Unauthorized" },
-          },
-        },
-      },
-      "/api/heartbeats/{id}": {
-        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
-        patch: {
-          summary: "Update a heartbeat",
-          operationId: "updateHeartbeat",
-          tags: ["Heartbeats"],
-          requestBody: { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/HeartbeatInput" } } } },
-          responses: { 200: { description: "Updated" }, 401: { $ref: "#/components/responses/Unauthorized" }, 404: { $ref: "#/components/responses/NotFound" } },
-        },
-        delete: {
-          summary: "Delete a heartbeat",
-          operationId: "deleteHeartbeat",
-          tags: ["Heartbeats"],
-          responses: { 200: { description: "Deleted" }, 401: { $ref: "#/components/responses/Unauthorized" }, 404: { $ref: "#/components/responses/NotFound" } },
         },
       },
 
@@ -618,61 +535,6 @@ export function buildOpenApiDocument(): unknown {
         },
       },
 
-      // ── API Keys ──
-      "/api/api-keys": {
-        get: {
-          summary: "List API keys",
-          operationId: "listApiKeys",
-          tags: ["API Keys"],
-          description: "Returns active (non-revoked) API keys. Key hashes are never returned.",
-          responses: {
-            200: {
-              description: "Active API keys",
-              content: { "application/json": { schema: { type: "object", properties: { apiKeys: { type: "array", items: { $ref: "#/components/schemas/ApiKey" } } } } } },
-            },
-            401: { $ref: "#/components/responses/Unauthorized" },
-          },
-        },
-        post: {
-          summary: "Create an API key",
-          operationId: "createApiKey",
-          tags: ["API Keys"],
-          description: "The full key (`uc_live_...`) is returned **once** in the response. Store it immediately — it cannot be retrieved again.",
-          requestBody: {
-            required: true,
-            content: { "application/json": { schema: { type: "object", required: ["name"], properties: { name: { type: "string", minLength: 1, maxLength: 255, example: "CI pipeline" } } } } },
-          },
-          responses: {
-            201: {
-              description: "Key created",
-              content: {
-                "application/json": {
-                  schema: {
-                    type: "object",
-                    properties: {
-                      apiKey: { $ref: "#/components/schemas/ApiKey" },
-                      key: { type: "string", description: "Full key — shown once. Copy it now.", example: "uc_live_xXxXxXxXxXxX" },
-                    },
-                  },
-                },
-              },
-            },
-            401: { $ref: "#/components/responses/Unauthorized" },
-            403: { description: "Requires Indie plan or higher" },
-          },
-        },
-      },
-      "/api/api-keys/{id}": {
-        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string", format: "uuid" } }],
-        delete: {
-          summary: "Revoke an API key",
-          operationId: "revokeApiKey",
-          tags: ["API Keys"],
-          description: "Immediately revokes the key. In-flight requests using this key will fail.",
-          responses: { 200: { description: "Revoked" }, 401: { $ref: "#/components/responses/Unauthorized" }, 404: { $ref: "#/components/responses/NotFound" } },
-        },
-      },
-
       // ── Public / Meta ──
       "/health": {
         get: {
@@ -706,32 +568,12 @@ export function buildOpenApiDocument(): unknown {
           responses: { 200: { description: "SVG badge", content: { "image/svg+xml": { schema: { type: "string" } } } } },
         },
       },
-      "/heartbeat/{slug}": {
-        parameters: [{ name: "slug", in: "path", required: true, schema: { type: "string" } }],
-        get: {
-          summary: "Receive a heartbeat ping",
-          operationId: "receiveHeartbeat",
-          tags: ["Public"],
-          security: [],
-          description: "Ping this URL from your cron job to signal it ran successfully. Also accepts POST.",
-          responses: { 200: { description: "Ping recorded" }, 404: { $ref: "#/components/responses/NotFound" } },
-        },
-        post: {
-          summary: "Receive a heartbeat ping (POST)",
-          operationId: "receiveHeartbeatPost",
-          tags: ["Public"],
-          security: [],
-          responses: { 200: { description: "Ping recorded" }, 404: { $ref: "#/components/responses/NotFound" } },
-        },
-      },
     },
     tags: [
       { name: "Monitors", description: "HTTP, TCP, and keyword uptime monitors" },
-      { name: "Heartbeats", description: "Cron job and scheduled task monitors" },
       { name: "Incidents", description: "Incident management and status updates" },
       { name: "Status Pages", description: "Public status page management" },
       { name: "Maintenance", description: "Planned maintenance windows" },
-      { name: "API Keys", description: "Manage programmatic access keys" },
       { name: "Public", description: "Unauthenticated public endpoints" },
       { name: "Meta", description: "System health and meta" },
     ],
