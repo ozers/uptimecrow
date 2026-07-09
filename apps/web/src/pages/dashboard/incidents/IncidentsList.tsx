@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, CheckCircle2, ArrowRight } from "lucide-react";
+import { Plus, CheckCircle2, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useInfiniteIncidents } from "@/lib/queries/incidents";
+import { useMonitors } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,12 +13,13 @@ import { LoadError } from "@/components/load-error";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
 import { RelativeTime } from "@/components/relative-time";
+import type { Incident } from "@uptimecrow/shared";
 
 type DateInput = string | Date;
 
-// Duration between two timestamps, compact ("12m", "3h 20m", "2d").
-function formatDuration(start: DateInput, end: DateInput): string {
-  const mins = Math.max(0, Math.round((new Date(end).getTime() - new Date(start).getTime()) / 60000));
+// Compact duration from a millisecond span ("12m", "3h 20m", "2d").
+function formatDurationMs(ms: number): string {
+  const mins = Math.round(ms / 60000);
   if (mins < 1) return "<1m";
   if (mins < 60) return `${mins}m`;
   const hrs = Math.floor(mins / 60);
@@ -28,16 +30,70 @@ function formatDuration(start: DateInput, end: DateInput): string {
   return remHrs ? `${days}d ${remHrs}h` : `${days}d`;
 }
 
-// Bucket incidents by how recent they are, so a long list of same-named
-// auto-incidents reads as a timeline instead of an undifferentiated wall.
-function bucketOf(startedAt: DateInput): string {
-  const days = (Date.now() - new Date(startedAt).getTime()) / 86_400_000;
-  if (days < 1) return "Today";
-  if (days < 7) return "This week";
-  if (days < 30) return "This month";
-  return "Older";
+function spanMs(start: DateInput, end: DateInput): number {
+  return Math.max(0, new Date(end).getTime() - new Date(start).getTime());
 }
-const BUCKET_ORDER = ["Today", "This week", "This month", "Older"];
+
+// Down time: resolved → start→resolved; still open → up to now; resolved with
+// no timestamp (shouldn't happen, but guard) → unknown, count as 0.
+function downMs(inc: Incident): number {
+  if (inc.resolvedAt) return spanMs(inc.startedAt, inc.resolvedAt);
+  if (inc.status !== "resolved") return spanMs(inc.startedAt, new Date());
+  return 0;
+}
+
+const severityRank: Record<string, number> = { critical: 3, major: 2, minor: 1 };
+const severityDotColor: Record<string, string> = {
+  critical: "bg-danger",
+  major: "bg-warning",
+  minor: "bg-muted-foreground",
+};
+
+interface IncidentGroup {
+  key: string;
+  label: string;
+  incidents: Incident[];
+  totalDownMs: number;
+  hasActive: boolean;
+  lastStartedAt: number;
+  worstSeverity: Incident["severity"];
+}
+
+// Group by monitor so a flapping service reads as one entry ("hooksense · 8×")
+// instead of a wall of identical rows. Manual incidents (no monitor) group by
+// their title. Active groups float to the top, then most-recent-first.
+function groupByMonitor(incidents: Incident[], monitorName: Map<string, string>): IncidentGroup[] {
+  const buckets = new Map<string, Incident[]>();
+  for (const inc of incidents) {
+    const key = inc.monitorId ?? `title:${inc.title}`;
+    (buckets.get(key) ?? buckets.set(key, []).get(key)!).push(inc);
+  }
+
+  const groups: IncidentGroup[] = [...buckets.entries()].map(([key, incs]) => {
+    incs.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
+    const first = incs[0];
+    const label = first.monitorId
+      ? monitorName.get(first.monitorId) ?? first.title.replace(/\s+is\s+down$/i, "")
+      : first.title;
+    return {
+      key,
+      label,
+      incidents: incs,
+      totalDownMs: incs.reduce((s, i) => s + downMs(i), 0),
+      hasActive: incs.some((i) => i.status !== "resolved"),
+      lastStartedAt: new Date(first.startedAt).getTime(),
+      worstSeverity: incs.reduce<Incident["severity"]>(
+        (w, i) => ((severityRank[i.severity] ?? 0) > (severityRank[w] ?? 0) ? i.severity : w),
+        "minor",
+      ),
+    };
+  });
+
+  groups.sort(
+    (a, b) => Number(b.hasActive) - Number(a.hasActive) || b.lastStartedAt - a.lastStartedAt,
+  );
+  return groups;
+}
 
 function IncidentsListSkeleton() {
   return (
@@ -52,9 +108,7 @@ function IncidentsListSkeleton() {
           <div key={i} className="flex items-center gap-4 py-3.5">
             <Skeleton className="h-2 w-2 rounded-full shrink-0" />
             <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-5 w-16" />
-            <Skeleton className="h-4 w-20 ml-auto" />
+            <Skeleton className="ml-auto h-4 w-24" />
           </div>
         ))}
       </div>
@@ -64,11 +118,108 @@ function IncidentsListSkeleton() {
 
 type Filter = "all" | "active" | "resolved";
 
-const severityDotColor: Record<string, string> = {
-  critical: "bg-danger",
-  major: "bg-warning",
-  minor: "bg-muted-foreground",
-};
+// ─── A single incident row (leaf) ─────────────────────────────────────────────
+function IncidentRow({ incident, nested }: { incident: Incident; nested?: boolean }) {
+  const isActive = incident.status !== "resolved";
+  const dotColor = severityDotColor[incident.severity] ?? "bg-muted-foreground";
+  const duration = incident.resolvedAt ? formatDurationMs(downMs(incident)) : null;
+  return (
+    <Link
+      to={`/dashboard/incidents/${incident.id}`}
+      className={cn(
+        "group flex items-center gap-3 py-3 transition-colors hover:bg-muted/40",
+        nested ? "pl-9 pr-4" : "px-4",
+      )}
+    >
+      <span className="relative flex h-2 w-2 shrink-0">
+        {isActive && incident.severity === "critical" && (
+          <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", dotColor)} />
+        )}
+        <span className={cn("relative inline-flex h-2 w-2 rounded-full", dotColor)} />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-brand">
+        {incident.title}
+      </span>
+      <div className="hidden shrink-0 items-center gap-2 sm:flex">
+        <IncidentStatusBadge status={incident.status} />
+        <SeverityBadge severity={incident.severity} />
+      </div>
+      {duration ? (
+        <span className="hidden w-20 shrink-0 items-center justify-end gap-1.5 font-mono text-[11px] tnum text-muted-foreground md:flex">
+          <CheckCircle2 className="h-3 w-3 shrink-0 text-success-foreground/70" />
+          {duration}
+        </span>
+      ) : isActive ? (
+        <span className="hidden w-20 shrink-0 justify-end font-mono text-[11px] tnum text-warning-foreground md:flex">
+          ongoing
+        </span>
+      ) : (
+        <span className="hidden w-20 shrink-0 justify-end font-mono text-[11px] tnum text-muted-foreground/50 md:flex">
+          &mdash;
+        </span>
+      )}
+      <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-muted-foreground/70">
+        <RelativeTime date={incident.startedAt} />
+      </span>
+    </Link>
+  );
+}
+
+// ─── A monitor group (expandable when it has >1 incident) ──────────────────────
+function GroupRow({ group }: { group: IncidentGroup }) {
+  const [open, setOpen] = useState(group.hasActive);
+  const single = group.incidents.length === 1;
+
+  if (single) return <IncidentRow incident={group.incidents[0]} />;
+
+  const dotColor = group.hasActive ? "bg-danger" : severityDotColor[group.worstSeverity] ?? "bg-muted-foreground";
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted/40"
+      >
+        <ChevronRight
+          className={cn("h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform", open && "rotate-90")}
+        />
+        <span className="relative flex h-2 w-2 shrink-0">
+          {group.hasActive && (
+            <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", dotColor)} />
+          )}
+          <span className={cn("relative inline-flex h-2 w-2 rounded-full", dotColor)} />
+        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-semibold">{group.label}</span>
+        <div className="hidden shrink-0 items-center gap-3 sm:flex">
+          <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-muted-foreground">
+            {group.incidents.length}× down
+          </span>
+          <span className="font-mono text-[11px] tnum text-muted-foreground/70">
+            {formatDurationMs(group.totalDownMs)} total
+          </span>
+          {group.hasActive ? (
+            <span className="rounded-full bg-danger/15 px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.06em] text-danger-foreground">
+              active
+            </span>
+          ) : (
+            <SeverityBadge severity={group.worstSeverity} />
+          )}
+        </div>
+        <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-muted-foreground/70">
+          <RelativeTime date={group.incidents[0].startedAt} />
+        </span>
+      </button>
+      {open && (
+        <div className="divide-y divide-border/60 border-t border-border/60 bg-muted/10">
+          {group.incidents.map((inc) => (
+            <IncidentRow key={inc.id} incident={inc} nested />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function IncidentsList() {
   const {
@@ -80,6 +231,7 @@ export function IncidentsList() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteIncidents();
+  const { data: monitors } = useMonitors();
   const [filter, setFilter] = useState<Filter>("all");
 
   if (isLoading) return <IncidentsListSkeleton />;
@@ -101,7 +253,8 @@ export function IncidentsList() {
     return true;
   });
 
-  const showResolved = filter === "resolved" || filter === "all";
+  const monitorName = new Map((monitors ?? []).map((m) => [m.id, m.name]));
+  const groups = groupByMonitor(filtered, monitorName);
 
   return (
     <div>
@@ -134,80 +287,21 @@ export function IncidentsList() {
         </TabsList>
       </Tabs>
 
-      {!filtered?.length ? (
+      {!groups.length ? (
         <EmptyState
           eyebrow="Incident log"
           title="No incidents"
           description={filter === "all" ? "No incidents have been recorded" : `No ${filter} incidents`}
         />
       ) : (
-        <div className="space-y-6">
-          {BUCKET_ORDER.map((bucket) => {
-            const rows = filtered.filter((i) => bucketOf(i.startedAt) === bucket);
-            if (rows.length === 0) return null;
-            return (
-              <section key={bucket}>
-                <div className="mb-2 flex items-baseline gap-2 px-1">
-                  <h2 className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    {bucket}
-                  </h2>
-                  <span className="font-mono text-[11px] tnum text-muted-foreground/50">
-                    {rows.length}
-                  </span>
-                  <span className="h-px flex-1 bg-border" />
-                </div>
-                <div className="divide-y divide-border border-t border-border">
-                  {rows.map((incident) => {
-                    const isActive = incident.status !== "resolved";
-                    const dotColor = severityDotColor[incident.severity] ?? "bg-muted-foreground";
-                    const duration =
-                      incident.resolvedAt != null
-                        ? formatDuration(incident.startedAt, incident.resolvedAt)
-                        : null;
-                    return (
-                      <Link
-                        key={incident.id}
-                        to={`/dashboard/incidents/${incident.id}`}
-                        className="group flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40"
-                      >
-                        <span className="relative flex h-2 w-2 shrink-0">
-                          {isActive && incident.severity === "critical" && (
-                            <span className={cn("absolute inline-flex h-full w-full animate-ping rounded-full opacity-75", dotColor)} />
-                          )}
-                          <span className={cn("relative inline-flex h-2 w-2 rounded-full", dotColor)} />
-                        </span>
-                        <span className="min-w-0 flex-1 truncate text-sm font-medium transition-colors group-hover:text-brand">
-                          {incident.title}
-                        </span>
-                        <div className="hidden shrink-0 items-center gap-2 sm:flex">
-                          <IncidentStatusBadge status={incident.status} />
-                          <SeverityBadge severity={incident.severity} />
-                        </div>
-                        {/* Duration is the key differentiator between otherwise-identical
-                            auto-incidents — how long the service was actually affected. */}
-                        {duration ? (
-                          <span className="hidden w-24 shrink-0 items-center justify-end gap-1.5 font-mono text-[11px] tnum text-muted-foreground md:flex">
-                            <CheckCircle2 className="h-3 w-3 shrink-0 text-success-foreground/70" />
-                            {duration}
-                          </span>
-                        ) : (
-                          <span className="hidden w-24 shrink-0 justify-end font-mono text-[11px] tnum text-warning-foreground md:flex">
-                            ongoing
-                          </span>
-                        )}
-                        <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-muted-foreground/70">
-                          <RelativeTime date={incident.startedAt} />
-                        </span>
-                        <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            );
-          })}
+        <>
+          <div className="divide-y divide-border border-t border-border">
+            {groups.map((g) => (
+              <GroupRow key={g.key} group={g} />
+            ))}
+          </div>
           {hasNextPage && (
-            <div className="flex justify-center pt-1">
+            <div className="flex justify-center pt-4">
               <Button
                 variant="outline"
                 size="sm"
@@ -218,7 +312,7 @@ export function IncidentsList() {
               </Button>
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
