@@ -81,9 +81,15 @@ monitorRoutes.post("/", async (c) => {
     );
   }
 
+  // Keyword monitors match text in the response body, which HEAD never returns.
+  // The schema already rejects HEAD+keyword, but coerce defensively so a keyword
+  // monitor can never be persisted with HEAD.
+  const createData = { ...parsed.data };
+  if (createData.type === "keyword") createData.method = "GET";
+
   const [monitor] = await db
     .insert(monitors)
-    .values({ ...parsed.data, orgId })
+    .values({ ...createData, orgId })
     .returning();
 
   // Remove any stale repeatable jobs for this monitor before scheduling
@@ -126,6 +132,27 @@ monitorRoutes.patch("/:id", async (c) => {
   const updateData: Record<string, unknown> = { ...parsed.data };
   if ("keyword" in body && !body.keyword) {
     updateData.keyword = null;
+  }
+
+  // Guard against a HEAD method landing on a keyword monitor. The refine only
+  // fires when type + method arrive together; a request that flips only the
+  // method needs the existing type consulted. HEAD has no body to keyword-match.
+  if (updateData.method === "HEAD") {
+    let effectiveType = parsed.data.type;
+    if (effectiveType === undefined) {
+      const [existing] = await db
+        .select({ type: monitors.type })
+        .from(monitors)
+        .where(and(eq(monitors.id, id), eq(monitors.orgId, orgId)))
+        .limit(1);
+      effectiveType = existing?.type;
+    }
+    if (effectiveType === "keyword") {
+      return c.json(
+        { error: "Keyword monitors must use GET — HEAD returns no body to match." },
+        400,
+      );
+    }
   }
 
   const [monitor] = await db

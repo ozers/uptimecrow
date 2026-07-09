@@ -1,6 +1,7 @@
 import type {
   Plan,
   MonitorType,
+  MonitorMethod,
   MonitorStatus,
   IncidentStatus,
   IncidentSeverity,
@@ -31,6 +32,7 @@ export interface Monitor {
   name: string;
   url: string;
   type: MonitorType;
+  method: MonitorMethod;
   intervalSeconds: number;
   timeoutMs: number;
   expectedStatus: number;

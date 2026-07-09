@@ -23,6 +23,7 @@ export function MonitorEdit() {
           name: monitor.name,
           url: monitor.url,
           type: monitor.type,
+          method: monitor.method ?? "GET",
           intervalSeconds: monitor.intervalSeconds,
           timeoutMs: monitor.timeoutMs,
           expectedStatus: monitor.expectedStatus,

@@ -25,9 +25,13 @@ export async function executeHttpCheck(
     timeoutMs: number;
     expectedStatus: number;
     keyword?: string | null;
+    method?: "GET" | "HEAD";
   },
 ): Promise<CheckResult> {
   const start = Date.now();
+  // HEAD ("lightweight") mode returns headers only — no body is downloaded, so
+  // keyword matching is impossible and we base up/down purely on the status code.
+  const method = options.method === "HEAD" ? "HEAD" : "GET";
 
   try {
     await assertPublicUrl(url);
@@ -36,7 +40,7 @@ export async function executeHttpCheck(
     const timeout = setTimeout(() => controller.abort(), options.timeoutMs);
 
     const response = await fetch(url, {
-      method: "GET",
+      method,
       signal: controller.signal,
       redirect: "manual",
       headers: {
@@ -63,8 +67,9 @@ export async function executeHttpCheck(
       }
     }
 
-    // Keyword check (only if status code passed and keyword is set)
-    if (status === "up" && options.keyword) {
+    // Keyword check (only if status code passed and keyword is set). HEAD has no
+    // body to inspect, so the keyword branch is skipped entirely in that mode.
+    if (method !== "HEAD" && status === "up" && options.keyword) {
       const body = await response.text();
       const found = body.toLowerCase().includes(options.keyword.toLowerCase());
       if (!found) {

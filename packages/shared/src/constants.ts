@@ -4,6 +4,10 @@ export type Plan = (typeof PLANS)[number];
 export const MONITOR_TYPES = ["http", "tcp", "keyword"] as const;
 export type MonitorType = (typeof MONITOR_TYPES)[number];
 
+export const MONITOR_METHODS = ["GET", "HEAD"] as const;
+export type MonitorMethod = (typeof MONITOR_METHODS)[number];
+export const DEFAULT_MONITOR_METHOD: MonitorMethod = "GET";
+
 export const MONITOR_STATUSES = ["up", "down", "degraded", "unknown"] as const;
 export type MonitorStatus = (typeof MONITOR_STATUSES)[number];
 

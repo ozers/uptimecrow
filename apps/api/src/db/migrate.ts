@@ -196,6 +196,10 @@ const repairs: Array<{ sql: string; desc: string }> = [
     desc: "monitors.slow_response_threshold_ms",
   },
   {
+    sql: `ALTER TABLE monitors ADD COLUMN IF NOT EXISTS method varchar(8) NOT NULL DEFAULT 'GET'`,
+    desc: "monitors.method",
+  },
+  {
     sql: `ALTER TABLE status_pages ADD COLUMN IF NOT EXISTS show_incident_history boolean NOT NULL DEFAULT true`,
     desc: "status_pages.show_incident_history",
   },

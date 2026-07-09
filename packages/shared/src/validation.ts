@@ -1,6 +1,8 @@
 import { z } from "zod";
 import {
   MONITOR_TYPES,
+  MONITOR_METHODS,
+  DEFAULT_MONITOR_METHOD,
   INCIDENT_STATUSES,
   INCIDENT_SEVERITIES,
   DEFAULT_CHECK_INTERVAL,
@@ -9,21 +11,36 @@ import {
   DEFAULT_EXPECTED_STATUS,
 } from "./constants.js";
 
-export const createMonitorSchema = z.object({
-  name: z.string().min(1).max(255),
-  url: z.string().url().max(2048),
-  type: z.enum(MONITOR_TYPES).default("http"),
-  intervalSeconds: z.number().int().min(30).max(300).default(DEFAULT_CHECK_INTERVAL),
-  timeoutMs: z.number().int().min(1000).max(30000).default(DEFAULT_TIMEOUT_MS),
-  expectedStatus: z.number().int().min(100).max(599).default(DEFAULT_EXPECTED_STATUS),
-  confirmationCount: z.number().int().min(1).max(5).default(DEFAULT_CONFIRMATION_COUNT),
-  keyword: z.string().max(500).optional().transform((v) => v || undefined),
-  sslDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
-  domainDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
-  slowResponseThresholdMs: z.number().int().min(100).max(60000).nullable().optional(),
-});
+// HEAD requests send no body, so a keyword monitor (which matches text in the
+// response body) cannot use HEAD. Enforced on both create and update.
+const rejectHeadWithKeyword = (data: { type?: string; method?: string }): boolean =>
+  !(data.type === "keyword" && data.method === "HEAD");
+const headKeywordRefinement = {
+  message: "Keyword monitors must use GET — HEAD returns no body to match.",
+  path: ["method"] as (string | number)[],
+};
 
-export const updateMonitorSchema = createMonitorSchema.partial();
+export const createMonitorSchema = z
+  .object({
+    name: z.string().min(1).max(255),
+    url: z.string().url().max(2048),
+    type: z.enum(MONITOR_TYPES).default("http"),
+    method: z.enum(MONITOR_METHODS).default(DEFAULT_MONITOR_METHOD),
+    intervalSeconds: z.number().int().min(30).max(300).default(DEFAULT_CHECK_INTERVAL),
+    timeoutMs: z.number().int().min(1000).max(30000).default(DEFAULT_TIMEOUT_MS),
+    expectedStatus: z.number().int().min(100).max(599).default(DEFAULT_EXPECTED_STATUS),
+    confirmationCount: z.number().int().min(1).max(5).default(DEFAULT_CONFIRMATION_COUNT),
+    keyword: z.string().max(500).optional().transform((v) => v || undefined),
+    sslDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
+    domainDaysWarning: z.number().int().min(1).max(365).default(30).optional(),
+    slowResponseThresholdMs: z.number().int().min(100).max(60000).nullable().optional(),
+  })
+  .refine(rejectHeadWithKeyword, headKeywordRefinement);
+
+export const updateMonitorSchema = createMonitorSchema
+  .innerType()
+  .partial()
+  .refine(rejectHeadWithKeyword, headKeywordRefinement);
 
 export const createIncidentSchema = z.object({
   statusPageId: z.string().uuid(),

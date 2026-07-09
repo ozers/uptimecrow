@@ -217,6 +217,67 @@ describe("executeTcpCheck", () => {
   });
 });
 
+describe("executeHttpCheck — HEAD (lightweight) mode", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.useRealTimers();
+  });
+
+  it("issues a HEAD request when method is HEAD", async () => {
+    let capturedMethod: string | undefined;
+    mockFetch(((_url: string, init?: RequestInit) => {
+      capturedMethod = init?.method;
+      return Promise.resolve(new Response(null, { status: 200 }));
+    }) as unknown as typeof fetch);
+
+    const result = await executeHttpCheck("https://example.com", {
+      timeoutMs: 5000,
+      expectedStatus: 200,
+      method: "HEAD",
+    });
+    expect(capturedMethod).toBe("HEAD");
+    expect(result.status).toBe("up");
+    expect(result.statusCode).toBe(200);
+    expect(result.responseMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it("resolves up/down purely by status code in HEAD mode", async () => {
+    mockFetch(respond({ status: 503 }));
+    const result = await executeHttpCheck("https://example.com", {
+      timeoutMs: 5000,
+      expectedStatus: 200,
+      method: "HEAD",
+    });
+    expect(result.status).toBe("down");
+    expect(result.errorMessage).toContain("503");
+  });
+
+  it("never reads the body or runs keyword logic in HEAD mode", async () => {
+    // A body is present, but a keyword that is NOT in it must be ignored —
+    // HEAD skips the keyword branch entirely, so the monitor stays UP.
+    let bodyRead = false;
+    mockFetch(((_url: string, _init?: RequestInit) => {
+      const res = new Response("nothing matching here", { status: 200 });
+      const originalText = res.text.bind(res);
+      res.text = () => {
+        bodyRead = true;
+        return originalText();
+      };
+      return Promise.resolve(res);
+    }) as unknown as typeof fetch);
+
+    const result = await executeHttpCheck("https://example.com", {
+      timeoutMs: 5000,
+      expectedStatus: 200,
+      method: "HEAD",
+      keyword: "Checkout",
+    });
+    expect(result.status).toBe("up");
+    expect(bodyRead).toBe(false);
+    expect(result.errorMessage).toBeNull();
+  });
+});
+
 describe("executeHttpCheck — not called with a keyword", () => {
   beforeEach(() => {
     mockFetch(respond({ status: 200, body: "anything" }));

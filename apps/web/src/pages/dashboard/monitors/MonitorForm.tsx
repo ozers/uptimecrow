@@ -25,6 +25,7 @@ type MonitorFormData = {
   name: string;
   url: string;
   type: "http" | "tcp" | "keyword";
+  method: "GET" | "HEAD";
   intervalSeconds: number;
   timeoutMs: number;
   expectedStatus: number;
@@ -75,6 +76,7 @@ export function MonitorForm({
     resolver: monitorResolver,
     defaultValues: {
       type: "http",
+      method: "GET",
       intervalSeconds: 60,
       timeoutMs: 10000,
       expectedStatus: 200,
@@ -86,8 +88,14 @@ export function MonitorForm({
   });
 
   const monitorType = watch("type");
+  const monitorMethod = watch("method");
   const urlValue = watch("url");
   const watchedInterval = watch("intervalSeconds");
+
+  // HEAD ("lightweight") mode downloads no body, so keyword matching is
+  // unavailable. Only offer/apply HEAD for plain HTTP monitors.
+  const isHttp = monitorType === "http";
+  const usesHead = isHttp && monitorMethod === "HEAD";
 
   const runTest = async () => {
     const raw = getValues("url");
@@ -284,18 +292,48 @@ export function MonitorForm({
         </div>
       </div>
 
-      {/* Keyword field */}
-      <div className="space-y-1.5">
-        <Label htmlFor="keyword">Keyword (optional)</Label>
-        <Input
-          id="keyword"
-          placeholder="e.g. Welcome, Dashboard, OK"
-          {...register("keyword")}
-        />
-        <p className="text-xs text-muted-foreground">
-          If set, the response body must contain this text to be considered UP. Works even on JS-rendered pages (checks the raw HTML including meta tags).
-        </p>
-      </div>
+      {/* Request method — HTTP monitors only. HEAD skips the body for a
+          lightweight up/down check; GET downloads it and supports keywords. */}
+      {isHttp && (
+        <div className="space-y-1.5">
+          <Label>Request method</Label>
+          <Select
+            value={monitorMethod ?? "GET"}
+            onValueChange={(v) => {
+              setValue("method", v as "GET" | "HEAD");
+              if (v === "HEAD") setValue("keyword", undefined);
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="GET">GET — Full (downloads the response, supports keyword match)</SelectItem>
+              <SelectItem value="HEAD">HEAD — Lightweight (headers only, minimal load on your endpoint)</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-muted-foreground">
+            {usesHead
+              ? "Only response headers are fetched — no body is downloaded, so up/down is decided by the status code alone. Keyword matching is disabled."
+              : "The full response body is downloaded. Add a keyword below to require specific text in the response."}
+          </p>
+        </div>
+      )}
+
+      {/* Keyword field — unavailable in HEAD mode (no body to match). */}
+      {!usesHead && (
+        <div className="space-y-1.5">
+          <Label htmlFor="keyword">Keyword (optional)</Label>
+          <Input
+            id="keyword"
+            placeholder="e.g. Welcome, Dashboard, OK"
+            {...register("keyword")}
+          />
+          <p className="text-xs text-muted-foreground">
+            If set, the response body must contain this text to be considered UP. Works even on JS-rendered pages (checks the raw HTML including meta tags).
+          </p>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">

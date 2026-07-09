@@ -44,6 +44,7 @@ export async function processCheckJob(job: Job<CheckJobData>): Promise<void> {
     timeoutMs: monitor.timeoutMs,
     expectedStatus: monitor.expectedStatus,
     keyword: monitor.keyword,
+    method: (monitor.method === "HEAD" ? "HEAD" : "GET") as "GET" | "HEAD",
   };
 
   const result =

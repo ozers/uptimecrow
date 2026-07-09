@@ -84,6 +84,7 @@ export const monitors = pgTable(
     name: varchar("name", { length: 255 }).notNull(),
     url: varchar("url", { length: 2048 }).notNull(),
     type: monitorTypeEnum("type").notNull().default("http"),
+    method: varchar("method", { length: 8 }).notNull().default("GET"),
     intervalSeconds: integer("interval_seconds").notNull().default(60),
     timeoutMs: integer("timeout_ms").notNull().default(10000),
     expectedStatus: integer("expected_status").notNull().default(200),
