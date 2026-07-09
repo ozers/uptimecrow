@@ -1,7 +1,7 @@
 // Check Job — Monitor ping execution + incident creation + notifications
 
 import type { Job } from "bullmq";
-import { eq, and, isNull, sql } from "drizzle-orm";
+import { eq, and, isNull, sql, desc } from "drizzle-orm";
 import { db, redis } from "../db/index.js";
 import {
   monitors,
@@ -13,6 +13,7 @@ import {
   maintenanceWindowMonitors,
 } from "../db/schema.js";
 import { makeQueue } from "../utils/queues.js";
+import { isWithinFlapCooldown } from "../utils/incident-flap.js";
 import { checkSslExpiry, checkDomainExpiry, executeHttpCheck, executeTcpCheck } from "../services/monitor.service.js";
 import {
   incrementFailureCount,
@@ -248,38 +249,74 @@ async function handleDownTransition(
   const severity = result.statusCode && result.statusCode >= 500 ? "major" : "minor";
   const updateText = `We detected that ${monitor.name} is not responding${statusCode}${errorDetail}. Our team has been notified and is investigating.`;
 
-  // Create incident
-  const [incident] = await db
-    .insert(incidents)
-    .values({
-      orgId: monitor.orgId,
-      statusPageId: page.id,
-      monitorId: monitor.id,
-      title,
-      status: "investigating",
-      severity,
-      isAiGenerated: false,
-    })
-    .returning();
+  // Flapping cooldown: if this monitor had an incident resolved within the last
+  // FLAP_COOLDOWN, reopen it instead of opening a fresh one. A service that
+  // bounces down/up/down then reads as one incident with a timeline of updates,
+  // not a wall of duplicate records.
+  const [recent] = await db
+    .select()
+    .from(incidents)
+    .where(
+      and(
+        eq(incidents.monitorId, monitor.id),
+        eq(incidents.status, "resolved"),
+      ),
+    )
+    .orderBy(desc(incidents.resolvedAt))
+    .limit(1);
 
-  // Create initial incident update
-  await db.insert(incidentUpdates).values({
-    incidentId: incident.id,
-    status: "investigating",
-    body: updateText,
-    isAiGenerated: false,
-  });
+  let incidentId: string;
+  let pageId: string;
+
+  if (recent && isWithinFlapCooldown(recent.resolvedAt, Date.now())) {
+    // Reopen the just-resolved incident.
+    await db
+      .update(incidents)
+      .set({ status: "investigating", resolvedAt: null })
+      .where(eq(incidents.id, recent.id));
+    incidentId = recent.id;
+    pageId = recent.statusPageId;
+
+    await db.insert(incidentUpdates).values({
+      incidentId,
+      status: "investigating",
+      body: `${monitor.name} is down again${statusCode}${errorDetail}. Reopening this incident.`,
+      isAiGenerated: false,
+    });
+  } else {
+    const [incident] = await db
+      .insert(incidents)
+      .values({
+        orgId: monitor.orgId,
+        statusPageId: page.id,
+        monitorId: monitor.id,
+        title,
+        status: "investigating",
+        severity,
+        isAiGenerated: false,
+      })
+      .returning();
+    incidentId = incident.id;
+    pageId = page.id;
+
+    await db.insert(incidentUpdates).values({
+      incidentId,
+      status: "investigating",
+      body: updateText,
+      isAiGenerated: false,
+    });
+  }
 
   // Queue notification to subscribers
   await notifyQueue.add("incident_created", {
     type: "incident_created",
-    statusPageId: page.id,
-    incidentId: incident.id,
+    statusPageId: pageId,
+    incidentId,
   });
 
   // Queue status page regeneration
   await generateQueue.add("regenerate", {
-    statusPageId: page.id,
+    statusPageId: pageId,
   });
 }
 
