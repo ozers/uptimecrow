@@ -184,7 +184,7 @@ export function MonitorDetail() {
             <span className="text-xs text-muted-foreground">interval</span>
           </div>
           {monitor.sslExpiresAt != null && monitor.url.startsWith("https://") && (() => {
-            const days = Math.round((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
+            const days = Math.floor((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
             const expired = days < 0;
             const warning = days < 14;
             return (

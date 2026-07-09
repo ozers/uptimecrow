@@ -155,7 +155,7 @@ export function MonitorsList() {
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {monitor.url.startsWith("https://") && monitor.sslExpiresAt != null ? (() => {
-                          const days = Math.round((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
+                          const days = Math.floor((new Date(monitor.sslExpiresAt).getTime() - Date.now()) / 86_400_000);
                           const expired = days < 0;
                           const warning = days < (monitor.sslDaysWarning ?? 30);
                           return (
@@ -180,7 +180,7 @@ export function MonitorsList() {
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {monitor.domainExpiresAt != null ? (() => {
-                          const days = Math.round((new Date(monitor.domainExpiresAt).getTime() - Date.now()) / 86_400_000);
+                          const days = Math.floor((new Date(monitor.domainExpiresAt).getTime() - Date.now()) / 86_400_000);
                           const expired = days < 0;
                           const warning = days < (monitor.domainDaysWarning ?? 30);
                           return (

@@ -4,6 +4,7 @@ import net from "node:net";
 import tls from "node:tls";
 import { logger } from "../utils/logger.js";
 import { assertPublicUrl, assertPublicHost, SsrfBlockedError } from "../utils/ssrf.js";
+import { daysUntil } from "../utils/expiry.js";
 
 export interface CheckResult {
   status: "up" | "down" | "degraded";
@@ -311,7 +312,7 @@ export async function checkSslExpiry(url: string): Promise<SslCheckResult> {
         socket.destroy();
         if (!cert?.valid_to) return resolve({ expiresAt: null, daysRemaining: null, status: "error" });
         const expiresAt = new Date(cert.valid_to);
-        const daysRemaining = Math.floor((expiresAt.getTime() - Date.now()) / 86_400_000);
+        const daysRemaining = daysUntil(expiresAt);
         let status: SslCheckResult["status"] = "ok";
         if (daysRemaining < 0) status = "expired";
         else if (daysRemaining < 14) status = "expiring_soon";
@@ -367,7 +368,7 @@ export async function checkDomainExpiry(url: string): Promise<DomainCheckResult>
     const expiresAt = new Date(expiryRaw as string);
     if (isNaN(expiresAt.getTime())) return { expiresAt: null, daysRemaining: null, status: "error" };
 
-    const daysRemaining = Math.floor((expiresAt.getTime() - Date.now()) / 86_400_000);
+    const daysRemaining = daysUntil(expiresAt);
     const status: DomainCheckResult["status"] =
       daysRemaining < 0 ? "expired" :
       daysRemaining < 30 ? "expiring_soon" :
