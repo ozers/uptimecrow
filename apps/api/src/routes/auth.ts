@@ -11,6 +11,7 @@ import { registerSchema, loginSchema } from "@uptimecrow/shared";
 import { authMiddleware } from "../middleware/auth.js";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { logger } from "../utils/logger.js";
+import { track } from "../utils/beacon.js";
 
 export const authRoutes = new Hono();
 
@@ -41,6 +42,8 @@ authRoutes.post("/register", async (c) => {
   const slug = email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
   const [org] = await db.insert(organizations).values({ name: `${name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id }).returning({ id: organizations.id });
   const orgId = org.id;
+
+  track("signup", { method: "email" }, user.id);
 
   const token = await createToken({ sub: user.id, email: user.email, orgId });
 

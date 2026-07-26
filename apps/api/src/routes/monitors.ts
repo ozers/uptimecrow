@@ -7,6 +7,7 @@ import { createMonitorSchema, updateMonitorSchema, PLAN_LIMITS } from "@uptimecr
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
 import { executeTestCheck } from "../services/monitor.service.js";
+import { track } from "../utils/beacon.js";
 
 export const monitorRoutes = new Hono();
 
@@ -91,6 +92,8 @@ monitorRoutes.post("/", async (c) => {
     .insert(monitors)
     .values({ ...createData, orgId })
     .returning();
+
+  track("monitor_created", { type: monitor.type, plan: org?.plan ?? "free" }, c.get("user").sub);
 
   // Remove any stale repeatable jobs for this monitor before scheduling
   const existingJobs = await checkQueue.getRepeatableJobs();

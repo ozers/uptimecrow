@@ -5,6 +5,7 @@ import { db } from "../db/index.js";
 import { users, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
 import { logger } from "../utils/logger.js";
+import { track } from "../utils/beacon.js";
 
 export const billingRoutes = new Hono();
 
@@ -172,9 +173,12 @@ async function handlePolarWebhook(c: Context) {
       const entry = priceMap[priceId];
 
       if (entry && (status === "active" || status === "trialing")) {
+        // read previous plan so beacon only fires on a real change, not renewals
+        const [prev] = await db.select({ plan: users.plan }).from(users).where(eq(users.id, userId)).limit(1);
         await db.update(users).set({ plan: entry.plan, stripeCustomerId: customerId }).where(eq(users.id, userId));
         await db.update(organizations).set({ plan: entry.plan }).where(eq(organizations.ownerId, userId));
         logger.info(`[Polar] Upgraded ${userId} to ${entry.plan} (${entry.interval})`);
+        if (prev?.plan !== entry.plan) track("subscription_started", { plan: entry.plan, interval: entry.interval, from: prev?.plan ?? "free" }, userId);
       }
       break;
     }
@@ -184,6 +188,7 @@ async function handlePolarWebhook(c: Context) {
       await db.update(users).set({ plan: "free", stripeCustomerId: null }).where(eq(users.id, userId));
       await db.update(organizations).set({ plan: "free" }).where(eq(organizations.ownerId, userId));
       logger.info(`[Polar] Downgraded ${userId} to free`);
+      track("subscription_canceled", { type: eventType }, userId);
       break;
     }
   }
