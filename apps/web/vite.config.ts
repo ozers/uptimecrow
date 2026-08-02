@@ -7,10 +7,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Resolve the workspace package to its source, not packages/shared/dist.
+      // The package's "types" already point at src, so a stale dist silently
+      // shipped plan limits and pricing copy that typecheck could not catch.
+      "@uptimecrow/shared": path.resolve(__dirname, "../../packages/shared/src"),
     },
   },
   server: {
-    port: 5173,
+    port: Number(process.env.PORT) || 5173,
     host: "0.0.0.0",
     proxy: {
       "/api": {

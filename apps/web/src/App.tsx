@@ -28,20 +28,44 @@ import { Docs } from "./pages/Docs";
 import SelfHostPage from "./pages/SelfHostPage";
 import Changelog from "./pages/Changelog";
 
-// Reset scroll to the top on every route change (e.g. clicking the logo from a
-// scrolled-down page lands you at the top, not mid-page).
-function ScrollToTop() {
-  const { pathname } = useLocation();
+// Scroll behaviour on navigation:
+//  - `/#features` (from any page) scrolls to that section — React Router does
+//    not do this for us, and the old pathname-only effect actively fought it by
+//    forcing scrollTo(0,0) on cross-page hash links.
+//  - anything else lands at the top.
+// Keyed on location.key so clicking the same hash link twice scrolls again.
+function ScrollManager() {
+  const { pathname, hash, key } = useLocation();
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (!hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+    // The target may not be laid out yet on a cross-page navigation, so retry
+    // for a few frames before giving up and going to the top.
+    let frames = 0;
+    let raf = 0;
+    const seek = () => {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+      if (frames++ < 20) raf = requestAnimationFrame(seek);
+      else window.scrollTo(0, 0);
+    };
+    raf = requestAnimationFrame(seek);
+    return () => cancelAnimationFrame(raf);
+  }, [pathname, hash, key]);
+
   return null;
 }
 
 export function App() {
   return (
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <ScrollToTop />
+      <ScrollManager />
       <Routes>
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />

@@ -55,11 +55,11 @@ const LANDING_FAQ_LD = {
 };
 
 function FAQSection() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
   const toggle = (i: number) => setOpen((prev) => (prev === i ? null : i));
 
   return (
-    <section className="mx-auto max-w-3xl px-6 py-20 sm:px-8" id="faq">
+    <section className="mx-auto max-w-3xl scroll-mt-20 px-6 py-20 sm:px-8" id="faq">
       <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
         FAQ
       </p>
@@ -108,24 +108,22 @@ export function LandingPage() {
     <div className="min-h-screen bg-background">
       <MarketingNav />
 
-      {/* ── HERO — one message ── */}
-      <section className="mx-auto max-w-4xl px-6 pt-20 text-center sm:px-8 sm:pt-28">
-        <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          Open source · AGPL-3.0
-        </p>
-        <h1 className="mx-auto mt-5 max-w-3xl font-display text-[42px] font-extrabold leading-[1.02] tracking-[-0.04em] text-balance sm:text-[64px]">
+      {/* ── HERO — one message, then the product itself. The visual is part of
+           the hero (not a section below it) and is deliberately cropped at the
+           fold so the page reads as "here is the thing" on first paint. ── */}
+      <section className="mx-auto max-w-5xl px-6 pt-10 text-center sm:px-8 sm:pt-12">
+        <h1 className="mx-auto max-w-3xl font-display text-[38px] font-extrabold leading-[1.03] tracking-[-0.04em] text-balance sm:text-[58px]">
           Status pages that stay up{" "}
           <span className="text-brand">when you&apos;re down.</span>
         </h1>
-        <p className="mx-auto mt-6 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-          UptimeCrow watches your services, opens incidents automatically, and
-          serves a pre-rendered status page that keeps answering — even when
-          everything else doesn&apos;t.
+        <p className="mx-auto mt-5 max-w-lg text-[16.5px] leading-relaxed text-muted-foreground text-balance">
+          Built-in monitoring, automatic incidents, and a pre-rendered page that
+          keeps answering.
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <Button size="lg" asChild>
             <Link to="/register">
-              Create your status page — free
+              Create your status page
               <ArrowRight className="ml-1.5 h-4 w-4" />
             </Link>
           </Button>
@@ -135,16 +133,11 @@ export function LandingPage() {
             </a>
           </Button>
         </div>
-        <p className="mt-5 font-mono text-[12px] text-muted-foreground">
-          free tier · no credit card · or self-host with{" "}
-          <span className="text-foreground">docker compose up</span>
-        </p>
-      </section>
 
-      {/* ── THE PROMISE, SHOWN — real product output, not a mockup ── */}
-      <section className="mx-auto max-w-5xl px-6 pb-6 pt-14 sm:px-8">
-        <figure>
-          <div className="overflow-hidden rounded-xl border border-border shadow-[0_1px_2px_rgba(42,34,48,.06),0_32px_64px_-32px_rgba(42,34,48,.35)]">
+        {/* The product, immediately. Cropped at the fold — the fade tells you
+            it continues, so nobody mistakes it for a decorative header image. */}
+        <figure className="mt-9 sm:mt-10">
+          <div className="relative overflow-hidden rounded-t-xl border border-b-0 border-border shadow-[0_1px_2px_rgba(42,34,48,.06),0_32px_64px_-32px_rgba(42,34,48,.35)]">
             {/* Browser chrome */}
             <div className="flex items-center gap-2 border-b border-border bg-secondary px-4 py-2.5">
               <span className="h-2.5 w-2.5 rounded-full bg-danger/50" />
@@ -154,29 +147,45 @@ export function LandingPage() {
                 status.yourapp.com
               </span>
             </div>
-            <img
-              src="/product-status-preview.png"
-              alt="A live UptimeCrow status page: all systems operational, 99.99% uptime over 90 days, three monitored services with daily uptime bars, and incident history."
-              width={1120}
-              height={840}
-              className="block w-full"
-              loading="eager"
+            {/* On phones the full page would shrink to an illegible thumbnail,
+                so we blow it up and crop instead — you can still read the
+                headline status and the uptime bars. */}
+            <div className="max-h-[42vh] min-h-[260px] overflow-hidden sm:max-h-[46vh]">
+              <img
+                src="/product-status-preview.png"
+                alt="A live UptimeCrow status page: all systems operational, 99.99% uptime over 90 days, three monitored services with daily uptime bars, and incident history."
+                width={1120}
+                height={840}
+                className="-ml-[13%] block w-[175%] max-w-none sm:ml-0 sm:w-full"
+                loading="eager"
+                // React 18 does not map the camelCase prop onto the DOM (it
+                // warns and drops it), so pass the attribute name directly.
+                {...{ fetchpriority: "high" }}
+              />
+            </div>
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-background"
+              aria-hidden="true"
             />
           </div>
-          <figcaption className="mt-3 text-center font-mono text-[11px] text-muted-foreground">
-            the actual page UptimeCrow serves — pre-rendered static HTML, so it
-            survives your outage
+          <figcaption className="mt-4 font-mono text-[11.5px] text-muted-foreground">
+            the page UptimeCrow serves — static HTML, decoupled from your stack
           </figcaption>
         </figure>
+
+        <p className="mt-6 font-mono text-[12px] text-muted-foreground">
+          free tier · no credit card · self-host with{" "}
+          <span className="text-foreground">docker compose up</span>
+        </p>
       </section>
 
       {/* ── HOW — three steps, one line each ── */}
-      <section className="mx-auto max-w-5xl px-6 py-16 sm:px-8" id="how">
+      <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-14 sm:px-8" id="how">
         <div className="grid grid-cols-1 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {[
-            { n: "01", t: "Add your endpoints", d: "HTTP, TCP or keyword checks — HEAD mode for near-zero load." },
-            { n: "02", t: "Pick a slug", d: "Your page is live at status.yourapp.com or a free URL." },
-            { n: "03", t: "Share it", d: "Down? Incident opens, subscribers get emailed — automatically." },
+            { n: "01", t: "Add your endpoints", d: "HTTP, TCP or keyword checks." },
+            { n: "02", t: "Pick a slug", d: "Live at status.yourapp.com." },
+            { n: "03", t: "Share it", d: "Incidents open and email subscribers themselves." },
           ].map((s) => (
             <div key={s.n} className="px-6 py-6">
               <p className="font-mono text-[11px] font-semibold text-brand">{s.n}</p>
@@ -188,23 +197,23 @@ export function LandingPage() {
       </section>
 
       {/* ── WHY — three proofs, ruled ── */}
-      <section className="mx-auto max-w-5xl px-6 py-8 sm:px-8" id="features">
+      <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-8 sm:px-8" id="features">
         <div className="grid grid-cols-1 gap-x-14 gap-y-10 sm:grid-cols-3">
           {[
             {
               icon: ShieldCheck,
               t: "Survives your outage",
-              d: "The page is pre-rendered static HTML, decoupled from your stack. App, API and database can all be down — your status page still answers.",
+              d: "Pre-rendered static HTML, decoupled from your stack. App, API and database down — the page still answers.",
             },
             {
               icon: Radio,
               t: "Monitoring built in",
-              d: "No separate uptime tool to wire up. Checks every 30s–5min, consecutive-failure confirmation kills false alarms, incidents open and resolve themselves.",
+              d: "Checks every 30s–5min. Consecutive-failure confirmation kills false alarms.",
             },
             {
               icon: Terminal,
               t: "Yours, either way",
-              d: "AGPL-3.0, one docker compose up to self-host — or use the hosted free tier. Custom domain, your logo, your brand color.",
+              d: "AGPL-3.0 and one docker compose up — or the hosted free tier.",
             },
           ].map(({ icon: Icon, t, d }) => (
             <div key={t}>
@@ -219,13 +228,13 @@ export function LandingPage() {
       </section>
 
       {/* ── INK CTA ── */}
-      <section className="mx-auto max-w-5xl px-6 py-20 sm:px-8">
+      <section className="mx-auto max-w-5xl px-6 py-16 sm:px-8">
         <div className="rounded-xl bg-foreground px-8 py-12 text-center text-background sm:px-14">
           <h2 className="font-display text-[30px] font-extrabold tracking-[-0.035em] sm:text-[38px]">
             Put a crow on your uptime.
           </h2>
           <p className="mx-auto mt-3 max-w-md text-[15px] text-background/60">
-            Ten monitors and a status page, free forever. Live in three minutes.
+            Ten monitors and a status page. Free forever.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
             <Button size="lg" variant="brand" asChild>

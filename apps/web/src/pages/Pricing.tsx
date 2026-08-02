@@ -1,12 +1,40 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
 import { usePageMeta } from "@/lib/meta";
-import { PLAN_CATALOG } from "@uptimecrow/shared";
+import { PLAN_CATALOG, PLAN_LIMITS } from "@uptimecrow/shared";
+
+// ─── Comparison table ─────────────────────────────────────────────────────────
+// Every cell is derived from PLAN_LIMITS so the table can never drift from what
+// the API actually enforces. Only plans we sell (PLAN_CATALOG) get a column.
+
+const fmtInterval = (s: number) => (s >= 60 ? `${s / 60} min` : `${s} sec`);
+const fmtRetention = (d: number) => (d >= 365 ? `${Math.round(d / 365)} year` : `${d} days`);
+
+const COMPARE_ROWS: { label: string; value: (l: (typeof PLAN_LIMITS)[keyof typeof PLAN_LIMITS]) => string | boolean }[] = [
+  { label: "Status pages", value: (l) => (l.statusPages === Infinity ? "Unlimited" : `${l.statusPages}`) },
+  { label: "Monitors", value: (l) => `${l.monitors}` },
+  { label: "Check interval", value: (l) => fmtInterval(l.minInterval) },
+  { label: "History retention", value: (l) => fmtRetention(l.retentionDays) },
+  { label: "Custom domain", value: (l) => l.customDomain },
+  { label: "Slack, Discord & webhooks", value: (l) => l.slackWebhook },
+  { label: "Team seats", value: (l) => `${l.teamSeats}` },
+];
+
+function CompareCell({ value }: { value: string | boolean }) {
+  if (typeof value === "string") {
+    return <span className="font-mono text-[13.5px] tnum">{value}</span>;
+  }
+  return value ? (
+    <Check size={15} className="mx-auto text-brand" aria-label="Included" />
+  ) : (
+    <Minus size={15} className="mx-auto text-muted-foreground/50" aria-label="Not included" />
+  );
+}
 
 const FAQ = [
   {
@@ -86,16 +114,12 @@ export function Pricing() {
       <MarketingNav />
 
       {/* HERO */}
-      <section className="mx-auto max-w-4xl px-6 pb-8 pt-20 text-center sm:px-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-brand">
-          Fair pricing · no lock-in
-        </p>
-        <h1 className="mt-4 font-display text-[42px] font-extrabold leading-[1.05] tracking-[-0.035em] sm:text-[52px]">
-          Simple pricing. <span className="text-brand">Pick a plan that fits.</span>
+      <section className="mx-auto max-w-4xl px-6 pb-8 pt-14 text-center sm:px-8">
+        <h1 className="font-display text-[40px] font-extrabold leading-[1.04] tracking-[-0.035em] sm:text-[52px]">
+          Simple pricing. <span className="text-brand">No lock-in.</span>
         </h1>
-        <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
-          Start free forever. Upgrade when you need more monitors, faster checks, or a branded
-          status page.
+        <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-muted-foreground">
+          Free forever to start. Or self-host the whole thing under AGPL-3.0.
         </p>
 
         {/* Billing toggle */}
@@ -141,8 +165,8 @@ export function Pricing() {
       </section>
 
       {/* PLAN CARDS */}
-      <section className="mx-auto max-w-6xl px-6 pt-4 sm:px-8">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-5xl px-6 pt-4 sm:px-8">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PLAN_CATALOG.map((plan) => {
             const isAnnualPaid = annual && plan.monthlyPrice > 0;
             const displayPrice = isAnnualPaid
@@ -159,8 +183,8 @@ export function Pricing() {
                 }`}
               >
                 {pop && (
-                  <span className="absolute -top-2.5 left-6 rounded-full bg-brand px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-foreground">
-                    Popular
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-brand px-3 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-brand-foreground">
+                    Most popular
                   </span>
                 )}
                 <p
@@ -170,7 +194,16 @@ export function Pricing() {
                 >
                   {plan.name}
                 </p>
-                <p className="mt-3 flex items-baseline gap-1">
+                <p className="mt-3 flex items-baseline gap-1.5">
+                  {isAnnualPaid && (
+                    <span
+                      className={`font-display text-2xl font-bold tracking-[-0.03em] line-through tnum ${
+                        pop ? "text-background/35" : "text-muted-foreground/60"
+                      }`}
+                    >
+                      ${plan.monthlyPrice}
+                    </span>
+                  )}
                   <span className="font-display text-4xl font-extrabold tracking-[-0.03em] tnum">
                     {displayPrice}
                   </span>
@@ -182,15 +215,17 @@ export function Pricing() {
                     /mo
                   </span>
                 </p>
-                {isAnnualPaid && (
-                  <p
-                    className={`mt-1 font-mono text-[12px] ${
-                      pop ? "text-background/50" : "text-muted-foreground"
-                    }`}
-                  >
-                    billed ${plan.annualTotal}/yr
-                  </p>
-                )}
+                <p
+                  className={`mt-1 font-mono text-[12px] ${
+                    pop ? "text-background/50" : "text-muted-foreground"
+                  }`}
+                >
+                  {isAnnualPaid
+                    ? `billed $${plan.annualTotal}/yr · 2 months free`
+                    : plan.monthlyPrice === 0
+                      ? "free forever"
+                      : "billed monthly"}
+                </p>
                 <p
                   className={`mt-2 text-[13px] leading-relaxed ${
                     pop ? "text-background/60" : "text-muted-foreground"
@@ -225,8 +260,62 @@ export function Pricing() {
           })}
         </div>
 
+        {/* COMPARISON — the numbers, side by side. This is the question the
+            cards can't answer ("how many monitors do I actually get?"). */}
+        <div className="mt-14 scroll-mt-20" id="compare">
+          <h2 className="font-display text-[22px] font-bold tracking-[-0.03em]">
+            Compare the limits.
+          </h2>
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[560px] border-collapse text-left">
+              <caption className="sr-only">Plan limits compared</caption>
+              <thead>
+                <tr className="border-b border-border">
+                  <th scope="col" className="py-3 pr-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    Limit
+                  </th>
+                  {PLAN_CATALOG.map((p) => (
+                    <th
+                      key={p.plan}
+                      scope="col"
+                      className={`w-[18%] py-3 text-center font-display text-[15px] font-bold tracking-[-0.02em] ${
+                        p.featured ? "bg-brand/[0.06] text-brand" : ""
+                      }`}
+                    >
+                      {p.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE_ROWS.map((row) => (
+                  <tr key={row.label} className="border-b border-border">
+                    <th scope="row" className="py-3 pr-4 text-[14px] font-medium">
+                      {row.label}
+                    </th>
+                    {PLAN_CATALOG.map((p) => (
+                      <td
+                        key={p.plan}
+                        className={`py-3 text-center ${p.featured ? "bg-brand/[0.06]" : ""}`}
+                      >
+                        <CompareCell value={row.value(PLAN_LIMITS[p.plan])} />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-4 font-mono text-[11.5px] text-muted-foreground">
+            self-hosting under AGPL-3.0 has no plan limits at all —{" "}
+            <Link to="/self-host" className="text-foreground underline underline-offset-2">
+              see the guide
+            </Link>
+          </p>
+        </div>
+
         {/* Enterprise hook */}
-        <div className="mt-6 flex flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:px-8">
+        <div className="mt-12 flex flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:px-8">
           <div>
             <p className="font-display text-lg font-bold tracking-[-0.02em]">Need more than Pro?</p>
             <p className="mt-1 text-[14px] text-muted-foreground">
