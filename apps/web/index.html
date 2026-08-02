@@ -61,13 +61,6 @@
         "price": "30",
         "priceCurrency": "USD",
         "description": "10 status pages + custom domain, 100 monitors, 30-second checks"
-      },
-      {
-        "@type": "Offer",
-        "name": "Team",
-        "price": "80",
-        "priceCurrency": "USD",
-        "description": "Unlimited status pages, 200 monitors, 30-second checks"
       }
     ],
     "featureList": [
@@ -98,7 +91,9 @@
   <!-- FAQPage — baseline copy in static HTML so non-JS crawlers (CCBot,
        some training bots) see the answers; the React app re-emits the same
        schema after hydration via usePageMeta(). Both copies are identical,
-       which search engines deduplicate. -->
+       which search engines deduplicate. The markers let scripts/prerender.mjs
+       strip this block from the non-landing route shells. -->
+  <!--faq-ld-->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -117,10 +112,11 @@
       { "@type": "Question", "name": "Can I self-host UptimeCrow?",
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. UptimeCrow's full stack is AGPL-3.0 licensed and runs with a single docker compose up command. You bring PostgreSQL and Redis; we provide the code. No vendor lock-in, no data leaving your infrastructure." } },
       { "@type": "Question", "name": "How often does UptimeCrow check my websites and APIs?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro and Team. A configurable consecutive-failure confirmation means a single blip won't trigger a false incident." } }
+        "acceptedAnswer": { "@type": "Answer", "text": "Every 5 minutes on Free, every 60 seconds on Indie, every 30 seconds on Pro. A configurable consecutive-failure confirmation means a single blip won't trigger a false incident." } }
     ]
   }
   </script>
+  <!--/faq-ld-->
 
   <script type="application/ld+json">
   {
@@ -138,6 +134,39 @@
   </script>
 
   <style>* { margin: 0; padding: 0; box-sizing: border-box; }</style>
+
+  <!-- Styling for the pre-rendered shell written by scripts/prerender.mjs.
+       React's createRoot() clears #root on mount, so this only ever paints
+       before hydration (and for crawlers that never hydrate). Kept tiny and
+       token-matched to globals.css so the first paint is not a flash of
+       unstyled text. -->
+  <style>
+    #uc-static { --b:#141018; --f:#f0ebe2; --m:#a79fb2; --br:#00e676; --l:#2a2333;
+      background:var(--b); color:var(--f); min-height:100vh;
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      font-size:16px; line-height:1.65; }
+    html.light #uc-static { --b:#faf8f4; --f:#1a1520; --m:#6b6377; --l:#e6e0d6; }
+    #uc-static .uc-wrap { max-width:44rem; margin:0 auto; padding:2rem 1.5rem 4rem; }
+    #uc-static a { color:var(--br); text-decoration:none; }
+    #uc-static .uc-nav { display:flex; flex-wrap:wrap; gap:1rem; padding-bottom:2rem;
+      border-bottom:1px solid var(--l); font-size:.9rem; }
+    #uc-static h1 { margin:2rem 0 .75rem; font-size:2.25rem; line-height:1.1;
+      letter-spacing:-.03em; }
+    #uc-static h2 { margin:2rem 0 .5rem; font-size:1.35rem; letter-spacing:-.02em; }
+    #uc-static h3 { margin:1.25rem 0 .25rem; font-size:1.05rem; }
+    #uc-static p, #uc-static li { color:var(--m); }
+    #uc-static .uc-lead { font-size:1.1rem; color:var(--f); }
+    /* Tailwind preflight strips list markers (ul,ol{list-style:none}); the id
+       selector wins over it regardless of stylesheet order. */
+    #uc-static ul { margin:.5rem 0 0; padding-left:1.25rem; list-style:disc; }
+    #uc-static ol { margin:.5rem 0 0; padding-left:1.25rem; list-style:decimal; }
+    #uc-static code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:.9em; color:var(--f); }
+    #uc-static .uc-cta { display:inline-block; margin:1.25rem 1rem 0 0; padding:.6rem 1.1rem;
+      background:var(--br); color:#0c0a10; border-radius:.5rem; font-weight:600; }
+    #uc-static .uc-footer { margin-top:3rem; padding-top:1.5rem;
+      border-top:1px solid var(--l); font-size:.85rem; }
+  </style>
 
   <!-- Apply theme before first paint to avoid flash -->
   <script>
@@ -181,7 +210,10 @@
   </script>
 </head>
 <body>
-  <div id="root"></div>
+  <!-- The static shell is injected between these markers at build time by
+       scripts/prerender.mjs (one file per marketing route). It stays empty in
+       source so the copy has a single home; React clears #root on mount. -->
+  <div id="root"><!--static-shell--><!--/static-shell--></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
