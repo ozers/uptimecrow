@@ -337,7 +337,12 @@ const ROUTES = [
 
 // ─── Rendering ────────────────────────────────────────────────────────────────
 
-const escapeAttr = (s) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+// Apostrophes are escaped too. They are legal raw inside a double-quoted
+// attribute, but naive scrapers that accept either quote character truncate
+// there — one external crawler read the landing description as 46 characters,
+// stopping dead at "when you" in "when you're down".
+const escapeAttr = (s) =>
+  s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
 function replaceBetween(html, start, end, replacement) {
   const from = html.indexOf(start);
@@ -348,17 +353,21 @@ function replaceBetween(html, start, end, replacement) {
   return html.slice(0, from + start.length) + replacement + html.slice(to);
 }
 
+// The replacement is always a function, never a string: copy containing "$10"
+// or "$&" would otherwise be read by String.replace as a capture-group
+// reference and silently corrupt the tag (the Pricing description did exactly
+// that — "$10/mo" spliced group 1 back into the attribute).
 function setMeta(html, selector, value) {
   const re = new RegExp(`(<meta ${selector} content=")[^"]*(")`);
   if (!re.test(html)) throw new Error(`prerender: meta ${selector} not found`);
-  return html.replace(re, `$1${escapeAttr(value)}$2`);
+  return html.replace(re, (_, open, close) => open + escapeAttr(value) + close);
 }
 
 function render(template, page) {
   const url = ORIGIN + (page.route === "/" ? "/" : page.route);
   let html = template;
 
-  html = html.replace(/<title>[^<]*<\/title>/, `<title>${page.title}</title>`);
+  html = html.replace(/<title>[^<]*<\/title>/, () => `<title>${page.title}</title>`);
   html = setMeta(html, 'name="description"', page.description);
   html = setMeta(html, 'property="og:title"', page.title);
   html = setMeta(html, 'property="og:description"', page.description);
@@ -367,7 +376,7 @@ function render(template, page) {
   html = setMeta(html, 'name="twitter:description"', page.description);
   html = html.replace(
     /(<link rel="canonical" href=")[^"]*(")/,
-    `$1${escapeAttr(url)}$2`,
+    (_, open, close) => open + escapeAttr(url) + close,
   );
 
   // FAQPage markup belongs on the landing page only — emitting it on every
@@ -384,10 +393,34 @@ function render(template, page) {
   return replaceBetween(html, SHELL_START, SHELL_END, shell);
 }
 
+// Read the tags back and compare with what was asked for, so a substitution
+// that silently mangles an attribute fails the build instead of shipping.
+function verify(html, page) {
+  const url = ORIGIN + (page.route === "/" ? "/" : page.route);
+  const decode = (s) =>
+    s?.replace(/&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&");
+  const got = {
+    title: html.match(/<title>([^<]*)<\/title>/)?.[1],
+    description: decode(
+      html.match(/<meta name="description" content="([^"]*)"/)?.[1],
+    ),
+    canonical: decode(html.match(/<link rel="canonical" href="([^"]*)"/)?.[1]),
+  };
+  const want = { title: page.title, description: page.description, canonical: url };
+  for (const [k, v] of Object.entries(want)) {
+    if (got[k] !== v) {
+      throw new Error(
+        `prerender: ${page.route} ${k} mismatch\n  want: ${v}\n  got:  ${got[k]}`,
+      );
+    }
+  }
+}
+
 const template = await readFile(path.join(DIST, "index.html"), "utf8");
 
 for (const page of ROUTES) {
   const html = render(template, page);
+  verify(html, page);
   const dir = page.route === "/" ? DIST : path.join(DIST, page.route.slice(1));
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, "index.html"), html);
