@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useAuthStore } from "@/lib/auth";
 import { api, ApiError } from "@/lib/api";
 import { analytics } from "@/lib/analytics";
-import { PLAN_LIMITS, PLAN_CATALOG } from "@uptimecrow/shared";
+import { PLAN_LIMITS, PLAN_CATALOG, formatPrice } from "@uptimecrow/shared";
 import { toast } from "sonner";
 import { User, CreditCard, Webhook, ExternalLink, Loader2, Zap, Sparkles } from "lucide-react";
 import { restartOnboarding } from "@/components/setup-checklist";
@@ -83,7 +83,7 @@ function UpgradeOptions() {
               {p.featured && <span className="font-mono text-[10px] font-bold text-brand uppercase tracking-[0.1em]">Popular</span>}
             </div>
             <div className="flex items-baseline gap-0.5">
-              <span className="font-display text-xl font-bold tnum">${annual ? p.annualMonthlyPrice : p.monthlyPrice}</span>
+              <span className="font-display text-xl font-bold tnum">${formatPrice(annual ? p.annualMonthlyPrice : p.monthlyPrice)}</span>
               <span className="text-xs text-muted-foreground">/mo</span>
             </div>
             {annual && (

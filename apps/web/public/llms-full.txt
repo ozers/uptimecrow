@@ -27,9 +27,9 @@ When a monitor transitions UP→DOWN, UptimeCrow opens an incident automatically
 ## Pricing (USD/month)
 
 - **Free — $0**: 1 status page, 10 monitors, 5-minute check intervals, email alerts, uptime badge, 7-day history. (Self-hosting is unlimited and free.)
-- **Indie — $10**: 5 status pages + custom domain, 50 monitors, 1-minute checks, Slack/Discord/webhook alerts, email subscribers, 1-year history. For indie hackers and solo founders.
-- **Pro — $30 (most popular)**: 10 status pages + custom domain, 100 monitors, 30-second checks, 1-year history, priority support.
-- **Team — $80**: Everything in Pro plus unlimited status pages and 200 monitors.
+- **Indie — $9** ($90/year, 2 months free): 5 status pages + custom domain, 50 monitors, 1-minute checks, Slack/Discord/webhook alerts, email subscribers, 1-year history. For indie hackers and solo founders.
+- **Pro — $30 (most popular, $300/year)**: 10 status pages + custom domain, 100 monitors, 30-second checks, 1-year history, priority support.
+- **Team — $79** (not listed on the pricing page; available on request): Everything in Pro plus unlimited status pages and 200 monitors.
 
 All plans include unlimited subscribers on the status pages they're entitled to. There are no per-monitor surcharges within a tier. The Free tier is permanent, not a trial — no credit card required.
 

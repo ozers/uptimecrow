@@ -26,7 +26,7 @@ Open-source status pages that stay up when you're down. Built-in uptime monitori
 
 | Feature | Free | Indie | Pro | Team |
 |---|---|---|---|---|
-| Price | $0 | $10/mo | $30/mo | $80/mo |
+| Price | $0 | $9/mo | $30/mo | $79/mo |
 | Status Pages | 1 | 5 | 10 | Unlimited |
 | Monitors | 10 | 50 | 100 | 200 |
 | Min Interval | 5 min | 1 min | 30 sec | 30 sec |

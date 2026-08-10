@@ -20,7 +20,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Is UptimeCrow really free? What's in the free plan?",
-    a: "Yes — free forever, no credit card required. The free plan includes 1 status page, 10 monitors, 5-minute check intervals, email alerts, and 7-day history. Upgrade to Indie ($10/mo) for 1-minute checks, custom domains, 1-year history, and Slack/Discord.",
+    a: "Yes — free forever, no credit card required. The free plan includes 1 status page, 10 monitors, 5-minute check intervals, email alerts, and 7-day history. Upgrade to Indie ($9/mo) for 1-minute checks, custom domains, 1-year history, and Slack/Discord.",
   },
   {
     q: "How does UptimeCrow prevent false alarms?",

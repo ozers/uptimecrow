@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 import { useAuthStore } from "@/lib/auth";
 import { usePageMeta } from "@/lib/meta";
-import { PLAN_CATALOG, PLAN_LIMITS } from "@uptimecrow/shared";
+import { PLAN_CATALOG, PLAN_LIMITS, formatPrice } from "@uptimecrow/shared";
 
 // ─── Comparison table ─────────────────────────────────────────────────────────
 // Every cell is derived from PLAN_LIMITS so the table can never drift from what
@@ -73,7 +73,7 @@ export function Pricing() {
   usePageMeta({
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($10/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($30/mo) for 30-second checks and 100 monitors.",
+      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($30/mo) for 30-second checks and 100 monitors.",
     canonical: "https://uptimecrow.com/pricing",
     jsonLd: {
       "@context": "https://schema.org",
@@ -170,10 +170,10 @@ export function Pricing() {
           {PLAN_CATALOG.map((plan) => {
             const isAnnualPaid = annual && plan.monthlyPrice > 0;
             const displayPrice = isAnnualPaid
-              ? `$${plan.annualMonthlyPrice}`
+              ? `$${formatPrice(plan.annualMonthlyPrice)}`
               : plan.monthlyPrice === 0
                 ? "$0"
-                : `$${plan.monthlyPrice}`;
+                : `$${formatPrice(plan.monthlyPrice)}`;
             const pop = plan.featured;
             return (
               <div
@@ -201,7 +201,7 @@ export function Pricing() {
                         pop ? "text-background/35" : "text-muted-foreground/60"
                       }`}
                     >
-                      ${plan.monthlyPrice}
+                      ${formatPrice(plan.monthlyPrice)}
                     </span>
                   )}
                   <span className="font-display text-4xl font-extrabold tracking-[-0.03em] tnum">
