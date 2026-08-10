@@ -20,7 +20,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new ApiError(res.status, body.error || body.message || "Request failed");
+    const base = body.error || body.message || "Request failed";
+    // Routes that proxy a third party (billing) attach the upstream reason as
+    // `detail`. Dropping it turned every Polar rejection into an identical,
+    // undiagnosable "Failed to create checkout".
+    throw new ApiError(res.status, body.detail ? `${base}: ${body.detail}` : base);
   }
 
   if (res.status === 204) return undefined as T;

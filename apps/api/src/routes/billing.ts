@@ -16,26 +16,42 @@ const POLAR_WEBHOOK_SECRET = () => process.env.POLAR_WEBHOOK_SECRET || "";
 type PaidPlan = "indie" | "pro" | "team";
 type BillingInterval = "monthly" | "yearly";
 
-// price_id → plan mapping (env vars set to Polar price IDs)
-function buildPriceMap(): Record<string, { plan: PaidPlan; interval: BillingInterval }> {
-  const map: Record<string, { plan: PaidPlan; interval: BillingInterval }> = {};
-  const entries: Array<[string, PaidPlan, BillingInterval]> = [
-    [process.env.POLAR_INDIE_MONTHLY_PRICE_ID || "", "indie", "monthly"],
-    [process.env.POLAR_INDIE_YEARLY_PRICE_ID || "", "indie", "yearly"],
-    [process.env.POLAR_PRO_MONTHLY_PRICE_ID || "", "pro", "monthly"],
-    [process.env.POLAR_PRO_YEARLY_PRICE_ID || "", "pro", "yearly"],
-    [process.env.POLAR_TEAM_MONTHLY_PRICE_ID || "", "team", "monthly"],
-    [process.env.POLAR_TEAM_YEARLY_PRICE_ID || "", "team", "yearly"],
-  ];
-  for (const [id, plan, interval] of entries) {
-    if (id) map[id] = { plan, interval };
-  }
-  return map;
+// Polar identifies checkout targets and subscriptions by PRODUCT id — the
+// price-level ids this code used to pass were dropped from the API (a checkout
+// body with `product_price_id` is now a 422, and a subscription webhook carries
+// no `price_id` at all). Monthly and yearly are separate Polar products, hence
+// one env var per (plan, interval).
+//
+// `POLAR_<PLAN>_<INTERVAL>_PRODUCT_ID` is the canonical name. The old
+// `..._PRICE_ID` names are still read so an existing deployment keeps working
+// once the values are swapped to product ids, and `POLAR_<PLAN>_PRODUCT_ID`
+// covers a single-product plan with no separate yearly product.
+const PAID_PLANS: PaidPlan[] = ["indie", "pro", "team"];
+const INTERVALS: BillingInterval[] = ["monthly", "yearly"];
+
+export function getProductId(plan: PaidPlan, interval: BillingInterval): string {
+  const P = plan.toUpperCase();
+  const I = interval.toUpperCase();
+  return (
+    process.env[`POLAR_${P}_${I}_PRODUCT_ID`] ||
+    process.env[`POLAR_${P}_${I}_PRICE_ID`] ||
+    process.env[`POLAR_${P}_PRODUCT_ID`] ||
+    ""
+  );
 }
 
-function getPriceId(plan: PaidPlan, interval: BillingInterval): string {
-  const envKey = `POLAR_${plan.toUpperCase()}_${interval.toUpperCase()}_PRICE_ID`;
-  return process.env[envKey] || "";
+// product_id → plan mapping, used to resolve subscription webhooks back to a plan.
+export function buildProductMap(): Record<string, { plan: PaidPlan; interval: BillingInterval }> {
+  const map: Record<string, { plan: PaidPlan; interval: BillingInterval }> = {};
+  for (const plan of PAID_PLANS) {
+    for (const interval of INTERVALS) {
+      const id = getProductId(plan, interval);
+      // First writer wins: with a single POLAR_<PLAN>_PRODUCT_ID both intervals
+      // resolve to the same id and monthly is the honest label.
+      if (id && !map[id]) map[id] = { plan, interval };
+    }
+  }
+  return map;
 }
 
 // POST /api/billing/checkout
@@ -43,22 +59,26 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
   const { sub, email } = c.get("user");
   const { plan, interval = "monthly" } = await c.req.json<{ plan: PaidPlan; interval?: BillingInterval }>();
 
-  const priceId = getPriceId(plan, interval);
-  if (!priceId) return c.json({ error: "Billing not configured" }, 400);
+  if (!PAID_PLANS.includes(plan) || !INTERVALS.includes(interval)) {
+    return c.json({ error: "Unknown plan" }, 400);
+  }
+
+  const productId = getProductId(plan, interval);
+  if (!productId) return c.json({ error: "Billing not configured" }, 400);
 
   const token = POLAR_TOKEN();
   if (!token) return c.json({ error: "Billing not configured" }, 500);
 
   let res: Response;
   try {
-    res = await fetch(`${POLAR_API}/checkouts`, {
+    res = await fetch(`${POLAR_API}/checkouts/`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        product_price_id: priceId,
+        products: [productId],
         success_url: `${process.env.APP_URL || "http://localhost:5173"}/dashboard/settings?billing=success`,
         customer_email: email,
         metadata: { user_id: sub },
@@ -71,7 +91,7 @@ billingRoutes.post("/checkout", authMiddleware, async (c) => {
 
   if (!res.ok) {
     const err = await res.text();
-    logger.error({ status: res.status, err, plan, interval, priceId }, "[Polar] Checkout error");
+    logger.error({ status: res.status, err, plan, interval, productId }, "[Polar] Checkout error");
     // Surface the upstream reason. Polar returns validation/auth messages (not
     // secrets) and the caller is an authenticated user acting on their own org,
     // so exposing the detail turns an opaque 500 into something diagnosable.
@@ -111,7 +131,7 @@ billingRoutes.post("/portal", authMiddleware, async (c) => {
   const token = POLAR_TOKEN();
   if (!token) return c.json({ error: "Billing not configured" }, 500);
 
-  const res = await fetch(`${POLAR_API}/customer-sessions`, {
+  const res = await fetch(`${POLAR_API}/customer-sessions/`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -159,18 +179,22 @@ async function handlePolarWebhook(c: Context) {
   const eventType: string = event.type;
   const userId: string | undefined = event.data?.metadata?.user_id;
   const customerId = String(event.data?.customer_id || "");
-  const priceId = String(event.data?.price_id || "");
+  // Subscription payloads carry product_id; `prices[0].product_id` is the
+  // fallback for order events that nest the product one level down.
+  const productId = String(
+    event.data?.product_id || event.data?.product?.id || event.data?.prices?.[0]?.product_id || "",
+  );
 
-  logger.info(`[Polar] Webhook: ${eventType} priceId=${priceId} user=${userId}`);
+  logger.info(`[Polar] Webhook: ${eventType} productId=${productId} user=${userId}`);
   if (!userId) return c.json({ ok: true });
 
-  const priceMap = buildPriceMap();
+  const productMap = buildProductMap();
 
   switch (eventType) {
     case "subscription.created":
     case "subscription.updated": {
       const status: string = event.data?.status;
-      const entry = priceMap[priceId];
+      const entry = productMap[productId];
 
       if (entry && (status === "active" || status === "trialing")) {
         // read previous plan so beacon only fires on a real change, not renewals
