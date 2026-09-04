@@ -15,6 +15,11 @@ import { track } from "../utils/beacon.js";
 
 export const authRoutes = new Hono();
 
+// Exported for tests: the org slug derived from the local part of an email.
+export function orgSlugFromEmail(email: string): string {
+  return email.split("@")[0].toLowerCase().replace(/[^a-z0-9-]/g, "-").slice(0, 50);
+}
+
 authRoutes.post("/register", async (c) => {
   const body = await c.req.json();
   const parsed = registerSchema.safeParse(body);
@@ -25,7 +30,11 @@ authRoutes.post("/register", async (c) => {
   const { email, password, name } = parsed.data;
 
   // Check if email already exists
-  const existing = await db.select().from(users).where(eq(users.email, email)).limit(1);
+  const existing = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
   if (existing.length > 0) {
     return c.json({ error: "Email already registered" }, 409);
   }
@@ -38,8 +47,10 @@ authRoutes.post("/register", async (c) => {
     .values({ email, name, passwordHash })
     .returning({ id: users.id, email: users.email, name: users.name });
 
-  // Every new account gets its own organization.
-  const slug = email.split("@")[0].replace(/[^a-z0-9-]/g, "-").slice(0, 50);
+  // Every new account gets its own organization. Lowercase first: the character
+  // class has no A-Z, so "Ozer@..." used to slugify to "----" — every uppercase
+  // letter became a dash.
+  const slug = orgSlugFromEmail(email);
   const [org] = await db.insert(organizations).values({ name: `${name}'s Org`, slug: `${slug}-${user.id.slice(0, 6)}`, ownerId: user.id }).returning({ id: organizations.id });
   const orgId = org.id;
 

@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { eq, and, desc, sql, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import {
@@ -400,8 +400,15 @@ function confirmationPage(title: string, message: string, success: boolean, slug
 </html>`;
 }
 
-// Uptime badge SVG
-publicRoutes.get("/badge/:slug", async (c) => {
+// Uptime badge SVG.
+//
+// Mounted twice: at /badge (the URL the docs, the OpenAPI spec and the README
+// embed snippet all advertise — it was never actually reachable there, because
+// this router only hangs off /status) and, for anything already embedding the
+// old path, at /status/badge.
+export const badgeRoutes = new Hono();
+
+badgeRoutes.get("/:slug", async (c) => {
   const rawSlug = c.req.param("slug");
   const slug = rawSlug.endsWith(".svg") ? rawSlug.slice(0, -4) : rawSlug;
 
@@ -432,16 +439,21 @@ publicRoutes.get("/badge/:slug", async (c) => {
   // Calculate uptime from last 30 days of check results
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const orgMonitorIds = await db
+  // The badge must agree with the page it belongs to, so it counts the monitors
+  // attached to THIS status page — not every monitor in the organization, which
+  // is what it used to do and which quietly leaked the health of services the
+  // page never listed.
+  const pageMonitors = await db
     .select({ id: monitors.id })
-    .from(monitors)
-    .where(and(eq(monitors.orgId, page.orgId), eq(monitors.isActive, true)));
+    .from(statusPageMonitors)
+    .innerJoin(monitors, eq(monitors.id, statusPageMonitors.monitorId))
+    .where(and(eq(statusPageMonitors.statusPageId, page.id), eq(monitors.isActive, true)));
 
-  if (orgMonitorIds.length === 0) {
+  if (pageMonitors.length === 0) {
     return svgBadge(c, "uptime", "N/A", "#999");
   }
 
-  const monitorIds = orgMonitorIds.map((m) => m.id);
+  const monitorIds = pageMonitors.map((m) => m.id);
 
   const stats = await db
     .select({
@@ -465,7 +477,9 @@ publicRoutes.get("/badge/:slug", async (c) => {
   return svgBadge(c, "uptime", `${uptime}%`, color);
 });
 
-function svgBadge(c: any, label: string, value: string, color: string) {
+publicRoutes.route("/badge", badgeRoutes);
+
+function svgBadge(c: Context, label: string, value: string, color: string) {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="140" height="20" viewBox="0 0 140 20">
   <rect width="60" height="20" rx="3" fill="#555"/>
   <rect x="60" width="80" height="20" rx="3" fill="${color}"/>

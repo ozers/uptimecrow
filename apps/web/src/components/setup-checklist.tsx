@@ -19,7 +19,7 @@ import { toast } from "sonner";
 
 const DISMISS_KEY = "uc-onboarding-dismissed";
 
-export function isOnboardingDismissed(): boolean {
+function isOnboardingDismissed(): boolean {
   if (typeof window === "undefined") return false;
   return window.localStorage.getItem(DISMISS_KEY) === "1";
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Check } from "lucide-react";
 import { api, ApiError } from "@/lib/api";
+import { analytics } from "@/lib/analytics";
 import { normalizeUrl } from "@/lib/utils";
 import { useMonitors } from "@/lib/queries/monitors";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,7 @@ export function StatusPageCreate() {
         brandColor,
         isPublic,
       });
+      analytics.statusPageCreated();
 
       // 2. Create new monitors
       const createdMonitorIds: string[] = [...selectedExisting];

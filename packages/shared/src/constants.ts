@@ -64,12 +64,6 @@ export const PLAN_LIMITS = {
   },
 } as const;
 
-export const PLAN_PRICES: Record<Exclude<Plan, "free">, number> = {
-  indie: 9,
-  pro: 30,
-  team: 79,
-};
-
 // Prices are dollars, and the annual-equivalent monthly figure is not always a
 // whole number ($90/yr is $7.50/mo). Rendering it with plain interpolation
 // printed "$7.5", so every price string goes through here.

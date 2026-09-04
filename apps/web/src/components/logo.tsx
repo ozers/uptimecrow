@@ -63,12 +63,3 @@ export function Logo({ size = "md", to = "/", showText = true, className }: Logo
     </Link>
   );
 }
-
-export function LogoStacked({ to = "/", className }: { to?: string; className?: string }) {
-  return (
-    <Link to={to} className={cn("flex flex-col items-center gap-3", className)}>
-      <CrowMark size={56} />
-      <span className="text-xl font-bold tracking-[-0.02em] text-foreground">UptimeCrow</span>
-    </Link>
-  );
-}

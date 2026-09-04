@@ -6,7 +6,7 @@ import { monitorRoutes } from "./routes/monitors.js";
 import { incidentRoutes } from "./routes/incidents.js";
 import { statusPageRoutes } from "./routes/status-pages.js";
 import { subscriberRoutes } from "./routes/subscribers.js";
-import { publicRoutes } from "./routes/public.js";
+import { publicRoutes, badgeRoutes } from "./routes/public.js";
 import { settingsRoutes } from "./routes/settings.js";
 import { billingRoutes } from "./routes/billing.js";
 import { maintenanceRoutes } from "./routes/maintenance.js";
@@ -95,10 +95,17 @@ app.get("/s/:slug", (c) => {
 app.use("/status/*", publicRateLimit);
 app.route("/status", publicRoutes);
 
+// Uptime badges. The docs, the OpenAPI spec and the README snippet have always
+// pointed at /badge/<slug>.svg, but the router lived only under /status, so
+// every embedded badge 404'd. It is still reachable at /status/badge/<slug>.
+app.use("/badge/*", publicRateLimit);
+app.route("/badge", badgeRoutes);
+
 // Auth routes (strict rate limit on login/register, not on /me)
 app.use("/api/auth/login", authRateLimit);
 app.use("/api/auth/register", authRateLimit);
 app.use("/api/auth/forgot-password", authRateLimit);
+app.use("/api/auth/reset-password", authRateLimit);
 app.route("/api/auth", authRoutes);
 
 // Protected API routes

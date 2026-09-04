@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { StatusPage } from "@uptimecrow/shared";
 import { api } from "../api";
-import { analytics } from "../analytics";
 
 export function useStatusPages() {
   return useQuery({
@@ -28,18 +27,6 @@ export function useSetStatusPageMonitors(id: string) {
       api.put<{ ok: boolean }>(`/api/status-pages/${id}/monitors`, { monitors }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["status-pages", id] });
-    },
-  });
-}
-
-export function useCreateStatusPage() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (data: Record<string, unknown>) =>
-      api.post<{ statusPage: StatusPage }>("/api/status-pages", data),
-    onSuccess: () => {
-      analytics.statusPageCreated();
-      qc.invalidateQueries({ queryKey: ["status-pages"] });
     },
   });
 }

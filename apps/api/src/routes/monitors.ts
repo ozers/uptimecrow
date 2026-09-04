@@ -3,6 +3,7 @@ import { eq, and, desc, count } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { monitors, checkResults, organizations } from "../db/schema.js";
 import { authMiddleware } from "../middleware/auth.js";
+import { resetFailureCount } from "../utils/state-machine.js";
 import { createMonitorSchema, updateMonitorSchema, PLAN_LIMITS } from "@uptimecrow/shared";
 import { Queue } from "bullmq";
 import { redis } from "../db/index.js";
@@ -226,6 +227,11 @@ monitorRoutes.delete("/:id", async (c) => {
       await checkQueue.removeRepeatableByKey(job.key);
     }
   }
+
+  // The consecutive-failure counter lives in Redis keyed by monitor id and has
+  // no TTL, so deleting a monitor while it was failing used to strand the key
+  // forever. It also has to go before an id could ever be reused.
+  await resetFailureCount(id);
 
   return c.json({ ok: true });
 });

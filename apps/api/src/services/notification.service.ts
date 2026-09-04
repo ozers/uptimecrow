@@ -8,9 +8,20 @@ import { assertPublicUrl } from "../utils/ssrf.js";
 // validated against private/internal address ranges before we dial them —
 // otherwise an attacker can configure a webhook that points at the metadata
 // service or an internal admin panel and turn our notifier into an SSRF probe.
+// `redirect: "manual"` is load-bearing, not tidiness: assertPublicUrl only
+// vets the URL we were given, so a webhook host that answers 302 with a
+// Location of http://169.254.169.254/... would walk us straight past the guard.
+// The timeout matters too — a webhook that accepts the connection and never
+// answers would otherwise hold a notification worker open indefinitely.
+const WEBHOOK_TIMEOUT_MS = 10_000;
+
 async function fetchUserWebhook(url: string, init: RequestInit): Promise<Response> {
   await assertPublicUrl(url);
-  return fetch(url, init);
+  return fetch(url, {
+    ...init,
+    redirect: "manual",
+    signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
+  });
 }
 
 function getClient(): SESv2Client | null {

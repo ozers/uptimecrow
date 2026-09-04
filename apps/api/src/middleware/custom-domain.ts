@@ -74,10 +74,6 @@ export function normalizeHost(raw: string | undefined): string {
   return (raw || "").toLowerCase().split(":")[0].trim();
 }
 
-export function __resetCacheForTests() {
-  CACHE.clear();
-}
-
 export function customDomainRouter(appRef: { fetch: (req: Request) => Promise<Response> | Response }) {
   return async (c: Context, next: Next) => {
     const host = normalizeHost(c.req.header("host"));
