@@ -58,6 +58,10 @@ const FAQ = [
     a: "Each HTTP, TCP, or keyword check is one monitor. A monitor can appear on any number of your status pages.",
   },
   {
+    q: "Is there a Team plan?",
+    a: "Yes, but not as a self-serve checkout. Team accounts get unlimited status pages and more monitors, and they usually come with questions about seats, invoicing or a DPA — so we set them up with you. Email support@uptimecrow.com and we'll price it together.",
+  },
+  {
     q: "Do you offer annual discounts or a custom plan?",
     a: "Annual billing gives you 2 months free (see toggle above). For SSO, a DPA, a custom invoice, or more monitors than Pro allows, email support@uptimecrow.com and we'll sort it out.",
   },
@@ -314,17 +318,25 @@ export function Pricing() {
           </p>
         </div>
 
-        {/* Enterprise hook */}
-        <div className="mt-12 flex flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:px-8">
+        {/* Team / business — deliberately not a self-serve card. Seats are not
+            something the product can hand out yet (there is no invite flow), so
+            selling a seat count on this page would promise what we cannot
+            deliver. Everything above Pro goes through a conversation. */}
+        <div
+          id="team"
+          className="mt-12 flex scroll-mt-20 flex-col items-start justify-between gap-5 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:px-8"
+        >
           <div>
-            <p className="font-display text-lg font-bold tracking-[-0.02em]">Need more than Pro?</p>
+            <p className="font-display text-lg font-bold tracking-[-0.02em]">
+              Team or business? Let&apos;s talk.
+            </p>
             <p className="mt-1 text-[14px] text-muted-foreground">
-              More monitors, custom data retention, SSO, DPA, or a custom invoice — tell us what you
-              need.
+              Unlimited status pages, more monitors than Pro allows, custom retention, SSO, a DPA or
+              a custom invoice — tell us what you need and we&apos;ll price it with you.
             </p>
           </div>
           <Button asChild variant="outline" className="shrink-0">
-            <a href="mailto:support@uptimecrow.com?subject=Custom plan inquiry">Contact us →</a>
+            <a href="mailto:support@uptimecrow.com?subject=Team plan inquiry">Talk to us →</a>
           </Button>
         </div>
       </section>

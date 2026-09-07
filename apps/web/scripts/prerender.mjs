@@ -155,6 +155,11 @@ const ROUTES = [
     <li>Priority support</li>
   </ul>
 
+  <h2>Team or business — talk to us</h2>
+  <p>Unlimited status pages, more monitors than Pro allows, custom retention, SSO,
+  a DPA or a custom invoice: team accounts are set up with us rather than through
+  a self-serve checkout. Email support@uptimecrow.com and we price it with you.</p>
+
   <h2>Self-hosted — free</h2>
   <p>The full platform is AGPL-3.0. Run it on your own infrastructure with
   <code>docker compose up</code>: unlimited status pages, unlimited monitors, no
