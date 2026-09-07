@@ -2,6 +2,18 @@
 
 We take security seriously. If you believe you have found a vulnerability in UptimeCrow, please disclose it responsibly using the process below.
 
+## Supported versions
+
+Security fixes land on `main` and in the next release. Self-hosters should run a
+recent tagged release; `:latest` tracks `main` and is not a supported target for
+a security report ("it broke after a `latest` pull" is a bug report, not an
+advisory).
+
+| Version | Supported |
+|---|---|
+| `main` / latest release | Yes |
+| Older releases | Upgrade first; we backport only if the upgrade path is broken |
+
 ## Reporting a vulnerability
 
 **Email:** [security@uptimecrow.com](mailto:security@uptimecrow.com)

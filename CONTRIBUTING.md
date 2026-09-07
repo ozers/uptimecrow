@@ -93,7 +93,15 @@ Optional longer body explaining *why*.
 
 ## License of contributions
 
-By submitting a contribution, you agree it is licensed under AGPL-3.0 (the project license). We do not currently require a CLA. If we ever introduce one, existing contributions will not be relicensed without your explicit consent.
+Contributions are licensed under AGPL-3.0, the project license.
+
+We also ask contributors to accept a short [Contributor Licence Agreement](./CLA.md). You keep the copyright to your code; the CLA grants the maintainer a licence broad enough to ship it, including in a commercially licensed edition — see [OPEN_CORE.md](./OPEN_CORE.md) for why that boundary exists. Signing is one line in your PR description.
+
+This was introduced while the project had no outside contributions, so nothing anyone has already written is affected: no existing contribution has been or will be relicensed without its author's explicit consent.
+
+Don't want to sign? That is a fair position, and you can still help: open an issue with the bug or the design proposal. A precise report is worth as much as a patch and needs no paperwork.
+
+The project name and logo are covered separately — see [TRADEMARK.md](./TRADEMARK.md).
 
 ## Community
 

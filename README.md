@@ -6,6 +6,8 @@ Open-source status pages that stay up when you're down. Built-in uptime monitori
 ![Node](https://img.shields.io/badge/Node-%3E%3D20-green)
 ![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
+![A UptimeCrow status page: all systems operational, 90-day uptime bars per service, and incident history](./apps/web/public/product-status-preview.png)
+
 > **Open core.** This repository is the full self-hostable platform under AGPL-3.0. The managed service at [uptimecrow.com](https://uptimecrow.com) runs the same code plus a small set of managed-only add-ons for larger teams. See [OPEN_CORE.md](./OPEN_CORE.md) for the exact split.
 
 ## Features
@@ -21,6 +23,21 @@ Open-source status pages that stay up when you're down. Built-in uptime monitori
 - **Multi-Tenancy** — Organization-scoped resources
 - **Tiered Plans** — Free, Indie, Pro, and Team with enforced limits on monitors, pages, intervals, and retention
 - **Billing** — Polar integration with Standard Webhooks signature verification
+
+## How this compares
+
+| | UptimeCrow | Uptime Kuma | Atlassian Statuspage |
+|---|---|---|---|
+| Monitoring | HTTP / TCP / keyword | Extensive protocol list | None — you post updates |
+| Status pages | The point of the product: pre-rendered, multi-tenant, custom domain | Included, simpler | The point of the product |
+| Survives your origin going down | Pages are static files, served independently | Dies with the host it runs on | Yes (hosted) |
+| Self-host | Yes, AGPL-3.0 | Yes, MIT | No |
+| Hosted option | Yes | No | From $29/mo |
+
+Kuma is excellent and probably the right answer if you want a private dashboard
+for a homelab. UptimeCrow is for the case where the *public* page matters — the
+one your customers refresh at 3am — and it must not live in the same failure
+domain as the thing it reports on.
 
 ## Plan Limits
 
@@ -155,11 +172,24 @@ cp .env.prod.example .env
 # Edit .env — set POSTGRES_PASSWORD, JWT_SECRET, APP_URL (required).
 # Generate strong secrets with: openssl rand -hex 32
 
+# Pin a release rather than tracking latest:
+#   UPTIMECROW_VERSION=v0.1.0
 docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml logs -f api
 ```
 
 Everything is on port `80`: the app container serves the web UI and the API from one origin. Put Caddy or nginx in front for TLS. Email (SES) and billing (Polar) integrations are optional — UptimeCrow runs fine with just the three core containers (Postgres, Redis, app).
+
+### Telemetry
+
+**Off by default.** The code contains a `track()` helper that posts product
+events to a self-hosted [event-beacon](https://github.com/ozers/event-beacon)
+instance, and it is a no-op unless you set both `BEACON_URL` and `BEACON_KEY`.
+A self-hosted install sets neither, so nothing leaves your server — no
+phone-home, no version check, no usage ping. The hosted service sets them, and
+what it sends is the event name, a handful of non-identifying properties (plan
+tier, monitor type) and the opaque user id — never emails, URLs or check
+results. The code is `apps/api/src/utils/beacon.ts`; it is 30 lines.
 
 ### Local Development (without Docker)
 

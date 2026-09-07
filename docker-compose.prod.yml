@@ -43,7 +43,10 @@ services:
       retries: 5
 
   api:
-    image: ghcr.io/ozers/uptimecrow/api:latest
+    # Pin a release. `:latest` follows main and can change under you mid-incident,
+    # which is the last thing you want from the tool that watches your uptime.
+    # Releases: https://github.com/ozers/uptimecrow/releases
+    image: ghcr.io/ozers/uptimecrow/api:${UPTIMECROW_VERSION:-latest}
     restart: unless-stopped
     depends_on:
       postgres:
