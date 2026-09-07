@@ -28,7 +28,7 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 
 ### Monorepo Layout
 - `apps/api` — Hono backend + BullMQ workers. `MODE=api|worker|all` controls which runs.
-- `apps/web` — Vite React SPA. Vite dev server (and nginx in prod) proxies `/api`, `/status`, `/badge` to the API.
+- `apps/web` — Vite React SPA. In dev the Vite server proxies `/api`, `/status`, `/badge` to the API; in production the API itself serves the built SPA (`apps/api/src/web.ts`), so there is no separate web container.
 - `packages/shared` — Shared TS types, constants (plan limits, defaults), Zod schemas. Imported by both API and web as `@uptimecrow/shared`.
 
 ### API Structure (`apps/api/src/`)
@@ -71,7 +71,7 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 
 ### Docker & CI
 - Multi-stage Dockerfiles for API and web (development + production targets). Default `docker-compose.yml` uses `target: development` with bind mounts for hot-reload. `docker-compose.prod.yml` pulls pre-built GHCR images and runs in production mode.
-- Web production image is nginx with SPA fallback and reverse proxy to the API (entrypoint substitutes `API_URL` into the nginx config).
+- The production API image also contains the built SPA (`/app/web`, `WEB_ROOT`). `apps/api/src/web.ts` serves it with the pre-render-aware `try_files` order and the cache headers; the SPA falls back to `/index.html`. The nginx web image still exists for the dev compose file and legacy deploys, but the self-host path no longer uses it.
 - CI (`.github/workflows/ci.yml`): typecheck + tests with Postgres 16 + Redis 7 service containers + Docker build validation.
 - Deploy (`.github/workflows/deploy.yml`): pushes API and web images to `ghcr.io/${{ github.repository }}/{api,web}:latest` on `main`.
 

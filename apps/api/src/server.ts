@@ -17,6 +17,7 @@ import { sql } from "drizzle-orm";
 import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-limit.js";
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
+import { mountWebApp } from "./web.js";
 import { logger } from "./utils/logger.js";
 
 const app = new Hono();
@@ -117,6 +118,11 @@ app.route("/api/subscribers", subscriberRoutes);
 app.route("/api/settings", settingsRoutes);
 app.route("/api/billing", billingRoutes);
 app.route("/api/maintenance-windows", maintenanceRoutes);
+
+// Mounted after every API route so the SPA only sees what nothing else claimed.
+// A missing build is not an error: MODE=worker and "API behind the Vite dev
+// server" both run without one.
+mountWebApp(app);
 
 export async function startServer() {
   const port = parseInt(process.env.PORT || "3000", 10);

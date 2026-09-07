@@ -40,16 +40,8 @@ const COMPOSE_SNIPPET = `services:
       AWS_REGION: us-east-1
       SES_FROM_EMAIL: alerts@yourdomain.com
     ports:
-      - "3000:3000"
-
-  web:
-    image: ghcr.io/ozers/uptimecrow/web:latest
-    restart: unless-stopped
-    depends_on: [api]
-    environment:
-      API_URL: http://api:3000
-    ports:
-      - "80:80"
+      # The API image serves the web UI too — this is the whole product.
+      - "80:3000"
 
 volumes:
   pgdata:
@@ -65,7 +57,7 @@ APP_URL=https://uptime.yourdomain.com
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=`;
 
-const START_SNIPPET = `# Pull images and start all 4 containers.
+const START_SNIPPET = `# Pull images and start all 3 containers.
 # Migrations run automatically on API startup — no extra step needed.
 docker compose up -d
 
@@ -104,7 +96,7 @@ export default function SelfHostPage() {
       "@type": "HowTo",
       name: "Self-host UptimeCrow with Docker Compose",
       description:
-        "Run the full UptimeCrow stack (Postgres, Redis, API+worker, nginx web) on your own VPS with one command.",
+        "Run the full UptimeCrow stack (Postgres, Redis, and the app container that serves the API, the worker and the web UI) on your own VPS with one command.",
       totalTime: "PT5M",
       supply: [
         { "@type": "HowToSupply", name: "A VPS or machine running Docker 24+" },
@@ -158,7 +150,7 @@ export default function SelfHostPage() {
           <span className="text-brand">in 5 minutes.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-[16px] leading-relaxed text-muted-foreground">
-          4 Docker containers. 512 MB RAM. Any VPS. Full source code included — fork it, extend it,
+          3 Docker containers. 512 MB RAM. Any VPS. Full source code included — fork it, extend it,
           or just run it as-is.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -209,7 +201,8 @@ export default function SelfHostPage() {
           The full stack in one file.
         </h2>
         <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-          Postgres 16, Redis 7, the {BRAND} API + worker, and the nginx-served web UI. Copy this into{" "}
+          Postgres 16, Redis 7, and one {BRAND} container running the API, the worker and the web UI.
+          Copy this into{" "}
           <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-[12.5px] text-foreground">
             docker-compose.yml
           </code>{" "}
@@ -235,10 +228,11 @@ export default function SelfHostPage() {
         <CodeBlock code={START_SNIPPET} />
 
         <p className="mt-4 text-[14px] leading-relaxed text-muted-foreground">
-          After <code className="font-mono text-foreground">docker compose up</code>: the web UI is
-          on <strong className="text-foreground">:80</strong> (nginx, production) or{" "}
-          <strong className="text-foreground">:5173</strong> (Vite dev server). API is always on{" "}
-          <strong className="text-foreground">:3000</strong>.
+          After <code className="font-mono text-foreground">docker compose up</code>: everything is on{" "}
+          <strong className="text-foreground">:80</strong> — the UI and the API share one origin, so
+          there is no CORS to configure and no proxy to keep in sync. Put Caddy or nginx in front for
+          TLS. (In the development compose file the Vite dev server still runs separately on{" "}
+          <strong className="text-foreground">:5173</strong>.)
         </p>
       </section>
 

@@ -28,11 +28,15 @@ EXPOSE 3000
 CMD ["pnpm", "dev"]
 
 # ── Build ──
+# The SPA is built here too: since the API serves it (src/web.ts), one image
+# carries both and self-hosters run one container instead of app + nginx.
 FROM deps AS build
 COPY tsconfig.base.json ./
 COPY apps/api/ apps/api/
+COPY apps/web/ apps/web/
 COPY packages/shared/ packages/shared/
 RUN pnpm --filter @uptimecrow/shared build
+RUN pnpm --filter @uptimecrow/web build
 WORKDIR /app/apps/api
 RUN pnpm build
 
@@ -43,6 +47,9 @@ COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/packages/shared ./packages/shared
+# Served by the API at /, resolved from WEB_ROOT (default ../../web relative to
+# the /app/apps/api working directory).
+COPY --from=build /app/apps/web/dist ./web
 COPY apps/api/package.json ./apps/api/
 COPY apps/api/drizzle.config.ts ./apps/api/
 COPY apps/api/drizzle/ ./apps/api/drizzle/

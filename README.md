@@ -159,7 +159,7 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml logs -f api
 ```
 
-Web UI on port `80`, API on `3000`. Put nginx/Caddy in front for TLS. Email (SES) and billing (Polar) integrations are optional — UptimeCrow runs fine with just the four core containers.
+Everything is on port `80`: the app container serves the web UI and the API from one origin. Put Caddy or nginx in front for TLS. Email (SES) and billing (Polar) integrations are optional — UptimeCrow runs fine with just the three core containers (Postgres, Redis, app).
 
 ### Local Development (without Docker)
 

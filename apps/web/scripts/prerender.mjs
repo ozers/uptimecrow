@@ -228,9 +228,9 @@ const ROUTES = [
       "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     body: `
   <h1>Run your own uptime monitor in 5 minutes.</h1>
-  <p class="uc-lead">4 Docker containers. 512 MB RAM. Any VPS. Full source code
-  included — fork it, extend it, or run it as-is. AGPL-3.0, no telemetry, no
-  feature gates.</p>
+  <p class="uc-lead">3 Docker containers. 512 MB RAM. Any VPS. Full source code
+  included — fork it, extend it, or run it as-is. AGPL-3.0, telemetry off by
+  default, no feature gates.</p>
 
   <h2>What you need</h2>
   <ul>
@@ -247,10 +247,12 @@ const ROUTES = [
   schema.</p>
 
   <h2>What runs where</h2>
-  <p>The API is a Hono server and a BullMQ worker runs the repeatable check jobs.
-  <code>MODE=api|worker|all</code> decides which starts, so the checker can scale
-  separately from the HTTP server. Status pages are pre-rendered to static files,
-  so they keep serving even while the API restarts.</p>
+  <p>One container runs the Hono API, the BullMQ worker and the web UI:
+  <code>MODE=api|worker|all</code> decides which parts start, so the checker can
+  still scale separately when you need it to. The UI and the API share an origin,
+  so there is no CORS to configure and no reverse proxy to keep in sync. Status
+  pages are pre-rendered to static files, so they keep serving even while the API
+  restarts.</p>
 
   <h2>What is not in the open-source repository</h2>
   <p>SSO, audit log, advanced RBAC, multi-region check orchestration and SLA

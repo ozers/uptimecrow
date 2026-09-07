@@ -9,6 +9,9 @@
 #   2. docker compose -f docker-compose.prod.yml up -d
 #   3. Open APP_URL in your browser.
 #
+# Three services: postgres, redis and the app (API + worker + web UI in one
+# image). There is no separate web container — the API serves the built SPA.
+#
 # JWT_SECRET must be at least 32 random characters (the API refuses to
 # start in production mode with a known default).
 
@@ -63,32 +66,21 @@ services:
       AWS_REGION: ${AWS_REGION:-us-east-1}
       SES_FROM_EMAIL: ${SES_FROM_EMAIL:-}
       # Optional — paid plan upgrades via Polar. Leave blank to disable billing.
-      # Checkout needs ACCESS_TOKEN + the price IDs below; webhook needs the secret.
+      # Checkout needs ACCESS_TOKEN + the product IDs below; webhook needs the secret.
       POLAR_ACCESS_TOKEN: ${POLAR_ACCESS_TOKEN:-}
       POLAR_WEBHOOK_SECRET: ${POLAR_WEBHOOK_SECRET:-}
-      POLAR_INDIE_MONTHLY_PRICE_ID: ${POLAR_INDIE_MONTHLY_PRICE_ID:-}
-      POLAR_INDIE_YEARLY_PRICE_ID: ${POLAR_INDIE_YEARLY_PRICE_ID:-}
-      POLAR_PRO_MONTHLY_PRICE_ID: ${POLAR_PRO_MONTHLY_PRICE_ID:-}
-      POLAR_PRO_YEARLY_PRICE_ID: ${POLAR_PRO_YEARLY_PRICE_ID:-}
-      POLAR_TEAM_MONTHLY_PRICE_ID: ${POLAR_TEAM_MONTHLY_PRICE_ID:-}
-      POLAR_TEAM_YEARLY_PRICE_ID: ${POLAR_TEAM_YEARLY_PRICE_ID:-}
+      POLAR_INDIE_MONTHLY_PRODUCT_ID: ${POLAR_INDIE_MONTHLY_PRODUCT_ID:-}
+      POLAR_INDIE_YEARLY_PRODUCT_ID: ${POLAR_INDIE_YEARLY_PRODUCT_ID:-}
+      POLAR_PRO_MONTHLY_PRODUCT_ID: ${POLAR_PRO_MONTHLY_PRODUCT_ID:-}
+      POLAR_PRO_YEARLY_PRODUCT_ID: ${POLAR_PRO_YEARLY_PRODUCT_ID:-}
+      POLAR_TEAM_MONTHLY_PRODUCT_ID: ${POLAR_TEAM_MONTHLY_PRODUCT_ID:-}
+      POLAR_TEAM_YEARLY_PRODUCT_ID: ${POLAR_TEAM_YEARLY_PRODUCT_ID:-}
       # Optional — error tracking via Sentry. Leave blank to disable.
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-}
     ports:
-      - "3000:3000"
-
-  web:
-    image: ghcr.io/ozers/uptimecrow/web:latest
-    restart: unless-stopped
-    depends_on:
-      - api
-    environment:
-      # Nginx inside this image proxies /api, /status, /badge, /hb, /s to
-      # the API service (set via the API_URL env var the entrypoint substitutes).
-      API_URL: http://api:3000
-    ports:
-      - "80:80"
+      # The API image also serves the web app, so this is the whole product.
+      - "${HTTP_PORT:-80}:3000"
 
 volumes:
   pgdata:
