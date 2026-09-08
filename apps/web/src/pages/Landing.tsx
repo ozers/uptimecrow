@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { usePageMeta } from "@/lib/meta";
+import { PLAN_CATALOG, PLAN_LIMITS, formatPrice } from "@uptimecrow/shared";
 import { ShieldCheck, Radio, Terminal, ArrowRight } from "lucide-react";
 import { MarketingNav, MarketingFooter } from "@/components/marketing-nav";
 import { Button } from "@/components/ui/button";
@@ -225,6 +226,108 @@ export function LandingPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ── PRICING STRIP — the second question every visitor has, answered on
+           the page rather than one click away. Numbers come from PLAN_CATALOG
+           so this cannot drift from /pricing. ── */}
+      <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-8 sm:px-8" id="pricing">
+        <div className="grid grid-cols-2 divide-border border-y border-border sm:grid-cols-4 sm:divide-x">
+          {PLAN_CATALOG.map((plan) => (
+            <div key={plan.plan} className="px-5 py-5">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-brand">
+                {plan.name}
+              </p>
+              <p className="mt-2 font-display text-[26px] font-extrabold tracking-[-0.03em] tnum">
+                {plan.monthlyPrice === 0 ? "$0" : `$${formatPrice(plan.monthlyPrice)}`}
+                <span className="ml-1 font-mono text-[12px] font-normal text-muted-foreground">
+                  /mo
+                </span>
+              </p>
+              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+                {PLAN_LIMITS[plan.plan].monitors} monitors ·{" "}
+                {PLAN_LIMITS[plan.plan].statusPages === Infinity
+                  ? "unlimited pages"
+                  : `${PLAN_LIMITS[plan.plan].statusPages} ${
+                      PLAN_LIMITS[plan.plan].statusPages === 1 ? "page" : "pages"
+                    }`}
+              </p>
+            </div>
+          ))}
+          <div className="px-5 py-5">
+            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Self-hosted
+            </p>
+            <p className="mt-2 font-display text-[26px] font-extrabold tracking-[-0.03em]">
+              Free
+            </p>
+            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+              Unlimited, no feature gates
+            </p>
+          </div>
+        </div>
+        <p className="mt-4 text-center text-[13px] text-muted-foreground">
+          Annual billing is two months free.{" "}
+          <Link to="/pricing" className="text-brand hover:underline">
+            Full pricing and limits →
+          </Link>
+        </p>
+      </section>
+
+      {/* ── HONEST COMPARISON — the first question anyone arriving from Hacker
+           News or r/selfhosted asks. Saying Kuma is the better answer for a
+           homelab costs us nothing and buys the rest of the page credibility. ── */}
+      <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-10 sm:px-8" id="compare">
+        <h2 className="font-display text-[24px] font-bold tracking-[-0.03em]">
+          Where this fits.
+        </h2>
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-left text-[13.5px]">
+            <caption className="sr-only">
+              UptimeCrow compared with Uptime Kuma and Atlassian Statuspage
+            </caption>
+            <thead>
+              <tr className="border-b border-border">
+                <th scope="col" className="py-2.5 pr-4 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  &nbsp;
+                </th>
+                <th scope="col" className="py-2.5 pr-4 font-display text-[15px] font-bold tracking-[-0.02em] text-brand">
+                  UptimeCrow
+                </th>
+                <th scope="col" className="py-2.5 pr-4 font-display text-[15px] font-bold tracking-[-0.02em]">
+                  Uptime Kuma
+                </th>
+                <th scope="col" className="py-2.5 font-display text-[15px] font-bold tracking-[-0.02em]">
+                  Statuspage
+                </th>
+              </tr>
+            </thead>
+            <tbody className="text-muted-foreground">
+              {[
+                ["Monitoring", "HTTP, TCP, keyword", "Extensive protocol list", "None — you post updates"],
+                ["Public status page", "The product", "Included, simpler", "The product"],
+                ["Survives your own outage", "Served as static files", "Dies with its host", "Yes (hosted)"],
+                ["Self-host", "AGPL-3.0", "MIT", "No"],
+                ["Hosted from", "$0", "—", "$29/mo"],
+              ].map(([label, us, kuma, sp]) => (
+                <tr key={label} className="border-b border-border">
+                  <th scope="row" className="py-2.5 pr-4 font-medium text-foreground">
+                    {label}
+                  </th>
+                  <td className="py-2.5 pr-4 text-foreground">{us}</td>
+                  <td className="py-2.5 pr-4">{kuma}</td>
+                  <td className="py-2.5">{sp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-4 max-w-2xl text-[13.5px] leading-relaxed text-muted-foreground">
+          Kuma is excellent, and it is probably the right answer if you want a private
+          dashboard for a homelab. UptimeCrow is for when the <em>public</em> page matters —
+          the one your customers refresh at 3am — and it must not live in the same failure
+          domain as the thing it reports on.
+        </p>
       </section>
 
       {/* ── INK CTA ── */}

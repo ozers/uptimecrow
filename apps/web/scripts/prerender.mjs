@@ -116,7 +116,18 @@ const ROUTES = [
   <p>Free ($0) — 1 status page, 10 monitors, 5-minute checks.
   Indie ($19/mo) — 5 status pages with custom domain, 50 monitors, 1-minute checks.
   Pro ($49/mo) — 10 status pages, 100 monitors, 30-second checks.
-  Self-hosting is unlimited and free. <a href="/pricing">Full pricing</a>.</p>
+  Annual billing is two months free. Self-hosting is unlimited and free.
+  <a href="/pricing">Full pricing</a>.</p>
+
+  <h2>Where this fits</h2>
+  <p>Against <strong>Uptime Kuma</strong>: Kuma has the longer protocol list and is
+  probably the right answer for a private homelab dashboard. Its status page dies
+  with the host it runs on; ours is served as static files, decoupled from the
+  stack it reports on.</p>
+  <p>Against <strong>Atlassian Statuspage</strong> ($29/mo): Statuspage has no
+  monitoring at all — you post the updates yourself. UptimeCrow watches the
+  services and writes the incident for you, and you can self-host the whole thing
+  under AGPL-3.0.</p>
 
   <h2>Common questions</h2>
   ${faq.map(([q, a]) => `<h3>${q}</h3>\n  <p>${a}</p>`).join("\n  ")}`,
