@@ -148,7 +148,7 @@ This allows you to scale API servers and workers independently in production.
 ### Prerequisites
 
 - [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- [Node.js](https://nodejs.org/) >= 20 (for local IDE support)
+- [Node.js](https://nodejs.org/) >= 20.12 (for local IDE support and the dev scripts)
 - [pnpm](https://pnpm.io/) >= 9
 
 ### Quick Start (Docker, development)

@@ -5,7 +5,7 @@
   "license": "AGPL-3.0-only",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file-if-exists=../../.env src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
@@ -13,7 +13,7 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node dist/db/migrate.js",
-    "db:migrate:dev": "tsx src/db/migrate.ts",
+    "db:migrate:dev": "tsx --env-file-if-exists=../../.env src/db/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

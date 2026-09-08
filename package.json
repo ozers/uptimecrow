@@ -2,6 +2,10 @@
   "name": "uptimecrow",
   "private": true,
   "packageManager": "pnpm@10.30.2",
+  "engines": {
+    "node": ">=20.12",
+    "pnpm": ">=10"
+  },
   "license": "AGPL-3.0-only",
   "homepage": "https://uptimecrow.com",
   "repository": {
@@ -19,10 +23,7 @@
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "db:generate": "pnpm --filter @uptimecrow/api db:generate",
-    "db:migrate": "pnpm --filter @uptimecrow/api db:migrate"
-  },
-  "engines": {
-    "node": ">=20.0.0"
+    "db:migrate": "pnpm --filter @uptimecrow/api db:migrate:dev"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

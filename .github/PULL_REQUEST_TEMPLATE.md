@@ -23,7 +23,6 @@
 
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm test` passes
-- [ ] `pnpm lint` passes for files I touched
 - [ ] I added or updated tests for new behavior
 - [ ] I ran this locally and confirmed it works
 - [ ] If I touched the dashboard UI, I attached a screenshot below

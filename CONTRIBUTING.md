@@ -13,7 +13,7 @@ Thanks for considering a contribution. This guide covers how to set up a dev env
 
 Prerequisites:
 
-- Node.js 20+
+- Node.js 20.12+
 - pnpm 9+
 - Docker + Docker Compose (recommended) **or** local PostgreSQL 16 + Redis 7
 
@@ -64,7 +64,6 @@ Before opening a PR:
 
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm test` passes
-- [ ] `pnpm lint` passes (if it surfaces in your scope)
 - [ ] You added or updated tests for new behavior
 - [ ] You ran the affected code locally and confirmed it works (not just that it compiles)
 - [ ] If you touched the dashboard UI, include a screenshot in the PR description
@@ -87,7 +86,7 @@ Optional longer body explaining *why*.
 ## Code style
 
 - TypeScript strict mode is enabled. We do not accept `any` without a comment justifying it.
-- ESLint config is the source of truth — when in doubt, run `pnpm lint`.
+- There is no linter yet, so style is settled in review: match the file you are editing. Comment density, naming and structure vary by area on purpose — the API services read differently from the React pages.
 - Prefer composition over inheritance, prefer explicit imports over barrel re-exports.
 - Don't ship dead code. If you removed a feature, delete the supporting code and tests.
 
