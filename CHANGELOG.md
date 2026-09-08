@@ -9,6 +9,13 @@ version tag in production** — `:latest` moves whenever `main` does.
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.1.0] — 2026-09-09
+
+First tagged release. Everything below has been running in production; the tag
+exists so self-hosters have something to pin.
+
 ### Changed
 
 - The API now serves the built web app, so self-hosting is three containers
@@ -18,6 +25,13 @@ version tag in production** — `:latest` moves whenever `main` does.
 - Team plans are handled through a conversation instead of a self-serve
   checkout — the product has no invite flow, so a seat count on the pricing
   page would have promised what it cannot deliver.
+- Creating a monitor asks for one thing, the URL. Name, type and interval are
+  derived from it and editable; everything else folds into Advanced. Saving
+  lands on the monitor detail, which polls until the first check result arrives.
+- The dashboard gained a mobile tab bar, a command palette (⌘K), list filtering
+  with search and counted status segments, and a table density mode.
+- Text colours use opaque tiers instead of alpha clips, so contrast holds at AA
+  in both themes; every interactive element has a visible focus ring.
 
 ### Fixed
 
@@ -35,11 +49,6 @@ version tag in production** — `:latest` moves whenever `main` does.
 - Deleting a monitor stranded its Redis failure counter forever.
 - Marketing routes are pre-rendered, so crawlers that do not run JavaScript
   receive real HTML with per-route titles, descriptions and canonicals.
-
-## [0.1.0] — unreleased
-
-First tagged release. Everything below has been in `main` and running in
-production; the tag exists so self-hosters can pin something.
 
 ### Added
 
@@ -64,6 +73,8 @@ production; the tag exists so self-hosters can pin something.
 - **Uptime badge** — embeddable SVG at `/badge/<slug>.svg`.
 - **REST API** — full CRUD for monitors, incidents, status pages and
   maintenance windows, documented with an OpenAPI spec at `/api/docs`.
+- **Recurring maintenance windows** — weekly or monthly, bounded by a date or a
+  repeat count. The next window is materialised when the current one closes.
 - **Self-hosting** — `docker compose up` with Postgres and Redis; AGPL-3.0, no
   feature gates, telemetry off unless you configure it.
 
