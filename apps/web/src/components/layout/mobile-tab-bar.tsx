@@ -9,32 +9,32 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * DALGA 2 — Mobil alt sekme çubuğu.
+ * The mobile tab bar.
  *
- * Neden: kesinti anında telefonla bakan kullanıcı bugün hamburger → sheet →
- * hedef, yani üç dokunuşla gidiyor. Beş kalıcı hedef bunu tek dokunuşa indirir.
- * Sheet kalıyor ama artık ikincil (Settings, tema, hesap) için.
+ * Someone checking an outage from a phone had to go hamburger → sheet →
+ * destination: three taps to reach anything. Five permanent targets make it
+ * one. The sheet stays, demoted to the secondary things (theme, account, plan).
  *
  * Kurallar:
- *  · Tam olarak beş hedef — altıncısı gelirse sığmaz, sheet'e gider.
- *  · Her hedef min 44px yükseklik + safe-area payı.
- *  · Aktif hedef: brand yeşili ikon + üstte 2px rail (sidebar'daki rail'in
- *    mobil karşılığı, aynı dil).
- *  · İkon + kısa etiket birlikte — ikon tek başına tanınmıyor.
- *  · Down monitör varsa Monitors hedefinde kırmızı nokta göstergesi.
+ *  · Exactly five targets. A sixth does not fit and belongs in the sheet.
+ *  · Every target is at least 44px tall, plus the safe-area inset.
+ *  · The active target gets the brand icon and a 2px rail above it — the
+ *    mobile spelling of the sidebar rail, same language.
+ *  · Icon and label together: the icon alone is not recognisable enough.
+ *  · A red dot marks Monitors when something is down.
  */
 interface TabItem {
   label: string;
   href: string;
   icon: React.ElementType;
-  /** Sağ üstte küçük uyarı noktası (ör. açık kesinti sayısı > 0). */
+  /** Small alert dot in the corner, e.g. when open incidents exist. */
   alert?: boolean;
 }
 
 export interface MobileTabBarProps {
-  /** Açık/doğrulanmış kesinti var mı — Incidents hedefine nokta koyar. */
+  /** Whether an incident is open — dots the Incidents target. */
   hasOpenIncident?: boolean;
-  /** Down/degraded monitör var mı — Monitors hedefine nokta koyar. */
+  /** Whether a monitor is down or degraded — dots the Monitors target. */
   hasDownMonitor?: boolean;
 }
 

@@ -30,16 +30,16 @@ import { ConfirmDialog } from "@/components/confirm-dialog";
 import { FilterBar, matchesQuery, type FilterSegment } from "@/components/filter-bar";
 
 /**
- * DALGA 3 — liste sayfası ölçeklendi.
+ * The monitor list, made to scale.
  *
- * Değişenler:
- *  · Filtre çubuğu: arama + durum segmentleri (sayaçlı) + yoğunluk anahtarı.
- *  · Yoğunluk modu: compact satır 34px, seçim localStorage'da kalır.
- *  · Sayfalama: 50 satır sonra "Show more" — 200 monitörde DOM patlamıyor.
- *  · Mobilde tablo yerine satır-kart: yatay kaydırma yok, her kart tek
- *    dokunuşla detaya gider, aksiyonlar 44px hedefte.
- *  · Boş durum üç varyanta ayrıldı: hiç monitör yok (first-run) / filtre
- *    sonucu boş (filtered).
+ * What changed:
+ *  · Filter bar: search, counted status segments, density switch.
+ *  · Density: compact rows are 34px, and the choice persists per viewer.
+ *  · Paging: "Show more" after 50 rows, so 200 monitors do not blow up the DOM.
+ *  · Row-cards instead of a table on mobile: no horizontal scrolling, one tap
+ *    to the detail page, actions at a 44px target.
+ *  · Two distinct empty states: nothing created yet (first-run) versus a
+ *    filter that matched nothing (filtered).
  */
 const PAGE_SIZE = 50;
 
@@ -240,7 +240,7 @@ export function MonitorsList() {
               />
             ) : (
               <>
-                {/* ── Mobil: satır-kart ───────────────────────────────── */}
+                {/* ── Mobile: row-cards ────────────────────────────────── */}
                 <ul className="divide-y divide-border md:hidden">
                   {rows.map((monitor) => (
                     <li key={monitor.id}>

@@ -6,24 +6,24 @@ import { Button } from "@/components/ui/button";
 import type { Density } from "@/components/ui/table";
 
 /**
- * DALGA 3 — liste sayfaları için tek şeritlik filtre çubuğu.
+ * A single-strip filter bar for list pages.
  *
- * Bugün Monitors/Incidents listelerinde arama da filtre de yok; 20 monitörden
- * sonra sayfa kullanılamaz hale geliyor. Bu çubuk üç şeyi tek satırda verir:
- * arama, durum segmentleri (sayaçlı), yoğunluk anahtarı.
+ * The Monitors and Incidents lists had neither search nor filtering, which
+ * makes them unusable somewhere past twenty rows. This puts three things on one
+ * line: search, counted status segments, and the density switch.
  *
- * Tasarım kuralları:
- *  · Segmentler sayaç gösterir — "Down 0" görmek de bilgidir.
- *  · Aktif segment brand rengiyle işaretlenir, seçili olmayanlar nötr.
- *  · Aramada değer varsa temizleme butonu görünür (mobilde 44px hedef).
- *  · Mobilde: arama tam genişlik üstte, segmentler altında yatay kaydırmalı.
- *  · Yoğunluk anahtarı yalnızca md+ görünür — mobilde satırlar kart olur.
+ * Rules:
+ *  · Segments carry counts — seeing "Down 0" is information too.
+ *  · The active segment takes the brand colour; the rest stay neutral.
+ *  · A clear button appears once search has a value (44px target on mobile).
+ *  · On mobile the search goes full width, with the segments scrolling under it.
+ *  · The density switch is md+ only: on mobile rows become cards anyway.
  */
 export interface FilterSegment<T extends string> {
   value: T;
   label: string;
   count?: number;
-  /** Segment sayacı için ton: durum renkleri. */
+  /** Tone for the segment count: the status colours. */
   tone?: "neutral" | "success" | "warning" | "danger";
 }
 
@@ -43,7 +43,7 @@ export interface FilterBarProps<T extends string> {
   onSegmentChange?: (value: T) => void;
   density?: Density;
   onDensityToggle?: () => void;
-  /** Sağa eklenecek ekstra aksiyon (ör. "Add monitor"). */
+  /** Extra action pinned to the right, e.g. "Add monitor". */
   children?: React.ReactNode;
   className?: string;
 }
@@ -127,7 +127,7 @@ export function FilterBar<T extends string>({
       )}
 
       <div className="flex items-center gap-2 md:ml-auto">
-        {/* Yoğunluk anahtarı — sadece desktop */}
+        {/* Density switch — desktop only */}
         {density && onDensityToggle && (
           <Button
             type="button"
@@ -154,8 +154,8 @@ export function FilterBar<T extends string>({
 }
 
 /**
- * Basit istemci tarafı arama yardımcısı — alanları birleştirip küçük harfe
- * indirir. Sunucu tarafı arama gelene kadar liste sayfaları bunu kullanır.
+ * Plain client-side matching: join the fields, lowercase, substring. List
+ * pages use this until there is server-side search.
  */
 export function matchesQuery(query: string, ...fields: (string | null | undefined)[]) {
   const q = query.trim().toLowerCase();

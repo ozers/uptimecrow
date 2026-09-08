@@ -13,13 +13,13 @@ import {
 } from "@/components/ui/sheet";
 
 /**
- * DALGA 2/3 — layout değişiklikleri:
- * · MobileTabBar eklendi (mobilde beş kalıcı hedef). Sheet duruyor ama artık
- *   ikincil: tema, hesap, plan gibi seyrek şeyler için.
- * · <main> mobilde alt çubuk kadar padding alır (pb-tabbar).
- * · CommandPalette global olarak mount edilir — ⌘K / Ctrl+K her yerde çalışır.
- * · Sekme çubuğu uyarı noktaları için monitör/incident verisi burada okunur;
- *   iki sorgu da zaten cache'de olduğu için ek istek maliyeti yok.
+ * Layout changes:
+ * · MobileTabBar adds five permanent targets on mobile. The sheet stays, but
+ *   demoted to the rare things: theme, account, plan.
+ * · <main> reserves the height of that bar (pb-tabbar) so nothing is covered.
+ * · CommandPalette is mounted globally, so ⌘K / Ctrl+K works everywhere.
+ * · The tab bar's alert dots read monitor and incident data here; both queries
+ *   are already cached, so this costs no extra request.
  */
 export function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);

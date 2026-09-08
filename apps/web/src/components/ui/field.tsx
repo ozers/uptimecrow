@@ -3,9 +3,9 @@ import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
 /**
- * DALGA 2 — `<Field>`: label + kontrol + yardım metni + hata tek componentte.
+ * `<Field>`: label, control, hint and error as one component.
  *
- * Bugün her formda şu blok elle tekrarlanıyor:
+ * Every form used to hand-roll this block:
  *   <div className="space-y-1.5">
  *     <Label htmlFor="x">…</Label>
  *     <Input id="x" {...register("x")} />
@@ -13,28 +13,28 @@ import { Label } from "@/components/ui/label";
  *     {errors.x && <p className="text-sm text-danger-foreground">…</p>}
  *   </div>
  *
- * Sorunlar: aria bağlantısı (aria-describedby / aria-invalid) hiçbir yerde
- * kurulmuyor, yardım metni bazen hatanın üstünde bazen altında, boşluklar
- * tutarsız. Field bunları tek yerde çözer.
+ * Which meant the aria wiring (aria-describedby / aria-invalid) was nowhere to
+ * be found, the hint sat above the error in one form and below it in the next,
+ * and the spacing drifted. Field settles all three in one place.
  *
- * Kullanım:
- *   <Field label="URL" htmlFor="url" hint="Şema yoksa https:// eklenir."
+ * Usage:
+ *   <Field label="URL" htmlFor="url" hint="https:// is added when missing."
  *          error={errors.url?.message}>
  *     <Input id="url" {...register("url")} />
  *   </Field>
  *
- * Kontrol otomatik olarak id / aria-describedby / aria-invalid alır — tek
- * çocuk bir React elementi ise. Birden fazla çocukta bunları elle ver.
+ * A single React element child gets id / aria-describedby / aria-invalid
+ * automatically. With multiple children, wire them yourself.
  */
 export interface FieldProps {
   label?: React.ReactNode;
-  /** Kontrolün id'si. Verilmezse otomatik üretilir. */
+  /** Control id. Generated when omitted. */
   htmlFor?: string;
-  /** Nötr açıklama — hata olsa bile görünür kalır. */
+  /** Neutral guidance. Stays visible even when there is an error. */
   hint?: React.ReactNode;
-  /** Doğrulama hatası. Varsa kontrol aria-invalid alır. */
+  /** Validation error. Its presence marks the control aria-invalid. */
   error?: React.ReactNode;
-  /** Sağ üstte küçük mono etiket: "Optional", "Pro", birim vb. */
+  /** Small mono tag on the right: "Optional", "Pro", a unit. */
   adornment?: React.ReactNode;
   required?: boolean;
   className?: string;
@@ -108,9 +108,9 @@ export function Field({
 }
 
 /**
- * Form içinde bölüm başlığı — mono, uppercase, üst çizgi. MonitorForm ve
- * StatusPageForm'daki elle yazılmış <p className="font-mono …"> bloklarının
- * yerine geçer.
+ * Section heading inside a form — mono, uppercase, with a rule above it.
+ * Replaces the hand-written <p className="font-mono …"> blocks in MonitorForm
+ * and StatusPageForm.
  */
 export function FieldSection({
   title,
@@ -121,7 +121,7 @@ export function FieldSection({
 }: {
   title: string;
   description?: React.ReactNode;
-  /** İlk bölümde false ver — üstte gereksiz çizgi olmasın. */
+  /** Pass false on the first section so it does not open with a stray rule. */
   divider?: boolean;
   className?: string;
   children: React.ReactNode;
@@ -140,8 +140,8 @@ export function FieldSection({
 }
 
 /**
- * Katlanabilir "Advanced" bloğu. <details> üzerine kurulu: JS state yok,
- * klavye ve ekran okuyucu bedava, sayfa yenilendiğinde kapalı gelir.
+ * Collapsible "Advanced" block, built on <details>: no JS state, keyboard and
+ * screen-reader behaviour for free, closed again after a reload.
  */
 export function FieldDisclosure({
   label,
@@ -151,7 +151,7 @@ export function FieldDisclosure({
   children,
 }: {
   label: string;
-  /** Kapalıyken sağda görünen özet: "timeout 10s · 200 · 2 onay" gibi. */
+  /** Summary shown on the right while collapsed, e.g. "10s timeout · 200 · 2× confirm". */
   summary?: React.ReactNode;
   defaultOpen?: boolean;
   className?: string;

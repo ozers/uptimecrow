@@ -73,8 +73,11 @@ export function MonitorDetail() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
-  const { data: monitor, isLoading } = useMonitor(id!);
-  const { data: checks } = useMonitorChecks(id!);
+  // Poll while the monitor has never been checked: this page is where someone
+  // lands straight after creating one, and the first result is what they came
+  // to see.
+  const { data: monitor, isLoading } = useMonitor(id!, { pollUntilChecked: true });
+  const { data: checks } = useMonitorChecks(id!, 50, { pollWhileEmpty: true });
   const deleteMutation = useDeleteMonitor();
 
   if (isLoading) return <MonitorDetailSkeleton />;

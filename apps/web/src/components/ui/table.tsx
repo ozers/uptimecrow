@@ -3,15 +3,15 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * DALGA 3 — tabloya yoğunluk modu eklendi.
+ * Table density.
  *
- * 100+ monitörü olan Pro/Team hesapları bugün sonsuz kaydırıyor. Compact mod
- * satırı 52px'ten 34px'e indirir: ekranda ~%50 daha fazla satır.
+ * Accounts with a hundred monitors scroll forever. Compact takes a row from
+ * 52px to 34px, which is roughly 50% more rows on screen.
  *
- * Yoğunluk `<Table density="compact">` ile ya da `useTableDensity()` hook'u +
- * `<DensityToggle>` ile kullanıcı tarafından seçilir (localStorage'da kalır).
- * Satır yükseklikleri globals.css'teki --density-row token'ından gelir, yani
- * kart listeleri de aynı ölçüye uyabilir.
+ * Set it per table with `<Table density="compact">`, or let the viewer choose
+ * with `useTableDensity()` and `<DensityToggle>` (persisted in localStorage).
+ * Row heights come from the --density-row token in globals.css, so card lists
+ * can follow the same measure.
  */
 type Density = "comfortable" | "compact"
 
@@ -19,7 +19,7 @@ const DensityContext = React.createContext<Density>("comfortable")
 
 const DENSITY_KEY = "uc-table-density"
 
-/** Kullanıcının seçtiği yoğunluk — sayfalar arasında ve yenilemede korunur. */
+/** The viewer's density choice, kept across pages and reloads. */
 export function useTableDensity(defaultValue: Density = "comfortable") {
   const [density, setDensity] = React.useState<Density>(() => {
     try {
@@ -35,7 +35,7 @@ export function useTableDensity(defaultValue: Density = "comfortable") {
     try {
       localStorage.setItem(DENSITY_KEY, next)
     } catch {
-      /* storage kapalı olabilir — sessizce yoksay */
+      /* storage can be disabled — ignore quietly */
     }
   }, [])
 

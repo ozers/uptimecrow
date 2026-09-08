@@ -11,10 +11,9 @@ import {
 } from "@/lib/recurrence";
 
 /**
- * DALGA 3 — bakım penceresi formuna eklenen tekrar alanı.
+ * The repeat control on the maintenance window form.
  *
- * MaintenanceList içindeki Dialog formuna, scheduledEnd alanının hemen altına
- * yerleştirilir:
+ * Sits in the MaintenanceList dialog, directly under the end-time field:
  *
  *   <RepeatField
  *     value={form.recurrence}
@@ -22,10 +21,10 @@ import {
  *     onChange={(recurrence) => setForm((f) => ({ ...f, recurrence }))}
  *   />
  *
- * Kapalıyken tek onay kutusu — mevcut formu uzatmıyor. Açıldığında kip,
- * gün seçimi, bitiş ve sonraki üç tarihin önizlemesi görünür. Önizleme
- * kritik: "her ayın 31'i" gibi seçimlerin ne demek olduğunu kullanıcı
- * kaydetmeden görür.
+ * Collapsed it is one checkbox, so the form does not grow for the common
+ * one-off case. Expanded it shows the mode, the day picker, the end condition
+ * and the next three dates. That preview is the point: it shows what a choice
+ * like "the 31st of every month" actually means before anything is saved.
  */
 export function RepeatField({
   value,
@@ -106,7 +105,7 @@ export function RepeatField({
             ))}
           </div>
 
-          {/* Gün seçimi */}
+          {/* Day picker */}
           {value.freq === "weekly" ? (
             <div role="group" aria-label="Day of week" className="flex flex-wrap gap-1.5">
               {WEEKDAY_LABELS.map((label, i) => (
@@ -130,7 +129,7 @@ export function RepeatField({
             <Field
               label="Day of month"
               htmlFor="byMonthDay"
-              hint="1–28 arası. 29–31 bazı aylarda atlanır, bu yüzden kabul edilmiyor."
+              hint="1–28. Later days would skip shorter months, so they are not offered."
             >
               <Input
                 id="byMonthDay"
@@ -146,7 +145,7 @@ export function RepeatField({
             </Field>
           )}
 
-          {/* Bitiş */}
+          {/* End condition */}
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Ends on" htmlFor="until" adornment="optional">
               <Input
@@ -180,7 +179,7 @@ export function RepeatField({
             </Field>
           </div>
 
-          {/* Önizleme */}
+          {/* Preview */}
           {preview.length > 0 && (
             <div className="rounded-lg border border-dashed border-border p-3">
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-text3">

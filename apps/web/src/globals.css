@@ -10,13 +10,13 @@
    is recognisably one product. Ink is the primary action; green is meaning
    (up / success / focus); everything else stays calm.
 
-   DALGA 1 — bu dosyada değişenler:
-   · --text-2 / --text-3 metin hiyerarşisi token'ları eklendi. Artık
-     `text-muted-foreground/40` gibi alfa kırpmaları YASAK: opak token kullan.
-   · Dark temada --muted-foreground 55% → 62% (AA borcu kapatıldı).
-   · Motion token'ları (--dur-*, --ease-*) eklendi; component'ler kendi
-     duration'larını uydurmayı bırakır.
-   · --density-row: tablo satır yüksekliği; .density-compact ile 34px'e iner.
+   Design system, wave 1:
+   · --text-2 / --text-3 text tiers. Alpha clips like
+     `text-muted-foreground/40` are out — use the opaque token instead, because
+     alpha means "whatever is behind it" and contrast drifts per surface.
+   · Dark --muted-foreground raised from 55% to 62% to clear AA.
+   · Motion tokens (--dur-*, --ease-*), so components stop inventing durations.
+   · --density-row: table row height, dropping to 34px under .density-compact.
    · Focus ring tek kaynaktan: .focus-ring utility'si.
    ══════════════════════════════════════════════════════════════════════════ */
 
@@ -46,10 +46,10 @@
     --ring: 142 62% 50%;           /* brand green focus */
     --radius: 0.75rem;
 
-    /* ── Metin hiyerarşisi (3 kademe, hepsi opak) ──
-       text-1 = --foreground   : başlık, birincil değer
-       text-2 = --muted-foreground : açıklama, tablo ikincil hücre
-       text-3 = --text-3       : timestamp, meta, placeholder — AA sınırı  */
+    /* ── Text hierarchy: three tiers, all opaque ──
+       text-1 = --foreground       : headings, primary values
+       text-2 = --muted-foreground : descriptions, secondary table cells
+       text-3 = --text-3           : timestamps, meta, placeholders — at AA  */
     --text-3: 267 8% 52%;
 
     /* Brand accent — the crow's green, used for links/active/focus */
@@ -116,8 +116,8 @@
     --grain-blend: multiply;
   }
 
-  /* ── Motion: üç süre, iki easing. Component'ler bunları kullanır. ──
-     dur-1 hover/renk, dur-2 açılır panel/sheet, dur-3 sayfa geçişi. */
+  /* ── Motion: three durations, two easings, used by every component. ──
+     dur-1 hover and colour, dur-2 popovers and sheets, dur-3 page transitions. */
   :root,
   .dark,
   .light {
@@ -127,7 +127,7 @@
     --ease-out: cubic-bezier(0.22, 0.85, 0.28, 1);
     --ease-in-out: cubic-bezier(0.5, 0, 0.4, 1);
 
-    /* Tablo/liste yoğunluğu — .density-compact ile ezilir */
+    /* Table and list density — overridden by .density-compact */
     --density-row: 3.25rem;  /* 52px comfortable */
     --density-cell-y: 0.75rem;
   }
@@ -194,8 +194,8 @@
   .bg-brand { background-color: hsl(var(--brand)); }
   .tnum { font-variant-numeric: tabular-nums; }
 
-  /* Tek focus dili — link, satır, kart, custom trigger hepsinde aynı.
-     Radix/native focus-visible'ı olmayan elemanlara bunu ekle. */
+  /* One focus language for links, rows, cards and custom triggers. Add it to
+     anything that does not get Radix or native focus-visible styling. */
   .focus-ring {
     outline: none;
   }
@@ -205,7 +205,7 @@
     border-radius: calc(var(--radius) - 4px);
   }
 
-  /* Dokunma hedefi — mobilde 44px garanti. Küçük ikon butonlarına ekle. */
+  /* Touch target: guarantees 44px on mobile without growing the visual box. */
   .touch-target {
     position: relative;
   }
@@ -222,11 +222,11 @@
     .touch-target::before { content: none; }
   }
 
-  /* Motion yardımcıları */
+  /* Motion helpers */
   .motion-1 { transition-duration: var(--dur-1); transition-timing-function: var(--ease-out); }
   .motion-2 { transition-duration: var(--dur-2); transition-timing-function: var(--ease-out); }
   .motion-3 { transition-duration: var(--dur-3); transition-timing-function: var(--ease-in-out); }
 
-  /* Mobil alt sekme çubuğu için güvenli alan payı */
+  /* Clearance so the fixed mobile tab bar never covers content */
   .pb-tabbar { padding-bottom: calc(3.75rem + env(safe-area-inset-bottom)); }
 }

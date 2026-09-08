@@ -19,14 +19,13 @@ import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/lib/theme";
 
 /**
- * DALGA 1 — bu dosyada değişenler (yalnızca kontrast + focus, IA aynı):
- * · `text-text3`, `/60`, `/70`, `/40` alfa kırpmalarının hepsi
- *   opak `text-text3` ile değiştirildi. Açıklama satırları, grup başlıkları ve
- *   ikonlar artık AA geçiyor.
- * · Tüm etkileşimli satırlara `focus-ring` eklendi — klavye kullanıcısı
- *   sidebar'da nerede olduğunu görüyor.
- * · Transition'lar motion token'larına bağlandı.
- * · Alta ⌘K ipucu eklendi (Dalga 3 command palette'i keşfedilebilir kılar).
+ * Contrast and focus only — the information architecture is unchanged:
+ * · Every /40, /60 and /70 alpha clip became the opaque `text-text3` token,
+ *   so descriptions, group headings and icons clear AA.
+ * · Every interactive row has `focus-ring`, so a keyboard user can see where
+ *   they are in the sidebar.
+ * · Transitions run on the motion tokens instead of ad-hoc durations.
+ * · A ⌘K hint at the bottom, because an undiscoverable palette is no palette.
  */
 interface NavItem {
   label: string;
@@ -246,7 +245,7 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
           </span>
         </button>
 
-        {/* ⌘K keşfedilebilirliği — palette olmadan kimse denemez */}
+        {/* ⌘K discoverability — nobody tries a shortcut they were never shown */}
         <p className="flex items-center gap-2 px-3 pt-1 text-[11px] text-text3">
           <Command className="h-3 w-3" aria-hidden="true" />
           <span>

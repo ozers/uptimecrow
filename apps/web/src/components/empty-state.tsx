@@ -4,22 +4,22 @@ import { CrowMark } from "@/components/logo";
 import { cn } from "@/lib/utils";
 
 /**
- * DALGA 1/2 — boş durum varyantları ayrıştırıldı.
+ * Empty states, split by what the emptiness means.
  *
- * Üç boşluk aynı şey değildir:
- *  · `first-run`  — kullanıcının hiç verisi yok. Amaç: öğret + tek aksiyon.
- *                   Crow işareti + birincil buton.
- *  · `good-news`  — veri var, sonuç boş ve bu İYİ (açık incident yok).
- *                   Amaç: rahatlat. Yeşil ton, aksiyon opsiyonel/ikincil.
- *  · `filtered`   — filtre/arama sonucu boş. Amaç: filtreyi temizlemek.
- *                   Nötr ton, aksiyon "Clear filters".
+ * Three kinds of empty are not the same thing:
+ *  · `first-run`  — nothing exists yet. Teach, then offer one action:
+ *                   the crow mark and a primary button.
+ *  · `good-news`  — data exists and the result is empty, which is good news
+ *                   (no open incidents). Reassure: green tone, optional action.
+ *  · `filtered`   — a filter matched nothing. The job is to clear it:
+ *                   neutral tone, "Clear filters".
  *
- * Alfa kırpması yok: ikonlar `text-text3`, metinler `text-muted-foreground`.
+ * No alpha clips: icons are `text-text3`, prose is `text-muted-foreground`.
  */
 type EmptyVariant = "first-run" | "good-news" | "filtered";
 
 interface EmptyStateProps {
-  /** Hangi tür boşluk. Varsayılan: first-run. */
+  /** Which kind of empty this is. Defaults to first-run. */
   variant?: EmptyVariant;
   /** Optional lucide icon. When omitted, first-run shows the crow mark. */
   icon?: LucideIcon;

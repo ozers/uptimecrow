@@ -20,20 +20,21 @@ import { useTheme } from "@/lib/theme";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 /**
- * DALGA 3 — Command palette (⌘K / Ctrl+K).
+ * Command palette (⌘K / Ctrl+K).
  *
- * Neden: 20+ monitörde sidebar navigasyonu yetmiyor; kullanıcı "hangi
- * monitör down'dı" diye listeyi tarıyor. Palette hem arama hem hızlı aksiyon.
+ * Past twenty monitors, sidebar navigation stops being enough and people scan
+ * the list asking "which one was down". The palette is both the search and the
+ * shortcut.
  *
- * Kapsam (kasıtlı olarak dar):
- *  · Navigasyon: beş bölüm.
- *  · Aksiyon: yeni monitör, yeni status page, tema değiştir.
- *  · Kayıtlar: monitörler (durum noktalı), status page'ler, açık incident'lar.
+ * Scope, deliberately narrow:
+ *  · Navigation: the five sections.
+ *  · Actions: new monitor, new status page, toggle theme.
+ *  · Records: monitors (with status dots), status pages, open incidents.
  *
- * Bilerek yapılmayanlar: sonuç önizlemesi, çok adımlı komut, fuzzy skorlama.
- * Basit substring eşleşmesi 200 kayda kadar yeterli ve tahmin edilebilir.
+ * Left out on purpose: result previews, multi-step commands, fuzzy scoring.
+ * Substring matching is predictable and holds up to a couple of hundred rows.
  *
- * Bağımlılık eklemedik — cmdk yerine 60 satır liste + klavye yönetimi.
+ * No new dependency: sixty lines of list and keyboard handling instead of cmdk.
  */
 type Item = {
   id: string;
@@ -41,7 +42,7 @@ type Item = {
   hint?: string;
   group: string;
   icon: React.ElementType;
-  /** Solda küçük durum noktası rengi (monitörler için). */
+  /** Colour of the small status dot on the left, for monitors. */
   dot?: "success" | "danger" | "warning" | "muted";
   run: () => void;
 };
@@ -57,7 +58,7 @@ export function CommandPalette() {
   const { data: incidents } = useIncidents();
   const listRef = React.useRef<HTMLUListElement>(null);
 
-  // ⌘K / Ctrl+K aç-kapat
+  // ⌘K / Ctrl+K toggles the palette
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -178,7 +179,7 @@ export function CommandPalette() {
     }
   };
 
-  // Aktif satırı görünür tut (scrollIntoView kullanmadan)
+  // Keep the active row in view without scrollIntoView
   React.useEffect(() => {
     const list = listRef.current;
     if (!list) return;

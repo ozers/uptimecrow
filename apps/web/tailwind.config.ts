@@ -2,11 +2,11 @@ import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 /**
- * DALGA 1 — değişenler:
- * · `text3` rengi: opak üçüncü kademe metin (alfa kırpmalarının yerine).
- * · transitionDuration/timingFunction: globals.css motion token'larına bağlı.
- * · keyframes: `spin-slow`, `ping-soft`, `slide-up-fade` — component'ler artık
- *   kendi @keyframes'ini inline yazmıyor.
+ * Changes:
+ * · `text3`: the opaque third text tier that replaces alpha clips.
+ * · transitionDuration / timingFunction wired to the globals.css motion tokens.
+ * · keyframes `spin-slow`, `ping-soft`, `slide-up-fade`, so components stop
+ *   writing their own @keyframes inline.
  * · minHeight/spacing `touch`: 44px dokunma hedefi.
  */
 const config: Config = {
@@ -27,7 +27,7 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        /** Üçüncü kademe metin — timestamp, meta, placeholder. Opak. */
+        /** Third text tier — timestamps, meta, placeholders. Opaque. */
         text3: "hsl(var(--text-3))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -93,7 +93,7 @@ const config: Config = {
       },
       spacing: {
         touch: "2.75rem", // 44px
-        tabbar: "3.75rem", // mobil alt sekme çubuğu yüksekliği
+        tabbar: "3.75rem", // height of the mobile tab bar
       },
       minHeight: {
         touch: "2.75rem",

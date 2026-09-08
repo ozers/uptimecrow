@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node dist/db/migrate.js",
+    "db:migrate:dev": "tsx src/db/migrate.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

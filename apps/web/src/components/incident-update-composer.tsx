@@ -18,15 +18,15 @@ import {
 } from "@/lib/incident-templates";
 
 /**
- * DALGA 3 — incident güncelleme yazma bloğu, şablonlarla.
+ * The incident update composer, with templates.
  *
- * IncidentDetail'daki "Post Update" formunun yerine geçer. Fark:
- *  · Üstte dört şablon rozeti. Tıklama hem metni hem durumu doldurur.
- *  · Şablon uygulandıktan sonra metin serbestçe düzenlenebilir; kullanıcı
- *    yazmaya başlayınca rozet seçimi düşer (sürpriz üzerine yazma olmaz).
- *  · Durum ve metin tek Field dilinde, aria bağlantıları kurulu.
+ * Replaces the hand-rolled "Post Update" form in IncidentDetail:
+ *  · Four template badges on top. One click fills both the body and status.
+ *  · The text stays freely editable afterwards, and the badge deselects the
+ *    moment you type — nothing overwrites your words behind your back.
+ *  · Status and body speak the same Field language, aria wiring included.
  *
- * IncidentDetail entegrasyonu (mevcut form bloğunun yerine):
+ * Integration in IncidentDetail:
  *
  *   <IncidentUpdateComposer
  *     serviceName={incident.monitorName}
@@ -41,7 +41,7 @@ import {
  *   />
  */
 export interface IncidentUpdateComposerProps {
-  /** Şablonlarda `{service}` yerine yazılacak ad. */
+  /** Name substituted for `{service}` in the templates. */
   serviceName?: string | null;
   status: IncidentUpdateStatus | string;
   body: string;
@@ -78,9 +78,9 @@ export function IncidentUpdateComposer({
     <form onSubmit={onSubmit} className="max-w-xl">
       <FieldSection
         title="Post update"
-        description="Müşteri bu metni olduğu gibi okuyacak — kısa, net, mazeretsiz."
+        description="Customers read this verbatim. Short, specific, no excuses."
       >
-        {/* Şablonlar */}
+        {/* Templates */}
         <div className="flex flex-wrap gap-2">
           {UPDATE_TEMPLATES.map((t) => (
             <button
@@ -146,8 +146,8 @@ export function IncidentUpdateComposer({
 }
 
 /**
- * Otomatik çözüm teklifi bandı — incident detayının üstünde görünür.
- * `autoResolveState()` suggest=true döndürdüğünde göster.
+ * The auto-resolve offer, shown above the incident detail whenever
+ * `autoResolveState()` returns suggest=true.
  */
 export function AutoResolveBanner({
   countdown,
@@ -165,9 +165,9 @@ export function AutoResolveBanner({
           Service has been up for 15 minutes
         </p>
         <p className="mt-1 text-xs text-muted-foreground">
-          Bu incident{" "}
-          <span className="font-mono tnum text-foreground">{countdown}</span> içinde otomatik
-          olarak çözüldü işaretlenecek. İstersen şimdi kapat ya da açık tut.
+          This incident will be marked resolved in{" "}
+          <span className="font-mono tnum text-foreground">{countdown}</span>. Close it now, or
+          keep it open if the story is not over.
         </p>
       </div>
       <div className="flex shrink-0 gap-2">

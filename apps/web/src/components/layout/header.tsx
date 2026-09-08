@@ -25,10 +25,16 @@ function Breadcrumbs() {
   const location = useLocation();
   const segments = location.pathname.replace(/^\/dashboard\/?/, "").split("/").filter(Boolean);
 
+  // A record id has no label of its own, so fall back to the section it belongs
+  // to. Printing the raw UUID (what happened before) tells nobody anything and
+  // fills the whole mobile header.
+  const labelledSegments = segments.filter((seg) => ROUTE_LABELS[seg]);
   const currentLabel =
     segments.length === 0
       ? "Overview"
-      : (ROUTE_LABELS[segments[segments.length - 1]] ?? segments[segments.length - 1]);
+      : (ROUTE_LABELS[segments[segments.length - 1]] ??
+        ROUTE_LABELS[labelledSegments[labelledSegments.length - 1]] ??
+        "Detail");
 
   if (segments.length === 0) {
     return (

@@ -1,15 +1,15 @@
 /**
- * DALGA 3 — tekrarlayan bakım penceresi.
+ * Recurring maintenance windows.
  *
- * Bugün "her salı 02:00–04:00" için kullanıcı her hafta elle pencere açıyor.
- * En sık istenen özellik ve arayüzde tek onay kutusu + gün seçimiyle çözülür.
+ * A "every Tuesday 02:00–04:00" slot meant creating a window by hand every
+ * week. In the UI this is one checkbox and a day picker.
  *
- * Model kararı: RRULE gibi tam bir tekrar dili GEREKMİYOR. İki kip yeterli:
- *  · weekly  — haftanın bir günü, aynı saatte
- *  · monthly — ayın belirli günü (1–28; 29-31 ay atlamalarına yol açar)
- * Bitiş: belirli bir tarihe kadar ya da N tekrar sonra ya da süresiz.
+ * Deliberately not RRULE. Two modes cover what people actually schedule:
+ *  · weekly  — one weekday, same time
+ *  · monthly — a day of the month (1–28; 29-31 would skip shorter months)
+ * Ending: on a date, after N repeats, or never.
  *
- * Backend sözleşmesi (öneri):
+ * Backend contract:
  *   recurrence: null | {
  *     freq: "weekly" | "monthly",
  *     byWeekday?: 0..6,      // weekly
@@ -17,8 +17,8 @@
  *     until?: string | null, // ISO
  *     count?: number | null,
  *   }
- * Scheduler her pencere kapandığında sonraki örneği üretir (materialize),
- * yani sorgu tarafı bugünkü haliyle çalışmaya devam eder.
+ * The scheduler materialises the next window when the current one closes, so
+ * every query that asks "is a window active right now?" is unchanged.
  */
 // The shape is owned by the shared zod schema, which is also what the API
 // validates against — a second declaration here would drift the moment one side
@@ -30,7 +30,7 @@ export type RecurrenceFreq = Recurrence["freq"];
 
 export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-/** İnsan diline çevir: "Her salı 02:00 · 8 tekrar" */
+/** Human wording: "Every Tue at 02:00 · 8 times" */
 export function describeRecurrence(
   recurrence: Recurrence | null | undefined,
   startIso?: string,
@@ -59,8 +59,8 @@ export function describeRecurrence(
 }
 
 /**
- * Sonraki N örneğin başlangıç zamanını üretir — formda önizleme için.
- * Saat/dakika ilk pencereden alınır; DST geçişlerinde yerel saat korunur.
+ * Start times of the next N occurrences, for the preview in the form. The
+ * time of day comes from the first window and is kept across DST changes.
  */
 export function nextOccurrences(
   recurrence: Recurrence,
@@ -71,7 +71,7 @@ export function nextOccurrences(
   const out: Date[] = [];
   const cursor = new Date(start);
 
-  const guard = 400; // sonsuz döngü emniyeti
+  const guard = 400; // infinite-loop guard
   let steps = 0;
 
   while (out.length < limit && steps < guard) {

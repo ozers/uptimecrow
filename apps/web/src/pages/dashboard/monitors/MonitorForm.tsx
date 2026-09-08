@@ -8,8 +8,20 @@ import { normalizeUrl } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
 import { deriveMonitorDefaults, formatInterval } from "@/lib/monitor-defaults";
 import { Zap, CheckCircle2, XCircle, AlertTriangle, Pencil } from "lucide-react";
+// The URL is normalised BEFORE validation, not after. The field promises "no
+// scheme needed — https:// is added for you", but zod's .url() ran first and
+// rejected "api.example.com/health" as invalid, so the form contradicted its own
+// hint. Normalising here also means the value that reaches onSubmit already has
+// the scheme.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const monitorResolver = zodResolver(createMonitorSchema) as any;
+const baseMonitorResolver = zodResolver(createMonitorSchema) as any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const monitorResolver = (values: any, context: any, options: any) =>
+  baseMonitorResolver(
+    { ...values, url: typeof values?.url === "string" ? normalizeUrl(values.url) : values?.url },
+    context,
+    options,
+  );
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldSection, FieldDisclosure } from "@/components/ui/field";
@@ -23,24 +35,27 @@ import {
 import type { Monitor } from "@uptimecrow/shared";
 
 /**
- * DALGA 2 — MonitorForm sadeleştirmesi.
+ * The monitor form, reduced to one decision.
  *
- * Önce: 12 görünür alan, hepsi eşit ağırlıkta, üç bölüm açık. Kayıt olan
- * kullanıcı ilk yeşil noktayı görmek için 12 karar veriyordu.
+ * Before: twelve visible fields, all weighted the same, three sections open.
+ * Someone who had just signed up made twelve decisions before seeing a single
+ * green dot.
  *
  * Sonra:
  *  · Zorunlu alan tek: URL. Odak otomatik oraya gider.
- *  · Ad / tip / aralık URL'den türetilir ve rozet olarak gösterilir. Rozete
- *    basınca ilgili alan açılır — "tahmin ettim, istersen düzelt".
- *  · Kalan her şey (method, keyword, timeout, expected status, confirmation,
- *    SSL/domain/slow eşikleri) `Advanced` içinde katlı. Kapalıyken özeti
- *    tek satırda görünür, yani gizlenmiş değil — sadece susturulmuş.
- *  · Test sonucu URL'in hemen altında, aynı yerde: kullanıcı gözünü
- *    kaydırmıyor.
- *  · Edit modunda (`monitor` prop'u varsa) Advanced varsayılan olarak açık —
- *    düzenlemeye gelen kullanıcı zaten ince ayar peşinde.
+ *  · Name, type and interval are derived from the URL and shown as badges.
+ *    Clicking one opens the real field: "here is my guess, correct it if it is
+ *    wrong".
+ *  · Everything else (method, keyword, timeout, expected status, confirmation
+ *    count, SSL/domain/slow thresholds) folds into `Advanced`, which shows its
+ *    summary on one line while collapsed — quieted, not hidden.
+ *  · The test result appears directly under the URL, so nobody has to look
+ *    somewhere else to read it.
+ *  · When editing (the `monitor` prop is present) Advanced starts open: you
+ *    came back to this form precisely to change one of those.
  *
- * Alan sayısı azalmadı; görünür karar sayısı 12 → 1'e indi.
+ * No field was removed. The number of visible decisions went from twelve to
+ * one.
  */
 type MonitorFormData = {
   name: string;
@@ -75,7 +90,7 @@ interface MonitorFormProps {
   monitor?: Monitor;
 }
 
-/** Türetilmiş değer rozeti — tıklanınca gerçek alanı açar. */
+/** A derived value as a badge; clicking it reveals the real field. */
 function DerivedChip({
   label,
   value,
@@ -110,7 +125,7 @@ export function MonitorForm({
   const isEdit = !!monitor;
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [testing, setTesting] = useState(false);
-  /** Türetilen değerleri elle düzenleme modu. */
+  /** Whether the derived values are being edited by hand. */
   const [editIdentity, setEditIdentity] = useState(isEdit);
   const [nameTouched, setNameTouched] = useState(isEdit || !!defaultValues?.name);
   const plan = useAuthStore((s) => s.user?.plan) ?? "free";
@@ -154,12 +169,12 @@ export function MonitorForm({
   const isHttp = monitorType === "http";
   const usesHead = isHttp && monitorMethod === "HEAD";
 
-  // Yeni monitörde odak doğrudan tek zorunlu alana
+  // On a new monitor, focus goes straight to the one required field
   useEffect(() => {
     if (!isEdit) urlRef.current?.focus();
   }, [isEdit]);
 
-  // URL yazıldıkça ad ve tip türetilir — kullanıcı ada dokunmadıysa
+  // Name and type follow the URL as it is typed, until the name is touched
   useEffect(() => {
     if (isEdit || !urlValue) return;
     const derived = deriveMonitorDefaults(urlValue, watchedInterval ?? 60);
@@ -214,7 +229,7 @@ export function MonitorForm({
         label="URL"
         htmlFor="url"
         required
-        hint="Şema yazmasan da olur — https:// eklenir. Kaydettiğin an ilk kontrol çalışır."
+        hint="No scheme needed — https:// is added for you. The first check runs the moment you save."
         error={errors.url?.message}
       >
         <div className="flex gap-2">
@@ -241,7 +256,7 @@ export function MonitorForm({
         </div>
       </Field>
 
-      {/* Test sonucu — URL'in hemen altında, aynı odak alanında */}
+      {/* Test result — directly under the URL, in the same field of view */}
       {testResult && (
         <div
           className={`border-y border-l-2 p-4 ${
@@ -343,21 +358,21 @@ export function MonitorForm({
         </div>
       )}
 
-      {/* ── Türetilenler ─────────────────────────────────────────────────── */}
+      {/* ── Derived values ───────────────────────────────────────────────── */}
       {!editIdentity ? (
         <div className="space-y-2">
           <p className="text-xs text-muted-foreground">
-            URL'den tahmin edildi — değiştirmek için tıkla.
+            Derived from the URL — click any of these to change it.
           </p>
           <div className="flex flex-wrap gap-2">
-            <DerivedChip label="Ad" value={nameValue} onEdit={() => setEditIdentity(true)} />
+            <DerivedChip label="Name" value={nameValue} onEdit={() => setEditIdentity(true)} />
             <DerivedChip
-              label="Tip"
+              label="Type"
               value={(monitorType ?? "http").toUpperCase()}
               onEdit={() => setEditIdentity(true)}
             />
             <DerivedChip
-              label="Aralık"
+              label="Every"
               value={formatInterval(watchedInterval ?? 60)}
               onEdit={() => setEditIdentity(true)}
             />

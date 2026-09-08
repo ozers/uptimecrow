@@ -1,28 +1,28 @@
 /**
- * DALGA 3 — hazır incident güncelleme metinleri.
+ * Ready-made incident update copy.
  *
- * Kesinti anında en pahalı iş yazı yazmaktır: kullanıcı hem sorunu çözmeye
- * hem müşteriye ne diyeceğini düşünmeye çalışır. Üç şablon 30 saniyelik işi
- * 3 saniyeye indirir.
+ * During an outage the most expensive thing to produce is prose: the person is
+ * trying to fix the problem and decide what to tell customers at the same time.
+ * These templates turn a thirty-second writing task into a three-second one.
  *
- * Ton kuralları (Patterns bölümündeki kopya sözlüğüyle aynı):
- *  · Suçlama yok, mazeret yok. Ne biliyoruz, ne yapıyoruz, ne zaman tekrar
- *    yazacağız.
- *  · Teknik iç detay yok ("Redis bağlantı havuzu tükendi" → "bir altyapı
- *    sorunu").
- *  · Söz verilen zaman aralığı her zaman geçmez — "within 30 minutes" yerine
- *    "as soon as we know more".
- *  · Servis adı otomatik doldurulur; kullanıcı yalnızca gerekiyorsa düzeltir.
+ * Tone rules:
+ *  · No blame, no excuses. What we know, what we are doing, when we write next.
+ *  · No internal detail ("the Redis connection pool was exhausted" becomes "an
+ *    infrastructure issue").
+ *  · Never promise a specific window — "as soon as we know more" instead of
+ *    "within 30 minutes", because that promise is the one that gets broken.
+ *  · The service name is filled in automatically; the writer only corrects it
+ *    when it reads wrong.
  */
 export type IncidentUpdateStatus = "investigating" | "identified" | "monitoring" | "resolved";
 
 export interface UpdateTemplate {
   id: string;
-  /** Butonda görünen kısa etiket. */
+  /** Short label shown on the template button. */
   label: string;
-  /** Şablonun ima ettiği durum — seçilince Status alanı da güncellenir. */
+  /** The status this template implies — picking it also sets the Status field. */
   status: IncidentUpdateStatus;
-  /** `{service}` yer tutucusu servis adıyla değiştirilir. */
+  /** The `{service}` placeholder is replaced with the monitored service name. */
   body: string;
 }
 
@@ -61,26 +61,26 @@ export const UPDATE_TEMPLATES: UpdateTemplate[] = [
   },
 ];
 
-/** `{service}` yer tutucusunu doldurur. Servis adı yoksa nötr ifade kullanır. */
+/** Fills the `{service}` placeholder, falling back to neutral wording. */
 export function fillTemplate(template: UpdateTemplate, serviceName?: string | null): string {
   return template.body.replace(/\{service\}/g, serviceName?.trim() || "this service");
 }
 
 /**
- * Otomatik çözüm teklifi kuralı — W2 akışındaki en yüksek etkili öneri.
+ * When to offer closing an incident by itself.
  *
- * Servis şu kadar süredir kesintisiz UP ise incident'ı kapatmayı teklif et.
- * Karar hâlâ insanın: UI "Auto-resolve in 45m" sayacı gösterir ve kullanıcı
- * iptal edebilir. Bu fonksiyon yalnızca teklifin görünüp görünmeyeceğini ve
- * kalan süreyi hesaplar.
+ * Once the service has been continuously up for long enough, suggest resolving.
+ * The decision stays human: the UI shows an "Auto-resolve in 45m" countdown the
+ * person can cancel. This function only decides whether the offer appears and
+ * how much time is left on it.
  */
-export const AUTO_RESOLVE_AFTER_UP_MS = 15 * 60 * 1000; // 15 dk stabil UP
-export const AUTO_RESOLVE_GRACE_MS = 45 * 60 * 1000; // sayaç süresi
+export const AUTO_RESOLVE_AFTER_UP_MS = 15 * 60 * 1000; // stable and up this long
+export const AUTO_RESOLVE_GRACE_MS = 45 * 60 * 1000; // countdown before it closes
 
 export function autoResolveState(params: {
-  /** Monitörün UP'a döndüğü an (ISO) — hâlâ down ise null. */
+  /** When the monitor came back up (ISO), or null while it is still down. */
   recoveredAt: string | null | undefined;
-  /** Şu an (test edilebilirlik için enjekte edilebilir). */
+  /** Injectable clock, so the countdown is testable. */
   now?: number;
 }): { suggest: boolean; msRemaining: number } {
   const { recoveredAt, now = Date.now() } = params;

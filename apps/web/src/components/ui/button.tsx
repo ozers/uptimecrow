@@ -6,13 +6,13 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 /**
- * DALGA 1 — değişenler:
+ * Changes:
  * · `loading` prop'u: spinner + disabled + aria-busy tek yerde. Sayfalarda
- *   `{loading ? "Saving..." : label}` tekrarını bitirir.
- * · motion token'ları (duration-1 / ease-out) hardcoded 150ms yerine.
- * · size="touch": mobilde 44px hedef gereken birincil aksiyonlar için.
- * · asChild + loading birlikte kullanılırsa spinner enjekte edilmez (Slot tek
- *   çocuk bekler) — bu durumda sadece aria-busy ve pointer kilidi uygulanır.
+ *   ends the `{loading ? "Saving..." : label}` copy-paste in every form.
+ * · motion tokens (duration-1 / ease-out) instead of a hardcoded 150ms.
+ * · size="touch" for primary actions that need a 44px target on mobile.
+ * · With asChild + loading the spinner is not injected (Slot expects a single
+ *   child); only aria-busy and the pointer lock apply.
  */
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold tracking-[-0.01em] transition-all duration-1 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:translate-y-px [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -39,7 +39,7 @@ const buttonVariants = cva(
         /** Mobil birincil aksiyon — 44px dokunma hedefi. */
         touch: "h-11 min-h-touch rounded-lg px-5 text-[15px]",
         icon: "h-9 w-9",
-        /** İkon butonu, mobilde görünmez 44px hit alanı ile. */
+        /** Icon button with an invisible 44px hit area on mobile. */
         "icon-touch": "h-9 w-9 touch-target",
       },
     },
@@ -54,7 +54,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  /** Spinner göster, tıklamayı kilitle, aria-busy ver. */
+  /** Show a spinner, lock the click, set aria-busy. */
   loading?: boolean
 }
 

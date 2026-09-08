@@ -1,18 +1,18 @@
 /**
- * DALGA 2 — URL'den monitör varsayılanlarını türetme.
+ * Deriving monitor defaults from a URL.
  *
- * Amaç: monitör formunda zorunlu alanı tek'e (URL) indirmek. Ad ve kontrol
- * tipi URL'den tahmin edilir; kullanıcı isterse düzeltir. Bu dosya saf
- * fonksiyonlardan oluşur — test edilebilir, UI bağımlılığı yok.
+ * The point is to leave the monitor form with exactly one required field. The
+ * name and the check type are guessed from the URL and stay editable. Pure
+ * functions only, so they are testable and carry no UI dependency.
  */
 
-/** İkinci seviye TLD'ler: burada "co.uk" gibi parçalar isim olmamalı. */
+/** Second-level TLDs, so "co.uk" never becomes the name. */
 const MULTI_PART_TLDS = new Set([
   "co.uk", "org.uk", "ac.uk", "gov.uk", "com.tr", "org.tr", "net.tr",
   "com.au", "com.br", "co.jp", "co.nz", "co.za", "com.mx",
 ]);
 
-/** Ad olarak anlamsız olan alt alan adları. */
+/** Subdomains that say nothing about the service. */
 const IGNORED_SUBDOMAINS = new Set(["www", "app", "api", "web", "cdn", "static"]);
 
 function titleCase(input: string): string {
@@ -28,9 +28,9 @@ function titleCase(input: string): string {
  * `example.com`                    → "Example"
  * `db.internal:5432`               → "DB Internal"
  *
- * Kural: anlamlı alt alan adı varsa isme dahil edilir (api, www gibi
- * jenerikler atılır), kök alan adı başlığa çevrilir, yol parçası varsa
- * kısa bir nitelendirici olarak eklenir.
+ * A meaningful subdomain becomes part of the name (generic ones like api or
+ * www are dropped), the root domain is title-cased, and a path segment is
+ * appended as a short qualifier when there is one.
  */
 export function deriveMonitorName(rawUrl: string): string {
   const url = rawUrl.trim();
@@ -49,7 +49,7 @@ export function deriveMonitorName(rawUrl: string): string {
   const parts = host.split(".").filter(Boolean);
   if (parts.length === 0) return titleCase(url);
 
-  // TLD'yi (gerekirse iki parçalı) ayır
+  // Strip the TLD, two segments deep when needed
   let tldParts = 1;
   if (parts.length >= 3 && MULTI_PART_TLDS.has(parts.slice(-2).join("."))) tldParts = 2;
   const nameParts = parts.slice(0, Math.max(1, parts.length - tldParts));
@@ -75,11 +75,11 @@ export function deriveMonitorName(rawUrl: string): string {
 export type MonitorKind = "http" | "tcp" | "keyword";
 
 /**
- * Şema/port'a bakarak kontrol tipini tahmin eder.
- * · `tcp://` veya `host:port` (http(s) portu değil) → tcp
- * · diğer her şey → http
- * Keyword tipi asla otomatik seçilmez: kullanıcı bir anahtar kelime yazana
- * kadar "http" doğrudur.
+ * Guesses the check type from the scheme and port.
+ * · `tcp://` or `host:port` on a non-HTTP port → tcp
+ * · everything else → http
+ * Keyword is never guessed: until someone types a keyword, http is the honest
+ * answer.
  */
 export function deriveMonitorType(rawUrl: string): MonitorKind {
   const url = rawUrl.trim().toLowerCase();
@@ -95,14 +95,14 @@ export function deriveMonitorType(rawUrl: string): MonitorKind {
   return "http";
 }
 
-/** Aralık etiketini insan diline çevirir: 60 → "1 dk", 300 → "5 dk". */
+/** Human-readable interval: 60 → "1 min", 300 → "5 min". */
 export function formatInterval(seconds: number): string {
-  if (seconds < 60) return `${seconds} sn`;
+  if (seconds < 60) return `${seconds}s`;
   const minutes = seconds / 60;
-  return Number.isInteger(minutes) ? `${minutes} dk` : `${seconds} sn`;
+  return Number.isInteger(minutes) ? `${minutes} min` : `${seconds}s`;
 }
 
-/** Türetilmiş üçlü — form rozetlerinde gösterilir. */
+/** The three derived values shown as badges on the form. */
 export function deriveMonitorDefaults(rawUrl: string, intervalSeconds: number) {
   return {
     name: deriveMonitorName(rawUrl),

@@ -7,16 +7,17 @@ import { PageHeader } from "@/components/page-header";
 import { MonitorForm } from "./MonitorForm";
 
 /**
- * DALGA 2 — kayıt sonrası hedef değişti.
+ * Where you land after creating a monitor.
  *
- * Önce: monitör oluşturulunca listeye dönülüyordu; kullanıcı "Pending"
- * satırına bakıyor, ilk sonucu görmek için bekliyor ve akış kopuyordu.
- * Sonra: doğrudan monitör detayına gidilir — ilk kontrol sonucu (yeşil nokta,
- * yanıt süresi, HTTP kodu) oradadır. W1'in "ilk yeşil" adımı budur.
+ * Before: back to the list, staring at a "Pending" row, waiting for a first
+ * result that appears somewhere off screen.
+ * Now: straight to the monitor detail, where the first check result lands —
+ * the green dot, the response time, the status code. That first green dot is
+ * the whole point of the signup flow.
  *
- * NOT (backend): detay sayfasının anında sonuç gösterebilmesi için API
- * tarafında monitör oluşturma isteği tek seferlik senkron bir kontrol
- * tetiklemeli (bkz. patch/apps/api/README-first-check.md).
+ * Backend note: the API already queues a one-off check when a monitor is
+ * created (routes/monitors.ts), so the detail page has something to show within
+ * a second or two.
  */
 export function MonitorCreate() {
   const navigate = useNavigate();
