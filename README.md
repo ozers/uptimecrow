@@ -43,7 +43,7 @@ domain as the thing it reports on.
 
 | Feature | Free | Indie | Pro | Team |
 |---|---|---|---|---|
-| Price | $0 | $9/mo | $30/mo | $79/mo |
+| Price | $0 | $19/mo | $49/mo | Talk to us |
 | Status Pages | 1 | 5 | 10 | Unlimited |
 | Monitors | 10 | 50 | 100 | 200 |
 | Min Interval | 5 min | 1 min | 30 sec | 30 sec |

@@ -65,7 +65,7 @@ export const PLAN_LIMITS = {
 } as const;
 
 // Prices are dollars, and the annual-equivalent monthly figure is not always a
-// whole number ($90/yr is $7.50/mo). Rendering it with plain interpolation
+// whole number ($190/yr is $15.83/mo). Rendering it with plain interpolation
 // printed "$7.5", so every price string goes through here.
 export function formatPrice(amount: number): string {
   return Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
@@ -103,9 +103,9 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
   {
     plan: "indie",
     name: "Indie",
-    monthlyPrice: 9,
-    annualMonthlyPrice: 7.5,
-    annualTotal: 90,
+    monthlyPrice: 19,
+    annualMonthlyPrice: 15.83,
+    annualTotal: 190,
     desc: "For indie hackers and solo founders.",
     features: [
       "5 status pages + custom domain",
@@ -120,9 +120,9 @@ export const PLAN_CATALOG: PlanCatalogEntry[] = [
   {
     plan: "pro",
     name: "Pro",
-    monthlyPrice: 30,
-    annualMonthlyPrice: 25,
-    annualTotal: 300,
+    monthlyPrice: 49,
+    annualMonthlyPrice: 40.83,
+    annualTotal: 490,
     desc: "For teams that take uptime seriously.",
     features: [
       "10 status pages + custom domain",

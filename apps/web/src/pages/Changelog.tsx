@@ -12,12 +12,24 @@ interface ChangelogEntry {
 }
 
 // Newest first. Keep the body short — link to docs for the long form.
+//
+// Only ships what the product currently does. Announcements for features that
+// were later removed (on-call rotation, PagerDuty/Teams/Telegram, Twilio SMS,
+// the MCP server) are not kept here as history — a visitor reading this page is
+// deciding whether to sign up, and every line is read as a promise. The July
+// refocus entry below records that they went away.
 const ENTRIES: ChangelogEntry[] = [
   {
+    date: "2026-07-07",
+    title: "Refocused on status pages",
+    type: "improvement",
+    body: "Cut the product back to what it is best at: status pages with the monitoring that feeds them. On-call rotation, SMS, and the PagerDuty, Teams, Telegram and MCP integrations were removed — nine notification channels became four (email, Slack, Discord, webhook), and the dashboard was rebuilt around status pages instead of a monitor list.",
+  },
+  {
     date: "2026-05-18",
-    title: "Slow-response alerts · 3 new free tools",
+    title: "Slow-response alerts",
     type: "feature",
-    body: "New slow-response alerts notify you when a monitor stays up but degrades past a configurable threshold. Launched three free public tools — SSL Checker, DNS Lookup, and Uptime Tester — at /tools.",
+    body: "Slow-response alerts notify you when a monitor stays up but degrades past a configurable threshold. The check still counts as up — latency is not downtime — so the up/down state machine is untouched.",
   },
   {
     date: "2026-05-12",
@@ -38,24 +50,6 @@ const ENTRIES: ChangelogEntry[] = [
     body: "Added a server-side SSRF guard that rejects private/internal targets, locked CORS to APP_URL in production, and made login responses identical for invalid email vs invalid password.",
   },
   {
-    date: "2026-05-05",
-    title: "On-call rotation",
-    type: "feature",
-    body: "Built-in on-call schedule with rotation and email + SMS notifications when an incident opens. No more PagerDuty bill for small teams.",
-  },
-  {
-    date: "2026-05-01",
-    title: "PagerDuty, Microsoft Teams, Telegram integrations",
-    type: "feature",
-    body: "Three new notification channels alongside the existing Slack/Discord/webhook/email. Configure in Settings.",
-  },
-  {
-    date: "2026-04-28",
-    title: "MCP server",
-    type: "feature",
-    body: "Native Model Context Protocol server at /api/mcp. Query monitor status, list incidents, and create monitors from Claude, Cursor, or any MCP-aware AI assistant.",
-  },
-  {
     date: "2026-04-20",
     title: "SSL & domain expiry monitoring",
     type: "feature",
@@ -65,13 +59,7 @@ const ENTRIES: ChangelogEntry[] = [
     date: "2026-04-15",
     title: "Maintenance windows",
     type: "feature",
-    body: "Schedule planned downtime windows per monitor. Failures during the window don't create incidents or page on-call.",
-  },
-  {
-    date: "2026-04-10",
-    title: "Twilio SMS alerts",
-    type: "feature",
-    body: "Bring your own Twilio credentials to receive SMS alerts on incidents. Stored encrypted, masked in the API response.",
+    body: "Schedule planned downtime windows per monitor. Failures during the window are still recorded, but they don't open incidents or notify subscribers.",
   },
 ];
 

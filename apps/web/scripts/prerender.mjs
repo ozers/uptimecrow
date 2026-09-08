@@ -114,8 +114,8 @@ const ROUTES = [
 
   <h2>Pricing in one line</h2>
   <p>Free ($0) — 1 status page, 10 monitors, 5-minute checks.
-  Indie ($9/mo) — 5 status pages with custom domain, 50 monitors, 1-minute checks.
-  Pro ($30/mo) — 10 status pages, 100 monitors, 30-second checks.
+  Indie ($19/mo) — 5 status pages with custom domain, 50 monitors, 1-minute checks.
+  Pro ($49/mo) — 10 status pages, 100 monitors, 30-second checks.
   Self-hosting is unlimited and free. <a href="/pricing">Full pricing</a>.</p>
 
   <h2>Common questions</h2>
@@ -125,7 +125,7 @@ const ROUTES = [
     route: "/pricing",
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($9/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($30/mo) for 30-second checks and 100 monitors.",
+      "Start free with 10 monitors. Upgrade to Indie ($19/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($49/mo) for 30-second checks and 100 monitors.",
     body: `
   <h1>Simple pricing. No lock-in.</h1>
   <p class="uc-lead">Start free, no credit card. Every plan includes monitoring,
@@ -139,7 +139,7 @@ const ROUTES = [
     <li>Email alerts</li><li>Uptime badge</li><li>7-day history</li>
   </ul>
 
-  <h2>Indie — $9/month ($7.50/month billed annually, $90/year)</h2>
+  <h2>Indie — $19/month ($15.83/month billed annually, $190/year)</h2>
   <p>For indie hackers and solo founders.</p>
   <ul>
     <li>5 status pages + custom domain</li><li>50 monitors</li>
@@ -147,7 +147,7 @@ const ROUTES = [
     <li>Email subscribers</li><li>1-year history</li>
   </ul>
 
-  <h2>Pro — $30/month ($25/month billed annually, $300/year)</h2>
+  <h2>Pro — $49/month ($40.83/month billed annually, $490/year)</h2>
   <p>For teams that take uptime seriously.</p>
   <ul>
     <li>10 status pages + custom domain</li><li>100 monitors</li>
