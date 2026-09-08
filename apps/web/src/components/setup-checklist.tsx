@@ -120,10 +120,15 @@ export function SetupChecklist() {
   return (
     <div className="border-b border-border bg-card/30">
       <div className="mx-auto max-w-7xl px-4 py-2.5 md:px-6">
-        {/* Compact bar */}
+        {/* Compact bar.
+            The expander and the dismiss control are siblings, not nested: a
+            <span role="button"> inside a <button> is invalid HTML, took no
+            focus ring, and made the keyboard tour skip straight past it. */}
+        <div className="flex w-full items-center gap-3">
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="flex w-full items-center gap-3 text-left"
+          className="focus-ring flex flex-1 items-center gap-3 rounded-md text-left"
+          aria-expanded={expanded}
         >
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand/10">
@@ -164,23 +169,17 @@ export function SetupChecklist() {
                 <ChevronDown className="h-4 w-4" />
               )}
             </span>
-            <span
-              role="button"
-              tabIndex={0}
-              onClick={handleDismiss}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.stopPropagation();
-                  handleDismiss(e as unknown as React.MouseEvent);
-                }
-              }}
-              className="ml-1 cursor-pointer rounded p-0.5 text-text3 transition-colors hover:bg-muted hover:text-foreground"
-              aria-label="Dismiss setup guide"
-            >
-              <X className="h-3.5 w-3.5" />
-            </span>
           </div>
         </button>
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="focus-ring touch-target ml-1 shrink-0 rounded p-0.5 text-text3 transition-colors hover:bg-muted hover:text-foreground"
+          aria-label="Dismiss setup guide"
+        >
+          <X className="h-3.5 w-3.5" />
+        </button>
+        </div>
 
         {/* Expanded panel */}
         {expanded && (
