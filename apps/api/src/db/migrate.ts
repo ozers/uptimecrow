@@ -141,6 +141,10 @@ const repairs: Array<{ sql: string; desc: string }> = [
     desc: "users.password_hash nullable",
   },
   {
+    sql: `ALTER TABLE maintenance_windows ADD COLUMN IF NOT EXISTS recurrence jsonb`,
+    desc: "maintenance_windows.recurrence",
+  },
+  {
     sql: `CREATE TABLE IF NOT EXISTS org_members (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
       org_id uuid NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,

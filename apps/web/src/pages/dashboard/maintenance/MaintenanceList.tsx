@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { RepeatField } from "@/components/maintenance-repeat-field";
+import type { Recurrence } from "@/lib/recurrence";
 import { Plus, Wrench, Trash2, Pencil, Clock, CheckCircle2, XCircle } from "lucide-react";
 import type { MaintenanceWindow } from "@uptimecrow/shared";
 import { ConfirmDialog } from "@/components/confirm-dialog";
@@ -69,6 +71,7 @@ interface FormState {
   scheduledStart: string;
   scheduledEnd: string;
   monitorIds: string[];
+  recurrence: Recurrence | null;
 }
 
 function emptyForm(firstStatusPageId: string): FormState {
@@ -79,6 +82,7 @@ function emptyForm(firstStatusPageId: string): FormState {
     scheduledStart: defaultStart(),
     scheduledEnd: defaultEnd(),
     monitorIds: [],
+    recurrence: null,
   };
 }
 
@@ -171,6 +175,7 @@ export function MaintenanceList() {
       scheduledStart: toLocalInputValue(w.scheduledStart),
       scheduledEnd: toLocalInputValue(w.scheduledEnd),
       monitorIds: w.monitorIds ?? [],
+      recurrence: w.recurrence ?? null,
     });
     setDialogOpen(true);
   };
@@ -188,6 +193,7 @@ export function MaintenanceList() {
       scheduledStart: fromLocalInputValue(form.scheduledStart),
       scheduledEnd: fromLocalInputValue(form.scheduledEnd),
       monitorIds: form.monitorIds,
+      recurrence: form.recurrence,
     };
     try {
       if (editingId) {
@@ -320,6 +326,11 @@ export function MaintenanceList() {
                   />
                 </div>
               </div>
+              <RepeatField
+                value={form.recurrence}
+                startIso={fromLocalInputValue(form.scheduledStart)}
+                onChange={(recurrence) => setForm({ ...form, recurrence })}
+              />
               {(statusPages?.length ?? 0) > 1 && (
                 <div className="space-y-1.5">
                   <Label>Status page</Label>

@@ -10,7 +10,9 @@ import {
   pgEnum,
   index,
   uniqueIndex,
+  jsonb,
 } from "drizzle-orm/pg-core";
+import type { Recurrence } from "@uptimecrow/shared";
 
 // ── Enums ──
 
@@ -237,6 +239,10 @@ export const maintenanceWindows = pgTable(
     status: maintenanceStatusEnum("status").notNull().default("scheduled"),
     scheduledStart: timestamp("scheduled_start", { withTimezone: true }).notNull(),
     scheduledEnd: timestamp("scheduled_end", { withTimezone: true }).notNull(),
+    // Recurrence rule, or null for a one-off window. The next window is
+    // materialised when this one closes (see jobs/maintenance.job.ts), so the
+    // "is a window active right now?" query never has to expand a rule.
+    recurrence: jsonb("recurrence").$type<Recurrence | null>(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [

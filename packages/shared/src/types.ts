@@ -7,6 +7,7 @@ import type {
   IncidentSeverity,
   CheckStatus,
 } from "./constants.js";
+import type { Recurrence } from "./validation.js";
 
 export interface User {
   id: string;
@@ -110,6 +111,9 @@ export interface MaintenanceWindow {
   status: "scheduled" | "in_progress" | "completed" | "cancelled";
   scheduledStart: string;
   scheduledEnd: string;
+  /** Repeat rule, or null for a one-off window. The scheduler materialises the
+   *  next window when this one closes, so this is a rule, not an expansion. */
+  recurrence: Recurrence | null;
   createdAt: string;
   monitorIds: string[];
 }

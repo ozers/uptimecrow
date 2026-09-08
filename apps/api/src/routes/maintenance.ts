@@ -81,6 +81,7 @@ maintenanceRoutes.post("/", async (c) => {
       body: parsed.data.body ?? null,
       scheduledStart: new Date(parsed.data.scheduledStart),
       scheduledEnd: new Date(parsed.data.scheduledEnd),
+      recurrence: parsed.data.recurrence ?? null,
     })
     .returning();
 
@@ -122,6 +123,9 @@ maintenanceRoutes.patch("/:id", async (c) => {
   if (parsed.data.status !== undefined) patch.status = parsed.data.status;
   if (parsed.data.scheduledStart !== undefined) patch.scheduledStart = new Date(parsed.data.scheduledStart);
   if (parsed.data.scheduledEnd !== undefined) patch.scheduledEnd = new Date(parsed.data.scheduledEnd);
+  // `null` clears the rule and turns a repeating window into a one-off, so
+  // undefined (absent) and null (explicit) must stay distinguishable here.
+  if (parsed.data.recurrence !== undefined) patch.recurrence = parsed.data.recurrence ?? null;
 
   if (Object.keys(patch).length > 0) {
     await db.update(maintenanceWindows).set(patch).where(eq(maintenanceWindows.id, id));

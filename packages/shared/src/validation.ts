@@ -94,6 +94,35 @@ export const loginSchema = z.object({
 export const MAINTENANCE_STATUSES = ["scheduled", "in_progress", "completed", "cancelled"] as const;
 export type MaintenanceStatus = (typeof MAINTENANCE_STATUSES)[number];
 
+// Recurring maintenance. Deliberately not RRULE: two modes cover what people
+// actually schedule ("every Tuesday 02:00", "the 1st of the month"), and the
+// scheduler materialises the next window when one closes, so every query that
+// asks "is a window active?" keeps working unchanged.
+//
+// byMonthDay stops at 28 on purpose — 29-31 silently skip months.
+export const recurrenceSchema = z
+  .object({
+    freq: z.enum(["weekly", "monthly"]),
+    byWeekday: z.number().int().min(0).max(6).optional(),
+    byMonthDay: z.number().int().min(1).max(28).optional(),
+    until: z.string().datetime().nullish(),
+    count: z.number().int().min(1).max(365).nullish(),
+  })
+  .refine((r) => r.freq !== "weekly" || r.byWeekday !== undefined, {
+    message: "byWeekday is required for weekly recurrence",
+    path: ["byWeekday"],
+  })
+  .refine((r) => r.freq !== "monthly" || r.byMonthDay !== undefined, {
+    message: "byMonthDay is required for monthly recurrence",
+    path: ["byMonthDay"],
+  })
+  .refine((r) => !(r.until && r.count), {
+    message: "Set an end date or a repeat count, not both",
+    path: ["count"],
+  });
+
+export type Recurrence = z.infer<typeof recurrenceSchema>;
+
 export const createMaintenanceWindowSchema = z.object({
   statusPageId: z.string().uuid(),
   title: z.string().min(1).max(500),
@@ -101,6 +130,7 @@ export const createMaintenanceWindowSchema = z.object({
   scheduledStart: z.string().datetime(),
   scheduledEnd: z.string().datetime(),
   monitorIds: z.array(z.string().uuid()).default([]),
+  recurrence: recurrenceSchema.nullish(),
 }).refine(
   (data) => new Date(data.scheduledEnd) > new Date(data.scheduledStart),
   { message: "scheduledEnd must be after scheduledStart", path: ["scheduledEnd"] },
@@ -113,4 +143,5 @@ export const updateMaintenanceWindowSchema = z.object({
   scheduledStart: z.string().datetime().optional(),
   scheduledEnd: z.string().datetime().optional(),
   monitorIds: z.array(z.string().uuid()).optional(),
+  recurrence: recurrenceSchema.nullish(),
 });

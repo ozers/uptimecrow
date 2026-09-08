@@ -20,15 +20,13 @@
  * Scheduler her pencere kapandığında sonraki örneği üretir (materialize),
  * yani sorgu tarafı bugünkü haliyle çalışmaya devam eder.
  */
-export type RecurrenceFreq = "weekly" | "monthly";
+// The shape is owned by the shared zod schema, which is also what the API
+// validates against — a second declaration here would drift the moment one side
+// gains a field.
+import type { Recurrence } from "@uptimecrow/shared";
 
-export interface Recurrence {
-  freq: RecurrenceFreq;
-  byWeekday?: number;
-  byMonthDay?: number;
-  until?: string | null;
-  count?: number | null;
-}
+export type { Recurrence };
+export type RecurrenceFreq = Recurrence["freq"];
 
 export const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

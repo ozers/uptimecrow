@@ -5,6 +5,7 @@ import { processCheckJob } from "./jobs/check.job.js";
 import { processNotifyJob } from "./jobs/notify.job.js";
 import { processGenerateJob } from "./jobs/generate.job.js";
 import { processRetentionJob } from "./jobs/retention.job.js";
+import { processMaintenanceJob } from "./jobs/maintenance.job.js";
 import { logger } from "./utils/logger.js";
 import { isTerminalFailure } from "./utils/queues.js";
 import { captureException } from "./utils/sentry.js";
@@ -120,12 +121,32 @@ export async function startWorker() {
     },
   );
 
+  // Maintenance windows close on a five-minute tick. Recurring windows
+  // materialise their next occurrence here, so the rest of the system only ever
+  // sees concrete rows.
+  const maintenanceWorker = new Worker("maintenance", processMaintenanceJob, {
+    connection: redis,
+    concurrency: 1,
+    ...removeOpts,
+  });
+
+  const maintenanceQueue = new Queue("maintenance", { connection: redis });
+  await maintenanceQueue.add(
+    "close-due-windows",
+    {},
+    {
+      jobId: "repeat-maintenance-close",
+      repeat: { pattern: "*/5 * * * *" },
+    },
+  );
+
   checkWorker.on("failed", (job, err) => logJobFailure("monitor-checks", job, err));
   notifyWorker.on("failed", (job, err) => logJobFailure("notifications", job, err));
   generateWorker.on("failed", (job, err) => logJobFailure("status-page-generate", job, err));
   retentionWorker.on("failed", (job, err) => logJobFailure("retention", job, err));
+  maintenanceWorker.on("failed", (job, err) => logJobFailure("maintenance", job, err));
 
   logger.info(
-    "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention",
+    "[Worker] Started workers: monitor-checks, notifications, status-page-generate, retention, maintenance",
   );
 }
