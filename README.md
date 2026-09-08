@@ -15,11 +15,13 @@ Open-source status pages that stay up when you're down. Built-in uptime monitori
 - **Pre-Rendered Status Pages** — Static HTML/JSON pages survive origin downtime; your users see status even when you're down
 - **Branded Status Pages** — Custom logo, brand color, custom domain, private-access tokens, embeddable SVG badges
 - **Built-In Uptime Monitoring** — HTTP / TCP / keyword checks with configurable interval, timeout, expected status codes, and keyword-in-body matching
-- **Redis State Machine** — Consecutive-failure confirmation (configurable, default 2) prevents single-blip false alarms
+- **No False Alarms** — A monitor must fail N consecutive checks (default 2) before an incident opens, so a single network blip never pages anyone
 - **Automatic Incidents** — Real outages open incidents and update your status page with no human in the loop; manual incidents and updates supported
 - **Subscriber Management** — Double opt-in verification, one-click unsubscribe (HTML confirmation pages)
 - **Email + Chat Notifications** — Amazon SES for transactional email to subscribers; native Slack, Discord, and custom webhooks
-- **Maintenance Windows** — Planned downtime pauses alerts and shows on the status page
+- **Maintenance Windows** — Planned downtime is announced on the page and suppresses alerts; windows can repeat weekly or monthly
+- **SSL & Domain Expiry** — Certificate and WHOIS expiry checked daily with a configurable warning threshold
+- **Badges & Feeds** — Embeddable SVG uptime badge and an RSS incident feed per status page
 - **Multi-Tenancy** — Organization-scoped resources
 - **Tiered Plans** — Free, Indie, Pro, and Team with enforced limits on monitors, pages, intervals, and retention
 - **Billing** — Polar integration with Standard Webhooks signature verification
@@ -80,12 +82,15 @@ uptimecrow/
 │   │   │   ├── jobs/        # BullMQ handlers: check, notify, generate
 │   │   │   ├── middleware/  # JWT auth (cookie + Bearer header), rate limiting
 │   │   │   ├── db/          # Drizzle schema & connection
-│   │   │   └── utils/       # JWT helpers, Redis state machine
-│   │   └── Dockerfile
+│   │   │   ├── web.ts       # Serves the built SPA in production
+│   │   │   └── utils/       # JWT helpers, SSRF guard, state machine
+│   │   └── Dockerfile       # Builds the API *and* the web app into one image
 │   └── web/                 # Vite React SPA
 │       ├── src/
 │       │   └── pages/       # Landing, Dashboard, Login
-│       ├── nginx.conf       # Production: SPA fallback + API proxy
+│       ├── scripts/
+│       │   └── prerender.mjs  # Writes static HTML per marketing route
+│       ├── nginx.conf       # Only used by the development compose file
 │       └── Dockerfile
 ├── packages/
 │   └── shared/              # Types, constants, Zod validation schemas
@@ -158,10 +163,15 @@ docker compose up
 This starts:
 - **PostgreSQL 16** on port `5432`
 - **Redis 7** on port `6379`
-- **API** on port `3000` (with hot-reload)
-- **Web** on port `5173` (with hot-reload)
+- **API** on port `3000` (with hot-reload; runs migrations on start)
+- **Web** on port `5173` (Vite dev server with hot-reload)
 
-Open [http://localhost:5173](http://localhost:5173) to see the app.
+Open [http://localhost:5173](http://localhost:5173) and register an account —
+the first one you create owns its own organization.
+
+In development the web app runs as its own container so you get Vite's
+hot-reload. In production there is no separate web container: the API serves the
+built SPA from the same origin.
 
 ### Production self-host
 
@@ -224,8 +234,12 @@ pnpm dev:web    # http://localhost:5173
 | `SES_FROM_EMAIL` | No¹ | — | Verified "from" address in SES |
 | `POLAR_ACCESS_TOKEN` | No² | — | Polar API token |
 | `POLAR_WEBHOOK_SECRET` | No² | — | Polar webhook signing secret (base64) |
-| `POLAR_PRO_PRODUCT_ID` | No² | — | Polar Pro product ID |
-| `POLAR_TEAM_PRODUCT_ID` | No² | — | Polar Team product ID |
+| `POLAR_<PLAN>_<INTERVAL>_PRODUCT_ID` | No² | — | Polar **product** id per plan and interval, e.g. `POLAR_INDIE_MONTHLY_PRODUCT_ID`. Product ids, not price ids — Polar removed price-level ids from checkout |
+| `UPTIMECROW_VERSION` | No | `latest` | Image tag read by `docker-compose.prod.yml`. Pin a release |
+| `WEB_ROOT` | No | `../../web` | Where the API looks for the built SPA, relative to its working directory |
+| `BEACON_URL` / `BEACON_KEY` | No | — | Product analytics endpoint. **Both unset means nothing is sent** — see [Telemetry](#telemetry) |
+| `SENTRY_DSN` | No | — | Error tracking. No DSN, no reporting |
+| `ALLOW_PRIVATE_TARGETS` | No | — | `1` lets monitors and webhooks reach private/loopback addresses. For local development only — this disables the SSRF guard |
 
 ¹ Required to send email notifications.
 ² Required to accept paid plan upgrades.
@@ -246,107 +260,99 @@ pnpm db:migrate                       # Run migrations
 
 # Quality
 pnpm typecheck                        # TypeScript check across all packages
-pnpm lint                             # ESLint across all packages
 pnpm test                             # Run all tests (vitest)
 
 # Per-package
 pnpm --filter @uptimecrow/api test    # Run API tests only
-pnpm --filter @uptimecrow/web build   # Build web only
+pnpm --filter @uptimecrow/web build   # Build web (also writes the pre-rendered routes)
+
+# A single test file
+pnpm --filter @uptimecrow/api exec vitest run src/utils/ssrf.test.ts
 ```
 
 ## API Endpoints
 
-### Authentication
+The full surface is documented by the OpenAPI spec the server generates:
+interactive Swagger UI at **`/api/docs`**, raw document at
+**`/api/openapi.json`**. That spec is generated from the running app, so it
+cannot drift from reality the way a hand-written list does. The shape:
+
+| Area | Routes |
+|---|---|
+| Auth | `POST /api/auth/{register,login,logout,forgot-password,reset-password}`, `GET /api/auth/me` |
+| Monitors | CRUD on `/api/monitors`, plus `GET /api/monitors/:id/checks` and `POST /api/monitors/test` |
+| Incidents | CRUD on `/api/incidents`, plus `POST /api/incidents/:id/updates` |
+| Status pages | CRUD on `/api/status-pages`, plus `PUT /:id/monitors`, `PUT /:id/domain`, `POST /:id/regenerate-token` |
+| Maintenance | CRUD on `/api/maintenance-windows` |
+| Subscribers | `GET /api/subscribers`, `DELETE /api/subscribers/:id` |
+| Settings | `GET`/`PATCH /api/settings`, `POST /api/settings/test-webhook` |
+| Billing | `POST /api/billing/{checkout,portal,webhook}` |
+
+Authenticated routes take a JWT as an HTTP-only cookie or an
+`Authorization: Bearer` header. Tokens last 7 days and are scoped to an
+organization.
+
+### Public routes (no auth)
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/api/auth/register` | Create account |
-| `POST` | `/api/auth/login` | Login (returns JWT in cookie) |
-| `POST` | `/api/auth/forgot-password` | Send password reset email |
-| `POST` | `/api/auth/reset-password` | Reset password with token |
+| `GET` | `/status/:slug` | Status page (HTML) |
+| `GET` | `/status/:slug?format=json` | The same data as JSON |
+| `GET` | `/status/:slug/incidents` | Incident history |
+| `GET` | `/status/:slug/rss` | Incident feed |
+| `POST` | `/status/:slug/subscribe` | Subscribe by email (double opt-in) |
+| `GET` | `/badge/:slug.svg` | Embeddable uptime badge |
+| `GET` | `/health` | Deep health check — returns 503 if Postgres or Redis is unreachable |
 
-### Monitors (authenticated)
+Embed a badge in your own README:
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/monitors` | List monitors |
-| `POST` | `/api/monitors` | Create monitor |
-| `GET` | `/api/monitors/:id` | Get monitor details |
-| `PATCH` | `/api/monitors/:id` | Update monitor |
-| `DELETE` | `/api/monitors/:id` | Delete monitor |
-
-### Incidents (authenticated)
-
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/incidents` | List incidents |
-| `POST` | `/api/incidents` | Create incident |
-| `PATCH` | `/api/incidents/:id` | Update incident |
-| `POST` | `/api/incidents/:id/updates` | Add incident update |
-
-### Status Pages (authenticated)
-
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/status-pages` | List status pages |
-| `POST` | `/api/status-pages` | Create status page |
-| `PATCH` | `/api/status-pages/:id` | Update status page |
-| `DELETE` | `/api/status-pages/:id` | Delete status page |
-
-### API Documentation
-
-Interactive Swagger UI at `/api/docs` and the raw OpenAPI 3.1 document at `/api/openapi.json`.
-
-### Billing (authenticated)
-
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/api/billing/checkout` | Polar checkout session |
-| `POST` | `/api/billing/portal` | Polar customer portal session |
-| `POST` | `/api/billing/webhook` | Polar webhook (Standard Webhooks) |
-
-### Public (no auth required)
-
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/status/:slug` | Public status page (HTML) |
-| `GET` | `/status/:slug/incidents` | Public incident history |
-| `POST` | `/status/:slug/subscribe` | Subscribe to updates |
-| `GET` | `/badge/:slug.svg` | Embeddable status badge |
-| `GET` | `/health` | Health check |
+```markdown
+![Uptime](https://uptimecrow.com/badge/your-slug.svg)
+```
 
 ## Database Schema
 
-9 tables with full referential integrity:
+Seventeen tables. Twelve carry the product:
 
-- **users** — Accounts with email, password hash, plan tier
-- **organizations** — Multi-tenant org scoping
-- **monitors** — HTTP/keyword monitors with interval, timeout, expected status, confirmation count
-- **check_results** — Time-series check data (status, response time, status code)
-- **status_pages** — Branded pages with slug, custom domain, logo, brand color, access token
-- **status_page_monitors** — Junction table linking monitors to status pages
-- **incidents** — Linked to monitors and status pages
-- **incident_updates** — Timeline entries for each incident
-- **subscribers** — Email subscribers per status page with double-opt-in verification
+- **users** — accounts with email, password hash, plan tier
+- **organizations** / **org_members** — multi-tenant scoping; every resource is org-scoped
+- **monitors** — type, URL, interval, timeout, expected status, confirmation count, SSL/domain expiry state
+- **check_results** — the time series: status, response time, status code, error
+- **status_pages** — slug, custom domain, logo, brand colour, access token
+- **status_page_monitors** — which monitors appear on which page
+- **incidents** / **incident_updates** — the incident and its timeline
+- **subscribers** — per status page, with double opt-in verification
+- **maintenance_windows** / **maintenance_window_monitors** — planned downtime, with an optional recurrence rule
+
+Five are **dead by design** — left in place because dropping columns needs a
+migration plan, not because anything reads them: `heartbeats`, `api_keys`,
+`org_invites`, `on_call_schedules`, `on_call_contacts`. They are the remains of
+features removed when the product refocused on status pages. Do not build on
+them without reading [CLAUDE.md](./CLAUDE.md) first.
 
 ## Deployment
 
 ### Docker Production Build
 
-```bash
-docker build -t uptimecrow-api --target production apps/api/
-docker build -t uptimecrow-web --target production apps/web/
+One image carries the API, the worker and the web UI:
 
-docker run -p 3000:3000 --env-file .env uptimecrow-api
-docker run -p 80:80 uptimecrow-web
+```bash
+docker build -t uptimecrow --target production -f apps/api/Dockerfile .
+docker run -p 80:3000 --env-file .env uptimecrow
+```
+
+Or pull a published release instead of building:
+
+```bash
+docker pull ghcr.io/ozers/uptimecrow/api:v0.1.0
 ```
 
 ### CI/CD
 
 GitHub Actions workflows:
 
-- **CI** (`.github/workflows/ci.yml`) — Runs on PRs and pushes to main: lint, TypeScript check, tests with PostgreSQL 16 + Redis 7 service containers, Docker build validation.
-- **Deploy** (`.github/workflows/deploy.yml`) — Pushes to GitHub Container Registry on main.
+- **CI** (`.github/workflows/ci.yml`) — Runs on PRs and pushes to main: TypeScript check, tests with PostgreSQL 16 + Redis 7 service containers, Docker build validation, and a Trivy scan of dependencies and config.
+- **Deploy** (`.github/workflows/deploy.yml`) — Publishes images to GitHub Container Registry after CI passes on main. Pushing a `v*.*.*` tag also publishes `:v1.2.3` and `:1.2`, which is what you should pin in production.
 
 ### Production Checklist
 
@@ -354,14 +360,35 @@ GitHub Actions workflows:
 - [ ] Configure Amazon SES (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `SES_FROM_EMAIL`) with a verified sender domain
 - [ ] Configure Polar (`POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, product IDs) and point the Polar dashboard webhook at `/api/billing/webhook`
 - [ ] Set `APP_URL` and `STATUS_PAGE_URL` to your production domain
-- [ ] Run `MODE=api` and `MODE=worker` as separate processes for independent scaling
+- [ ] Pin `UPTIMECROW_VERSION` to a release tag instead of tracking `latest`
+- [ ] Split `MODE=api` and `MODE=worker` into separate processes if you need to scale checks independently — one `MODE=all` container is fine to start
 - [ ] Set up PostgreSQL with proper backups and connection pooling
 - [ ] Configure Redis persistence if you need state machine durability across restarts
 - [ ] Put a CDN in front of `/status/:slug` for further origin-downtime resilience
 
+## Contributing
+
+Bug reports, reproductions and design proposals are as welcome as patches — see
+[CONTRIBUTING.md](./CONTRIBUTING.md) for the dev setup and what we accept.
+First-time contributors sign a one-line [CLA](./CLA.md); if you would rather
+not, open an issue instead and we will take it from there.
+
+Security issues go to [SECURITY.md](./SECURITY.md), never a public issue.
+
+| | |
+|---|---|
+| What changed | [CHANGELOG.md](./CHANGELOG.md) · [Releases](https://github.com/ozers/uptimecrow/releases) |
+| What is in scope | [OPEN_CORE.md](./OPEN_CORE.md) |
+| Name and logo | [TRADEMARK.md](./TRADEMARK.md) |
+| Questions | [Discussions](https://github.com/ozers/uptimecrow/discussions) |
+
+## Supporting the project
+
+If UptimeCrow is useful to you, the simplest way to support it is to [use the managed cloud](https://uptimecrow.com/pricing) — those plans fund the time spent here. A sponsor program for self-hosters is on the roadmap.
+
 ## License
 
-UptimeCrow is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](./LICENSE) for the full text and [OPEN_CORE.md](./OPEN_CORE.md) for what's in the open core vs. managed-only.
+UptimeCrow is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](./LICENSE) for the full text and [OPEN_CORE.md](./OPEN_CORE.md) for what's in the open core vs. managed-only. The name and the crow mark are covered separately — see [TRADEMARK.md](./TRADEMARK.md).
 
 **Plain-English summary** (not legal advice):
 
@@ -369,11 +396,3 @@ UptimeCrow is licensed under the **GNU Affero General Public License v3.0**. See
 - You can modify it however you like.
 - If you offer a modified version of UptimeCrow as a network service to third parties, AGPL requires you to publish your modifications under the same license.
 - If your organization cannot use AGPL software, [contact us](mailto:hello@uptimecrow.com) about a commercial license.
-
-## Supporting the project
-
-If UptimeCrow is useful to you, the simplest way to support it is to [use the managed cloud](https://uptimecrow.com/pricing) — those plans fund the time spent here. A sponsor program for self-hosters is on the roadmap.
-
-## Contributing
-
-PRs and issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md), and report security issues per [SECURITY.md](./SECURITY.md).
