@@ -260,7 +260,7 @@ export function MonitorDetail() {
                               </TooltipContent>
                             </Tooltip>
                           ) : (
-                            <span className="text-muted-foreground/50">—</span>
+                            <span className="text-text3">—</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">
@@ -326,7 +326,7 @@ export function MonitorDetail() {
                               </TooltipContent>
                             </Tooltip>
                           ) : (
-                            <span className="text-muted-foreground/50">—</span>
+                            <span className="text-text3">—</span>
                           )}
                         </TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">

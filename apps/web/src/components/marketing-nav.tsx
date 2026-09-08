@@ -167,7 +167,7 @@ export function MarketingFooter() {
                     <li key={l.to}>
                       <Link
                         to={l.to}
-                        className="text-sm text-foreground/80 transition-colors hover:text-brand"
+                        className="text-sm text-muted-foreground transition-colors hover:text-brand"
                       >
                         {l.label}
                       </Link>

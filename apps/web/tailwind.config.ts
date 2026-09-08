@@ -1,6 +1,14 @@
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
+/**
+ * DALGA 1 — değişenler:
+ * · `text3` rengi: opak üçüncü kademe metin (alfa kırpmalarının yerine).
+ * · transitionDuration/timingFunction: globals.css motion token'larına bağlı.
+ * · keyframes: `spin-slow`, `ping-soft`, `slide-up-fade` — component'ler artık
+ *   kendi @keyframes'ini inline yazmıyor.
+ * · minHeight/spacing `touch`: 44px dokunma hedefi.
+ */
 const config: Config = {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -19,6 +27,8 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        /** Üçüncü kademe metin — timestamp, meta, placeholder. Opak. */
+        text3: "hsl(var(--text-3))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -81,6 +91,25 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      spacing: {
+        touch: "2.75rem", // 44px
+        tabbar: "3.75rem", // mobil alt sekme çubuğu yüksekliği
+      },
+      minHeight: {
+        touch: "2.75rem",
+      },
+      minWidth: {
+        touch: "2.75rem",
+      },
+      transitionDuration: {
+        1: "var(--dur-1)",
+        2: "var(--dur-2)",
+        3: "var(--dur-3)",
+      },
+      transitionTimingFunction: {
+        out: "var(--ease-out)",
+        "in-out": "var(--ease-in-out)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -90,10 +119,24 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "spin-slow": {
+          to: { transform: "rotate(360deg)" },
+        },
+        "ping-soft": {
+          "0%, 100%": { opacity: "1", transform: "scale(1)" },
+          "50%": { opacity: "0.3", transform: "scale(2)" },
+        },
+        "slide-up-fade": {
+          from: { opacity: "0", transform: "translateY(4px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        "accordion-down": "accordion-down var(--dur-2) var(--ease-out)",
+        "accordion-up": "accordion-up var(--dur-2) var(--ease-out)",
+        "spin-slow": "spin-slow 1.1s linear infinite",
+        "ping-soft": "ping-soft 1.6s var(--ease-in-out) infinite",
+        "slide-up-fade": "slide-up-fade var(--dur-2) var(--ease-out)",
       },
     },
   },

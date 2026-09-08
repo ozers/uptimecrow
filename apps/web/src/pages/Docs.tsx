@@ -15,7 +15,7 @@ function CodeBlock({ code, lang = "bash" }: { code: string; lang?: string }) {
   };
   return (
     <div className="relative mb-4">
-      <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-foreground/80">
+      <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-muted-foreground">
         <code className={`language-${lang}`}>{code}</code>
       </pre>
       <button

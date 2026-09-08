@@ -250,7 +250,7 @@ export function StatusPageDetail() {
                         <MonitorStatusBadge status={monitor.status} />
                         {linked && (
                           <div className="flex items-center gap-1.5">
-                            <Tag className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+                            <Tag className="h-3 w-3 text-text3 shrink-0" />
                             <Input
                               className="h-7 w-32 text-xs px-2"
                               placeholder="Group name"
@@ -273,7 +273,7 @@ export function StatusPageDetail() {
             </>
           ) : (
             <div className="border-t border-border py-12 text-center">
-              <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <Activity className="mx-auto mb-3 h-7 w-7 text-text3" />
               <p className="text-sm text-muted-foreground">
                 No monitors available.{" "}
                 <Link to="/dashboard/monitors/new" className="text-brand hover:underline">
@@ -342,7 +342,7 @@ export function StatusPageDetail() {
             </div>
           ) : (
             <div className="border-t border-border py-12 text-center">
-              <Users className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <Users className="mx-auto mb-3 h-7 w-7 text-text3" />
               <p className="text-sm text-muted-foreground">No subscribers yet.</p>
             </div>
           )}

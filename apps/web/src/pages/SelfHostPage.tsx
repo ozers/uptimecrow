@@ -69,7 +69,7 @@ docker compose ps`;
 
 function CodeBlock({ code }: { code: string }) {
   return (
-    <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-foreground/80">
+    <pre className="overflow-x-auto rounded-xl border border-border bg-card px-5 py-4 font-mono text-[12.5px] leading-[1.7] text-muted-foreground">
       <code>{code}</code>
     </pre>
   );

@@ -97,7 +97,7 @@ function MetricCards({
           >
             <div className="mb-3 flex items-center justify-between">
               <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-                <Icon className="h-3 w-3 text-muted-foreground/60" />
+                <Icon className="h-3 w-3 text-text3" />
                 {item.label}
               </span>
               {item.badge && (
@@ -593,7 +593,7 @@ export function Overview() {
           />
           {visibleMonitors.length === 0 ? (
             <div className="border-y border-border py-10 text-center">
-              <Activity className="mx-auto mb-3 h-7 w-7 text-muted-foreground/40" />
+              <Activity className="mx-auto mb-3 h-7 w-7 text-text3" />
               <p className="text-sm font-medium">No monitors yet</p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Add your first endpoint to start tracking uptime.

@@ -63,7 +63,7 @@ function Breadcrumbs() {
         </li>
         {crumbs.map((crumb) => (
           <li key={crumb.path} className="flex items-center gap-1.5">
-            <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+            <ChevronRight className="h-3 w-3 text-text3" />
             {crumb.isLast ? (
               <span className="text-foreground">{crumb.label}</span>
             ) : (

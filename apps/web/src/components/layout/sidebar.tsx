@@ -10,6 +10,7 @@ import {
   Sun,
   Moon,
   User,
+  Command,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/logo";
@@ -17,6 +18,16 @@ import { useAuthStore } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { useTheme } from "@/lib/theme";
 
+/**
+ * DALGA 1 — bu dosyada değişenler (yalnızca kontrast + focus, IA aynı):
+ * · `text-text3`, `/60`, `/70`, `/40` alfa kırpmalarının hepsi
+ *   opak `text-text3` ile değiştirildi. Açıklama satırları, grup başlıkları ve
+ *   ikonlar artık AA geçiyor.
+ * · Tüm etkileşimli satırlara `focus-ring` eklendi — klavye kullanıcısı
+ *   sidebar'da nerede olduğunu görüyor.
+ * · Transition'lar motion token'larına bağlandı.
+ * · Alta ⌘K ipucu eklendi (Dalga 3 command palette'i keşfedilebilir kılar).
+ */
 interface NavItem {
   label: string;
   href: string;
@@ -88,8 +99,9 @@ function NavRow({
     <Link
       to={item.href}
       onClick={onNavClick}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+        "focus-ring group relative flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-1 ease-out",
         active
           ? "bg-brand/10 text-foreground"
           : "text-muted-foreground hover:bg-accent hover:text-foreground",
@@ -99,16 +111,18 @@ function NavRow({
       {/* Brand-green active accent rail */}
       <span
         className={cn(
-          "absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full transition-colors",
+          "absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full transition-colors duration-1",
           active ? "bg-brand" : "bg-transparent",
         )}
+        aria-hidden="true"
       />
       <item.icon
         className={cn(
           "h-4 w-4 shrink-0",
-          active ? "text-brand" : "text-muted-foreground/70",
+          active ? "text-brand" : "text-text3",
           item.desc && "mt-0.5",
         )}
+        aria-hidden="true"
       />
       <div className="min-w-0">
         <span className="block font-mono text-[13px] uppercase tracking-[0.06em] leading-none">
@@ -118,7 +132,7 @@ function NavRow({
           <span
             className={cn(
               "mt-1 block truncate text-[11px] font-normal leading-none",
-              active ? "text-muted-foreground" : "text-muted-foreground/55",
+              active ? "text-muted-foreground" : "text-text3",
             )}
           >
             {item.desc}
@@ -147,11 +161,11 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto p-3">
+      <nav className="flex-1 overflow-y-auto p-3" aria-label="Sections">
         {navGroups.map((group, gi) => (
           <div key={group.header ?? gi} className={cn(gi > 0 && "mt-5")}>
             {group.header && (
-              <p className="px-3 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground/60">
+              <p className="px-3 pb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-text3">
                 {group.header}
               </p>
             )}
@@ -175,10 +189,10 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
           <Link
             to="/dashboard/settings#plan"
             onClick={onNavClick}
-            className="mb-2 flex items-center gap-2.5 rounded-lg border border-brand/25 bg-brand/5 px-3 py-2.5 transition-colors hover:bg-brand/10"
+            className="focus-ring mb-2 flex items-center gap-2.5 rounded-lg border border-brand/25 bg-brand/5 px-3 py-2.5 transition-colors duration-1 ease-out hover:bg-brand/10"
           >
             <div className="rounded-md bg-brand/15 p-1">
-              <Zap className="h-3.5 w-3.5 text-brand" />
+              <Zap className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.06em] text-foreground">
@@ -194,7 +208,7 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
         {/* User info */}
         <div className="flex items-center gap-2.5 rounded-lg px-3 py-2">
           <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted">
-            <User className="h-3.5 w-3.5 text-muted-foreground" />
+            <User className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="truncate text-xs font-medium leading-none text-foreground">
@@ -220,17 +234,29 @@ export function SidebarContent({ onNavClick }: SidebarContentProps) {
           type="button"
           onClick={toggle}
           aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          className="group relative flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="focus-ring group relative flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors duration-1 ease-out hover:bg-accent hover:text-foreground"
         >
           {theme === "dark" ? (
-            <Sun className="h-4 w-4 shrink-0 text-muted-foreground/70" />
+            <Sun className="h-4 w-4 shrink-0 text-text3" aria-hidden="true" />
           ) : (
-            <Moon className="h-4 w-4 shrink-0 text-muted-foreground/70" />
+            <Moon className="h-4 w-4 shrink-0 text-text3" aria-hidden="true" />
           )}
           <span className="font-mono text-[13px] uppercase tracking-[0.06em]">
             {theme === "dark" ? "Light mode" : "Dark mode"}
           </span>
         </button>
+
+        {/* ⌘K keşfedilebilirliği — palette olmadan kimse denemez */}
+        <p className="flex items-center gap-2 px-3 pt-1 text-[11px] text-text3">
+          <Command className="h-3 w-3" aria-hidden="true" />
+          <span>
+            Press{" "}
+            <kbd className="rounded border border-border bg-muted px-1 font-mono text-[10px]">
+              ⌘K
+            </kbd>{" "}
+            to search
+          </span>
+        </p>
       </div>
     </>
   );
@@ -253,8 +279,9 @@ function SecondaryRow({
     <Link
       to={to}
       onClick={onNavClick}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+        "focus-ring group relative flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-1 ease-out",
         active
           ? "bg-brand/10 text-foreground"
           : "text-muted-foreground hover:bg-accent hover:text-foreground",
@@ -265,8 +292,12 @@ function SecondaryRow({
           "absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full",
           active ? "bg-brand" : "bg-transparent",
         )}
+        aria-hidden="true"
       />
-      <Icon className={cn("h-4 w-4 shrink-0", active ? "text-brand" : "text-muted-foreground/70")} />
+      <Icon
+        className={cn("h-4 w-4 shrink-0", active ? "text-brand" : "text-text3")}
+        aria-hidden="true"
+      />
       <span className="font-mono text-[13px] uppercase tracking-[0.06em]">{label}</span>
     </Link>
   );

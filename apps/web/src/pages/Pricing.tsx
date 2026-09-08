@@ -32,7 +32,7 @@ function CompareCell({ value }: { value: string | boolean }) {
   return value ? (
     <Check size={15} className="mx-auto text-brand" aria-label="Included" />
   ) : (
-    <Minus size={15} className="mx-auto text-muted-foreground/50" aria-label="Not included" />
+    <Minus size={15} className="mx-auto text-text3" aria-label="Not included" />
   );
 }
 
@@ -202,7 +202,7 @@ export function Pricing() {
                   {isAnnualPaid && (
                     <span
                       className={`font-display text-2xl font-bold tracking-[-0.03em] line-through tnum ${
-                        pop ? "text-background/35" : "text-muted-foreground/60"
+                        pop ? "text-background/35" : "text-text3"
                       }`}
                     >
                       ${formatPrice(plan.monthlyPrice)}
@@ -241,7 +241,7 @@ export function Pricing() {
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-[13.5px]">
                       <Check size={14} className="mt-0.5 shrink-0 text-brand" />
-                      <span className={pop ? "text-background/85" : "text-foreground/85"}>{f}</span>
+                      <span className={pop ? "text-background/85" : "text-muted-foreground"}>{f}</span>
                     </li>
                   ))}
                 </ul>

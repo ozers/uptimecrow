@@ -174,7 +174,7 @@ export function SetupChecklist() {
                   handleDismiss(e as unknown as React.MouseEvent);
                 }
               }}
-              className="ml-1 cursor-pointer rounded p-0.5 text-muted-foreground/60 transition-colors hover:bg-muted hover:text-foreground"
+              className="ml-1 cursor-pointer rounded p-0.5 text-text3 transition-colors hover:bg-muted hover:text-foreground"
               aria-label="Dismiss setup guide"
             >
               <X className="h-3.5 w-3.5" />
@@ -224,7 +224,7 @@ export function SetupChecklist() {
                           {step.title}
                         </p>
                         {step.optional && !step.done && (
-                          <span className="rounded border border-border px-1 py-px text-[9px] font-medium uppercase tracking-wide text-muted-foreground/70">
+                          <span className="rounded border border-border px-1 py-px text-[9px] font-medium uppercase tracking-wide text-text3">
                             opt
                           </span>
                         )}

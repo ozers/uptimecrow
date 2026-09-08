@@ -154,11 +154,11 @@ function IncidentRow({ incident, nested }: { incident: Incident; nested?: boolea
           ongoing
         </span>
       ) : (
-        <span className="hidden w-20 shrink-0 justify-end font-mono text-[11px] tnum text-muted-foreground/50 md:flex">
+        <span className="hidden w-20 shrink-0 justify-end font-mono text-[11px] tnum text-text3 md:flex">
           &mdash;
         </span>
       )}
-      <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-muted-foreground/70">
+      <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-text3">
         <RelativeTime date={incident.startedAt} />
       </span>
     </Link>
@@ -195,7 +195,7 @@ function GroupRow({ group }: { group: IncidentGroup }) {
           <span className="font-mono text-[11px] uppercase tracking-[0.06em] text-muted-foreground">
             {group.incidents.length}× down
           </span>
-          <span className="font-mono text-[11px] tnum text-muted-foreground/70">
+          <span className="font-mono text-[11px] tnum text-text3">
             {formatDurationMs(group.totalDownMs)} total
           </span>
           {group.hasActive ? (
@@ -206,7 +206,7 @@ function GroupRow({ group }: { group: IncidentGroup }) {
             <SeverityBadge severity={group.worstSeverity} />
           )}
         </div>
-        <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-muted-foreground/70">
+        <span className="w-20 shrink-0 text-right font-mono text-[11px] tnum text-text3">
           <RelativeTime date={group.incidents[0].startedAt} />
         </span>
       </button>

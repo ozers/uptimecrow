@@ -175,7 +175,7 @@ export function MonitorsList() {
                             </Tooltip>
                           );
                         })() : (
-                          <span className="text-xs text-muted-foreground/40">—</span>
+                          <span className="text-xs text-text3">—</span>
                         )}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
@@ -200,7 +200,7 @@ export function MonitorsList() {
                             </Tooltip>
                           );
                         })() : (
-                          <span className="text-xs text-muted-foreground/40">—</span>
+                          <span className="text-xs text-text3">—</span>
                         )}
                       </TableCell>
                       <TableCell className="text-right">

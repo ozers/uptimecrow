@@ -9,6 +9,15 @@
    mono instrumentation, shared with the public status page so the whole app
    is recognisably one product. Ink is the primary action; green is meaning
    (up / success / focus); everything else stays calm.
+
+   DALGA 1 — bu dosyada değişenler:
+   · --text-2 / --text-3 metin hiyerarşisi token'ları eklendi. Artık
+     `text-muted-foreground/40` gibi alfa kırpmaları YASAK: opak token kullan.
+   · Dark temada --muted-foreground 55% → 62% (AA borcu kapatıldı).
+   · Motion token'ları (--dur-*, --ease-*) eklendi; component'ler kendi
+     duration'larını uydurmayı bırakır.
+   · --density-row: tablo satır yüksekliği; .density-compact ile 34px'e iner.
+   · Focus ring tek kaynaktan: .focus-ring utility'si.
    ══════════════════════════════════════════════════════════════════════════ */
 
 @layer base {
@@ -27,7 +36,7 @@
     --secondary: 270 17% 14%;      /* #211b27 */
     --secondary-foreground: 41 33% 91%;
     --muted: 270 16% 15%;
-    --muted-foreground: 267 8% 55%; /* text2/3 */
+    --muted-foreground: 267 8% 62%; /* AA on --card: was 55%, lifted */
     --accent: 270 16% 17%;
     --accent-foreground: 41 33% 91%;
     --destructive: 4 85% 61%;      /* #f05548 */
@@ -36,6 +45,12 @@
     --input: 267 16% 22%;
     --ring: 142 62% 50%;           /* brand green focus */
     --radius: 0.75rem;
+
+    /* ── Metin hiyerarşisi (3 kademe, hepsi opak) ──
+       text-1 = --foreground   : başlık, birincil değer
+       text-2 = --muted-foreground : açıklama, tablo ikincil hücre
+       text-3 = --text-3       : timestamp, meta, placeholder — AA sınırı  */
+    --text-3: 267 8% 52%;
 
     /* Brand accent — the crow's green, used for links/active/focus */
     --brand: 142 62% 50%;          /* #2fce6f */
@@ -50,7 +65,7 @@
     --danger-fg: 4 85% 66%;
     --info: 213 94% 68%;           /* #60a5fa */
     --info-fg: 213 94% 72%;
-    --neutral-fg: 267 8% 55%;
+    --neutral-fg: 267 8% 62%;
 
     /* Paper grain visibility (screen blend on dark) */
     --grain-opacity: 0.10;
@@ -82,6 +97,8 @@
     --input: 38 14% 79%;
     --ring: 146 64% 31%;
 
+    --text-3: 265 7% 50%;          /* 4.6:1 on --card */
+
     --brand: 146 64% 31%;          /* mature green — unchanged, brand anchor */
     --brand-foreground: 42 22% 97%;
 
@@ -97,6 +114,27 @@
 
     --grain-opacity: 0.17;         /* less paper texture in the tool */
     --grain-blend: multiply;
+  }
+
+  /* ── Motion: üç süre, iki easing. Component'ler bunları kullanır. ──
+     dur-1 hover/renk, dur-2 açılır panel/sheet, dur-3 sayfa geçişi. */
+  :root,
+  .dark,
+  .light {
+    --dur-1: 120ms;
+    --dur-2: 180ms;
+    --dur-3: 280ms;
+    --ease-out: cubic-bezier(0.22, 0.85, 0.28, 1);
+    --ease-in-out: cubic-bezier(0.5, 0, 0.4, 1);
+
+    /* Tablo/liste yoğunluğu — .density-compact ile ezilir */
+    --density-row: 3.25rem;  /* 52px comfortable */
+    --density-cell-y: 0.75rem;
+  }
+
+  .density-compact {
+    --density-row: 2.125rem; /* 34px */
+    --density-cell-y: 0.3125rem;
   }
 }
 
@@ -155,4 +193,40 @@
   .text-brand { color: hsl(var(--brand)); }
   .bg-brand { background-color: hsl(var(--brand)); }
   .tnum { font-variant-numeric: tabular-nums; }
+
+  /* Tek focus dili — link, satır, kart, custom trigger hepsinde aynı.
+     Radix/native focus-visible'ı olmayan elemanlara bunu ekle. */
+  .focus-ring {
+    outline: none;
+  }
+  .focus-ring:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  /* Dokunma hedefi — mobilde 44px garanti. Küçük ikon butonlarına ekle. */
+  .touch-target {
+    position: relative;
+  }
+  .touch-target::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+  @media (min-width: 768px) {
+    .touch-target::before { content: none; }
+  }
+
+  /* Motion yardımcıları */
+  .motion-1 { transition-duration: var(--dur-1); transition-timing-function: var(--ease-out); }
+  .motion-2 { transition-duration: var(--dur-2); transition-timing-function: var(--ease-out); }
+  .motion-3 { transition-duration: var(--dur-3); transition-timing-function: var(--ease-in-out); }
+
+  /* Mobil alt sekme çubuğu için güvenli alan payı */
+  .pb-tabbar { padding-bottom: calc(3.75rem + env(safe-area-inset-bottom)); }
 }

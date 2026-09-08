@@ -157,7 +157,7 @@ export function IncidentDetail() {
                             <RelativeTime date={update.createdAt} />
                           </span>
                         </div>
-                        <p className="text-sm leading-relaxed text-foreground/80">{update.body}</p>
+                        <p className="text-sm leading-relaxed text-muted-foreground">{update.body}</p>
                       </div>
                     </div>
                   ))}

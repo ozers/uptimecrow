@@ -12,7 +12,7 @@ export function LoadError({
 }) {
   return (
     <div className="flex flex-col items-center justify-center border-y border-border py-16 text-center">
-      <AlertTriangle className="mb-3 h-8 w-8 text-muted-foreground/40" />
+      <AlertTriangle className="mb-3 h-8 w-8 text-text3" />
       <p className="text-sm font-medium">{message}</p>
       <p className="mt-1 text-xs text-muted-foreground">
         Something went wrong fetching your data. Check your connection and try again.
