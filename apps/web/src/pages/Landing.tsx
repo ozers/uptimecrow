@@ -121,18 +121,34 @@ export function LandingPage() {
           Built-in monitoring, automatic incidents, and a pre-rendered page that
           keeps answering.
         </p>
-        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+        {/* One primary action. The GitHub link used to sit beside it as an
+            equal-weight button, which is a second destination competing with
+            the only one that matters here — it is a text link now, and the
+            reassurance sits with the button instead of below the screenshot,
+            where it answers "what does this cost me" at the moment of the
+            decision rather than after it. */}
+        <div className="mt-7 flex flex-col items-center gap-3">
           <Button size="lg" asChild>
             <Link to="/register">
-              Create your status page
+              Create your status page — free
               <ArrowRight className="ml-1.5 h-4 w-4" />
             </Link>
           </Button>
-          <Button size="lg" variant="outline" asChild>
-            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-              ★ Star on GitHub
-            </a>
-          </Button>
+          <p className="font-mono text-[12px] text-muted-foreground">
+            10 monitors · no credit card · or{" "}
+            <Link to="/self-host" className="text-foreground underline-offset-2 hover:underline">
+              self-host it
+            </Link>{" "}
+            under AGPL-3.0
+          </p>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="focus-ring rounded text-[13px] text-muted-foreground transition-colors hover:text-brand"
+          >
+            ★ Star on GitHub
+          </a>
         </div>
 
         {/* The product, immediately. Cropped at the fold — the fade tells you
@@ -174,14 +190,13 @@ export function LandingPage() {
           </figcaption>
         </figure>
 
-        <p className="mt-6 font-mono text-[12px] text-muted-foreground">
-          free tier · no credit card · self-host with{" "}
-          <span className="text-foreground">docker compose up</span>
-        </p>
       </section>
 
       {/* ── HOW — three steps, one line each ── */}
       <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-14 sm:px-8" id="how">
+        <h2 className="mb-6 font-display text-[24px] font-bold tracking-[-0.03em]">
+          From a URL to a public status page in three steps.
+        </h2>
         <div className="grid grid-cols-1 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           {[
             { n: "01", t: "Add your endpoints", d: "HTTP, TCP or keyword checks." },
@@ -199,6 +214,9 @@ export function LandingPage() {
 
       {/* ── WHY — three proofs, ruled ── */}
       <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-8 sm:px-8" id="features">
+        <h2 className="mb-7 font-display text-[24px] font-bold tracking-[-0.03em]">
+          Uptime monitoring and a status page that outlives the outage.
+        </h2>
         <div className="grid grid-cols-1 gap-x-14 gap-y-10 sm:grid-cols-3">
           {[
             {
@@ -232,6 +250,9 @@ export function LandingPage() {
            the page rather than one click away. Numbers come from PLAN_CATALOG
            so this cannot drift from /pricing. ── */}
       <section className="mx-auto max-w-5xl scroll-mt-20 px-6 py-8 sm:px-8" id="pricing">
+        <h2 className="mb-6 font-display text-[24px] font-bold tracking-[-0.03em]">
+          Pricing.
+        </h2>
         <div className="grid grid-cols-2 divide-border border-y border-border sm:grid-cols-4 sm:divide-x">
           {PLAN_CATALOG.map((plan) => (
             <div key={plan.plan} className="px-5 py-5">
@@ -266,12 +287,17 @@ export function LandingPage() {
             </p>
           </div>
         </div>
-        <p className="mt-4 text-center text-[13px] text-muted-foreground">
-          Annual billing is two months free.{" "}
-          <Link to="/pricing" className="text-brand hover:underline">
-            Full pricing and limits →
-          </Link>
-        </p>
+        <div className="mt-5 flex flex-col items-center gap-2">
+          <Button asChild>
+            <Link to="/register">Start on the free plan</Link>
+          </Button>
+          <p className="text-center text-[13px] text-muted-foreground">
+            Annual billing is two months free.{" "}
+            <Link to="/pricing" className="text-brand hover:underline">
+              Full pricing and limits →
+            </Link>
+          </p>
+        </div>
       </section>
 
       {/* ── HONEST COMPARISON — the first question anyone arriving from Hacker
@@ -330,6 +356,7 @@ export function LandingPage() {
         </p>
       </section>
 
+      <FAQSection />
       {/* ── INK CTA ── */}
       <section className="mx-auto max-w-5xl px-6 py-16 sm:px-8">
         <div className="rounded-xl bg-foreground px-8 py-12 text-center text-background sm:px-14">
@@ -355,7 +382,6 @@ export function LandingPage() {
         </div>
       </section>
 
-      <FAQSection />
       <MarketingFooter />
     </div>
   );

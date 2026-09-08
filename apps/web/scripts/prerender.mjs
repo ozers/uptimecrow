@@ -86,10 +86,11 @@ const ROUTES = [
   <p class="uc-lead">Built-in monitoring, automatic incidents, and a pre-rendered
   status page that keeps answering "is it down?" while everything else is on fire.
   Open source, AGPL-3.0, self-hostable.</p>
-  <p><a class="uc-cta" href="/register">Start free — no credit card</a>
-     <a href="https://github.com/ozers/uptimecrow" rel="noopener">Star on GitHub</a></p>
+  <p><a class="uc-cta" href="/register">Create your status page — free</a></p>
+  <p>10 monitors, no credit card — or <a href="/self-host">self-host it</a> under
+  AGPL-3.0. <a href="https://github.com/ozers/uptimecrow" rel="noopener">Star on GitHub</a>.</p>
 
-  <h2>How it works</h2>
+  <h2>From a URL to a public status page in three steps</h2>
   <ol>
     <li><strong>Add a monitor.</strong> HTTP, TCP or keyword check on any URL or
     host. Pick the interval; GET or lightweight HEAD requests.</li>
@@ -100,7 +101,7 @@ const ROUTES = [
     Slack, Discord and webhook alerts for your team.</li>
   </ol>
 
-  <h2>What you get</h2>
+  <h2>Uptime monitoring and a status page that outlives the outage</h2>
   <ul>
     <li>Pre-rendered status pages that survive your origin going down</li>
     <li>HTTP, TCP and keyword monitors with configurable intervals</li>
@@ -112,7 +113,7 @@ const ROUTES = [
     <li>Self-host the whole platform with <code>docker compose up</code></li>
   </ul>
 
-  <h2>Pricing in one line</h2>
+  <h2>Pricing</h2>
   <p>Free ($0) — 1 status page, 10 monitors, 5-minute checks.
   Indie ($19/mo) — 5 status pages with custom domain, 50 monitors, 1-minute checks.
   Pro ($49/mo) — 10 status pages, 100 monitors, 30-second checks.
