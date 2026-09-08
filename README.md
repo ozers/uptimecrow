@@ -173,6 +173,9 @@ In development the web app runs as its own container so you get Vite's
 hot-reload. In production there is no separate web container: the API serves the
 built SPA from the same origin.
 
+Already running Postgres or Redis locally? Set `POSTGRES_PORT`, `REDIS_PORT`,
+`API_PORT` or `WEB_PORT` in `.env` rather than stopping your own services.
+
 ### Production self-host
 
 For an actual production deploy on a VPS, use `docker-compose.prod.yml` — it pulls pre-built images from GHCR, runs the API in production mode, and runs migrations automatically on startup.

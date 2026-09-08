@@ -1,8 +1,10 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      # Override in .env if you already run Postgres locally.
+      - "${POSTGRES_PORT:-5432}:5432"
     environment:
       POSTGRES_DB: uptimecrow
       POSTGRES_USER: uptimecrow
@@ -17,8 +19,9 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -30,8 +33,9 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
       target: development
+    restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${API_PORT:-3000}:3000"
     environment:
       MODE: all
       PORT: "3000"
@@ -64,8 +68,9 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       target: development
+    restart: unless-stopped
     ports:
-      - "5173:5173"
+      - "${WEB_PORT:-5173}:5173"
     environment:
       API_URL: http://api:3000
     volumes:
