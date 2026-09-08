@@ -1,6 +1,7 @@
 {
   "name": "uptimecrow",
   "private": true,
+  "packageManager": "pnpm@10.30.2",
   "license": "AGPL-3.0-only",
   "homepage": "https://uptimecrow.com",
   "repository": {

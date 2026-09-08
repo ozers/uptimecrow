@@ -75,4 +75,10 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/health >/dev/null 2>&1 || exit 1
 
-CMD ["/bin/sh", "-c", "pnpm --filter @uptimecrow/api db:migrate && node /app/apps/api/dist/index.js"]
+# node, not pnpm. Invoking pnpm here made corepack resolve and download a pnpm
+# release on every container start — so startup needed the network, and the
+# version it picked (newer than the one the image was built with) re-linked
+# /app/node_modules without bcrypt's native binding. The API then crash-looped
+# on `Cannot find module bcrypt_lib.node`, which meant nobody could register or
+# log in on a self-hosted install.
+CMD ["/bin/sh", "-c", "node /app/apps/api/dist/db/migrate.js && node /app/apps/api/dist/index.js"]
