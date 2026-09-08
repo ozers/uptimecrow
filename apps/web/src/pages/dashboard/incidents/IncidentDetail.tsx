@@ -3,21 +3,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createIncidentUpdateSchema, INCIDENT_STATUSES } from "@uptimecrow/shared";
 import { toast } from "sonner";
-import { Send, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { useIncident, useCreateIncidentUpdate, useUpdateIncident } from "@/lib/queries/incidents";
+import { useMonitors } from "@/lib/queries/monitors";
+import { IncidentUpdateComposer } from "@/components/incident-update-composer";
 import { ApiError } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { PageHeader } from "@/components/page-header";
 import { IncidentStatusBadge } from "@/components/status-badge";
 import { SeverityBadge } from "@/components/severity-badge";
@@ -53,6 +46,9 @@ function IncidentDetailSkeleton() {
 export function IncidentDetail() {
   const { id } = useParams<{ id: string }>();
   const { data, isLoading } = useIncident(id!);
+  // Only used to name the service in the update templates; the list is already
+  // cached by the dashboard, so this costs nothing.
+  const { data: monitors } = useMonitors();
   const createUpdate = useCreateIncidentUpdate(id!);
   const updateIncident = useUpdateIncident(id!);
 
@@ -73,6 +69,9 @@ export function IncidentDetail() {
 
   const { incident, updates } = data;
   const isActive = incident.status !== "resolved";
+  const serviceName = incident.monitorId
+    ? (monitors?.find((m) => m.id === incident.monitorId)?.name ?? null)
+    : null;
 
   const onSubmitUpdate = (formData: UpdateForm) => {
     createUpdate.mutate(formData, {
@@ -172,46 +171,17 @@ export function IncidentDetail() {
         {isActive && (
           <div className="max-w-xl">
             <section className="border-t border-border pt-5">
-              <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                Post Update
-              </p>
-              <div>
-                <form onSubmit={handleSubmit(onSubmitUpdate)} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <Select
-                      value={watch("status")}
-                      onValueChange={(v) => setValue("status", v as UpdateForm["status"])}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {INCIDENT_STATUSES.map((s) => (
-                          <SelectItem key={s} value={s} className="capitalize">
-                            {s}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Message</Label>
-                    <Textarea
-                      placeholder="Describe the current state..."
-                      rows={4}
-                      {...register("body")}
-                    />
-                    {errors.body && (
-                      <p className="text-sm text-danger-foreground">{errors.body.message}</p>
-                    )}
-                  </div>
-                  <Button type="submit" className="w-full" disabled={createUpdate.isPending}>
-                    <Send className="mr-2 h-4 w-4" />
-                    {createUpdate.isPending ? "Posting..." : "Post Update"}
-                  </Button>
-                </form>
-              </div>
+              <IncidentUpdateComposer
+                serviceName={serviceName}
+                status={watch("status")}
+                body={watch("body") ?? ""}
+                onStatusChange={(v) => setValue("status", v as UpdateForm["status"])}
+                onBodyChange={(v) => setValue("body", v, { shouldValidate: true })}
+                error={errors.body?.message}
+                pending={createUpdate.isPending}
+                onSubmit={handleSubmit(onSubmitUpdate)}
+                statuses={INCIDENT_STATUSES}
+              />
             </section>
           </div>
         )}

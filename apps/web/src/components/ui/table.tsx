@@ -2,17 +2,69 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * DALGA 3 — tabloya yoğunluk modu eklendi.
+ *
+ * 100+ monitörü olan Pro/Team hesapları bugün sonsuz kaydırıyor. Compact mod
+ * satırı 52px'ten 34px'e indirir: ekranda ~%50 daha fazla satır.
+ *
+ * Yoğunluk `<Table density="compact">` ile ya da `useTableDensity()` hook'u +
+ * `<DensityToggle>` ile kullanıcı tarafından seçilir (localStorage'da kalır).
+ * Satır yükseklikleri globals.css'teki --density-row token'ından gelir, yani
+ * kart listeleri de aynı ölçüye uyabilir.
+ */
+type Density = "comfortable" | "compact"
+
+const DensityContext = React.createContext<Density>("comfortable")
+
+const DENSITY_KEY = "uc-table-density"
+
+/** Kullanıcının seçtiği yoğunluk — sayfalar arasında ve yenilemede korunur. */
+export function useTableDensity(defaultValue: Density = "comfortable") {
+  const [density, setDensity] = React.useState<Density>(() => {
+    try {
+      const stored = localStorage.getItem(DENSITY_KEY)
+      return stored === "compact" || stored === "comfortable" ? stored : defaultValue
+    } catch {
+      return defaultValue
+    }
+  })
+
+  const set = React.useCallback((next: Density) => {
+    setDensity(next)
+    try {
+      localStorage.setItem(DENSITY_KEY, next)
+    } catch {
+      /* storage kapalı olabilir — sessizce yoksay */
+    }
+  }, [])
+
+  const toggle = React.useCallback(() => {
+    set(density === "compact" ? "comfortable" : "compact")
+  }, [density, set])
+
+  return { density, setDensity: set, toggle }
+}
+
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
+  React.HTMLAttributes<HTMLTableElement> & { density?: Density }
+>(({ className, density = "comfortable", ...props }, ref) => (
+  <DensityContext.Provider value={density}>
+    <div
+      className={cn(
+        "relative w-full overflow-auto",
+        density === "compact" && "density-compact",
+      )}
+    >
+      <table
+        ref={ref}
+        data-density={density}
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  </DensityContext.Provider>
 ))
 Table.displayName = "Table"
 
@@ -54,11 +106,12 @@ TableFooter.displayName = "TableFooter"
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <tr
     ref={ref}
+    style={{ height: "var(--density-row)", ...style }}
     className={cn(
-      "border-b transition-colors hover:bg-accent/60 data-[state=selected]:bg-muted cursor-default",
+      "border-b transition-colors duration-1 ease-out hover:bg-accent/60 data-[state=selected]:bg-muted cursor-default",
       className
     )}
     {...props}
@@ -84,11 +137,12 @@ TableHead.displayName = "TableHead"
 const TableCell = React.forwardRef<
   HTMLTableCellElement,
   React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
+>(({ className, style, ...props }, ref) => (
   <td
     ref={ref}
+    style={{ paddingTop: "var(--density-cell-y)", paddingBottom: "var(--density-cell-y)", ...style }}
     className={cn(
-      "p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "px-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
       className
     )}
     {...props}
@@ -117,4 +171,6 @@ export {
   TableRow,
   TableCell,
   TableCaption,
+  DensityContext,
 }
+export type { Density }
