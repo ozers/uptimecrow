@@ -186,7 +186,7 @@ cp .env.prod.example .env
 # Generate strong secrets with: openssl rand -hex 32
 
 # Pin a release rather than tracking latest:
-#   UPTIMECROW_VERSION=v0.1.0
+#   UPTIMECROW_VERSION=v0.1.1
 docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml logs -f api
 ```
@@ -347,7 +347,7 @@ docker run -p 80:3000 --env-file .env uptimecrow
 Or pull a published release instead of building:
 
 ```bash
-docker pull ghcr.io/ozers/uptimecrow/api:v0.1.0
+docker pull ghcr.io/ozers/uptimecrow/api:v0.1.1
 ```
 
 ### CI/CD

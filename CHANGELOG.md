@@ -11,7 +11,38 @@ version tag in production** — `:latest` moves whenever `main` does.
 
 Nothing yet.
 
+## [0.1.1] — 2026-09-11
+
+**Upgrade from 0.1.0 immediately — the 0.1.0 image does not start.** Use this
+release as the first one to self-host.
+
+### Fixed
+
+- **The production image crash-looped on startup.** Its start command ran
+  `pnpm`, and with no `packageManager` pinned, corepack downloaded the newest
+  pnpm on every boot. That version ignored the `onlyBuiltDependencies`
+  allowlist, re-linked `node_modules` without bcrypt's native binding, and the
+  API died with `Cannot find module bcrypt_lib.node` — nobody could register or
+  log in. The container now runs `node` directly, needs no network to start, and
+  the package manager is pinned.
+- `docker compose up` could leave the API exited for good after a slow first
+  start (`getaddrinfo ENOTFOUND postgres`). Every development service now has a
+  restart policy.
+- Host ports in the development compose file were hardcoded, so anyone already
+  running Postgres or Redis locally failed on the first command. Set
+  `POSTGRES_PORT`, `REDIS_PORT`, `API_PORT` or `WEB_PORT` to move them.
+- The documented setup without Docker failed at every step: `pnpm db:migrate`
+  ran a compiled file that does not exist in a fresh clone, and nothing read
+  `.env`. Both work from source now. Requires Node 20.12 or newer.
+
+### Removed
+
+- References to `pnpm lint` in the contributing guide and PR template. There is
+  no linter configured in this repository.
+
 ## [0.1.0] — 2026-09-09
+
+> **Do not run this release.** Its container image fails to start — see 0.1.1.
 
 First tagged release. Everything below has been running in production; the tag
 exists so self-hosters have something to pin.
@@ -78,5 +109,6 @@ exists so self-hosters have something to pin.
 - **Self-hosting** — `docker compose up` with Postgres and Redis; AGPL-3.0, no
   feature gates, telemetry off unless you configure it.
 
-[Unreleased]: https://github.com/ozers/uptimecrow/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/ozers/uptimecrow/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/ozers/uptimecrow/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/ozers/uptimecrow/releases/tag/v0.1.0

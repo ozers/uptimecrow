@@ -7,7 +7,7 @@ Guidance for Claude Code (and other AI assistants) working in this repository. K
 - **Frontend:** Vite + React + React Router + Tailwind CSS
 - **Database:** PostgreSQL 16 + Redis 7
 - **Email:** Amazon SES (`@aws-sdk/client-sesv2`)
-- **Infra:** Docker, pnpm workspaces, Node >= 20
+- **Infra:** Docker, pnpm workspaces (pinned via `packageManager`), Node >= 20.12
 
 ## Development Commands
 ```bash
@@ -72,8 +72,10 @@ Running a single vitest file: `pnpm --filter @uptimecrow/api exec vitest run pat
 ### Docker & CI
 - Multi-stage Dockerfiles for API and web (development + production targets). Default `docker-compose.yml` uses `target: development` with bind mounts for hot-reload. `docker-compose.prod.yml` pulls pre-built GHCR images and runs in production mode.
 - The production API image also contains the built SPA (`/app/web`, `WEB_ROOT`). `apps/api/src/web.ts` serves it with the pre-render-aware `try_files` order and the cache headers; the SPA falls back to `/index.html`. The nginx web image still exists for the dev compose file and legacy deploys, but the self-host path no longer uses it.
-- CI (`.github/workflows/ci.yml`): typecheck + tests with Postgres 16 + Redis 7 service containers + Docker build validation.
-- Deploy (`.github/workflows/deploy.yml`): pushes API and web images to `ghcr.io/${{ github.repository }}/{api,web}:latest` on `main`.
+- CI (`.github/workflows/ci.yml`): typecheck + tests with Postgres 16 + Redis 7 service containers + Docker build validation + Trivy scan. CI builds the production image but never runs it — after touching a Dockerfile or `package.json`, run `docker-compose.prod.yml` against a local build before tagging a release.
+- Deploy (`.github/workflows/deploy.yml`): pushes API and web images as `:latest` and `:sha-<commit>` on `main`; a `v*.*.*` tag also publishes `:vX.Y.Z` and `:X.Y`.
+- The production container must start with `node`, never `pnpm` — invoking pnpm at runtime makes corepack download a pnpm release on boot, which re-linked `node_modules` without bcrypt's native binding and crash-looped the 0.1.0 image.
+- Dev scripts load the root `.env` via `--env-file-if-exists`; nothing in the app imports dotenv.
 
 ## Open core split
 
