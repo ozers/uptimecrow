@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveStaticPath, cacheControlFor } from "./web.js";
+import { resolveStaticPath, cacheControlFor, isKnownAppRoute, looksLikeAsset } from "./web.js";
 
 // These rules used to live in nginx.conf, where nothing could test them. The
 // pre-rendered marketing routes (/pricing -> /pricing/index.html) and the SPA
@@ -62,5 +62,47 @@ describe("cacheControlFor", () => {
 
   it("gives everything else a modest TTL", () => {
     expect(cacheControlFor("/favicon.ico")).toBe("public, max-age=3600");
+  });
+});
+
+// Every unknown path used to answer 200 with the app shell. That makes a typo,
+// a stale link and a missing image indistinguishable from a real page — search
+// engines index the lot as soft 404s, and a missing asset (og-image.png) looks
+// like it is being served.
+describe("isKnownAppRoute", () => {
+  it("recognises the marketing and auth routes", () => {
+    for (const p of ["/", "/pricing", "/docs", "/self-host", "/changelog", "/privacy", "/terms", "/login", "/register"]) {
+      expect(isKnownAppRoute(p)).toBe(true);
+    }
+  });
+
+  it("recognises dashboard routes at any depth", () => {
+    expect(isKnownAppRoute("/dashboard")).toBe(true);
+    expect(isKnownAppRoute("/dashboard/monitors/42/edit")).toBe(true);
+  });
+
+  it("ignores a trailing slash and a query string", () => {
+    expect(isKnownAppRoute("/pricing/")).toBe(true);
+    expect(isKnownAppRoute("/pricing?ref=hn")).toBe(true);
+  });
+
+  it("rejects paths the app has no page for", () => {
+    expect(isKnownAppRoute("/asdf")).toBe(false);
+    expect(isKnownAppRoute("/dashboardy")).toBe(false);
+    expect(isKnownAppRoute("/wp-admin")).toBe(false);
+  });
+});
+
+describe("looksLikeAsset", () => {
+  it("treats a path ending in a file extension as an asset", () => {
+    expect(looksLikeAsset("/og-image.png")).toBe(true);
+    expect(looksLikeAsset("/assets/index-abc123.js")).toBe(true);
+    expect(looksLikeAsset("/favicon.ico")).toBe(true);
+  });
+
+  it("treats page paths as pages", () => {
+    expect(looksLikeAsset("/")).toBe(false);
+    expect(looksLikeAsset("/pricing")).toBe(false);
+    expect(looksLikeAsset("/dashboard/monitors/42")).toBe(false);
   });
 });

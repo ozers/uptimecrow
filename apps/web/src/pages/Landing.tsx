@@ -98,9 +98,9 @@ function FAQSection() {
 
 export function LandingPage() {
   usePageMeta({
-    title: "UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring",
+    title: "UptimeCrow — Open-Source Status Pages & Uptime Monitoring",
     description:
-      "Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, email subscribers, and custom domains. Self-host under AGPL-3.0 or use the hosted free tier.",
+      "Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents and email subscribers. Free tier or self-host.",
     canonical: "https://uptimecrow.com/",
     jsonLd: LANDING_FAQ_LD,
   });

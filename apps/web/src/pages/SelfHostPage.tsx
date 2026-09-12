@@ -87,7 +87,7 @@ const COMPARISON: { feature: string; self: [boolean, string]; cloud: [boolean, s
 
 export default function SelfHostPage() {
   usePageMeta({
-    title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
+    title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring",
     description:
       "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     canonical: "https://uptimecrow.com/self-host",

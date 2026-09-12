@@ -77,9 +77,10 @@ const faq = [
 const ROUTES = [
   {
     route: "/",
-    title: "UptimeCrow — Open-Source Status Pages with Built-In Uptime Monitoring",
+    priority: "1.0",
+    title: "UptimeCrow — Open-Source Status Pages & Uptime Monitoring",
     description:
-      "Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents, email subscribers, and custom domains. Self-host under AGPL-3.0 or use the hosted free tier.",
+      "Open-source status pages that stay up when you're down. Built-in uptime monitoring, automatic incidents and email subscribers. Free tier or self-host.",
     faqLd: true,
     body: `
   <h1>Status pages that stay up when you're down.</h1>
@@ -137,7 +138,7 @@ const ROUTES = [
     route: "/pricing",
     title: "UptimeCrow Pricing — Free Uptime Monitoring Plans",
     description:
-      "Start free with 10 monitors. Upgrade to Indie ($19/mo) for 1-minute checks, 1-year history, and Slack/Discord alerts, or Pro ($49/mo) for 30-second checks and 100 monitors.",
+      "Start free with 10 monitors. Indie ($19/mo) adds 1-minute checks, custom domains and Slack alerts; Pro ($49/mo) 30-second checks and 100 monitors.",
     body: `
   <h1>Simple pricing. No lock-in.</h1>
   <p class="uc-lead">Start free, no credit card. Every plan includes monitoring,
@@ -235,7 +236,7 @@ const ROUTES = [
   },
   {
     route: "/self-host",
-    title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring with Docker",
+    title: "Self-Host UptimeCrow — Open-Source Uptime Monitoring",
     description:
       "Run UptimeCrow on your own infrastructure with a single Docker Compose command. AGPL-3.0 licensed, open-source uptime monitoring and status pages. No vendor lock-in.",
     body: `
@@ -298,9 +299,12 @@ const ROUTES = [
   },
   {
     route: "/privacy",
+    lastmod: "2026-05-01",
+    changefreq: "yearly",
+    priority: "0.3",
     title: "Privacy Policy — UptimeCrow",
     description:
-      "How UptimeCrow handles your account data, monitor configurations, and subscriber lists. GDPR and CCPA rights, sub-processors (AWS, Polar), retention windows, and contact for data requests.",
+      "How UptimeCrow handles your account data, monitors and subscriber lists: GDPR and CCPA rights, sub-processors, retention windows and data requests.",
     body: `
   <h1>Privacy Policy</h1>
   <h2>Data we collect</h2>
@@ -330,6 +334,9 @@ const ROUTES = [
   },
   {
     route: "/terms",
+    lastmod: "2026-05-01",
+    changefreq: "yearly",
+    priority: "0.3",
     title: "Terms of Service — UptimeCrow",
     description:
       "The terms governing your use of UptimeCrow: acceptable use, billing and refund policy, no-warranty disclaimer, termination, and how we communicate material changes.",
@@ -445,5 +452,25 @@ for (const page of ROUTES) {
   await writeFile(path.join(dir, "index.html"), html);
   console.log(`prerendered ${page.route} → ${path.relative(DIST, path.join(dir, "index.html"))}`);
 }
+
+// The sitemap is generated from the same table, so a new route cannot ship
+// without being listed and lastmod cannot drift — it used to say July while the
+// pages changed in September.
+const BUILD_DATE = new Date().toISOString().slice(0, 10);
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${ROUTES.map((page) => {
+  const loc = ORIGIN + (page.route === "/" ? "/" : page.route);
+  return `  <url>
+    <loc>${loc}</loc>
+    <lastmod>${page.lastmod ?? BUILD_DATE}</lastmod>
+    <changefreq>${page.changefreq ?? "weekly"}</changefreq>
+    <priority>${page.priority ?? "0.8"}</priority>
+  </url>`;
+}).join("\n")}
+</urlset>
+`;
+await writeFile(path.join(DIST, "sitemap.xml"), sitemap);
+console.log(`prerender: sitemap.xml with ${ROUTES.length} urls`);
 
 console.log(`prerender: ${ROUTES.length} routes written to dist/`);

@@ -27,6 +27,7 @@ import { Pricing } from "./pages/Pricing";
 import { Docs } from "./pages/Docs";
 import SelfHostPage from "./pages/SelfHostPage";
 import Changelog from "./pages/Changelog";
+import { NotFound } from "./pages/NotFound";
 
 // Scroll behaviour on navigation:
 //  - `/#features` (from any page) scrolls to that section — React Router does
@@ -96,6 +97,8 @@ export function App() {
             <Route path="/dashboard/settings" element={<Settings />} />
           </Route>
         </Route>
+        {/* No catch-all meant an unknown URL rendered a blank page with a 200. */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

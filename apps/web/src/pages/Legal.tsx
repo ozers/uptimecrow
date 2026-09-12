@@ -33,7 +33,7 @@ export function Privacy() {
   usePageMeta({
     title: "Privacy Policy — UptimeCrow",
     description:
-      "How UptimeCrow handles your account data, monitor configurations, and subscriber lists. GDPR and CCPA rights, sub-processors (AWS, Polar), retention windows, and contact for data requests.",
+      "How UptimeCrow handles your account data, monitors and subscriber lists: GDPR and CCPA rights, sub-processors, retention windows and data requests.",
     canonical: "https://uptimecrow.com/privacy",
   });
   return (

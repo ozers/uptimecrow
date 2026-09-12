@@ -43,12 +43,44 @@ export function buildFileIndex(root: string): Set<string> {
   return files;
 }
 
+// Paths the SPA owns. Anything outside this list has no page behind it, so the
+// shell is still served (the app renders its not-found screen) but with a 404
+// status — otherwise every typo and every stale link is a soft 404 that search
+// engines happily index. Must stay in sync with the routes in apps/web/src/App.tsx.
+const APP_ROUTES = new Set([
+  "/",
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/privacy",
+  "/terms",
+  "/docs",
+  "/pricing",
+  "/self-host",
+  "/changelog",
+]);
+const APP_ROUTE_PREFIXES = ["/dashboard"];
+
+export function isKnownAppRoute(urlPath: string): boolean {
+  const clean = (urlPath.split("?")[0] || "/").replace(/\/+$/, "") || "/";
+  if (APP_ROUTES.has(clean)) return true;
+  return APP_ROUTE_PREFIXES.some((p) => clean === p || clean.startsWith(`${p}/`));
+}
+
+// A path with a file extension is asking for an asset, not a page. Handing it
+// the HTML shell with a 200 is how a missing og-image.png looked fine for weeks:
+// every share was imageless while the URL answered "OK".
+export function looksLikeAsset(urlPath: string): boolean {
+  const last = (urlPath.split("?")[0] || "").split("/").pop() || "";
+  return /\.[a-z0-9]{2,5}$/i.test(last);
+}
+
 // The nginx `try_files $uri $uri.html $uri/index.html /index.html` rule, ported
 // so it can be tested. `$uri/` is deliberately absent: nginx answers that with a
 // 301 to a trailing slash, which fights the canonical URLs and the sitemap.
 //
-// Returns the file to serve, or "/index.html" for the SPA fallback — an unknown
-// path is a client-side route, not a 404, and React Router decides.
+// Returns the file to serve, or "/index.html" for the SPA fallback.
 export function resolveStaticPath(urlPath: string, files: Set<string>): string {
   const clean = decodeURIComponent(urlPath.split("?")[0]);
 
@@ -88,9 +120,24 @@ export function mountWebApp(app: Hono): boolean {
 
   // Mounted last, so every API, status, badge and health route above wins.
   app.get("*", async (c, next) => {
-    const target = resolveStaticPath(c.req.path, files);
+    const reqPath = c.req.path;
+    const target = resolveStaticPath(reqPath, files);
+    const missing = target === "/index.html" && !files.has(reqPath);
+
+    // A missing file gets a real 404 instead of the HTML shell.
+    if (missing && looksLikeAsset(reqPath)) {
+      return c.text("Not found", 404);
+    }
+
     c.header("Cache-Control", cacheControlFor(target));
-    return serveStatic({ root, rewriteRequestPath: () => target })(c, next);
+    const res = await serveStatic({ root, rewriteRequestPath: () => target })(c, next);
+
+    // Unknown page: the shell still renders so the app can show its not-found
+    // screen, but the status tells crawlers there is nothing here.
+    if (missing && !isKnownAppRoute(reqPath) && res instanceof Response) {
+      return new Response(res.body, { status: 404, headers: res.headers });
+    }
+    return res;
   });
 
   return true;

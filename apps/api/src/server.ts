@@ -18,6 +18,7 @@ import { authRateLimit, apiRateLimit, publicRateLimit } from "./middleware/rate-
 import { securityHeaders } from "./middleware/security.js";
 import { customDomainRouter } from "./middleware/custom-domain.js";
 import { mountWebApp } from "./web.js";
+import { appHostFromUrl, wwwRedirectTarget } from "./utils/www-redirect.js";
 import { logger } from "./utils/logger.js";
 
 const app = new Hono();
@@ -70,6 +71,20 @@ app.get("/api/health", healthCheck);
 
 // API docs — unauthenticated, no rate limit; pure static content.
 app.route("/api", docsRoutes);
+
+// www → apex, 301. Rules live in utils/www-redirect.ts so they are testable.
+const APP_HOST = appHostFromUrl(process.env.APP_URL);
+
+app.use("*", async (c, next) => {
+  const target = wwwRedirectTarget(
+    c.req.url,
+    c.req.header("host"),
+    APP_HOST,
+    c.req.header("x-forwarded-proto"),
+  );
+  if (target) return c.redirect(target, 301);
+  return next();
+});
 
 // Custom domain routing — rewrite requests whose Host header matches a
 // registered custom domain to the pre-rendered status page. Moved into its
