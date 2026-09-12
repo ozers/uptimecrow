@@ -38,6 +38,30 @@ export function resolveWebRoot(
   return path.resolve(moduleDir, "../../../web");
 }
 
+/**
+ * The directory to serve, given what is actually on disk.
+ *
+ * A WEB_ROOT that points at nothing — "/" typed into the wrong field, a path
+ * from an older image layout, a value pasted from another service — must not
+ * take every page down while the build sits in its default location. Fall back
+ * to the default and say so; give up only when there is no build anywhere.
+ */
+export function pickWebRoot(
+  envValue: string | undefined,
+  moduleDir: string,
+  cwd: string,
+  hasIndex: (dir: string) => boolean,
+): { root: string | null; source: "env" | "default" | "fallback" } {
+  const fromDefault = resolveWebRoot(undefined, moduleDir, cwd);
+  if (envValue) {
+    const fromEnv = resolveWebRoot(envValue, moduleDir, cwd);
+    if (hasIndex(fromEnv)) return { root: fromEnv, source: "env" };
+    if (hasIndex(fromDefault)) return { root: fromDefault, source: "fallback" };
+    return { root: null, source: "env" };
+  }
+  return { root: hasIndex(fromDefault) ? fromDefault : null, source: "default" };
+}
+
 // Walk the build output once at startup. The tree is immutable after `vite
 // build`, so an index beats an existsSync() per request, and it keeps the
 // path-resolution rules below a pure function over a Set.
@@ -119,12 +143,22 @@ export function cacheControlFor(filePath: string): string {
 }
 
 export function mountWebApp(app: Hono): boolean {
-  const abs = resolveWebRoot(process.env.WEB_ROOT, MODULE_DIR, process.cwd());
+  const hasIndex = (dir: string) => existsSync(path.join(dir, "index.html"));
+  const picked = pickWebRoot(process.env.WEB_ROOT, MODULE_DIR, process.cwd(), hasIndex);
 
-  if (!existsSync(path.join(abs, "index.html"))) {
-    logger.info(`[Web] No SPA build at ${abs} — serving API only`);
+  if (!picked.root) {
+    const fallback = resolveWebRoot(undefined, MODULE_DIR, process.cwd());
+    logger.info(
+      `[Web] No SPA build found (WEB_ROOT=${process.env.WEB_ROOT ?? "unset"}, default ${fallback}) — serving API only`,
+    );
     return false;
   }
+  if (picked.source === "fallback") {
+    logger.warn(
+      `[Web] WEB_ROOT=${process.env.WEB_ROOT} has no index.html — serving the build at ${picked.root} instead`,
+    );
+  }
+  const abs = picked.root;
 
   const files = buildFileIndex(abs);
   logger.info(`[Web] Serving ${files.size} static files from ${abs}`);

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveStaticPath, cacheControlFor, isKnownAppRoute, looksLikeAsset, resolveWebRoot } from "./web.js";
+import { resolveStaticPath, cacheControlFor, isKnownAppRoute, looksLikeAsset, resolveWebRoot, pickWebRoot } from "./web.js";
 
 // These rules used to live in nginx.conf, where nothing could test them. The
 // pre-rendered marketing routes (/pricing -> /pricing/index.html) and the SPA
@@ -129,5 +129,38 @@ describe("resolveWebRoot", () => {
 
   it("resolves a relative WEB_ROOT against the working directory", () => {
     expect(resolveWebRoot("../web/dist", DIST, "/repo/apps/api")).toBe("/repo/apps/web/dist");
+  });
+});
+
+// A wrong WEB_ROOT used to be trusted blindly: "/" found no index.html and the
+// app served every page as "404 Not Found" while the build sat in /app/web.
+describe("pickWebRoot", () => {
+  const DIST = "/app/apps/api/dist";
+  const onDisk = (...dirs: string[]) => (dir: string) => dirs.includes(dir);
+
+  it("serves the default location when WEB_ROOT is unset", () => {
+    expect(pickWebRoot(undefined, DIST, "/app", onDisk("/app/web"))).toEqual({
+      root: "/app/web",
+      source: "default",
+    });
+  });
+
+  it("honours a WEB_ROOT that actually contains a build", () => {
+    expect(pickWebRoot("/srv/web", DIST, "/app", onDisk("/srv/web", "/app/web"))).toEqual({
+      root: "/srv/web",
+      source: "env",
+    });
+  });
+
+  it("falls back to the default when WEB_ROOT points at nothing", () => {
+    expect(pickWebRoot("/", DIST, "/app", onDisk("/app/web"))).toEqual({
+      root: "/app/web",
+      source: "fallback",
+    });
+  });
+
+  it("gives up only when there is no build anywhere", () => {
+    expect(pickWebRoot("/nope", DIST, "/app", onDisk()).root).toBeNull();
+    expect(pickWebRoot(undefined, DIST, "/app", onDisk()).root).toBeNull();
   });
 });
