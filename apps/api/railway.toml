@@ -4,7 +4,10 @@ dockerfilePath = "apps/api/Dockerfile"
 buildTarget = "production"
 
 [deploy]
-startCommand = "cd /app && pnpm --filter @uptimecrow/api db:migrate && node /app/apps/api/dist/index.js"
+# No startCommand: the Dockerfile CMD is the single source of truth. This override
+# used to `cd /app`, which moved the working directory the SPA root is resolved
+# from — the API came up with no web app and every page answered "404 Not Found".
+# It also ran pnpm at boot, the exact crash-loop the image CMD was fixed for.
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"

@@ -54,8 +54,9 @@ COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/packages/shared ./packages/shared
-# Served by the API at /, resolved from WEB_ROOT (default ../../web relative to
-# the /app/apps/api working directory).
+# Served by the API at /. Located relative to the compiled module
+# (dist/web.js → /app/web), so no start command or working directory can move
+# it; WEB_ROOT overrides.
 COPY --from=build /app/apps/web/dist ./web
 COPY apps/api/package.json ./apps/api/
 COPY apps/api/drizzle.config.ts ./apps/api/

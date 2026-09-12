@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveStaticPath, cacheControlFor, isKnownAppRoute, looksLikeAsset } from "./web.js";
+import { resolveStaticPath, cacheControlFor, isKnownAppRoute, looksLikeAsset, resolveWebRoot } from "./web.js";
 
 // These rules used to live in nginx.conf, where nothing could test them. The
 // pre-rendered marketing routes (/pricing -> /pricing/index.html) and the SPA
@@ -104,5 +104,30 @@ describe("looksLikeAsset", () => {
     expect(looksLikeAsset("/")).toBe(false);
     expect(looksLikeAsset("/pricing")).toBe(false);
     expect(looksLikeAsset("/dashboard/monitors/42")).toBe(false);
+  });
+});
+
+// Production went down because the SPA root was resolved against the working
+// directory: a start command that ran `cd /app` turned "../../web" into /web,
+// the API found no web app, and every page answered "404 Not Found".
+describe("resolveWebRoot", () => {
+  const DIST = "/app/apps/api/dist";
+
+  it("finds /app/web from the compiled module in the image", () => {
+    expect(resolveWebRoot(undefined, DIST, "/app/apps/api")).toBe("/app/web");
+  });
+
+  it("does not depend on the working directory", () => {
+    const fromApiDir = resolveWebRoot(undefined, DIST, "/app/apps/api");
+    expect(resolveWebRoot(undefined, DIST, "/app")).toBe(fromApiDir);
+    expect(resolveWebRoot(undefined, DIST, "/")).toBe(fromApiDir);
+  });
+
+  it("uses an absolute WEB_ROOT exactly as given", () => {
+    expect(resolveWebRoot("/srv/uptimecrow/web", DIST, "/app")).toBe("/srv/uptimecrow/web");
+  });
+
+  it("resolves a relative WEB_ROOT against the working directory", () => {
+    expect(resolveWebRoot("../web/dist", DIST, "/repo/apps/api")).toBe("/repo/apps/web/dist");
   });
 });

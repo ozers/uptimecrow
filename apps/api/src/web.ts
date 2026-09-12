@@ -13,17 +13,29 @@
 
 import { readdirSync, statSync, existsSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { serveStatic } from "@hono/node-server/serve-static";
 import type { Hono } from "hono";
 import { logger } from "./utils/logger.js";
 
-// `serveStatic` resolves `root` relative to process.cwd(), so the default is
-// expressed that way too: the production image copies the built SPA to
-// /app/web and runs from /app/apps/api.
-const DEFAULT_WEB_ROOT = "../../web";
+const MODULE_DIR = path.dirname(fileURLToPath(import.meta.url));
 
-export function webRoot(): string {
-  return process.env.WEB_ROOT || DEFAULT_WEB_ROOT;
+// Where the built SPA lives. The default is resolved from this module's own
+// location — never from the working directory. It used to be "../../web"
+// relative to process.cwd(), and a Railway start command that ran `cd /app`
+// moved it to /web: the API came up with no web app, and every page on the
+// production site answered "404 Not Found".
+//
+// In the image this module is /app/apps/api/dist/web.js, so ../../../web is
+// /app/web. An explicit WEB_ROOT still means what it says: absolute as-is,
+// relative against the working directory.
+export function resolveWebRoot(
+  envValue: string | undefined,
+  moduleDir: string,
+  cwd: string,
+): string {
+  if (envValue) return path.resolve(cwd, envValue);
+  return path.resolve(moduleDir, "../../../web");
 }
 
 // Walk the build output once at startup. The tree is immutable after `vite
@@ -107,8 +119,7 @@ export function cacheControlFor(filePath: string): string {
 }
 
 export function mountWebApp(app: Hono): boolean {
-  const root = webRoot();
-  const abs = path.resolve(process.cwd(), root);
+  const abs = resolveWebRoot(process.env.WEB_ROOT, MODULE_DIR, process.cwd());
 
   if (!existsSync(path.join(abs, "index.html"))) {
     logger.info(`[Web] No SPA build at ${abs} — serving API only`);
@@ -130,7 +141,9 @@ export function mountWebApp(app: Hono): boolean {
     }
 
     c.header("Cache-Control", cacheControlFor(target));
-    const res = await serveStatic({ root, rewriteRequestPath: () => target })(c, next);
+    // An absolute root: serveStatic joins it with the file path, so the working
+    // directory can no longer change what gets served.
+    const res = await serveStatic({ root: abs, rewriteRequestPath: () => target })(c, next);
 
     // Unknown page: the shell still renders so the app can show its not-found
     // screen, but the status tells crawlers there is nothing here.

@@ -239,7 +239,7 @@ pnpm dev:web    # http://localhost:5173
 | `POLAR_WEBHOOK_SECRET` | No² | — | Polar webhook signing secret (base64) |
 | `POLAR_<PLAN>_<INTERVAL>_PRODUCT_ID` | No² | — | Polar **product** id per plan and interval, e.g. `POLAR_INDIE_MONTHLY_PRODUCT_ID`. Product ids, not price ids — Polar removed price-level ids from checkout |
 | `UPTIMECROW_VERSION` | No | `latest` | Image tag read by `docker-compose.prod.yml`. Pin a release |
-| `WEB_ROOT` | No | `../../web` | Where the API looks for the built SPA, relative to its working directory |
+| `WEB_ROOT` | No | `/app/web` in the image | Where the API looks for the built SPA. The default is found relative to the compiled API, so the working directory does not matter; a relative override resolves against it |
 | `BEACON_URL` / `BEACON_KEY` | No | — | Product analytics endpoint. **Both unset means nothing is sent** — see [Telemetry](#telemetry) |
 | `SENTRY_DSN` | No | — | Error tracking. No DSN, no reporting |
 | `ALLOW_PRIVATE_TARGETS` | No | — | `1` lets monitors and webhooks reach private/loopback addresses. For local development only — this disables the SSRF guard |
